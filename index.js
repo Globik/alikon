@@ -6,7 +6,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
   //response.send('Hello World!');
-  response.send(cool()+"hello world");
+  response.send(cool()+"  Hello world and Globi!!!");
 });
 
 app.listen(app.get('port'), function() {
