@@ -10,7 +10,7 @@
     "koa": "0.15.0"
   },
   "engines": {
-    "iojs": "1.0.x"
+    "iojs": "1.0.4"
   },
   "repository": {
     "type": "git",
