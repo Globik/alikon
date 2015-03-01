@@ -7,7 +7,13 @@
     "start": "iojs index.js"
   },
   "dependencies": {
-    "koa": "0.15.0"
+    "koa": "0.15.0",
+    "koa-logger":"1.2.2",
+    "koa-route":"2.4.0",
+    "co-body":"1.1.0",
+    "co-wait":"0.0.0",
+    "monk":"0.9.1",
+    "co-monk":"1.0.0"
   },
   "engines": {
     "iojs": "1.0.4"
