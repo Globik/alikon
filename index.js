@@ -1,14 +1,14 @@
-var express = require('express');
-var app = express();
-var cool=require('cool-ascii-faces');
-app.set('port', (process.env.PORT || 5000));
-app.use(express.static(__dirname + '/public'));
+'use strict';
+var koa=require('koa');
+var app=koa();
 
-app.get('/', function(request, response) {
-  //response.send('Hello World!');
-  response.send(cool()+"  Hello world and Globi!!!");
+app.use(function *(){
+  this.body = 'Hello Body!';
 });
 
-app.listen(app.get('port'), function() {
-  console.log("Node app is running at localhost:" + app.get('port'));
-});
+if(process.env.NODE_ENV === 'test'){
+module.exports=app.callback();}
+else{
+
+console.log(3000);
+app.listen(3000);}
