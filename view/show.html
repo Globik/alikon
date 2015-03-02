@@ -1,0 +1,39 @@
+<style>
+p font {background-color:blue;}
+</style>
+
+<ul><li>
+<a href='/'>home</a>
+</li>
+<li><a href='show/jane'>concrete user</a></li>
+</ul>
+<pre><code>
+ var db = {
+  tobi: { name: 'tobi', species: ['ferret','kino'] },
+  loki: { name: 'loki', species: ['internet','theater'] },
+  jane: { name: 'jane', species: ['sport','lesen'] }
+};
+var users=[{name:'Dead Horse'},{name:'Jack'},{name:'Tom'}];
+yield this.render('show',{pets:db, users:users});
+</code></pre>
+<p>users(pets=db):</p>
+<p><b>pets.tobi.name: </b> <%= pets.tobi.name %></p>
+<ul>
+<p><b>pets[key].name + pets[key].species:</b></p>
+<% for(var key in pets){%>
+<li> <a href="/show/<%=pets[key].name %>" ><%= pets[key].name %></a> + hobby: <%= pets[key].species %></li> <% }%>
+</ul>
+<p>users(users=users):</p>
+<p><b>users[0].name :</b><%= users[0].name %></p>
+<pre><code>
+ users.forEach(function(user){
+=: user.name | downcase %>
+}) 
+</code></pre>
+<ul>Cycle forEach:
+<% users.forEach(function(user){ %>
+<li><%=: user.name | downcase %></li>
+<% }) %>
+</ul>
+<p><b>%=: users | map : 'name' %></b></p>
+<%=: users | map : 'name' %>

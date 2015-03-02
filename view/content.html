@@ -1,0 +1,12 @@
+<ul><li><a href='/show'>all users</a></li><li><a href="/show/jane">show Jane</a><li></li></ul>
+<div>
+<p>server time is: <%=: now | format %></p>
+<p>request ip is: <%= ip %></p>
+<p><%=: users | map : 'name' | join %></p>
+<ul><% tslist.forEach(function(d){ %>
+<li><%= d.task %> + <%= d.completed %></li><%});%>
+</ul>
+<%= tslist %>
+
+<% include user.html %>
+</div>
