@@ -1,5 +1,5 @@
 <ul><li><a href='/show'>all users</a></li><li><a href="/show/jane">show Jane</a><li></li></ul>
-<div>
+<div><%= version %><br><%= now %>
 <p>server time is: <%=: now | format %></p>
 <p>request ip is: <%= ip %></p>
 <p><%=: users | map : 'name' | join %></p>

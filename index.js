@@ -8,15 +8,9 @@ var route=require('koa-route');
 var parse=require('co-body');
 var monk=require('monk');
 var wrap=require('co-monk');
- //var db=monk("mongodb://localhost:27017/todo");
+  //var db=monk("mongodb://localhost:27017/todo");
  var db=monk(process.env.MONGOHQ_URL,{w:1});
-/***
-var db=monk("mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database");
-***/
-/***
-mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database
 
-***/
 var tasks=wrap(db.get('tasks'));
 var app=koa();
 
@@ -29,7 +23,7 @@ yield wait(100);
 return this.ip;}
 };
 var filters={
-    format: function *(time){
+    format: function (time){
     return time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate();
  }};
 
