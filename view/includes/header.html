@@ -1,0 +1,20 @@
+<!-- includes/header.html -->
+<hgroup>
+			<h1 id="site-logo"><a href="/">Globi</a></h1>
+			<h2 id="site-description">Site Description</h2>
+		</hgroup>
+
+		<nav>
+			<ul id="main-nav" class="clearfix">
+				<li><a href="/">Home</a></li>
+				<li><a href="/catalog">Articles</a></li>
+				<li><a href="/variant-3">Variant-3</a> </li>
+<% if(user){ %>
+				<li><a href="/account">Profile</a></li><% }%>
+			</ul>
+			<!-- /#main-nav --> 
+		</nav>
+
+		<form id="searchform">
+		<a href="#login_form" id="login_pop">Login</a> | <a href="/logout">Logout</a>
+		</form>

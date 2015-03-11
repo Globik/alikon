@@ -1,12 +1,149 @@
+<span id="out3"></span>
 <ul><li><a href='/show'>all users</a></li><li><a href="/show/jane">show Jane</a><li></li></ul>
 <div><%= version %><br><%= now %>
 <p>server time is: <%=: now | format %></p>
 <p>request ip is: <%= ip %></p>
-<p><%=: users | map : 'name' | join %></p>
-<ul><% tslist.forEach(function(d){ %>
-<li><%= d.task %> + <%= d.completed %></li><%});%>
-</ul>
-<%= tslist %>
 
-<% include user.html %>
+
+
 </div>
+<%= version %>
+<br>
+<% if(message){%>
+<b><%= message %></b><%}%></br>
+
+<% if(user){%><b>Hallo Admin!</b><h3><%= user.username %></h3><a href="/app">app</a><%}%>
+<a href="/show/tobi">show user tobi</a>
+
+  <button onclick="doit(this)">xhr</button>
+  <span id="out"></span>
+  <br>
+  <button onclick="addT(this)">get xhr</button>
+  <br>
+  
+
+<form enctype="multipart/form-data" method="post" name="fileinfo">
+    <p>
+ iojs index     
+<label>Username:
+        
+<input type="text" name="username" value="" />
+      </label>
+    </p>
+    <p>
+      <label>Password:
+        
+<input type="password" name="password" value="" />
+      </label>
+    </p>
+    <p>
+      <button type="submit">Log In</button>
+    </p>
+     
+  </form>
+  <div id="container" class="warning"><b>Proba</b></div>
+  <script>
+  /***
+var link=document.querySelector('link[rel="import"]');
+link.onload=function(e){
+var content=link.import;
+var el=this.import.querySelector('#warning');
+//var el=this.import.getElementById('warning');
+document.getElementById('warn').appendChild(el.cloneNode(true));}
+***/
+function addimportlink(url){
+var link=document.createElement('link');
+link.rel='import';
+link.href=url;
+link.onload=function(e){
+var post=this.import.querySelector('#warning');
+var container=document.querySelector('#container');
+container.appendChild(post.cloneNode(true));
+};
+link.onerror=function(e){alert("Error loading: "+e.target.href);};
+document.head.appendChild(link);
+}
+addimportlink('/insert2');//from view field
+//from /public - './insert.html'
+</script>
+  
+  
+  <script>
+  function vax(meth,url,data,onLoad,onError){
+var xhr=new XMLHttpRequest();
+xhr.open(meth,url);
+xhr.setRequestHeader("Content-Type","application/json");
+xhr.onload=onLoad;
+xhr.onerror=onError;
+xhr.send(data);
+} 
+
+function onLoad(e){
+if(this.status==200){
+console.log(this.responseText);alert('ok');
+}
+}
+function onError(e){alert('fuck');}
+
+  function doit(){
+  var data={};
+  data.mata="Hallo there!";
+  var data=JSON.stringify(data);
+  //xhr.setRequestHeader("Content-Type","application/json");
+  vax('get','/alfa',data,onLoad,onError);
+    function onLoad(e){
+  var antwort=JSON.parse(this.response);
+  //out.innerHTML=this.response;
+  out.innerHTML=antwort.str;
+  }
+  }
+  
+  function addT(event){
+  var data={};
+  //event.preventDefault();
+  var xhr=new XMLHttpRequest();
+  //xhr.setRequestHeader("Content-Type","application/json");
+  //var bu=document.forms["todoform"]["task"].value;
+  var dn="Pupkin"
+xhr.open("GET","/beta/:"+dn,true);
+  data.mata='bu';
+  var data=JSON.stringify(data);
+  //alert(bu);
+  xhr.onload=function(e){
+  if(this.status == 200){
+  out.innerHTML=this.response;}}
+xhr.onerror=function(e){alert("fuck");}
+xhr.send();
+//return false;
+  //var data={"data":"d"};
+  //data.data="Halo there!";
+  //var data=JSON.stringify(data);
+  }
+  /***
+  var forma=document.forms.namedItem("bub");
+  forma=addEventListener('submit',function(ev){
+  var xhr=new XMLHttpRequest();
+  xhr.open=("post","/custom",true);
+  xhr.onload=function(ov){
+  if(this.status ==200){out.innerHTML=this.response;}
+  else{out.innerHTML=this.status;}}
+  xhr.send(forma);
+  ev.preventDefault();
+  },false);
+  ***/
+  
+  var form=document.forms.namedItem("fileinfo");
+form.addEventListener('submit',function(ev){
+odata=new FormData(document.forms.namedItem("fileinfo"));
+//odata.append("custom field","this is some extra data");
+
+var oreq=new XMLHttpRequest();
+     oreq.open("post","/gamma",true);
+	 //oreq.setRequestHeader('Content-Type','multipart/form-data');
+	 oreq.onload=function(oevent){
+	 if(oreq.status==200){out.innerHTML=this.response;}
+	 else{out.innerHTML=oreq.status;}}
+	 oreq.send(odata);
+	 ev.preventDefault();},false);
+  
+  </script>

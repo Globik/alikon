@@ -1,9 +1,22 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <title>koa ejs</title>
+<%- include includes/head.html %>
+
 </head>
 <body>
+<div id="pagewrap">
+<header id="header"><%- include includes/header.html %></header>
+<div id="content">
 <h3>koa ejs</h3>
 <%- body %>
+</div>
+
+<%- include includes/login_form.html %>
+
+<aside id="sidebar"><%- include includes/aside.html %></aside>
+<footer id="footer"><%- include includes/footer.html %></footer>
+</div>
 </body>
 </html>
