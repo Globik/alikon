@@ -1,5 +1,6 @@
 <span id="out3"></span>
-<ul><li><a href='/show'>all users</a></li><li><a href="/show/jane">show Jane</a><li></li></ul>
+<ul><li><a href='/show'>all users</a></li><li><a href="/show/jane">show Jane</a>
+<li><a href="/insert2">insert2</a></li></ul>
 <div><%= version %><br><%= now %>
 <p>server time is: <%=: now | format %></p>
 <p>request ip is: <%= ip %></p>
@@ -21,10 +22,10 @@
   <button onclick="addT(this)">get xhr</button>
   <br>
   
-
-<form enctype="multipart/form-data" method="post" name="fileinfo">
+<!--
+<form  method="post" name="fileinfo">
     <p>
- iojs index     
+    
 <label>Username:
         
 <input type="text" name="username" value="" />
@@ -33,7 +34,7 @@
     <p>
       <label>Password:
         
-<input type="password" name="password" value="" />
+<input type="password" name="password" value="secret" />
       </label>
     </p>
     <p>
@@ -41,6 +42,24 @@
     </p>
      
   </form>
+  </br></br></br>
+  <p>Please enter your login and password here</p>
+  -->
+  <!--
+<form method="post" name="bub" enctype="application/x-www-form-urlencoded">
+<div>
+<label for="login">Login</label>
+<input type="text" id="login" name="username" value="">
+</div></br>
+ <div>
+<label for="password">Password</label>
+<input type="password" id="password" name="password" value="">
+</div>
+<button type="submit"  onsubmit="return doform(this.form);" value="Log In">doform</button>
+</form>
+-->
+<span id="prout"></span>
+  <!--
   <div id="container" class="warning"><b>Proba</b></div>
   <script>
   /***
@@ -66,7 +85,7 @@ document.head.appendChild(link);
 addimportlink('/insert2');//from view field
 //from /public - './insert.html'
 </script>
-  
+-->  
   
   <script>
   function vax(meth,url,data,onLoad,onError){
@@ -80,7 +99,8 @@ xhr.send(data);
 
 function onLoad(e){
 if(this.status==200){
-console.log(this.responseText);alert('ok');
+console.log(this.responseText);
+alert('ok');
 }
 }
 function onError(e){alert('fuck');}
@@ -120,30 +140,61 @@ xhr.send();
   //var data=JSON.stringify(data);
   }
   /***
+  function doform(form){
+  var xhr=new XMLHttpRequest();
+  var params='username='+encodeURIComponent('Bob')+'&password='+encodeURIComponent('secret');
+  xhr.open=("post","/custom2",true);
+  xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  xhr.onload=function(ov){
+  if(this.status ==200){prout.innerHTML=this.response;}
+  else{prout.innerHTML=this.status;}}
+  xhr.send(params);
+  return false;
+  }
+  ***/
+  /***
   var forma=document.forms.namedItem("bub");
   forma=addEventListener('submit',function(ev){
   var xhr=new XMLHttpRequest();
-  xhr.open=("post","/custom",true);
+  var params='username='+encodeURIComponent('Bob')+'&password='+encodeURIComponent('secret');
+  xhr.open=("post","/custom2",true);
+  xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
   xhr.onload=function(ov){
-  if(this.status ==200){out.innerHTML=this.response;}
-  else{out.innerHTML=this.status;}}
-  xhr.send(forma);
+  if(this.status ==200){prout.innerHTML=this.response;}
+  else{prout.innerHTML=this.status;}}
+  xhr.send(params);
+  return false;
   ev.preventDefault();
   },false);
   ***/
   
-  var form=document.forms.namedItem("fileinfo");
-form.addEventListener('submit',function(ev){
-odata=new FormData(document.forms.namedItem("fileinfo"));
-//odata.append("custom field","this is some extra data");
-
-var oreq=new XMLHttpRequest();
-     oreq.open("post","/gamma",true);
-	 //oreq.setRequestHeader('Content-Type','multipart/form-data');
-	 oreq.onload=function(oevent){
-	 if(oreq.status==200){out.innerHTML=this.response;}
-	 else{out.innerHTML=oreq.status;}}
-	 oreq.send(odata);
-	 ev.preventDefault();},false);
+  //var form=document.forms.namedItem("fileinfo");
+  //alert(document.forms.namedItem("fileinfo").username.value);
+  //alert(form.username.value);
   
+ /*** 
+form.addEventListener('submit',function(ev){
+//odata=new FormData(document.forms.namedItem("fileinfo"));
+//odata.append("custom field","this is some extra data");
+//alert(documents.form.fileinfo);
+var suserpassw=form.password.value;
+var suser=form.username.value;
+var oreq=new XMLHttpRequest();
+var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent(suserpassw);
+     oreq.open("post","/custom2",true);
+	 //oreq.setRequestHeader('Content-Type','multipart/form-data');
+	 oreq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+	 
+	 oreq.onload=function(oevent){
+	 if(oreq.status==200){
+	 var data=JSON.parse(this.response);
+	 //out.innerHTML=this.response;
+	 out.innerHTML=data.success+" : "+data.redirect;
+	 window.location.href=data.redirect;
+	 }
+	 else{out.innerHTML=oreq.status;}}
+	 //oreq.send(odata);
+	 oreq.send(params);
+	 ev.preventDefault();},false);
+  ***/
   </script>

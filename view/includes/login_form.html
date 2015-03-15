@@ -137,25 +137,53 @@ border-radius: 10px;
 <a href="#x" class="overlay" id="login_form"></a>
         
 <div class="popup">
- if (message) { >
-<p>< message ></p>
-< } >
+ 
+<span id="out4"></span>
 
-< if (message.length > 0) { >
-<= message >
-< } >
 <h2>Welcome Guest!</h2>
 <p>Please enter your login and password here</p>
-<form action="/custom" method="post">
+<form method="post" name="fileinfo">
 <div>
 <label for="login">Login</label>
 <input type="text" id="login" name="username" value="">
 </div>
  <div>
 <label for="password">Password</label>
-<input type="password" id="password" name="password" value="">
+<input type="password" id="password" name="password" value="secret">
 </div>
 <input type="submit" value="Log In">
 <a class="close" href="#"></a>
 </form>
-</div>           
+</div> 
+<script>
+/***
+     var form=document.forms.namedItem("fileinfo");
+  //alert(document.forms.namedItem("fileinfo").username.value);
+  //alert(form.username.value);
+  
+  
+form.addEventListener('submit',function(ev){
+//odata=new FormData(document.forms.namedItem("fileinfo"));
+//odata.append("custom field","this is some extra data");
+//alert(documents.form.fileinfo);
+var suserpassw=form.password.value;
+var suser=form.username.value;
+var oreq=new XMLHttpRequest();
+var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent(suserpassw);
+     oreq.open("post","/custom2",true);
+	 //oreq.setRequestHeader('Content-Type','multipart/form-data');
+	 oreq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+	 
+	 oreq.onload=function(oevent){
+	 if(oreq.status==200){
+	 var data=JSON.parse(this.response);
+	 //out4.innerHTML=this.response;
+	 out4.innerHTML=data.success+" : "+data.redirect;
+	 window.location.href=data.redirect;
+	 }
+	 else{out4.innerHTML=oreq.status;}}
+	 //oreq.send(odata);
+	 oreq.send(params);
+	 ev.preventDefault();},false);
+  ***/
+  </script>     
