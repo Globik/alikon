@@ -22,7 +22,7 @@ var configDB=require('./config/database.js');
 
 var monk=require('monk');
 var wrap=require('co-monk');
-  var db=monk(configDB.url,{w:1});
+  var db=module.exports=monk(configDB.url,{w:1});
   //var db=module.exports=monk(configDB.localurl);
  //var db=monk(process.env.MONGOHQ_URL,{w:1});
  
