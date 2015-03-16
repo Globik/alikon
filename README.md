@@ -1,6 +1,16 @@
+<!--
+by me. This is a blog example, it is now on koajs. http:// or https://alikon.herokuapp.com
+
+git remote add origin https://github.com/Globik/alikon.git
+git push -u origin master
+From heroku to github.
+The command goes from my directory on my computer where is the folder with alikon app....
+-->
+
+
 # node-js-getting-started
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+A barebones Node.js app using [Koa](http://koajs.com/).
 
 This application support the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 

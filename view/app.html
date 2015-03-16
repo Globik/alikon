@@ -4,3 +4,40 @@
   <a href="/">home</a>
   </br><a href="/insert2">insert2</a>
   <p>You are authenticated ... <a href="/logout">logout</a></p>
+  
+  
+  <form id="fd" name="fd" method="post" enctype="multipart/form-data">
+  <input type="text" name="title" value="alushta"/></br>
+  <input type="submit" value="submit"/>
+  
+  </form>
+  </br><span id="out"></span>
+  
+  <script>
+     var formface=document.forms.namedItem("fd");
+  //alert(document.forms.namedItem("fileinfo").username.value);
+  //alert(form.username.value);
+  
+  
+formface.addEventListener('submit',function(ev){
+var odata=new FormData(document.forms.namedItem("fd"));
+//odata.append("custom field","this is some extra data");
+//alert(documents.form.fileinfo);
+//var suserpassw=form.password.value;
+//var title=form.title.value;
+var xhr=new XMLHttpRequest();
+//var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent(suserpassw);
+     xhr.open("post","/gamma",true);
+	 //xhr.setRequestHeader('Content-Type','multipart/form-data');
+	 
+	 xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(odata);
+	 ev.preventDefault();},false);
+  
+  </script>     

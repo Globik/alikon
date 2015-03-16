@@ -1,5 +1,5 @@
 {
-  "name": "node-js-getting-started",
+  "name": "koa-js-getting-started",
   "version": "0.1.2",
   "description": "A sample Node.js app using koa",
   "main": "index.js",

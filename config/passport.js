@@ -1,16 +1,15 @@
 //config/passport.js
-
+//var passport=require('koa-passport');
 var monk=require('monk');
 var configDB=require('./database.js');
  //var db= monk(configDB.url);
  //var db=monk(configDB.localurl);
 //var db=monk("mongodb://localhost:27017/todo");
-var db=monk(process.env.MONGOHQ_URL,{w:1});
-//var db=monk("mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database");
+var db=require('../index');
+//var db=monk(process.env.MONGOHQ_URL,{w:1});
+
 
 module.exports=function(passport){
-
-//console.log('this.fuck in passport :'+this.fuck);
 var busers = db.get('users');
 
 passport.serializeUser(function(user, done) {

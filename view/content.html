@@ -120,24 +120,19 @@ function onError(e){alert('fuck');}
   
   function addT(event){
   var data={};
-  //event.preventDefault();
+  
   var xhr=new XMLHttpRequest();
   //xhr.setRequestHeader("Content-Type","application/json");
   //var bu=document.forms["todoform"]["task"].value;
   var dn="Pupkin"
 xhr.open("GET","/beta/:"+dn,true);
-  data.mata='bu';
-  var data=JSON.stringify(data);
+  
   //alert(bu);
   xhr.onload=function(e){
   if(this.status == 200){
   out.innerHTML=this.response;}}
 xhr.onerror=function(e){alert("fuck");}
 xhr.send();
-//return false;
-  //var data={"data":"d"};
-  //data.data="Halo there!";
-  //var data=JSON.stringify(data);
   }
   /***
   function doform(form){
