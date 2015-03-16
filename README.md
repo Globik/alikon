@@ -1,8 +1,9 @@
 
 by me. This is a blog example, it is now on koajs. http:// or https://alikon.herokuapp.com
 
-git remote add origin https://github.com/Globik/alikon.git
-git push -u origin master
+$git remote add origin https://github.com/Globik/alikon.git
+##
+$git push -u origin master
 From heroku to github.
 The command goes from my directory on my computer where is the folder with alikon app....
 
