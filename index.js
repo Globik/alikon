@@ -25,7 +25,16 @@ var wrap=require('co-monk');
   var db=module.exports=monk(configDB.url,{w:1});
   //var db=module.exports=monk(configDB.localurl);
  //var db=monk(process.env.MONGOHQ_URL,{w:1});
+ var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
  
+ sendgrid.send({to:'gru5@yandex.ru',
+               from:'ag1@yandex.ru',
+               subject:'Hello Hujarkus!!!',
+               text:'Sending email from heroku, eine Probe,alikon.herokuapp,  by admin Globi. OK?'},
+function(err,json){
+if(err){return console.log(err);}
+console.log(json);});
+
 
 var tasks=wrap(db.get('tasks'));
 var busers = db.get('users');

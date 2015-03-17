@@ -51,7 +51,10 @@ try{
 var res=yield admin.findOne({username:"Bob"});
 console.log('db :'+res.username);}catch(er){console.log("error in username :"+er);}
 this.session.dorthin=this.path;
-yield this.render('insert2',{user:this.req.user});
+var catalog=wrap(db.get('catalog'));
+var bloggies=yield catalog.find({});
+console.log('bloggies :'+bloggies);
+yield this.render('insert2',{user:this.req.user,bloggies:bloggies});
 });
 //iojs index
 fuckall.get('/alfa',function *(){

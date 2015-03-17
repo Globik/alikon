@@ -1,4 +1,19 @@
 <% if(user){%><b><%= user.username %></b><%}%>
+
+
+<h3>List of articles: </h3>
+<ul>
+<% bloggies.forEach(function(d){ %><li><a href='/catalog/<%= d._id %>' id=<%= d._id %> ><%= d.article %></a></li>
+<li><%=d.content %></li>
+<li><%= d.autor %></li>
+<li><%= d.dascription %></li>
+<li><%= d.created %></li>
+<li><%= d._id %></li><a href='/catalog/<%= d._id %>' >Read more...</a><% });%>
+
+</ul>
+
+
+
 <div id="warning" class="warning">
 <style>
 h2{color:red;}
