@@ -8,6 +8,7 @@ var serve=require('koa-static');
 //var route=require('koa-route');
 var Router=require('koa-router');
 var flash=require('koa-flash');
+var koaws=require('koa-ws');
 
 //var parse=require('co-body');
 //var bodyParser=require('koa-bodyparser');
@@ -25,15 +26,7 @@ var wrap=require('co-monk');
   var db=module.exports=monk(configDB.url,{w:1});
   //var db=module.exports=monk(configDB.localurl);
  //var db=monk(process.env.MONGOHQ_URL,{w:1});
- var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
  
- sendgrid.send({to:'gru5@yandex.ru',
-               from:'ag1@yandex.ru',
-               subject:'Hello Hujarkus!!!',
-               text:'Sending email from heroku, eine Probe,alikon.herokuapp,  by admin Globi. OK?'},
-function(err,json){
-if(err){return console.log(err);}
-console.log(json);});
 
 
 var tasks=wrap(db.get('tasks'));
@@ -51,7 +44,32 @@ var us=wrap(db.get('users'));
 require('./config/passport')(passport);
 
 var app=koa();
+var options={
+serveClientFile:true,
+clientFilePath:'/koaws.js',
+heartbeat:true,
+heartbeatInterval:5000};
+app.use(koaws(app,options));
+app.ws.register('hello',function *(){
+this.result('world!');
+});
+/***
+on client use koaws js
+ koaws.register('session', function (err, payload) {
+        if (err) console.error('Something went wrong', err);
+        console.log(payload) // should include our session
+    });
 
+Connect to the server:
+
+    koaws.connect();
+
+    koaws.method('hello', function (err, result) {
+        if (err) console.error('Something went wrong', err);
+        console.log(result) // should log 'world!'
+    });
+
+***/
 
 
 var locals={
@@ -80,7 +98,7 @@ app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
  //app.use(session({store:new MongoStore({db:"todo"})}));
-app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
+ app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
 
 app.use(passport.initialize());
 app.use(passport.session());

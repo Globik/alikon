@@ -193,3 +193,43 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
 	 ev.preventDefault();},false);
   ***/
   </script>
+  </br></br><button onclick="sendSock()">send message vie websocket</button>
+  <style>
+  .fur{color:blue;background-color:green;}</style>
+  <script>
+  alert('location.hostname :'+location.hostname);
+  alert("location.port :"+location.port);
+  var koaws={};
+  //var socket=new WebSocket('ws://'+location.hostname+':3000',['soap','jsonrpc-2.0']);
+   var socket=new WebSoket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
+  socket.onopen=function(){
+  //alert('connected');
+  out.innerHTML='Connected!';
+  }
+  var msg={"jsonrpc":"2.0",method:"hello","params":[41,20],"id":1};
+  
+  var data=JSON.stringify(msg);
+  function sendSock(){socket.send(data);}
+  
+  socket.onclose=function(ev){
+  if(ev.wasClean){
+  //alert('clear closed');
+  out.innerHTML="Clearly closed!"
+  }
+  else{
+  //alert('obryv conection');
+  out.innerHTML="Abrupt connection."
+  }
+  //alert('code: '+ev.code+'reson :'+ev.data);
+  out.innerHTML=2;//"<h1>"+"Code :"+ev.code+" reason :"+ev.data+"</h1>";
+  }
+  
+  socket.onmessage=function(ev){
+  //alert('polucheny dannye :'+ev.data);
+  out.innerHTML='<h4 class=fur>'+'Angaben :'+ev.data+'</h4>';
+  }
+  
+  socket.onerror=function(error){
+  //alert('error :'+error.message);
+  out.innerHTML='<b>Error : '+error.message+'</b>';}
+  </script>

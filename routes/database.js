@@ -2,6 +2,7 @@ var passport=require('koa-passport');
 var Router=require('koa-router');
 var bodyParser=require('koa-body');
 var wrap=require('co-monk');
+// var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
 
 var fuckall=new Router();
 
@@ -58,7 +59,18 @@ yield this.render('insert2',{user:this.req.user,bloggies:bloggies});
 });
 //iojs index
 fuckall.get('/alfa',function *(){
+	
+ /***
+ sendgrid.send({to:'gru5@yandex.ru',
+               from:'ag1@yandex.ru',
+               subject:'Hello Hujarkus!!!',
+               text:'Sending email from heroku, eine Probe,alikon.herokuapp,  by admin Globi. OK?'},
+function(err,json){
+if(err){return console.log(err);}
+console.log(json);});
+***/
 	yield this.body={str:"get alfa: OK xhr"};});
+	
 	
 	fuckall.get('/beta/:name',function *(name){
 		console.log('this.params.name',this.params.name);
