@@ -6,6 +6,8 @@ var Router=require('koa-router');
 //var request=require('co-request');//0.2.0
 var rekwest=require('koa-request');//1.0.0
 // var request=require('request');
+var wrap=require('co-monk');
+var fs=require('co-fs');
 
 var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
 var secured=new Router();
@@ -80,9 +82,82 @@ this.body={"OK":"2222 formidable","was namlich":this.request.body.fields,"inf":i
 yield next;
 }
 );
+
+secured.get('/app/adduser',authed,function *(){
+	var db=this.fuck;
+	var allusers=wrap(db.get('users'));
+	var users=yield allusers.find({});
+	console.log('users :',users);
+	yield this.render('adduser',{user:this.req.user,users:users});
+});
+
+secured.post('/addinguser',bodyParser({multipart:true,formidable:{}}),
+function *(next){
+	var db=this.fuck;
+	var users=wrap(db.get('users'));
+	yield users.insert({username:this.request.body.fields.username,
+	                    email:this.request.body.fields.email,
+						password:this.request.body.fields.password,
+						role: this.request.body.fields.role});
+	//console.log('in :'+this.request.body.fields.username);
+this.body=JSON.stringify(this.request.body,null,2);
+this.body={"rslt":this.request.body};
+yield next;});
+secured.get('/userbeta/:id',function *(id){
+	var db=this.fuck;
+	var users=wrap(db.get('users'));
+	//var busers=db.get('users');
+	
+	var result=yield users.findById(this.params.id);
+	console.log('users in result: '+result.username);
+	
+	/***
+	busers.findById(this.params.id,function(err,user){
+if(err){console.log(err);}
+console.log('user: '+user);
+	});***/
+		console.log('this.params.id',this.params.id);
+		//console.log('users in result:',result);
+		yield this.body={result:result};
+	});
+	secured.get('/deletingUser/:id',function *(id){
+	var db=this.fuck;
+    var us=wrap(db.get('users'));
+    yield	us.remove({_id:this.params.id});
+	yield this.body={result:this.params.id,ms:"deleted!"};
+	});
+//iojs index	
+secured.post('/edinguser',bodyParser({multipart:true,formidable:{}}),
+function *(next){
+	console.log(this.request.body.fields.username);
+	var id=this.request.body.fields.id;
+	var name=this.request.body.fields.username;
+	var email=this.request.body.fields.email;
+	var password=this.request.body.fields.password;
+	var role=this.request.body.fields.role;
+	var db=this.fuck;
+	var us=wrap(db.get('users'));
+	yield us.updateById(id,{username:name,email:email,password:password,role:role});
+	this.body=JSON.stringify(this.request.body,null,2);
+	this.body={"result":this.request.body};
+	yield next;
+});
+secured.get('/app/files',authed,function *(){
+	var paths=yield fs.readdir('view');
+console.log('paths : '+paths);
+	yield this.render('files',{user:this.req.user,paths:paths});
+	
+})
+/***
+secured.get('/getinguser,function*(){
+var db=this.fuck;
+var users_id=wrap(db.get('users'));
+	var res=yield admin.findById({username:"Bob"});
+})
+***/
 //iojs index
 function *authed(next){
-if(this.req.isAuthenticated()){
+if(this.req.isAuthenticated() && this.req.user.role == "admin"){
  
 yield next;}
 else{ this.redirect('/');}}

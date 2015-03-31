@@ -47,10 +47,11 @@ var xhr=new XMLHttpRequest();
   </script>  
   </br>
 <button onclick="uiTestWebRTC()">test ui ajax to STUN</button>  
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <script>
             //$(document).ready(function() {
 			function uiTestWebRTC(){
+			/***
                 $.post("https://api.xirsys.com/getIceServers", {
                     ident: "rony",
                     secret: "ff6a4897-e05c-4a19-9d2d-f555857a024a",
@@ -62,6 +63,47 @@ var xhr=new XMLHttpRequest();
                 function(data, status) {
                     alert("Data: " + data + "nnStatus: " + status);
                     console.log("Data: " + data + "nnStatus: " + status);
-                }); }
+                }); ***/
+				var xhr=new XMLHttpRequest();
+
+     xhr.open("POST","https://api.xirsys.com/getIceServers",true);
+	xhr.setRequestHeader("Content-Type","application/json","utf-8");
+	 //xhr.setRequestHeader("Content-Type","text/plain");
+	 //xhr.setRequestHeader("Content-Type","multipart/form-data");
+	 xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 
+	 var form=new FormData();
+	 form.append("ident","rony");
+	 form.append("secret","ff6a4897-e05c-4a19-9d2d-f555857a024a");
+	 form.append("domain","globibot.herokuapp.com");
+	 form.append("application","default");
+	 form.append("room","default");
+	 form.append("secure",1);
+	 
+				var form1={ident: "rony",
+secret: "ff6a4897-e05c-4a19-9d2d-f555857a024a",
+domain: "globibot.herokuapp.com",
+application: "default",
+room: "default",
+secure: 1};
+				//var ops=JSON.stringify(ops.form);
+	 //xhr.send(form1);
+	 xhr.send({"ident": "rony",
+"secret": "ff6a4897-e05c-4a19-9d2d-f555857a024a",
+"domain": "globibot.herokuapp.com",
+"application": "default",
+"room": "default",
+"secure": 1})
+				}
             //});
-    </script>    
+    </script>  
+<h4>Add user to DB</h4>
+<a href="/app/adduser">adduser</a>
+<h4>System files</h4>
+<a href="/app/files">File manager</a>	

@@ -1,0 +1,155 @@
+<!-- adduser.html -->
+<h4>Add new user to DB</h4>
+<p>Your name is <%= user.username %> and You are here as <%= user.role %></p>
+<% if(user.role == 'admin'){%>
+<form id="aduser" name="aduser" method="post" enctype="multipart/form-data">
+<input type="text" name="username" placeholder="name" required/>
+</br><input type="text" name="email" placeholder="email" required/>
+</br><input type="text" name="password" placeholder="pw" required/>
+</br><input type="text" name="role" placeholder="role"/>
+</br>
+<input type="submit" value="submit"/>
+</form>
+<br>
+<span id="out"></span>
+<script>
+var formface=document.forms.namedItem("aduser");
+formface.addEventListener('submit',function(ev){
+var odata=new FormData(document.forms.namedItem("aduser"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/addinguser",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(odata);
+	 ev.preventDefault();},false);
+</script>
+<%}%>
+<p><b>All users:</b></p>
+<table id=myt>
+<caption>All users</caption>
+<thead><tr><th>Users</th><th>email</th><th>password</th><th>role</th><th>edit</th><th>delete</th></tr></thead>
+<tbody id=rs3>
+<% users.forEach(function(us){%>
+
+<tr>
+<td class="f"><%= us.username %></td>
+<td class="f"><%= us.email %></td>
+<td class="f"><%= us.password %></td>
+<td class="f"><%= us.role %></td>
+<td><input type="submit" class="fedt" value="edit" data_id="<%= us._id %>"/>
+</td><td><button class="del-f" data_id="<%= us._id %>">del</button></td></tr>
+
+
+<%})%>
+</tbody>
+</table>
+
+<ul>
+<% users.forEach(function(us){%>
+<li><%=us.username %></li>
+<%})%>
+</ul>
+<form id="eduser" name="eduser" method="post" enctype="multipart/form-data">
+<input type="text" name="username" value="" placeholder="name" required/>
+<input type="text" name="email" value="" placeholder="@email" required/>
+<input type="text" name="password" value="" placeholder="password" required/>
+<input type="text" name="role" value="" placeholder="role" required/>
+<input type="text" name="id" value="" placeholder="id" required/>
+<input type="submit" value="submit"/>
+</form>
+</br>
+<span id="out2"></span>
+<script>
+/***
+ var tds=document.getElementsByClassName('f');
+ for(var i=0;i<tds.length;i++){
+ var td=tds[i];
+     td.setAttribute('contenteditable',true);}
+	***/
+	
+var btnEdts=document.getElementsByClassName('fedt');
+for(var i=0;i<btnEdts.length;i++){
+var btnEdt=btnEdts[i];
+btnEdt.addEventListener('click',svEdt,false);
+}
+
+var btnDels=document.getElementsByClassName('del-f');
+for(var i=0;i<btnDels.length;i++){
+var btnDel=btnDels[i];
+    btnDel.addEventListener('click',delUser,false);
+}
+
+function svEdt(ev){
+var show=ev.target;
+ //alert(show.parentNode.parentNode.textContent);
+// alert(ev.target.getAttribute('data_id'));
+var edtface=document.forms.namedItem("eduser");
+//alert(edtface.username.value);
+  var xhr=new XMLHttpRequest();
+  
+xhr.open("GET","/userbeta/"+show.getAttribute('data_id'),true);
+  xhr.onload=function(e){
+  if(this.status == 200){
+  var data=JSON.parse(this.response);
+  //out.innerHTML=this.response.result;
+  out.innerHTML=data.result.email;
+  edtface.username.value=data.result.username;
+  edtface.email.value=data.result.email;
+  edtface.password.value=data.result.password;
+  edtface.role.value=data.result.role;
+  edtface.id.value=data.result._id;
+  }}
+  xhr.onerror=function(e){alert("error"+e.status);}
+  xhr.send();
+}
+	function delUser(ev){
+	var show=ev.target;
+	//alert(ev.target.getAttribute('data_id'));
+	var xhr=new XMLHttpRequest();
+	    xhr.open("GET",'/deletingUser/'+show.getAttribute('data_id'),true);
+		xhr.onload=function(e){
+		if(this.status ==200){
+		out.innerHTML=this.response;}}
+		xhr.onerror=function(e){alert('error :'+e.status);}
+		xhr.send();}
+		
+ /***
+ var edtface=document.forms.namedItem("edtuser");
+     edtface.addEventListener('submit',function(ev){
+var odata=new FormData(document.forms.namedItem("edtuser"));
+alert(odata.username);
+
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/addinguser",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 //xhr.send(odata);
+	 
+	 ev.preventDefault();},false);
+	 ***/
+ 
+var edface=document.forms.namedItem("eduser");
+    edface.addEventListener('submit',function(ev){
+var odata=new FormData(document.forms.namedItem("eduser"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/edinguser",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var data=JSON.parse(this.response);
+	 out2.innerHTML=this.response;
+	 }
+	 else{out2.innerHTML=this.response;
+	 }}
+	 xhr.send(odata);
+	 ev.preventDefault();},false);
+</script>

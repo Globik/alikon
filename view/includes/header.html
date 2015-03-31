@@ -9,7 +9,7 @@
 				<li><a href="/">Home</a></li>
 				<li><a href="/catalog">Articles</a></li>
 				<li><a href="/labo">Labo</a> </li>
-<% if(user){ %>
+<% if(user && user.role == "admin"){ %>
 				<li><a href="/app">Profile</a></li><% }%>
 			</ul>
 			<!-- /#main-nav --> 

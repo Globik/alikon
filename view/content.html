@@ -119,7 +119,7 @@ function onError(e){alert('fuck');}
   }
   
   function addT(event){
-  var data={};
+  //var data={};
   
   var xhr=new XMLHttpRequest();
   //xhr.setRequestHeader("Content-Type","application/json");
@@ -197,11 +197,11 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
   <style>
   .fur{color:blue;background-color:green;}</style>
   <script>
-  alert('location.hostname :'+location.hostname);//alikon.herokuapp.com
-  alert("location.port :"+location.port);
+  //alert('location.hostname :'+location.hostname);//alikon.herokuapp.com
+  //alert("location.port :"+location.port);
   var koaws={};
-  //var socket=new WebSocket('ws://'+location.hostname+':3000',['soap','jsonrpc-2.0']);
-   var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
+  var socket=new WebSocket('ws://'+location.hostname+':3000',['soap','jsonrpc-2.0']);
+   //var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
   socket.onopen=function(){
   //alert('connected');
   out.innerHTML='Connected!';

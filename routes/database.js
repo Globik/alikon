@@ -58,6 +58,10 @@ console.log('bloggies :'+bloggies);
 yield this.render('insert2',{user:this.req.user,bloggies:bloggies});
 });
 //iojs index
+
+fuckall.get('/labo',function *(){
+	yield this.render('labo',{user:this.req.user});
+});
 fuckall.get('/alfa',function *(){
 	
  /***
