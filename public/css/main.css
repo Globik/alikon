@@ -1,6 +1,6 @@
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block;}
 body {
-	background: black url() no-repeat center top;
+	background: gray url() no-repeat center top;
 	font: .81em/150% Arial, Helvetica, sans-serif;
 	color: #666;
 }
