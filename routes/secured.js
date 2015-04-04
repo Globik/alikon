@@ -8,6 +8,7 @@ var rekwest=require('koa-request');//1.0.0
 // var request=require('request');
 var wrap=require('co-monk');
 var fs=require('co-fs');
+//var parse=require('co-body');
 
 var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
 var secured=new Router();
@@ -67,7 +68,7 @@ json: true
 var uri="https://api.xirsys.com/getIceServers"; 
 var ops={form:{ident: "rony",
 secret: "ff6a4897-e05c-4a19-9d2d-f555857a024a",
-domain: "globibot.herokuapp.com",
+domain: "alikon.herokuapp.com",
 application: "default",
 room: "default",
 secure: 1}};
@@ -75,7 +76,7 @@ secure: 1}};
  var result=yield rekwest.post(uri,ops);
 //var inf=JSON.parse(result.body);
 var inf=result.body;//verno pravilno
-console.log('fuck-info :'/*+inf.d.iceServers*/+inf);
+console.log('fuck-info :'/*+inf.d.iceServers*/+inf.d);
 console.log('this.request.body.fields: ',this.request.body.fields);
 this.body=JSON.stringify(this.request.body,null,2);
 this.body={"OK":"2222 formidable","was namlich":this.request.body.fields,"inf":inf};
@@ -142,12 +143,41 @@ function *(next){
 	this.body={"result":this.request.body};
 	yield next;
 });
-secured.get('/app/files',authed,function *(){
+secured.get('/app/files',function *(){
 	var paths=yield fs.readdir('view');
-console.log('paths : '+paths);
+console.log('paths : '+paths[0]);
 	yield this.render('files',{user:this.req.user,paths:paths});
 	
 })
+secured.get('/alfafile/:name',authed,function *(name){
+		console.log('this.params.name',this.params.name);
+		//var b=yield fs.readFile('./view/'+this.params.name,'utf-8');
+		var b=yield fs.readFile('view/includes/footer.html','utf-8');
+		console.log('file content: '+b);
+		yield this.body={str:this.params.name,file:b};
+	});
+	
+	secured.post('/savefile',function *(next){
+		//if(this.is('json')=='json')
+		var bu=this.request.body;
+		console.log('is this json? '+this.is('json'))
+		console.log('bu filename '+bu.file_name);
+		console.log('bu file content:  '+bu.file_content);
+		yield fs.writeFile('./view/includes/footer.html',bu.file_content);
+		this.body=JSON.stringify(this.request.body,null,2);
+	this.body={"result":this.request.body,result:"OK - saved!"};
+	yield next;
+	});
+	
+	/***
+	secured.post('/savefile',function *(){
+		var bo=yield parse.json(this);
+		console.log('body'+bo);
+		yield body={"result":bo};
+		
+	});
+	***/
+	//node index
 /***
 secured.get('/getinguser,function*(){
 var db=this.fuck;

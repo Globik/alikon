@@ -200,8 +200,8 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
   //alert('location.hostname :'+location.hostname);//alikon.herokuapp.com
   //alert("location.port :"+location.port);
   var koaws={};
-  var socket=new WebSocket('ws://'+location.hostname+':3000',['soap','jsonrpc-2.0']);
-   //var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
+  //var socket=new WebSocket('ws://'+location.hostname+':3000',['soap','jsonrpc-2.0']);
+   var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
   socket.onopen=function(){
   //alert('connected');
   out.innerHTML='Connected!';

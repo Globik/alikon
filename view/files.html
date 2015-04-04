@@ -4,8 +4,62 @@
 <b><%= user.username %>
 </br>
 <ul>
-<li><%= paths %></li>
+<li><%=: paths | first | capitalize %></li>
+<%= paths[1] %>
+<ul>
+<% paths.forEach(function(it,k){%>
+<li onclick="callFile(this)"><%= paths[k] %></li><%})%>
+</ul>
+</br>
+<textarea id="textarea" style="width:400px;height:400px;" value=""></textarea>
+</br><button onclick="saveIt(this)">save edited file</button>
+</br><span id="out"></span>
+<script>
+function callFile(el){
+alert(el.innerHTML);
+var xhr=new XMLHttpRequest();
+  //xhr.setRequestHeader("Content-Type","application/json");
+  //var bu=document.forms["todoform"]["task"].value;
+  var dn=el.innerHTML;
+xhr.open("GET","/alfafile/"+dn,true);
+xhr.onload=function(e){
+  if(this.status == 200){
+  out.textContent=JSON.parse(this.response).file;
+  textarea.setAttribute('data-file-name',dn);
+  textarea.textContent=JSON.parse(this.response).file;
+  //out.textContent=this.response.file;
+  }}
+xhr.onerror=function(e){alert("fuck"+e.status);}
+xhr.send();
+}
+function saveIt(){
+var errCount=0;
+if(textarea.value === ''){errCount++}
+if(errCount === 0){
 
+var fileName=textarea.getAttribute('data-file-name');
+    //alert(fileName);
+	/***
+var form=new FormaData();
+    form.append('data_file_name',fileName);
+	form.append('file_content',textarea.value);***/
+var xhr=new XMLHttpRequest();
+    xhr.open('POST','/savefile',true);
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	//xhr.setRequestHeader('Content-Type','text/plain','utf-8')
+	xhr.onload=function(e){
+	if(this.status==200){
+	out.innerHTML=this.response;}}
+	xhr.onerror=function(e){out.innerHTML='fuck :'+e.status;};
+	//var data={al:"al"};
+	var data={};
+	data.file_name="footer.html";
+	data.file_content=textarea.value;
+	var ata=JSON.stringify(data);
+	xhr.send(ata);}
+	else{alert('Please fill in textarea');}
+}
+</script>
 
 </ul>
 <div id="container">

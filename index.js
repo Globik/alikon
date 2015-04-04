@@ -23,9 +23,11 @@ var configDB=require('./config/database.js');
 
 var monk=require('monk');
 var wrap=require('co-monk');
-  var db=module.exports=monk(configDB.url,{w:1});
-  //var db=module.exports=monk(configDB.localurl);
- //var db=monk(process.env.MONGOHQ_URL,{w:1});
+  var db=module.exports=monk(configDB.url,{w:1});//for production
+  //var db=module.exports=monk(configDB.localurl);//for local
+  
+  /***
+ //var db=monk(process.env.MONGOHQ_URL,{w:1});***/
  
 
 
@@ -97,8 +99,8 @@ filters:filters});
 app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
- //app.use(session({store:new MongoStore({db:"todo"})}));
- //fucking a
+// app.use(session({store:new MongoStore({db:"todo"})}));
+ 
  app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
 
 app.use(passport.initialize());
