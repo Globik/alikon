@@ -1,0 +1,148 @@
+﻿<!-- modules.html -->
+<style>
+
+input[type=checkbox]:checked+label:before{
+width:2em;
+border:2px solid blue;
+content:"\2713";
+color:#f00;
+font-style:normal;
+background:lightgreen;}
+}
+</style>
+
+<b>modules</b>
+<h3>Create one</h3>
+<form name="module" onchange="fuck()">
+<input  type="text" name="modulname" placeholder="name" required value=""/>
+visible:
+<input type="checkbox" name="status" checked value="off" />
+isfree:
+<input type="checkbox" name="isfree" checked/>
+
+<input type="submit" value="submit"/>
+</form>
+</br>
+</br><h3>Edit One</h3>
+
+<button onclick="fuck()">fuck</button>
+<ul>
+<% mods.forEach(function(m){%>
+<li><%= m.modulname %></li>
+<li id="mstatus">Is on/off?: <%= m.status %></li>
+<li id="misfree">Is busy?: <%= m.isfree %></li><%})%>
+</ul>
+<dialog id="myd2">
+<span id="cancel">cancel</span>
+<p>Build and save</p>
+<ul>
+<% mods.forEach(function(m){%>
+<li><%= m.modulname %></li>
+<li><%= m.status %><input data-id="<%= m._id %>" type="checkbox" <% if(m.status=="on"){%> checked  class="greencheck" <%}else{%> class="redcheck" <%}%>onchange="goBusy1(this)" /></li>
+<li><%= m.isfree %><input  id="fucki" data-id="<%= m._id %>" type="checkbox"<% if(m.isfree=="on"){%> checked class="greencheck" onchange="goBusy(this)"<%}%>/><label  for="fucki">Занять модуль</label></li>
+<li><%= m._id %></li>
+<%})%>
+</ul>
+</br><span id="out2"></span>
+</br><button id="close2">save nastroiki</button>
+</dialog>
+<!-- <dialog id="myd">
+<p>this is a dialog!</p>
+<input type='text' id='retv' value='' placeholder='enter value'>
+<button id="close">enter</button>
+</dialog>
+-->
+<button id=show>Edit options</button>
+
+</br><span id="out"></span>
+<script>
+var hui=null;
+out.innerHTML='';
+function fuck(){
+var frm=document.forms.namedItem("module");
+//alert(frm.status.checked);
+//alert(frm.modulname.value);
+/***
+out.innerHTML=frm.modulname.value;
+out.innerHTML+=" : "+frm.status.checked;
+out.innerHTML+=" : "+frm.isfree.checked;
+out.innerHTML+=" : "+frm.status.value+" : "+frm.isfree.value;***/
+misfree.innerHTML="ok gyes";
+}
+var frm=document.forms.namedItem("module");
+frm.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("module"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/insertmodule",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(data);
+	 ev.preventDefault();},false);
+function goBusy1(el){
+//alert('booo');
+
+document.getElementById('out2').innerHTML=el.value;
+if(el.checked == true){el.value="on";
+out.innerHTML=el.checked+" : "+el.value+" data-id :"+el.getAttribute('data-id');
+hui=el.getAttribute('data-id');
+document.getElementById('out2').innerHTML=el.value;
+}
+else{
+el.value="off";
+out.innerHTML=el.checked+" : "+el.value+" data-id: "+el.getAttribute('data-id');
+document.getElementById('out2').innerHTML=el.value;
+hui=el.getAttribute('data-id');
+}
+
+}
+function goRest(el){
+if(el.checked==false){
+el.value="off";
+out.innerHTML=el.checked+" : "+el.value;
+
+//alert('Чо? Включить блок? Или не надо?');
+}
+else{
+el.value="on";
+out.innerHTML=el.checked+" : "+el.value;
+}
+}
+show.onclick=function(){
+myd2.showModal();}
+document.getElementById('close2').onclick=function(){
+//var value=document.querySelector('#retv').value;
+var value=document.getElementById('out2').innerHTML;
+myd2.close(value);}
+document.querySelector('dialog').addEventListener('close',function(){
+//alert(this.returnValue);
+var ba=this.returnValue;
+saveModul(ba);
+});
+cancel.onclick=function(){
+console.log('canceled');
+myd2.close();
+}
+function saveModul(ba){
+alert(ba);
+var xhr=new XMLHttpRequest();
+ xhr.open('post','/savemodule',true);
+ xhr.setRequestHeader('Content-Type','application/json','utf-8');
+ xhr.onload=function(e){
+ if(xhr.satus=200){
+ out.innerHTML=this.response;}}
+ xhr.onerror=function(e){alert(e.status);}
+ var data={};
+ if(hui !==null)
+ alert('hui :'+hui);
+ //data.is_free=ba;
+ data.status=ba;
+ data.modul_id=hui;
+ var ata=JSON.stringify(data);
+ xhr.send(ata);
+}
+</script>

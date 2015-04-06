@@ -43,9 +43,21 @@ console.log(doc.username);
 
 //iojs index
 var us=wrap(db.get('users'));
+/***
+var ser=yield us.find({});
+console.log(ser);
+***/
+
 require('./config/passport')(passport);
 
 var app=koa();
+var mods=wrap(db.get('modules'));
+    /***
+	app.use(function *(next){
+		var mdl=yield mods.findOne({modulname:"aside"});
+		console.log('mdl.status :',mdl.status);
+		yield next;
+	});***/
 var options={
 serveClientFile:true,
 clientFilePath:'/koaws.js',
@@ -77,6 +89,10 @@ Connect to the server:
 var locals={
 version:'0.0.1',
 message:'message must be',
+module:function *(){try{
+		var mdl=yield mods.findOne({modulname:"aside"});
+console.log('mdl.status :'+ mdl.status);
+return mdl.status}catch(err){console.log('err :'+err);}} ,
 now:function(){
 return new Date();},
 ip: function *(){
@@ -99,7 +115,7 @@ filters:filters});
 app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
-// app.use(session({store:new MongoStore({db:"todo"})}));
+ //app.use(session({store:new MongoStore({db:"todo"})}));
  
  app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
 

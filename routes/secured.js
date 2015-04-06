@@ -83,7 +83,12 @@ this.body={"OK":"2222 formidable","was namlich":this.request.body.fields,"inf":i
 yield next;
 }
 );
-
+/***
+//Users Management
+http://lh:3000/app/adduser
+=============================================================================================
+=============================================================================================
+***/
 secured.get('/app/adduser',authed,function *(){
 	var db=this.fuck;
 	var allusers=wrap(db.get('users'));
@@ -143,6 +148,12 @@ function *(next){
 	this.body={"result":this.request.body};
 	yield next;
 });
+/*** end of Users Management ***/
+/***
+FilesManager
+http://localhost:3000/app/files
+ ================================================================================
+ ============================================================================================= ***/
 secured.get('/app/files',function *(){
 	var paths=yield fs.readdir('view');
 console.log('paths : '+paths[0]);
@@ -165,10 +176,68 @@ secured.get('/alfafile/:name',authed,function *(name){
 		console.log('bu file content:  '+bu.file_content);
 		yield fs.writeFile('./view/includes/footer.html',bu.file_content);
 		this.body=JSON.stringify(this.request.body,null,2);
-	this.body={"result":this.request.body,result:"OK - saved!"};
+	this.body={resultA:this.request.body,result:"OK - saved!"};
 	yield next;
 	});
-	
+	/*** end of FilesManager ***/
+	/*** modules 
+	=******************************************************************************
+	*******************************************************************************=
+	= ***/
+	secured.get('/app/modules',function *(){
+		var db=this.fuck;
+	var modules=wrap(db.get('modules'));
+	var mods=yield modules.find({});
+    console.log('modules : '+ mods.status);
+	yield this.render('modules',{user:this.req.user,mods:mods});
+	});
+	secured.post('/insertmodule',bodyParser({multipart:true,formidable:{}}),function *(next){
+		var modulname=this.request.body.fields.modulname;
+		var status=this.request.body.fields.status;
+		var isfree=this.request.body.fields.isfree;
+		console.log(modulname+status+isfree);
+		var db=this.fuck;
+		var modules=wrap(db.get('modules'));
+	yield modules.insert({modulname:modulname,status:status,isfree:isfree});
+	this.body=JSON.stringify(this.request.body,null,2);
+	this.body={"result":this.request.body};
+	yield next;	
+	});
+	/***
+	secured.post('/savemodule',function *(next){
+		var db=this.fuck;
+		var bu=this.request.body;
+		console.log(bu.is_free);
+		console.log(bu.modul_id);
+		var id=bu.modul_id;
+		var mods=wrap(db.get('modules'));
+		
+		//yield us.updateById(id,{username:name,email:email,password:password,role:role});
+		yield mods.updateById(id,{$set:{isfree:bu.is_free}}); 
+		//--{$set:{completed:true}}
+		this.body=JSON.stringify(this.request.body,null,2);
+	this.body={resultRequest:this.request.body,result:"OK - saved!"};
+	yield next;
+	});
+	***/
+	secured.post('/savemodule',function *(next){
+		var db=this.fuck;
+		var bu=this.request.body;
+		console.log(bu.status);
+		console.log(bu.modul_id);
+		var id=bu.modul_id;
+		var mods=wrap(db.get('modules'));
+		
+		//yield us.updateById(id,{username:name,email:email,password:password,role:role});
+		yield mods.updateById(id,{$set:{status:bu.status}}); 
+		//--{$set:{completed:true}}
+		this.body=JSON.stringify(this.request.body,null,2);
+	this.body={resultRequest:this.request.body,result:"OK - saved!"};
+	yield next;
+	});
+/*** 
+end of modules =********************************************************************= 
+***/
 	/***
 	secured.post('/savefile',function *(){
 		var bo=yield parse.json(this);
