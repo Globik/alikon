@@ -31,8 +31,10 @@ var wrap=require('co-monk');
   var Agenda=require('Agenda');
   //var agenda=new Agenda({db:{address:configDB.simpleloc}});
   
+  console.log(process.env.MONGOHQ_URL)
+  //var agenda=new Agenda({db:{address:configDB.url}});//production
   
-  var agenda=new Agenda({db:{address:configDB.url}});//production
+  var agenda=new Agenda({db:{address:'mongodb://alik:123456@dogen.mongohq.com/alikon-fantastic-database'}});
  //module.exports=agenda;
 /***	
 var status;
