@@ -207,9 +207,13 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
   out.innerHTML='Connected!';
   }
   var msg={"jsonrpc":"2.0",method:"hello","params":[41,20],"id":1};
-  
+  var msg2={"jsonrpc":"2.0",method:"dolley","params":[41,20],"id":2};
   var data=JSON.stringify(msg);
-  function sendSock(){socket.send(data);}
+  var data2=JSON.stringify(msg2);
+  function sendSock(){
+  //socket.send(data);
+  socket.send(data);
+  }
   
   socket.onclose=function(ev){
   if(ev.wasClean){

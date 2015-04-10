@@ -46,15 +46,37 @@ isfree:
 </br><span id="out2"></span>
 </br><button id="close2">save nastroiki</button>
 </dialog>
+</br><button id=show>Edit options</button>
+</br><span id="out"></span>
+</br></br>
+<h2><%= listenToMyHeart %></h2>
+<% if(jobs){%>
+<table id="myt">
+<caption><h3>Agenda</h3></caption>
+<thead><tr><th>name</th><th>type</th><th>priority</th><th>lastRunAt</th><th>repeatInterval</th>
+<th>data</th><th>lastFinishedAt</th><th>lastModifiedBy</th><th>lockedAt</th><th>_id</th>
+<th>nextRunAt</th></tr></thead>
+<tbody id="rs3">
+<% jobs.forEach(function(j,k){%>
+<tr><td><%= j.name %></td><td><%= j.type %></td><td><%= j.priority %></td>
+<td><%= j.lastRunAt %></td><td><%= j.repeatInterval %></td>
+<td><%= j.data.to %></td><td><%= j.lastFinishedAt %></td>
+<td><%= j.lastModifiedBy %></td><td><%= j.lockedAt %></td>
+<td><%= j._id %></td><td><%= j.nextRunAt %></td></tr><%});%>
+</tbody>
+</table>
+<%}%>
+
+
+<b>Bu</b>
+
 <!-- <dialog id="myd">
 <p>this is a dialog!</p>
 <input type='text' id='retv' value='' placeholder='enter value'>
 <button id="close">enter</button>
 </dialog>
 -->
-<button id=show>Edit options</button>
 
-</br><span id="out"></span>
 <script>
 var hui=null;
 out.innerHTML='';

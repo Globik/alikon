@@ -1,0 +1,138 @@
+<!-- agenda.html -->
+<style>
+#out2{color:green;}
+#loader{color:blue;}
+.completed{color:blue;}
+.bookin{color:red;}
+</style>
+<b>Agenda</b>
+<span id="loader"></span>
+<span id="out2"></span>
+<span id="out"></span>
+<div>
+<ul id=me>
+</ul>
+</div>
+<div>
+<h3>Create agenda</h3>
+<form id="creator" name="creator" method="post" enctype="multipart/form-data">
+<input type="text" name="name" required placeholder="name" value="reklama">
+<input type="text" name="rubilnik" required placeholder="off/on" value="off">
+
+</br>
+<input type="submit" value="submit"/>
+</form>
+</div>
+</br>
+<p>The panel on rights</p>
+<button onclick="boit()">Off/getCall</button>
+</br>
+</br>
+<button onclick="foit()">On/Yiedable</button>
+<script>
+showLoad('');
+function doit(){
+showLoad('Loading!...')
+var xhr=new XMLHttpRequest();
+   xhr.open('get','/agendall');
+xhr.onload=function(e){
+if(xhr.status ==200){
+showLoad('');
+var data=JSON.parse(this.response);
+//out.innerHTML=this.response;
+out2.innerHTML=data.job[0]._id;//data.data[1].to;
+for(var key in data.job){
+var li=document.createElement('li');
+    li.setAttribute('data-id',data.job[key]._id);//
+	li.className="completed";
+var str='<button data-name="'+data.job[key].name+'" onclick="del(this)">del</button></br>';
+var str2='fail :'+data.job[key].failReason+'</br>';
+var str3=data.job[key].lastRunAt+'</br>';
+var str4=data.job[key].lockedAt+'</br>';
+var str5=data.job[key].lastFinishedAt+'</br>';
+    li.innerHTML='<b id="brille">'+data.job[key].name+'</b>'+str+' : '+str2+' lastRun: '+str3+'locked : '+str4+' finished : '+str5;
+
+/***
+'<button data-pid="'+data.job[key]._id+'"
+  onclick="del(this)">del</button>'+data.job[key].data;***/
+    me.appendChild(li);
+	if(data.job[key].lastFinishedAt =="undefined"){
+document.getElementById('brille').className="bookin";
+}
+}
+}}
+xhr.onerror=function(e){alert(e.status);};
+xhr.send();
+}
+doit();
+function del(el){
+showLoad('About deleting...')
+alert(el.getAttribute('data-name'));
+var n=el.getAttribute('data-name');
+var xhr=new XMLHttpRequest();
+   xhr.open('get','/delagenda/'+n);
+xhr.onload=function(e){
+if(xhr.status ==200){
+showLoad('');
+out.innerHTML=this.response;}}
+xhr.onerror=function(e){alert(e.status);}
+xhr.send();
+}
+var formface=document.forms.namedItem("creator");
+formface.addEventListener('submit',function(ev){
+var odata=new FormData(document.forms.namedItem("creator"));
+showLoad('Creating...');
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/createagenda",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 showLoad('');
+	 var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(odata);
+	 ev.preventDefault();},false);
+	 
+	 function boit(){
+	 //panel ausschalten
+	 showLoad('Ausschalten...');
+var xhr=new XMLHttpRequest();
+   xhr.open('get','/agendafuck');
+xhr.onload=function(e){
+if(xhr.status ==200){
+showLoad('');
+//var data=JSON.parse(this.response);
+out.innerHTML=this.response;
+
+}
+}
+xhr.onerror=function(e){alert(e.status);};
+xhr.send();
+//setTimeout(doit,1000);
+showLoad('Please reload this page.');
+}
+
+function foit(){
+//panel einschalten
+showLoad('Einschalten!...');
+var xhr=new XMLHttpRequest();
+   xhr.open('get','/agendamuck');
+xhr.onload=function(e){
+if(xhr.status ==200){
+//var data=JSON.parse(this.response);
+out.innerHTML=this.response;
+
+}
+}
+xhr.onerror=function(e){alert(e.status);};
+xhr.send();
+showLoad('Please reload this page.');
+//setTimeout(doit,1000)
+}
+function showLoad(text){
+loader.innerHTML=text;
+}
+
+</script>

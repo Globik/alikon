@@ -2,7 +2,7 @@ var koa=require('koa');
 var app=koa();
 var bodyParser=require('koa-body');
 var Router=require('koa-router');
-//var co=require('co');//4.5.1
+var co=require('co');//4.5.1
 //var request=require('co-request');//0.2.0
 var rekwest=require('koa-request');//1.0.0
 // var request=require('request');
@@ -187,9 +187,14 @@ secured.get('/alfafile/:name',authed,function *(name){
 	secured.get('/app/modules',function *(){
 		var db=this.fuck;
 	var modules=wrap(db.get('modules'));
+	var jobs=wrap(db.get('agendaJobs'));
 	var mods=yield modules.find({});
-    console.log('modules : '+ mods.status);
-	yield this.render('modules',{user:this.req.user,mods:mods});
+	var job=yield jobs.find({});
+	var data=job.map(function(ob){return ob.data;});
+	//console.log('data',data);
+	//console.log(job[4].data);
+    console.log('modules : ',mods);
+	yield this.render('modules',{user:this.req.user,mods:mods,jobs:job,data:data});
 	});
 	secured.post('/insertmodule',bodyParser({multipart:true,formidable:{}}),function *(next){
 		var modulname=this.request.body.fields.modulname;
@@ -238,15 +243,127 @@ secured.get('/alfafile/:name',authed,function *(name){
 /*** 
 end of modules =********************************************************************= 
 ***/
+/***
+agenda *******************************************************************************
+***/
+//node index
+  //var Agenda=require('./index');//('Agenda');
+  //var Agenda=require('Agenda');
+  //var config=require('../config/database.js');
+  //var locurl=config.localurl;
+  //var produrl=config.url;
+  //var agenda=new Agenda({db:{address: produrl}});//production
+  //var agenda=new Agenda({db:{address:locurl}});//development
+  //'localhost:27017/todo'}});
+  //var agenda=require('../index');
+secured.get('/app/agenda',function *(){
+	//var db=this.fuck;
+	yield this.render('agenda',{user:this.req.user});
+});
+secured.get('/agendall',authed,function *(){
+	var db=this.fuck;
+	var jobs=wrap(db.get('agendaJobs'));
+
+	var job=yield jobs.find({});
+	var data=job.map(function(ob){return ob.data;});
+	console.log('data',data);
+	this.body={result:"OK - agenda!",job:job,data:data};
+});
+secured.get('/delagenda/:name',function *(name){
+	var db=this.fuck;
 	/***
-	secured.post('/savefile',function *(){
-		var bo=yield parse.json(this);
-		console.log('body'+bo);
-		yield body={"result":bo};
-		
-	});
+    var us=wrap(db.get('users'));
+    yield	us.remove({_id:this.params.id});
 	***/
-	//node index
+	var agenda=this.agenda;
+	agenda.cancel({name: this.params.name}, function(err, numRemoved) {
+		if(err)console.log(err);
+		console.log(numRemoved);
+});
+	yield this.body={result:this.params.name,ms:"deleted!"};
+	});
+	
+	secured.post('/createagenda',bodyParser({multipart:true,formidable:{}}),
+function *(next){
+var name=this.request.body.fields.name;
+var rubilnik=this.request.body.fields.rubilnik;
+/***
+	var job = agenda.create(name, {to: rubilnik});
+job.save(function(err) {
+	if(err)console.log(err);
+  console.log("Job successfully saved");
+});
+***/
+var db=this.fuck;
+var agenda=this.agenda;
+var modules = db.get('users');
+agenda.define('reklama',{priority:'high',concurrency:10},function (job,done){
+
+modules.find({}).on('success',function(doc){
+	console.log("yes!!!!");
+	console.log(doc);
+	var data=job.attrs.data;
+	console.log(data.to);
+});
+done();
+});
+//node index
+this.body=JSON.stringify(this.request.body,null,2);
+this.body={"rslt":this.request.body};
+agenda.schedule('in 5 seconds','reklama',{to:'off'});
+agenda.start();
+yield next;});
+//node index
+secured.get('/agendafuck',authed,function *(){
+	//sidebar ausschalten
+	var db=this.fuck;
+	var agenda=this.agenda;
+    var us=db.get('modules');
+	agenda.define('reklama',{priority:'high',concurrency:10},function (job,done){
+	var data=job.attrs.data;
+	us.update({modulname:"aside"},{$set:{status:data.to}},function(err,doc){
+	if(err)console.log(err);
+			//return done(err);
+			console.log(doc);
+	console.log(data.to);
+	done();
+	});
+	});
+	agenda.schedule('in 30 minutes','reklama',{to:'off'});
+agenda.start();
+	this.body={result:"OK - agenda!"};
+});
+
+secured.get('/agendamuck',authed,function *(){
+	//sidebar einschalten
+	var db=this.fuck;
+	var agenda=this.agenda;
+    var us=db.get('modules');
+    var modules=wrap(db.get('modules'));
+	var as=wrap(db.get('users'));
+	agenda.define('reklama',{priority:'high',concurrency:10},function(job,done){
+	co(function *(){
+    try{	
+//yield Promise.resolve(1)			
+		var data=job.attrs.data;
+		var mods=yield modules.update({modulname:"aside"},{$set:{status:data.to}});
+	console.log('updated');
+    console.log(data.to);
+    }catch(err) {
+	console.log(err);
+    }}).catch(onerr)
+	function onerr(err){console.log(err+' : '+err.stack);done(err);}
+	done();
+	});
+	agenda.schedule('in 30 minutes','reklama',{to:'on'});
+agenda.start();
+//onStart(agenda);
+	this.body={result:"OK - agenda Yiedable!"};
+});
+//function onStart(agenda){
+	//agenda.start();
+	//}
+//************************************************************************
 /***
 secured.get('/getinguser,function*(){
 var db=this.fuck;

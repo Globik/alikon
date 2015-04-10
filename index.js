@@ -26,10 +26,36 @@ var wrap=require('co-monk');
   var db=module.exports=monk(configDB.url,{w:1});//for production
   //var db=module.exports=monk(configDB.localurl);//for local
   
+  var Agenda=require('Agenda');
+  //var agenda=new Agenda({db:{address:configDB.simpleloc}});//'localhost:27017/todo'}});
+  var agenda=new Agenda({db:{address:configDB.url}});//production
+ //module.exports=agenda;
+/***	
+var status;
+agenda.on('start', function(job) {
+	
+  console.log("Job %s starting", job.attrs.name);
+  //status=job.attrs.name;
+  //return status;
+  
+});
+***/
+//console.log(status);
+
+
+/***
+exports.showMessage=function(agenda){
+agenda.define('show message',function(job,done){
+console.log('Shows message.');
+done();
+});
+}***/
+//collection from mongodb: db.agendaJobs.find()
   /***
  //var db=monk(process.env.MONGOHQ_URL,{w:1});***/
- 
-
+ //var jobSchedule=require('./routes/job-schedule.js');
+    // jobSchedule.setupJobs("fucker");
+//console.log("string: "+jobSchedule.setupJobs("fucker"));
 
 var tasks=wrap(db.get('tasks'));
 var busers = db.get('users');
@@ -85,10 +111,10 @@ Connect to the server:
 
 ***/
 
-
 var locals={
 version:'0.0.1',
 message:'message must be',
+listenToMyHeart:'d',
 module:function *(){try{
 		var mdl=yield mods.findOne({modulname:"aside"});
 console.log('mdl.status :'+ mdl.status);
@@ -112,6 +138,10 @@ cache:false,
 debug:true,
 locals:locals,
 filters:filters});
+
+
+
+
 app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
@@ -128,7 +158,10 @@ app.use(flash());
 app.use(function *(next){
 this.fuck=db;
 yield next;});
-
+app.use(function *(next){
+	this.agenda=agenda;
+	yield next;
+});
 app.use(function *(next) {
   switch (this.path) {
   case '/get':

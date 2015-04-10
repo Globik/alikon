@@ -135,9 +135,9 @@ HEADER
 	z-index: 1;
 	/* gradient */
 	/*background: #6a6a6a url(images/nav-bar-bg.png) repeat-x;*/
-	background: -webkit-gradient(linear, left top, left bottom, from(red/*#b9b9b9*/), to(#6a6a6a));
+	background: -webkit-gradient(linear, left top, left bottom, from(#b9b9b9), to(#6a6a6a));
 	background: -moz-linear-gradient(top,  #b9b9b9,  #6a6a6a);
-	background: linear-gradient(-90deg, black/*#b9b9b9*/,black/* #6a6a6a*/);
+	background: linear-gradient(-90deg, #b9b9b9, #6a6a6a);
 	/* rounded corner */
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
@@ -180,20 +180,20 @@ HEADER
 CONTENT
 *************************************************************************************/
 #content {
-	background: rgba(255,255,230,0.1);
+	background: rgba(255,255,230,0.7);
 	margin: 30px 0 30px;
 	padding: 20px 35px;
-	/*width: 600px;*/
-	width:910px;
-/*	float: left;*/
+	width: 600px;
+	/*width:910px;*/
+	float: left;
 	/* rounded corner */
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
 	/* box shadow */
 	-webkit-box-shadow: 0 1px 30px rgba(0,0,120,.4);
-	-moz-box-shadow: 0 1px 30px rgba(0,0,120,.4);
-	box-shadow: 0 1px 30px rgba(0,0,120,.4);
+	-moz-box-shadow: 0 1px 3px rgba(0,0,120,.4);
+	box-shadow: 0 1px 3px rgba(0,0,120,.4);
 }
 
 /* post */
