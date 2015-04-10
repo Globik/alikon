@@ -27,7 +27,7 @@ var wrap=require('co-monk');
   
   //poe
   //var db=module.exports=monk(configDB.localurl);
-  
+  /***
   var Agenda=require('Agenda');
   //var agenda=new Agenda({db:{address:configDB.simpleloc}});
   
@@ -35,7 +35,7 @@ var wrap=require('co-monk');
   //var agenda=new Agenda({db:{address:configDB.url}});//production
   
   var agenda=new Agenda({db:{address:'mongodb://alik:123456@dogen.mongohq.com/alikon-fantastic-database'}});
- //module.exports=agenda;
+ ***/
 /***	
 var status;
 agenda.on('start', function(job) {
@@ -161,10 +161,11 @@ app.use(flash());
 app.use(function *(next){
 this.fuck=db;
 yield next;});
+/***
 app.use(function *(next){
 	this.agenda=agenda;
 	yield next;
-});
+});***/
 app.use(function *(next) {
   switch (this.path) {
   case '/get':
