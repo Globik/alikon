@@ -34,8 +34,7 @@ var wrap=require('co-monk');
   //console.log(process.env.MONGOHQ_URL)
   var agenda=new Agenda({db:{address:configDB.url}});
   
-//var agenda=new Agenda({db:{address:'mongodb://alik:123456@dogen.mongohq.com/alikon-fantastic-database'}});
- 
+
 /***	
 var status;
 agenda.on('start', function(job) {
@@ -161,11 +160,11 @@ app.use(flash());
 app.use(function *(next){
 this.fuck=db;
 yield next;});
-/***
+
 app.use(function *(next){
 	this.agenda=agenda;
 	yield next;
-});***/
+});
 app.use(function *(next) {
   switch (this.path) {
   case '/get':

@@ -256,7 +256,7 @@ agenda *************************************************************************
   //var agenda=new Agenda({db:{address:locurl}});//development
   //'localhost:27017/todo'}});
   //var agenda=require('../index');
-  /***
+  
 secured.get('/app/agenda',function *(){
 	//var db=this.fuck;
 	yield this.render('agenda',{user:this.req.user});
@@ -276,7 +276,7 @@ secured.get('/delagenda/:name',function *(name){
     var us=wrap(db.get('users'));
     yield	us.remove({_id:this.params.id});
 	***/
-	/***
+	
 	var agenda=this.agenda;
 	agenda.cancel({name: this.params.name}, function(err, numRemoved) {
 		if(err)console.log(err);
@@ -288,15 +288,15 @@ secured.get('/delagenda/:name',function *(name){
 	secured.post('/createagenda',bodyParser({multipart:true,formidable:{}}),
 function *(next){
 var name=this.request.body.fields.name;
-var rubilnik=this.request.body.fields.rubilnik;***/
-/***
+var rubilnik=this.request.body.fields.rubilnik;
+
 	var job = agenda.create(name, {to: rubilnik});
 job.save(function(err) {
 	if(err)console.log(err);
   console.log("Job successfully saved");
 });
-***/
-/***
+
+
 var db=this.fuck;
 var agenda=this.agenda;
 var modules = db.get('users');
@@ -360,13 +360,11 @@ secured.get('/agendamuck',authed,function *(){
 	});
 	agenda.schedule('in 30 minutes','reklama',{to:'on'});
 agenda.start();
-//onStart(agenda);
+
 	this.body={result:"OK - agenda Yiedable!"};
 });
-***/
-//function onStart(agenda){
-	//agenda.start();
-	//}
+
+
 //************************************************************************
 /***
 secured.get('/getinguser,function*(){
