@@ -27,14 +27,14 @@ var wrap=require('co-monk');
   
   //poe
   //var db=module.exports=monk(configDB.localurl);
-  /
+  
   var Agenda=require('agenda');
   //var agenda=new Agenda({db:{address:configDB.simpleloc}});
-  
-  console.log(process.env.MONGOHQ_URL)
+  //kokokokoko
+  //console.log(process.env.MONGOHQ_URL)
   //var agenda=new Agenda({db:{address:configDB.url}});//production
   
-  var agenda=new Agenda({db:{address:'mongodb://alik:123456@dogen.mongohq.com/alikon-fantastic-database'}});
+var agenda=new Agenda({db:{address:'mongodb://alik:123456@dogen.mongohq.com/alikon-fantastic-database'}});
  
 /***	
 var status;
