@@ -23,11 +23,15 @@ var configDB=require('./config/database.js');
 
 var monk=require('monk');
 var wrap=require('co-monk');
-  var db=module.exports=monk(configDB.url,{w:1});//for production
-  //var db=module.exports=monk(configDB.localurl);//for local
+  var db=module.exports=monk(configDB.url,{w:1});
+  
+  //poe
+  //var db=module.exports=monk(configDB.localurl);
   
   var Agenda=require('Agenda');
-  //var agenda=new Agenda({db:{address:configDB.simpleloc}});//'localhost:27017/todo'}});
+  //var agenda=new Agenda({db:{address:configDB.simpleloc}});
+  
+  
   var agenda=new Agenda({db:{address:configDB.url}});//production
  //module.exports=agenda;
 /***	
@@ -69,10 +73,7 @@ console.log(doc.username);
 
 //iojs index
 var us=wrap(db.get('users'));
-/***
-var ser=yield us.find({});
-console.log(ser);
-***/
+
 
 require('./config/passport')(passport);
 
