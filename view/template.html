@@ -46,7 +46,51 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
 	 //oreq.send(odata);
 	 oreq.send(params);
 	 ev.preventDefault();},false);
-  
+	 </script>
+	 <script>
+	/***
+  var usface=document.forms.namedItem("adus");
+usface.addEventListener('submit',function(ev){
+var odata=new FormData(document.forms.namedItem("adus"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/addingfuckinguser",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var data=JSON.parse(this.response);
+	 out5.innerHTML=this.response;
+	 }
+	 else{out5.innerHTML=this.response;
+	 }}
+	 //alert('df')
+	 xhr.send(odata);
+	 ev.preventDefault();},false);
+
+***/
+ var forma=document.forms.namedItem("adus");
+  forma.addEventListener('submit',function(ev){
+var pw=forma.password.value;
+var usname=forma.username.value;
+var email=forma.email.value;
+var oreq=new XMLHttpRequest();
+var params='username='+encodeURIComponent(usname)+'&password='+encodeURIComponent(pw)+'&email='+
+encodeURIComponent(email);
+     oreq.open("post","/addingfuckinguser",true);
+	 oreq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+	 
+	 oreq.onload=function(e){
+	 if(oreq.status==200){
+	 var data=JSON.parse(this.response);
+	 out5.innerHTML=this.response;
+	 //out5.innerHTML=+data.success+" : "+data.redirect;
+	 //alert(data.redirect);
+	 window.location.href=data.redirect;
+	 }
+	 else{out5.innerHTML=this.response;//oreq.status;
+	 
+	 }}
+	 oreq.send(params);
+	 ev.preventDefault();},false);
+	 
   </script>
 <%= module %>
 <% if(module =="on" && module !=='undefined'){%>  

@@ -30,9 +30,72 @@ fuckall.post('/login',
     successRedirect: '/app',
     failureRedirect: '/'
   }));
+
+fuckall.post('/signup',
+passport.authenticate('local-signup',
+{successRedirect:'/',
+ failureRedirect:'/',
+failureFlash:true}));
+
 fuckall.get('/logout', function*(next) {
 this.logout();
   this.redirect('/');
+});
+
+fuckall.post('/addingfuckinguser2',bodyParser({multipart:true,formidable:{}}),
+function *(next){
+	var db=this.fuck;
+	var username=this.request.body.fields.username;
+	var email=this.request.body.fields.email;
+	var password=this.request.body.fields.password;
+	this.body=JSON.stringify(this.request.body,null,2);
+	var dbus=wrap(db.get('users'));
+	try{
+	var users=yield dbus.findOne({email:email});
+	console.log(users.email);
+	this.status=401;
+	this.body={success:false,info:"user exists"}
+	}catch(err){
+		//this.login('user')
+ this.body = { success: true,info:'success!!!!' }
+		console.log(err);
+	
+	//node index
+	/***
+	yield users.insert({username:username,
+	                    email:email,
+						password:password,
+						role: "simple"});
+	//console.log('in :'+this.request.body.fields.username);
+	***/
+	}
+yield next;});
+//node index
+
+fuckall.post('/addingfuckinguser', function*(next) {
+var ctx = this;
+yield* passport.authenticate('local-signup',function*(err, user,info) {
+if (err) throw err;
+
+if (user == false) {
+	//if(info.message == false){
+ ctx.status =401;
+ console.log('un user',user);
+ ctx.body = { success: true,info:[info.message], infod:"Es gibt schon einer"}
+ } 
+ else{
+//if(info.message == true){
+	console.log('user in database',user)
+	//ctx.status=401;
+  yield ctx.login(user);
+//here is false  
+  //iojs index
+  //console.log('Where are you from :'+ctx.session.dorthin);
+  //console.log("You are from the this.flash.woane direction in custom :"+ctx.flash.woane);
+  ctx.body={success:"ok",info:[info.message],infod:'Noch nicht gibt es. OK.',redirect:'/insert2',user:user};
+  //ctx.redirect(ctx.session.dorthin || '/app');
+   }
+  }).call(this, next)
 });
 
 fuckall.get('/', function *(){

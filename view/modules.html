@@ -1,6 +1,6 @@
 ﻿<!-- modules.html -->
 <style>
-
+/***
 input[type=checkbox]:checked+label:before{
 width:2em;
 border:2px solid blue;
@@ -9,6 +9,9 @@ color:#f00;
 font-style:normal;
 background:lightgreen;}
 }
+***/
+.off{background-color:gray;}
+.on{background-color:lightgreen;}
 </style>
 
 <b>modules</b>
@@ -23,33 +26,34 @@ isfree:
 <input type="submit" value="submit"/>
 </form>
 </br>
-</br><h3>Edit One</h3>
+</br><h4>Option One</h4>
 
-<button onclick="fuck()">fuck</button>
-<ul>
-<% mods.forEach(function(m){%>
-<li><%= m.modulname %></li>
-<li id="mstatus">Is on/off?: <%= m.status %></li>
-<li id="misfree">Is busy?: <%= m.isfree %></li><%})%>
-</ul>
-<dialog id="myd2">
-<span id="cancel">cancel</span>
-<p>Build and save</p>
-<ul>
-<% mods.forEach(function(m){%>
-<li><%= m.modulname %></li>
-<li><%= m.status %><input data-id="<%= m._id %>" type="checkbox" <% if(m.status=="on"){%> checked  class="greencheck" <%}else{%> class="redcheck" <%}%>onchange="goBusy1(this)" /></li>
-<li><%= m.isfree %><input  id="fucki" data-id="<%= m._id %>" type="checkbox"<% if(m.isfree=="on"){%> checked class="greencheck" onchange="goBusy(this)"<%}%>/><label  for="fucki">Занять модуль</label></li>
-<li><%= m._id %></li>
+
+<table id="mytable">
+<caption><h3>Modules</h3></caption>
+<thead><tr><th>Modul</th><th>Status</th><th>Is free</th></tr></thead>
+
+
+<% mods.forEach(function(m){%> 
+
+<tr><td><b><%= m.modulname %><b></td>
+<td><label id="status" data-sid="<%= m._id %>" class="<%= m.status %>"><%= m.status %></label><input data-id="<%= m._id %>" type="checkbox" onchange="goBusy1(this)" <% if(m.status == "on"){%> checked <%}%>/></td>
+<td><label><%= m.isfree %></label><input data-id="<%= m._id %>" type="checkbox" onchange="goBusy(this)"/></td></tr>
+
 <%})%>
-</ul>
+
+</tbody>
+</table>
+<dialog id=myd2>
 </br><span id="out2"></span>
-</br><button id="close2">save nastroiki</button>
+<p>Сохранить настройки?</p>
+<button id="yes" value="yes">yes</button>
+</br><button id="no" value="no">no</button>
 </dialog>
-</br><button id=show>Edit options</button>
+</br>
 </br><span id="out"></span>
 </br></br>
-<h2><%= listenToMyHeart %></h2>
+
 <% if(jobs){%>
 <table id="myt">
 <caption><h3>Agenda</h3></caption>
@@ -105,23 +109,38 @@ var xhr=new XMLHttpRequest();
 	 }}
 	 xhr.send(data);
 	 ev.preventDefault();},false);
+	 
 function goBusy1(el){
 //alert('booo');
-
+var b=el.getAttribute('data-id');
+//alert(b);
 document.getElementById('out2').innerHTML=el.value;
 if(el.checked == true){el.value="on";
 out.innerHTML=el.checked+" : "+el.value+" data-id :"+el.getAttribute('data-id');
 hui=el.getAttribute('data-id');
 document.getElementById('out2').innerHTML=el.value;
+//var slabel=document.querySelector('label[data-sid="'+b+'"]');
+    //slabel.innerHTML=el.value;
+	//slabel.className=el.value;
+//el.parentNode.textContent="on";
 }
 else{
 el.value="off";
 out.innerHTML=el.checked+" : "+el.value+" data-id: "+el.getAttribute('data-id');
 document.getElementById('out2').innerHTML=el.value;
+//var slabel=document.querySelector('label[data-sid="'+b+'"]');
+    //slabel.innerHTML=el.value;
+	//slabel.className=el.value;
 hui=el.getAttribute('data-id');
+//el.parentNode.textContent="off";
 }
-
+//alert(document.getElementById('status').innerHTML);
+//var sLabel=document.querySelector('label[data-sid="'+b+'"]').innerHTML;
+//alert(s);
+//alert(el.parentNode.nextSibling)
+myd2.showModal();
 }
+/***
 function goRest(el){
 if(el.checked==false){
 el.value="off";
@@ -134,35 +153,58 @@ el.value="on";
 out.innerHTML=el.checked+" : "+el.value;
 }
 }
-show.onclick=function(){
-myd2.showModal();}
-document.getElementById('close2').onclick=function(){
-//var value=document.querySelector('#retv').value;
-var value=document.getElementById('out2').innerHTML;
-myd2.close(value);}
+***/
+
+document.getElementById('yes').onclick=function(){
+myd2.close(this.value);}
+document.getElementById('no').onclick=function(){
+myd2.close(this.value);}
+
 document.querySelector('dialog').addEventListener('close',function(){
 //alert(this.returnValue);
 var ba=this.returnValue;
-saveModul(ba);
-});
+//alert(ba);
+if(ba=="yes"){
+
+//alert(out2.innerHTML +" : "+hui)
+saveModul();
+} 
+if(ba=="no"){ lassdas();}
+},false);
+
+
+function lassdas(){
+var inpt=document.querySelector('input[data-id="'+hui+'"]');
+var lb=document.querySelector('label[data-sid="'+hui+'"]');
+//alert(lb);
+if(lb.className == "on"){inpt.checked=true}
+if(lb.className == "off"){inpt.checked=false}
+}
+/***
 cancel.onclick=function(){
 console.log('canceled');
 myd2.close();
-}
+}***/
+
 function saveModul(ba){
-alert(ba);
+//alert("SaveModul says: "+out2.innerHTML);
+var statuschange=out2.innerHTML;
 var xhr=new XMLHttpRequest();
  xhr.open('post','/savemodule',true);
  xhr.setRequestHeader('Content-Type','application/json','utf-8');
  xhr.onload=function(e){
  if(xhr.satus=200){
- out.innerHTML=this.response;}}
+ out.innerHTML=this.response;
+ var slabel=document.querySelector('label[data-sid="'+hui+'"]');
+    slabel.innerHTML=statuschange;
+	slabel.className=statuschange;
+ }}
  xhr.onerror=function(e){alert(e.status);}
  var data={};
  if(hui !==null)
- alert('hui :'+hui);
+ //alert('hui :'+hui);
  //data.is_free=ba;
- data.status=ba;
+ data.status=statuschange;
  data.modul_id=hui;
  var ata=JSON.stringify(data);
  xhr.send(ata);

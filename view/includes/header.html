@@ -16,5 +16,6 @@
 		</nav>
 
 		<form id="searchform">
-		<a href="#login_form" id="login_pop">Login</a> | <a href="/logout">Logout</a>
+		<%if(!user){%><a href="#login_form" id="login_pop">Login</a><%}%> |<% if(signup == "on"){%> <a href="#join_form" id="join_pop">Sign up</a><%}%>
+ | <a href="/logout">Logout</a>
 		</form>

@@ -35,4 +35,42 @@ if (user.password != password) { return done(null, false, { message: 'Invalid pa
 return done(null,user);
 });});}));
 
+
+//node index
+passport.use('local-signup',new LocalStrategy({
+	/***usernameField:'email',***/
+	
+passReqToCallback:true},
+function(req,username,password,done){
+process.nextTick(function(){
+	
+busers.findOne({'email':req.body.email},function(err,user){
+if (err) return done(err);
+if(user){
+	//if(user.email == req.body.email){return done(null,false,{message:'fuck'})}
+	console.log('is taken');
+	console.log('user',user.email);//null
+	console.log('req in db section', req.body.email);//email
+	console.log('username :',username);//email
+
+return done(null,false,{message:"Уже есть пользователь с таким имэйлом"});
+}
+ 
+ 
+else{
+console.log('password in passport',password);
+//console.log('email',email);
+console.log('user in passp',username)//by email
+console.log('req : '+req.body.email)
+busers.insert({username:req.body.username,email:req.body.email,password:password},function(err,user){
+	if(err) return done(err);
+	console.log('new user',user);
+return done(null,user,{message:'ОК - вносим в базу данных'});
+}) 
+}
+})
+
+})
+}))
+
 }

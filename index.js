@@ -1,4 +1,5 @@
 'use strict';
+var crypto=require('crypto');
 var koa=require('koa');
 var render=require('koa-ejs');
 var path=require('path');
@@ -23,16 +24,17 @@ var configDB=require('./config/database.js');
 
 var monk=require('monk');
 var wrap=require('co-monk');
-  var db=module.exports=monk(configDB.url,{w:1});
+ // var db=module.exports=monk(configDB.url,{w:1});
   
   //poe
-  //var db=module.exports=monk(configDB.localurl);
+  var db=module.exports=monk(configDB.url || configDB.localurl);
   
   var Agenda=require('agenda');
   //var agenda=new Agenda({db:{address:configDB.simpleloc}});
   //kokokokoko
-  //console.log(process.env.MONGOHQ_URL)
+  //console.log(process.env.MONGOHQ_URL_TEST)
   var agenda=new Agenda({db:{address:configDB.url}});
+  //var agenda=new Agenda({db:{address:configDB.localurl}});
   
 
 /***	
@@ -116,10 +118,13 @@ Connect to the server:
 var locals={
 version:'0.0.1',
 message:'message must be',
-listenToMyHeart:'d',
+signup:function *(){try{
+	var mdsignup=yield mods.findOne({modulname:"signup"});
+return mdsignup.status} catch(err){console.log(err);}
+},
 module:function *(){try{
 		var mdl=yield mods.findOne({modulname:"aside"});
-console.log('mdl.status :'+ mdl.status);
+//console.log('mdl.status :'+ mdl.status);
 return mdl.status}catch(err){console.log('err :'+err);}} ,
 now:function(){
 return new Date();},

@@ -135,7 +135,7 @@ border-radius: 10px;
 }
 </style>
 <a href="#x" class="overlay" id="login_form"></a>
-        
+
 <div class="popup">
  
 <span id="out4"></span>
@@ -153,9 +153,40 @@ border-radius: 10px;
 <input type="password" id="password" name="password" value="">
 </div>
 <input type="submit" value="Log In">
-<a class="close" href="#"></a>
 </form>
-</div> 
+<a class="close" href="#"></a>
+</div>
+ <!-- popup form #2 -->       
+<a href="#x" class="overlay" id="join_form"></a>
+<div class="popup">  
+<h2>Sign up</h2>        
+<p>Please enter your details here</p>
+ <form id="adus" name="adus" method="post" enctype="multipart/form-data">           
+<div>
+<label for="email">Login (Email)</label>
+<input type="email" name="email" placeholder="@email" required value="a@ya.ru">
+</div>
+            
+<div>
+<label for="pass">Password</label>
+<input type="password" name="password"  placeholder="Your password" required value="34">
+</div>
+            
+<div>
+<label for="firstname">Nick name</label>
+<input type="text" name="username" value="ader" placeholder="Your name" required>
+</div>
+        
+<input type="submit" value="Sign Up">&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
+
+<a href="#login_form" id="login_pop">Log In</a>
+</form>
+<a class="close" href="#"></a>
+<span id="out5"></span>
+</div>
+
+
+ 
 
 <script>
 /***

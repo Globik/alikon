@@ -13,7 +13,7 @@
 <% if(message){%>
 <b><%= message %></b><%}%></br>
 
-<% if(user){%><b>Hallo Admin!</b><h3><%= user.username %></h3><a href="/app">app</a><%}%>
+<% if(user){%><b>Hallo User!</b><h3><%= user.username %></h3><a href="/app">app</a><%}%>
 <a href="/show/tobi">show user tobi</a>
 
   <button onclick="doit(this)">xhr</button>
@@ -22,42 +22,6 @@
   <button onclick="addT(this)">get xhr</button>
   <br>
   
-<!--
-<form  method="post" name="fileinfo">
-    <p>
-    
-<label>Username:
-        
-<input type="text" name="username" value="" />
-      </label>
-    </p>
-    <p>
-      <label>Password:
-        
-<input type="password" name="password" value="secret" />
-      </label>
-    </p>
-    <p>
-      <button type="submit">Log In</button>
-    </p>
-     
-  </form>
-  </br></br></br>
-  <p>Please enter your login and password here</p>
-  -->
-  <!--
-<form method="post" name="bub" enctype="application/x-www-form-urlencoded">
-<div>
-<label for="login">Login</label>
-<input type="text" id="login" name="username" value="">
-</div></br>
- <div>
-<label for="password">Password</label>
-<input type="password" id="password" name="password" value="">
-</div>
-<button type="submit"  onsubmit="return doform(this.form);" value="Log In">doform</button>
-</form>
--->
 <span id="prout"></span>
   <!--
   <div id="container" class="warning"><b>Proba</b></div>

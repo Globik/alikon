@@ -109,6 +109,7 @@ function *(next){
 this.body=JSON.stringify(this.request.body,null,2);
 this.body={"rslt":this.request.body};
 yield next;});
+
 secured.get('/userbeta/:id',function *(id){
 	var db=this.fuck;
 	var users=wrap(db.get('users'));
