@@ -33,7 +33,7 @@ var wrap=require('co-monk');
   //var agenda=new Agenda({db:{address:configDB.simpleloc}});
   //kokokokoko
   //console.log(process.env.MONGOHQ_URL_TEST)
-  var agenda=new Agenda({db:{address:configDB.url}});
+  var agenda=new Agenda({db:{address:configDB.url || configDB.localurl}});
   //var agenda=new Agenda({db:{address:configDB.localurl}});
   
 

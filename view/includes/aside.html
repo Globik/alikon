@@ -11,8 +11,24 @@
 		<!-- /.widget -->
 
 		<section class="widget clearfix">
-			<h4 class="widgettitle">Huickr</h4>
-			<b>some script</b> 
+			<h4 class="widgettitle">html5 import</h4> 
+			<div id="container-as" class="warning"></div>
+			<script>
+			function addimportlink(url){
+var link=document.createElement('link');
+link.rel='import';
+link.href=url;
+link.onload=function(e){
+var post=this.import.querySelector('#warning');
+var container=document.querySelector('#container-as');
+container.appendChild(post.cloneNode(true));
+};
+link.onerror=function(e){alert("Error loading: "+e.target.href);};
+document.head.appendChild(link);
+}
+addimportlink('./insert.html');//from view field
+//from /public - './insert.html'
+</script>
 		</section>
 		<!-- /.widget -->
 
