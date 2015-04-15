@@ -30,7 +30,7 @@
     "agenda":"0.6.28",
     "koa-ws":"1.0.1",
     "koa-request":"1.0.0",
-    "moment":"2.10.0"
+    "moment":"2.10.2"
   },
   "engines": {
     "iojs": "1.0.4"
