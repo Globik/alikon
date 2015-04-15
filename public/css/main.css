@@ -378,7 +378,7 @@ smaller than 650
 		padding: 3% 4%;
 		margin: 0 0 10px;
 	}
-#cnv{background-color:green;width:500px;height:200px;
+#cnv{background-color:red;width:60%;height:200px;}
 
 	/* embedded videos */
 	.video embed,
@@ -398,6 +398,8 @@ smaller than 560
 	html {
 		-webkit-text-size-adjust: none;
 	}
+#cnv{background-color:yellow;width:450px;height:200px;}
+
 
 	/* main nav */
 	#main-nav a {

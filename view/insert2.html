@@ -1,25 +1,17 @@
-<% if(user){%><b><%= user.username %></b><%}%>
+
 
 
 <h3>List of articles: </h3>
 <ul>
-<% bloggies.forEach(function(d){ %><li><a href='/catalog/<%= d._id %>' id=<%= d._id %> ><%= d.article %></a></li>
-<li><%=d.content %></li>
+<% if(posts) {posts.forEach(function(d){ %>
+<li><a href='/articles/<%= d._id %>' id=<%= d._id %> ><%= d.postname %></a></li>
+<li><b>Created :</b><%=d.created %></li>by
 <li><%= d.autor %></li>
-<li><%= d.dascription %></li>
-<li><%= d.created %></li>
-<li><%= d._id %></li><a href='/catalog/<%= d._id %>' >Read more...</a><% });%>
+<li><%- d.caption %></li>
+<li><b>Main content :</b><li><%= d.maincontent %></li>
+<li><b>Formatted :</b><%= formated %></li>
 
+</br></br>
+<li><a href='/articles/<%= formated %><%= d.title %>'>Read more...</a></li><%});}%>
 </ul>
 
-
-
-<div id="warning" class="warning">
-<style>
-h2{color:blue;}
-</style>
-<a href="/">home</a>
-<h2>HTML5 import</h2>
-<h2>insert2</h2>
-<p>here</p>
-</div>

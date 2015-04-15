@@ -2,6 +2,7 @@ var passport=require('koa-passport');
 var Router=require('koa-router');
 var bodyParser=require('koa-body');
 var wrap=require('co-monk');
+var moment=require('moment');//2.10.0
 // var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
 
 var fuckall=new Router();
@@ -99,32 +100,69 @@ if (user == false) {
 });
 
 fuckall.get('/', function *(){
+	/***
 var db=this.fuck;	
 var admin=wrap(db.get('users'));
 try{
 var res=yield admin.findOne({username:"Bob"});
 console.log('db :'+res.username);}catch(er){console.log("error in username :"+er);}
+***/
 var body=this.req.user;
 this.session.dorthin=this.path;
 yield this.render('content',{user:body,message:this.flash.berror});});
 
-fuckall.get('/insert2',function *(){
+fuckall.get('/articles',function *(){
 var db=this.fuck;
+/***
 var admin=wrap(db.get('users'));
 try{
 var res=yield admin.findOne({username:"Bob"});
 console.log('db :'+res.username);}catch(er){console.log("error in username :"+er);}
+***/
 this.session.dorthin=this.path;
-var catalog=wrap(db.get('catalog'));
-var bloggies=yield catalog.find({});
-console.log('bloggies :'+bloggies);
-yield this.render('insert2',{user:this.req.user,bloggies:bloggies});
+var doc=wrap(db.get('posts'));//catalog
+var posts=yield doc.find({});
+var date=moment(posts.created);
+var formated=date.format('YYYY[/]MM[/]DD[/]');
+yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated});
 });
 //iojs index
+/***
+fuckall.get('/articles/:id', function *(id) {
+var db=this.fuck;
+ var catalogs=wrap(db.get('catalog'));
+ try{
+ var article= yield catalogs.findById(this.params.id);
+console.log('article created at: ',article.created);
+var date=moment(article.created);
+var formated=date.format('YYYY[/]MM[/]DD[/]');
+console.log('formated :',formated);
+ yield this.render('article-view',{user:this.req.user,article:article});
+ } catch(err){
+	 yield this.render('error-view',{user:this.req.user,err:err});
+ }
+});
+***/
+fuckall.get('/articles/:year/:month/:day/:title',function *(){
+	var db=this.fuck;
+ var doc=wrap(db.get('posts'));
+ try{
+ var post= yield doc.findOne({'title':this.params.title});
+ console.log('post :',post.postname);
+	yield this.render('formated-article-view',{user:this.req.user,
+	parametr:this.params.year+this.params.month+this.params.title,post:post});
+ }catch(err){
+	 yield this.render('error-view',{user:this.req.user,err:err});
+ }
+});
 
 fuckall.get('/labo',function *(){
 	yield this.render('labo',{user:this.req.user});
 });
+
+
+
+
 fuckall.get('/alfa',function *(){
 	
  /***

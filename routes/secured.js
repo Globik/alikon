@@ -8,6 +8,7 @@ var rekwest=require('koa-request');//1.0.0
 // var request=require('request');
 var wrap=require('co-monk');
 var fs=require('co-fs');
+var moment=require('moment');
 //var parse=require('co-body');
 
 var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
@@ -116,14 +117,14 @@ secured.get('/userbeta/:id',function *(id){
 	//var busers=db.get('users');
 	
 	var result=yield users.findById(this.params.id);
-	console.log('users in result: '+result.username);
+	//console.log('users in result: '+result.username);
 	
 	/***
 	busers.findById(this.params.id,function(err,user){
 if(err){console.log(err);}
 console.log('user: '+user);
 	});***/
-		console.log('this.params.id',this.params.id);
+		//console.log('this.params.id',this.params.id);
 		//console.log('users in result:',result);
 		yield this.body={result:result};
 	});
@@ -367,6 +368,45 @@ agenda.start();
 
 
 //************************************************************************
+//articles manager
+secured.get('/app/articlesmanager',authed,function *(){
+	yield this.render('articles-manager',{user:this.req.user});
+});
+
+secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
+function *(next){
+	//var db=this.fuck;
+	//var users=wrap(db.get('users'));
+	/*** yield users.insert({username:this.request.body.fields.username,
+	                    email:this.request.body.fields.email,
+						password:this.request.body.fields.password,
+						role: this.request.body.fields.role});
+	//console.log('in :'+this.request.body.fields.username);***/
+	var postname=this.request.body.fields.postname;
+	var slug=slugify(postname);
+	// autor shorti caption maincontent meta category rubrik serial * created redaktiert
+	var autor=this.request.body.fields.autor;
+	var shorti=this.request.body.fields.shorti;
+	var caption=this.request.body.fields.caption;
+	var maincontent=this.request.body.fields.maincontent;
+	var meta=this.request.body.fields.meta;
+	var category=this.request.body.fields.category;
+	var rubrik=this.request.body.fields.rubrik;
+	var serial=this.request.body.fields.serial;
+	var tim=new Date();
+	var date=moment(tim);
+	var format=date.format('YYYY[/]MM[/]DD');
+	var db=this.fuck;
+	var posts=wrap(db.get('posts'));
+	yield posts.insert({postname:postname,title:slug,autor:autor,shorti:shorti,caption:caption,maincontent:maincontent,meta:meta,category:category,rubrik:rubrik,serial:serial,created:tim,redaktiert:tim,visa:1});
+this.body=JSON.stringify(this.request.body,null,2);
+this.body={"result":this.request.body,"slugified":slug,"time":format};
+yield next;});
+
+function slugify(text){
+	return text.toString().toLowerCase().replace(/\s+/g,'-')
+	.replace(/[^\w\-]+/g,'').replace(/\-\-+/g,'-').replace(/^-+/,'').replace(/-+$/,'');
+}
 /***
 secured.get('/getinguser,function*(){
 var db=this.fuck;

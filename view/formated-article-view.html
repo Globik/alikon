@@ -1,0 +1,33 @@
+﻿<!-- formated-article-view -->
+<h1>Formatted data article view</h1></br>
+<%= parametr %>
+</br>
+<b>This post: </b>
+</br>
+<% if(post){%>
+<h1><%= post.postname %></h1>
+</br>
+Created at: <%= post.created %> by <%= post.autor %>
+</br>Format : <%=: post.created | format %></p>
+</br>
+About: <%=post.shorti %>
+</br>
+Caption:
+<%= post.caption %></br>
+Main content:
+</br>
+<%- post.maincontent %>
+</br>
+Last time edited:
+</br>
+<%= post.redaktiert %>
+</br>
+Tags: <%= post.meta %>
+</br>
+Category : <%= post.category %>
+</br>
+Rubrik: <%= post.rubrik %>
+</br>
+Visibility: <%= post.visa %>
+</br>Serial: <%= post.serial %>
+<%}%>

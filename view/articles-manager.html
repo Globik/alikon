@@ -1,0 +1,40 @@
+﻿<!-- articles-manager.html -->
+<style>
+textarea[name=caption] {height:200px,width:400px;}
+input[type=text]{width:400px;}
+</style>
+<h3>Articles Manager</h3>
+<p> Create one:</p>
+<form name="post" method="post" enctype="multipart/form-data">
+<input type="text" name="postname" required placeholder="postname" value="How to install Linux on Windows7" style="width:400px;"></br>
+<!--
+<input type="text" name="title" required placeholder="title" value="" style="width:400px;"> --></br>
+<input type="text" name="shorti" required placeholder="shorti" value="Ein kurzer Anonce in drei-vier Worte">
+<input type="text" name="autor" required placeholder="autor" value="<%= user.username %>"></br></br>
+<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;"></textarea>
+<textarea name="maincontent" style="width:400px;height:200px;" required></textarea>
+<input type="text" name="meta" value="js,css">
+<input type="text" name="category" value="webdesign" required placeholder="category">
+<input type="text" name="rubrik" value="css3" required placeholder="rubrik">
+<input type="text" name="serial" value="1" placeholder="serial">
+<input type="submit" value="save">
+</form>
+
+<br>
+<span id="out"></span>
+<script>
+var formface=document.forms.namedItem("post");
+formface.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("post"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/createpost",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(data);
+	 ev.preventDefault();},false);
+</script>

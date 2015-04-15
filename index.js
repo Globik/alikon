@@ -28,13 +28,11 @@ var wrap=require('co-monk');
   
   //poe
   var db=module.exports=monk(configDB.url || configDB.localurl);
-  
+  //var db=module.exports=monk(process.env.MONGOHQ_URL_TEST);
   var Agenda=require('agenda');
-  //var agenda=new Agenda({db:{address:configDB.simpleloc}});
-  //kokokokoko
-  //console.log(process.env.MONGOHQ_URL_TEST)
+  
   var agenda=new Agenda({db:{address:configDB.url || configDB.localurl}});
-  //var agenda=new Agenda({db:{address:configDB.localurl}});
+  //var agenda=new Agenda({db:{address:process.env.MONGOHQ_URL_TEST}});
   
 
 /***	
@@ -153,7 +151,7 @@ app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
  //app.use(session({store:new MongoStore({db:"todo"})}));
- 
+ //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST,db:"alikon-fantastic-database"})}));
  app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
 
 app.use(passport.initialize());
