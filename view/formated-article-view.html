@@ -1,4 +1,14 @@
 ﻿<!-- formated-article-view -->
+<div class="codrops-header" >
+<% if(post){%><h1><%= post.postname %><span><%= post.shorti %></span></h1><%}%>
+<nav class="codrops-demos">
+<a class="current-demo" href="">fb</a>
+<a href="">vk</a>
+<a href="">g+</a>
+</nav>	
+</div>
+<div id="content">
+<article class="post">
 <h1>Formatted data article view</h1></br>
 <%= parametr %>
 </br>
@@ -14,6 +24,7 @@ About: <%=post.shorti %>
 </br>
 Caption:
 <%= post.caption %></br>
+<img src="/images/result-blume-400.jpg"/>
 Main content:
 </br>
 <%- post.maincontent %>
@@ -31,3 +42,22 @@ Rubrik: <%= post.rubrik %>
 Visibility: <%= post.visa %>
 </br>Serial: <%= post.serial %>
 <%}%>
+</article>
+</div>
+<aside id="sidebar">
+<section class="widget">
+<h4 class="widgettitle">attariku</h4>
+<img src='/images/emblema-a.svg' width="100%" height="100%"/>
+</section>
+</aside>
+
+<aside id="sidebar">
+<section class="widget">
+<figure>
+<caption><h4 class="widgettitle">Agenda</h4></caption>
+<div style="background:blue;height:10rem">s</div>
+<figcaption><p>l</p></figcaption>
+</figure>
+</section>
+</aside>
+<footer id="footer2"><p><h3>footer2 for anonce and advertising</h3></p></footer>

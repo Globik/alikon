@@ -1,6 +1,10 @@
 <!-- adduser.html -->
+<div id="flex-content">
+<div class="fluiditems">
 <h4>Add new user to DB</h4>
 <p>Your name is <%= user.username %> and You are here as <%= user.role %></p>
+</div>
+<div class="fluiditems">
 <% if(user.role == 'admin'){%>
 <form id="aduser" name="aduser" method="post" enctype="multipart/form-data">
 <input type="text" name="username" placeholder="name" required/>
@@ -12,6 +16,7 @@
 </form>
 <br>
 <span id="out"></span>
+
 <script>
 var formface=document.forms.namedItem("aduser");
 formface.addEventListener('submit',function(ev){
@@ -29,6 +34,8 @@ var xhr=new XMLHttpRequest();
 	 ev.preventDefault();},false);
 </script>
 <%}%>
+</div>
+<div class="fluiditems">
 <p><b>All users:</b></p>
 <table id=myt>
 <caption>All users</caption>
@@ -54,6 +61,8 @@ var xhr=new XMLHttpRequest();
 <li><%=us.username %></li>
 <%})%>
 </ul>
+</div>
+<div class="fluiditems">
 <form id="eduser" name="eduser" method="post" enctype="multipart/form-data">
 <input type="text" name="username" value="" placeholder="name" required/>
 <input type="text" name="email" value="" placeholder="@email" required/>
@@ -63,7 +72,12 @@ var xhr=new XMLHttpRequest();
 <input type="submit" value="submit"/>
 </form>
 </br>
+</div>
+<div class="fluiditems">out:
 <span id="out2"></span>
+</div>
+
+</div>
 <script>
 /***
  var tds=document.getElementsByClassName('f');

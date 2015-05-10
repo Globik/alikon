@@ -1,28 +1,52 @@
-<span id="out3"></span>
-<ul><li><a href='/show'>all users</a></li><li><a href="/show/jane">show Jane</a>
-<li><a href="/articles">insert2</a></li></ul>
-<div><%= version %><br><%= now %>
-<p>server time is: <%=: now | format %></p>
-<p>request ip is: <%= ip %></p>
+<div id="flex-content">
+<style>
 
+</style>
+<div class="fluiditems" style="color:green;">1
+<span id="out3">kuku</span></br>
+<a href='/show'>all u</a></br>
+<a href="/show/jane">show Jane</a>
 
-
+<a href="/articles"><b>insert2</b></a>
 </div>
-<%= version %>
-<br>
+
+<div class="fluiditems">2)
+version: <%= version %></br> now: <%= now %></br>server time is: <%=: now | format %></br>
+request ip is: <%= ip %>
+</div>
+<div class="fluiditems">3
 <% if(message){%>
-<b><%= message %></b><%}%></br>
+<b><%= message %></b><%}%>
 
-<% if(user){%><b>Hallo User!</b><h3><%= user.username %></h3><a href="/app">app</a><%}%>
+<% if(user){%><b>Hallo User!</b> <%= user.username %></br>
+<a href="/app">app</a><%}%></br>
 <a href="/show/tobi">show user tobi</a>
-
+</div>
+<div class="fluiditems">4
   <button onclick="doit(this)">xhr</button>
+  <button onclick="addT(this)">get xhr</button></br>
   <span id="out"></span>
-  <br>
-  <button onclick="addT(this)">get xhr</button>
-  <br>
-  
-<span id="prout"></span>
+</div>
+<div class="fluiditems">5<button onclick="sendSock()">send message via WebSocket</button>
+ </div>
+<div class="fluiditems">6</div>
+<div class="fluiditems">7</div>
+<div class="fluiditems">8</div>
+<div class="fluiditems">9</div>
+<div class="fluiditems">10</div>
+
+<div class="fluiditems">11</div>
+<div class="fluiditems">12</div>
+<div class="fluiditems">13</div>
+<div class="fluiditems">14</div>
+<div class="fluiditems">15</div>
+<div class="fluiditems">16</div>
+<div class="fluiditems">17</div>
+<div class="fluiditems">18</div>
+<div class="fluiditems">19</div>
+<div class="fluiditems">20</div>
+<!-- end flex-content -->
+</div>
   <!--
   <div id="container" class="warning"><b>Proba</b></div>
   
@@ -158,9 +182,7 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
 	 ev.preventDefault();},false);
   ***/
   </script>
-  </br></br><button onclick="sendSock()">send message via WebSocket</button>
-  <style>
-  .fur{color:blue;background-color:green;}</style>
+  
   <script>
   //alert('location.hostname :'+location.hostname);//alikon.herokuapp.com
   //alert("location.port :"+location.port);
@@ -195,7 +217,7 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
   
   socket.onmessage=function(ev){
   //alert('polucheny dannye :'+ev.data);
-  out.innerHTML='<h4 class=fur>'+'Angaben :'+ev.data+'</h4>';
+  out.innerHTML+='<code>Angaaben :'+ev.data+'</code></br>';
   }
   
   socket.onerror=function(error){

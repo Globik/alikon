@@ -8,10 +8,10 @@
 <body>
 <div id="pagewrap">
 <header id="header"><%- include includes/header.html %></header>
-<div id="content">
+<!-- <div id="flex-content"> -->
 
 <%- body %>
-</div>
+<!-- </div> -->
 
 <%- include includes/login_form.html %>
 <script>
@@ -92,10 +92,12 @@ encodeURIComponent(email);
 	 ev.preventDefault();},false);
 	 
   </script>
-<%= module %>
-<% if(module =="on" && module !=='undefined'){%>  
-<aside id="sidebar"><%- include/includes/aside.html %></aside>
-<%}%>
+  <!--
+= module >
+ if(module =="on" && module !=='undefined'){>  
+aside id="sidebar"><- include/includes/aside.html ></aside>
+} -->
+
 <footer id="footer"><%- include includes/footer.html %></footer>
 </div>
 </body>

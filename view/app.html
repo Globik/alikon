@@ -1,11 +1,13 @@
+<div id="flex-content">
+<div class="fluiditems">
 <%- version %>
 <% if(user){%><b>Hallo Admin!</b><h3><%= user.username %></h3> <%}%>
   <h1>App</h1>
   <a href="/">home</a>
   </br><a href="/insert2">insert2</a>
   <p>You are authenticated ... <a href="/logout">logout</a></p>
-  
-  
+  </div>
+  <div class="fluiditems">
   <form id="fd" name="fd" method="post" enctype="multipart/form-data">
   <input type="text" name="ident" placeholder="nickname" required value="q"/></br>
   ff6a4897-e05c-4a19-9d2d-f555857a024a</br>
@@ -14,9 +16,11 @@
   <input type="submit" value="submit"/>
   
   </form>
-  </br>
+  </div>
+  <div class="fluiditems">
+  </br>Out:
   <span id="out"></span>
-  
+  </div>
   <script>
      var formface=document.forms.namedItem("fd");
   //alert(document.forms.namedItem("fileinfo").username.value);
@@ -46,8 +50,8 @@ var xhr=new XMLHttpRequest();
   
   </script>  
   </br>
-<button onclick="uiTestWebRTC()">test ui ajax to STUN</button>  
-script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<button onclick="uiTestWebRTC()" style="height:40px;">test ui ajax to STUN</button>  
+
 <script>
             //$(document).ready(function() {
 			function uiTestWebRTC(){
@@ -128,7 +132,8 @@ var xhr=new XMLHttpRequest();
 				}
 				
             //});
-    </script>  
+    </script>
+<div class="fluiditems">	
 <h4>Users manager</h4>
 <a href="/app/adduser">adduser</a>
 <h4>System files</h4>
@@ -139,3 +144,6 @@ var xhr=new XMLHttpRequest();
 <br></br>
 <h4>Articles Manager</h4>
 <a href='/app/articlesmanager'>Articles Manager</a>
+</div>
+
+</div>

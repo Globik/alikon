@@ -1,21 +1,98 @@
 <!-- includes/header.html -->
-<hgroup>
-			<h1 id="site-logo"><a href="/">Globi</a></h1>
-			<h2 id="site-description">Site Description</h2>
-		</hgroup>
+<nav class="back">
+<ul id="menu">
+<li><a href="/">home</a></li>
+<li>
+<a href="/articles">articles</a>
+<!-- <ul>
+<li><a href="#">Подпункт №1</a></li>
+<li><a href="#">Подпункт №2</a></li>
+<li><a href="#">Подпункт №3</a></li>
+</ul>
+-->
+</li>
+<li>
+<a href="/labo">labs</a>
+<!-- <ul>
+<li><a href="#">Подпункт №1</a></li>
+<li><a href="#">Подпункт №2</a></li>
+<li><a href="#">Подпункт №3</a></li>
+<li><a href="#">Подпункт №4</a></li>
+<li><a href="#">Подпункт №5</a></li>
+			</ul> -->
+			</li>
+<!-- <li>
+<a href="#">Пункт №4</a>
+<ul>
+<li><a href="#">Подпункт №1</a></li>
+</ul>
+</li> -->
+<% if(user && user.role == "admin"){ %>
+<li>
+<input type="checkbox" id="check-box"/><label class="lb-check" for="check-box">profi</label>
+<ul class="menu-show">
+<li><a href="/app">app</a></li>
+<li><a href="/app/articlesmanager">Write</a></li>
+<li><a href="/app/files">Files</a></li>
+<li><a href="/app/adduser">Users</a></li>
+<li><a href="/app/modules">modules</a></li>
+<li><a href="/app/agenda">agenda</a></li>
+</ul>
+</li><%}%>
+</ul>
+</nav>
+	
+<div id="cont" class='cont'>
+<div class="box"><a href=''>log</a>
+</div>
+<div class="box"><a href=''>sign</a></div>
+<ul>
+<% if(!user){%><li><a href='#login_form' id='login_pop'>login</a></li><%}%>
+<li><a href='/logout'>log out</a></li>
+<% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
+</ul>
+</div>
+<% if(user && user.role == "admin"){ %>
+<input type="checkbox" id="menu-small-admin"/>
+<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin"></label>
+<ul class="show-menu">
+<li><a href="/app">app</a></li>
+<li><a href="/app/articlesmanager">write</a></li>
+<li><a href="/app/files">files</a></li>
+<li><a href="/app/adduser">Users</a></li>
+<li><a href="/app/modules">modules</a></li>
+<li><a href="/app/agenda">agenda</a></li>
+</ul>
+<%}%>
+<input type="checkbox" id="menu-small-all"/>
+<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all">
+ <div class="spinner diagonal part-1"></div>
+ <div class="spinner horizontal"></div>
+ <div class="spinner diagonal part-2"></div>
+</label>
 
-		<nav>
-			<ul id="main-nav" class="clearfix">
+<ul class="show-menu1">
+<li><a href="/">home</a></li>
+<li><a href="/articles">articles</a></li>
+<li><a href="/labo">labs</a></li>
+<% if(user && user.role == "admin"){ %>
+<li><a href="/app">profi</a></li><%}%>
+<% if(!user){%><li><a href="#login_form" id="login_pop">log in</a></li><%}%>
+<li><a href="/logout">log out</a></li>
+<% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
+</ul>
+
+<!--
+<nav>
+<ul id="main-nav" class="clearfix">
 				<li><a href="/">Home</a></li>
 				<li><a href="/articles">Articles</a></li>
 				<li><a href="/labo">Labs</a> </li>
-<% if(user && user.role == "admin"){ %>
-				<li><a href="/app">Profile</a></li><% }%>
-			</ul>
-			<!-- /#main-nav --> 
-		</nav>
-
-		<form id="searchform">
-		<%if(!user){%><a href="#login_form" id="login_pop">Login</a><%}%> |<% if(signup == "on"){%> <a href="#join_form" id="join_pop">Sign up</a><%}%>
+< if(user && user.role == "admin"){ >
+				<li><a href="/app">Profile</a></li>< }>
+			</ul></nav>
+<form id="searchform">
+<if(!user){><a href="#login_form" id="login_pop">Login</a><}> |
+< if(signup == "on"){> <a href="#join_form" id="join_pop">Sign up</a><}>
  | <a href="/logout">Logout</a>
-		</form>
+</form> -->

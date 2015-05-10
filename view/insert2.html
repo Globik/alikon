@@ -1,17 +1,31 @@
+<div id="flex-content">
 
 
-
-<h3>List of articles: </h3>
-<ul>
 <% if(posts) {posts.forEach(function(d){ %>
-<li><a href='/articles/<%= d._id %>' id=<%= d._id %> ><%= d.postname %></a></li>
-<li><b>Created :</b><%=d.created %></li>by
-<li><%= d.autor %></li>
-<li><%- d.caption %></li>
-<li><b>Main content :</b><li><%= d.maincontent %></li>
-<li><b>Formatted :</b><%= formated %></li>
+<div class="fluiditems">
+<a href='/articles/<%= formated %><%= d.title %>' id=<%= d._id %> ><%= d.postname %></a></br>
+<%= d.shorti %></br>
+<b>Created :</b><%=d.created %> </br>by <%= d.autor %></br>
 
-</br></br>
-<li><a href='/articles/<%= formated %><%= d.title %>'>Read more...</a></li><%});}%>
-</ul>
+<%- d.caption %>
+<!-- <b>Main content :</b>< d.maincontent > -->
+<b>Formatted :</b><%= formated %>
+</br>
+<a href='/articles/<%= formated %><%= d.title %>'>Read more...</a></div><%});}%>
+<div class="fluiditems">6</div>
+<div class="fluiditems">7</div>
+<div class="fluiditems">8</div>
+<div class="fluiditems">9</div>
+<div class="fluiditems">10</div>
 
+<div class="fluiditems">11</div>
+<div class="fluiditems">12</div>
+<div class="fluiditems">13</div>
+<div class="fluiditems">14</div>
+<div class="fluiditems">15</div>
+<div class="fluiditems">16</div>
+<div class="fluiditems">17</div>
+<div class="fluiditems">18</div>
+<div class="fluiditems">19</div>
+<div class="fluiditems">20</div>
+</div>
