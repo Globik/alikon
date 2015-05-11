@@ -79,6 +79,11 @@ float:left;
 padding:2em 3%;margin:1em 9px 1em;
 }
 
+.noflex .fluiditems{
+float:left;
+padding:2em 3%;margin:1em 9px 1em;
+}
+
 /**************************************************************************
 HEADER
 **************************************************************************/
@@ -305,13 +310,12 @@ justify-content:space-around;
 .fluiditems{/* for ie-9 float:left;margin-left:3px;*/
 box-sizing:border-box;
 background:blue;
-/*
+
 box-flex:1.0;
 -webkit-box-flex:1.0;
--moz-box-flex:1.0;*/
+-moz-box-flex:1.0;
 width:22em/*25em*/;
-min-width:200px;
-height:/*150px*/40rem/*auto*/;
+height:/*150px*/auto;
 min-height:16em;
 text-align:center;
 padding:3rem;
