@@ -2,6 +2,9 @@ html{
 font-size: 62.5%;
 height:100%;
 }
+
+.lt-ie9 article,.lt-ie9 aside,.lt-ie9 details,.lt-ie9 figcaption,.lt-ie9 figure,.lt-ie9 footer,.lt-ie9 header,.lt-ie9 hgroup,.lt-ie9 menu,.lt-ie9 section{display:block;}
+
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,section{display:block;}
 body {
 height:100%;
@@ -70,9 +73,15 @@ min-width:1365px;
 width:2%;
 }
 }
-/************************************************************************************
+
+.lt-ie10 .fluiditems{
+float:left;
+padding:2em 3%;margin:1em 9px 1em;
+}
+
+/**************************************************************************
 HEADER
-*************************************************************************************/
+**************************************************************************/
 #header {
 box-sizing:border-box;
 	position: relative;
@@ -148,7 +157,10 @@ box-sizing:border-box;
 .lb-check{color:black;}
 .back{
 width:100%;
-background:#171717/*green*/;
+background:#65acc8/*green*/;
+background: -webkit-gradient(linear, left top, left bottom, from(#4586ae), to(#6a6a6a));
+	background: -moz-linear-gradient(top, #65acc8,  #4586ae);
+
 background: linear-gradient(#65acc8, #4586ae);
 border-top: 1px solid #a1cdde;
     /*color: rgba(255,45,55,.9); */
@@ -164,7 +176,9 @@ display:block;z-index:100;
 }
 #menu-small-all,#menu-small-admin{display:none;}
 #lb-menu-all,#lb-small-admin{visibility:hidden;}
-.show-menu, .show-menu1{visibility:hidden;}
+
+.show-menu, .show-menu1{display:none;}
+/*.show-menu1 li{display:none}*/
 /*****************************************
 BENEMUNG
 ******************************************/
@@ -183,7 +197,7 @@ margin-top:0;
 z-index:100;
 }
 div.box{
-
+text-align:center;
 box-sizing:border-box;
 width:50%;
 padding:0px;
@@ -252,14 +266,34 @@ width:100%;min-height:90%;
 font-size:100%;
 margin-top:1.5%;
 margin-bottom:1.5%;
+display:box;
 display:-webkit-box;
 display:-moz-box;
+display:-moz-flex;
 display:-ms-flexbox;
-display:-webkit-flexbox;
+-ms-box-orient:horizontal;
+/*display:-webkit-flexbox;*/
+display:-webkit-flex;
 display:flex;
+
+-webkit-box-direction:normal;
+-moz-box-direction:normal;
+-webkit-box-orient:horizontal;
+-moz-box-orient:horizontal;
+
+
 -webkit-flex-flow:row wrap;
 flex-flow:row wrap; 
 -ms-flex-flow:row wrap;
+-moz-flex-flow:row wrap;
+
+-webkit-box-pack:center;
+-moz-box-pack:center;
+-webkit-justify-content:center;
+-ms-flex-pack:center;
+-webkit-align-content:center;
+align-content:center;
+align-items:center;
 justify-content:space-around;
 }
 
@@ -457,6 +491,9 @@ height: 4.5rem;/*auto*/;
 #cont{display:none;}
 .show-menu1{
 visibility:visible;
+
+display:block;
+
 margin: 0 auto;
 /*margin: 10px 1% 100px 1%;*/
 position:absolute;
@@ -466,6 +503,7 @@ list-style:none;
 line-height:50px;
 }
 .show-menu1 li{
+display:none;
 background:brown;
 text-align:center;
 margin-top:-3px;
@@ -518,13 +556,22 @@ display:none;
 #menu-small-all:checked ~ #lb-menu-all{
 background:rgba(0,255,0,1);
 }
+
 #menu-small-all:checked ~ .show-menu1 { 
+display:block;
+opacity:1;
+z-index:100;
+}
+
+#menu-small-all:checked ~ .show-menu1 li{ 
+display:block;
 opacity:1;
 z-index:100;
 }
 /* adminka small */
 .show-menu{
-visibility:visible;
+/*visibility:visible;*/
+display:block;
 margin: 0 auto;
 /*margin: 10px 1% 100px 1%;*/
 position:absolute;

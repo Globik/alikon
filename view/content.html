@@ -1,3 +1,17 @@
+<script>
+var Detect=(function(){
+var props="flex,box,flexbox,boxFlex,boxDirection,boxOrient,boxPack,flexDirection,flexWrap,flexPack,justifyContent,alignContent,flexLinePack,boxAlign,flexAlign,alignItems,boxOrdinalGroup,Order".split(","),
+CSSprefix="Webkit,Moz,O,ms,Khtml".split(","),
+d=document.createElement("detect"),
+test=[],p,pty;
+function testprefixes(prop){
+var Uprop=prop.charAt(0).toUpperCase()+prop.substr(1),
+All=(prop+' '+CSSprefix.join(Uprop+' ')+Uprop).split(' ');
+for(var n=0,np=All.length;n<np;n++){
+if(d.style[All[n]]==="")return true;}return false;}
+for(p in props){pty=props[p];test[pty]=testprefixes(pty);}return test;
+}());
+</script>
 <div id="flex-content">
 <style>
 
@@ -29,9 +43,38 @@ request ip is: <%= ip %>
 </div>
 <div class="fluiditems">5<button onclick="sendSock()">send message via WebSocket</button>
  </div>
-<div class="fluiditems">6</div>
-<div class="fluiditems">7</div>
-<div class="fluiditems">8</div>
+<div class="fluiditems">6
+<span id="tout"></span>
+<script>
+var tout=document.getElementById('tout');
+var dtct=document.createElement('div');
+dtct.style.display='flex';
+if(dtct.style.display === 'flex'){
+tout.innerHTML='flex OK';
+}else{tout.innerHTML='flex not supported';}
+</script>
+</div>
+<div class="fluiditems">7
+<span id='tout2'></span>
+<script async>
+var tout2=document.getElementById("tout2");
+/*
+var html=document.getElementsByTagName("html")[0];
+for(t in Detect){if(Detect[t])html.className+=" "+t.toLowerCase();}
+*/
+for(t in Detect){
+tout2.innerHTML+="CSS "+t+" support? "+(Detect[t] ? "yes":"no")+"<br>";
+}
+</script>
+</div>
+<div class="fluiditems">8
+<span id="tout3"></span>
+<script async>
+var ismedia=!!(window && window.matchMedia);
+if(window.matchMedia){tout3.innerHTML='media queries OK';}
+else{tout3.innerHTML='media queries NOT supported';}
+</script>
+</div>
 <div class="fluiditems">9</div>
 <div class="fluiditems">10</div>
 
@@ -101,7 +144,7 @@ function onError(e){alert('fuck');}
   //xhr.setRequestHeader("Content-Type","application/json");
   vax('get','/alfa',data,onLoad,onError);
     function onLoad(e){
-  var antwort=JSON.parse(this.response);
+  var antwort=JSON.parse(this.responseText);
   //out.innerHTML=this.response;
   out.innerHTML=antwort.str;
   }
@@ -119,7 +162,7 @@ xhr.open("GET","/beta/:"+dn,true);
   //alert(bu);
   xhr.onload=function(e){
   if(this.status == 200){
-  out.innerHTML=this.response;}}
+  out.innerHTML=this.response || this.responseText;}}
 xhr.onerror=function(e){alert("fuck");}
 xhr.send();
   }
