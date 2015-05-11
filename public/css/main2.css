@@ -306,9 +306,6 @@ justify-content:space-around;
 box-sizing:border-box;
 background:blue;
 
-box-flex:1.0;
--webkit-box-flex:1.0;
--moz-box-flex:1.0;
 width:22em/*25em*/;
 height:/*150px*/auto;
 min-height:16em;
