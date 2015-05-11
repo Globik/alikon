@@ -262,8 +262,9 @@ top:0;
 flex-content
 **************************************/
 #flex-content{
-width:100%;min-height:90%;
-min-width:1000px; 
+width:100%;
+min-height:90%;
+ 
 font-size:100%;
 margin-top:1.5%;
 margin-bottom:1.5%;
@@ -302,7 +303,8 @@ align-items:center;
 justify-content:space-around;
 }
 
-.fluiditems{/* for ie-9 float:left;margin-left:3px;*/
+.fluiditems{
+/* for ie-9 float:left;margin-left:3px;*/
 box-sizing:border-box;
 background:blue;
 
