@@ -262,7 +262,8 @@ top:0;
 flex-content
 **************************************/
 #flex-content{
-width:100%;min-height:90%; 
+width:100%;min-height:90%;
+min-width:1000px; 
 font-size:100%;
 margin-top:1.5%;
 margin-bottom:1.5%;
@@ -304,11 +305,13 @@ justify-content:space-around;
 .fluiditems{/* for ie-9 float:left;margin-left:3px;*/
 box-sizing:border-box;
 background:blue;
+/*
 box-flex:1.0;
 -webkit-box-flex:1.0;
--moz-box-flex:1.0;
+-moz-box-flex:1.0;*/
 width:22em/*25em*/;
-height:/*150px*//*40rem*/auto;
+min-width:200px;
+height:/*150px*/40rem/*auto*/;
 min-height:16em;
 text-align:center;
 padding:3rem;
