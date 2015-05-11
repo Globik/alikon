@@ -286,6 +286,8 @@ justify-content:space-around;
 
 .fluiditems{
 /* for ie-9 float:left;margin-left:3px;*/
+float:left;
+padding:2em 3%;margin:1em 9px 1em;
 box-sizing:border-box;
 background:blue;
 
