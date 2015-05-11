@@ -268,38 +268,19 @@ min-height:90%;
 font-size:100%;
 margin-top:1.5%;
 margin-bottom:1.5%;
-display:box;
-display:-webkit-box;
-display:-moz-box;
-display:-moz-flex;
+
+
 display:-ms-flexbox;
--ms-box-orient:horizontal;
-/*display:-webkit-flexbox;*/
+
 display:-webkit-flex;
 display:flex;
-
--webkit-box-direction:normal;
--moz-box-direction:normal;
-box-direction:normal;
-box-orient:horizontal;
--webkit-box-orient:horizontal;
--moz-box-orient:horizontal;
 
 
 -webkit-flex-flow:row wrap;
 flex-flow:row wrap; 
 -ms-flex-flow:row wrap;
 -moz-flex-flow:row wrap;
--moz-box-lines:multiple;
--webkit-box-lines:multiple;
-box-lines:multiple;
--webkit-box-pack:center;
--moz-box-pack:center;
--webkit-justify-content:center;
--ms-flex-pack:center;
--webkit-align-content:center;
-align-content:center;
-align-items:center;
+
 justify-content:space-around;
 }
 
