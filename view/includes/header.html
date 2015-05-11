@@ -65,13 +65,13 @@
 </ul>
 <%}%>
 <input type="checkbox" id="menu-small-all"/>
-<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all">
+<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" ontouch="serra()">
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>
  <div class="spinner diagonal part-2"></div>
 </label>
 
-<ul class="show-menu1">
+<ul id="shmn1" class="show-menu1">
 <li><a href="/">home</a></li>
 <li><a href="/articles">articles</a></li>
 <li><a href="/labo">labs</a></li>
@@ -81,7 +81,14 @@
 <li><a href="/logout">log out</a></li>
 <% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
 </ul>
-
+<script>
+var knopka=document.getElementById('shmn1');
+function serra(){
+alert("ok - touch");
+if(knopka.className ==="show-menu1"){
+knopka.style.display="block";}
+}
+</script>
 <!--
 <nav>
 <ul id="main-nav" class="clearfix">
