@@ -42,19 +42,17 @@
 </ul>
 </nav>
 	
-<div id="cont" class='cont'>
-<div class="box">in
+<div id="cont" class='cont' onclick="" ontouchstart="knopka()">
+<div class="box"><% if(!user){%><a href='#login_form' id='login_pop'>login</a><%}else{%>
+<a href='/logout'>log out</a><%}%>
 </div>
-<div class="box">up</div>
-<ul>
-<% if(!user){%><li><a href='#login_form' id='login_pop'>login</a></li><%}%>
-<li><a href='/logout'>log out</a></li>
-<% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
-</ul>
+<div class="box">
+<% if(signup=='on'){%> <a href="#join_form" id="join_pop">sign up</a><%}%></div>
+
 </div>
 <% if(user && user.role == "admin"){ %>
 <input type="checkbox" id="menu-small-admin"/>
-<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin"></label>
+<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin" onclick="" ontouchstart="knopka()"></label>
 <ul class="show-menu">
 <li><a href="/app">app</a></li>
 <li><a href="/app/articlesmanager">write</a></li>
@@ -65,7 +63,7 @@
 </ul>
 <%}%>
 <input type="checkbox" id="menu-small-all"/>
-<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" ontouch="serra()">
+<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="" ontouchstart="serra()">
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>
  <div class="spinner diagonal part-2"></div>
