@@ -34,3 +34,17 @@ console.log("Error loading import: "+e.target.href);
 <!--[if lt IE 9]>
 	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 <![endif]-->
+<script>
+var Detect=(function(){
+var props="flex,flexWrap,justifyContent".split(","),
+CSSprefix="Webkit,Moz,O,ms,Khtml".split(","),
+d=document.createElement("detect"),
+test=[],p,pty;
+function testprefixes(prop){
+var Uprop=prop.charAt(0).toUpperCase()+prop.substr(1),
+All=(prop+' '+CSSprefix.join(Uprop+' ')+Uprop).split(' ');
+for(var n=0,np=All.length;n<np;n++){
+if(d.style[All[n]]==="")return true;}return false;}
+for(p in props){pty=props[p];test[pty]=testprefixes(pty);}return test;
+}());
+</script>

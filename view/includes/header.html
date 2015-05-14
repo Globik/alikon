@@ -52,15 +52,16 @@
 </div>
 <% if(user && user.role == "admin"){ %>
 <input type="checkbox" id="menu-small-admin"/>
-<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin" onclick="" ontouchstart="knopka()"></label>
-<ul class="show-menu">
+<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin">
+<ul class="show-menu" id="drug">
 <li><a href="/app">app</a></li>
 <li><a href="/app/articlesmanager">write</a></li>
 <li><a href="/app/files">files</a></li>
 <li><a href="/app/adduser">Users</a></li>
 <li><a href="/app/modules">modules</a></li>
 <li><a href="/app/agenda">agenda</a></li>
-</ul>
+</ul></label>
+
 <%}%>
 <input type="checkbox" id="menu-small-all"/>
 <label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="" ontouchstart="serra()">
@@ -70,34 +71,27 @@
 </label>
 
 <ul id="shmn1" class="show-menu1">
-<li><a href="/">home</a></li>
+<li><a href="/">homed</a></li>
 <li><a href="/articles">articles</a></li>
 <li><a href="/labo">labs</a></li>
 <% if(user && user.role == "admin"){ %>
 <li><a href="/app">profi</a></li><%}%>
-<% if(!user){%><li><a href="#login_form" id="login_pop">log in</a></li><%}%>
-<li><a href="/logout">log out</a></li>
+<% if(!user){%><li><a href="#login_form" id="login_pop">log in</a></li><%}else{%>
+<li><a href="/logout">log out</a></li><%}%>
 <% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
 </ul>
 <script>
-var knopka=document.getElementById('shmn1');
+var ka=document.getElementById('shmn1');
 function serra(){
-alert("ok - touch");
-if(knopka.className ==="show-menu1"){
-knopka.style.display="block";}
+//alert("ok - touch");
+//if(knopka.className ==="show-menu1"){
+ka.style.className="show-menu1";
+//}
+}
+function knopka(){
+//alert('ok');
+var elsh=document.getElementById('drug');
+elsh.className="debugshowmenu";
 }
 </script>
-<!--
-<nav>
-<ul id="main-nav" class="clearfix">
-				<li><a href="/">Home</a></li>
-				<li><a href="/articles">Articles</a></li>
-				<li><a href="/labo">Labs</a> </li>
-< if(user && user.role == "admin"){ >
-				<li><a href="/app">Profile</a></li>< }>
-			</ul></nav>
-<form id="searchform">
-<if(!user){><a href="#login_form" id="login_pop">Login</a><}> |
-< if(signup == "on"){> <a href="#join_form" id="join_pop">Sign up</a><}>
- | <a href="/logout">Logout</a>
-</form> -->
+

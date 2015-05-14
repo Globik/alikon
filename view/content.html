@@ -1,28 +1,12 @@
 
 <div id="flex-content">
-<style>
 
-</style>
 <div class="fluiditems" style="color:green;">1
 <span id="out3">kuku</span></br>
 <a href='/show'>all u</a></br>
 <a href="/show/jane">show Jane</a>
 
 <a href="/articles"><b>insert2</b></a>
-<script>
-var Detect=(function(){
-var props="flex,flexWrap,justifyContent".split(","),
-CSSprefix="Webkit,Moz,O,ms,Khtml".split(","),
-d=document.createElement("detect"),
-test=[],p,pty;
-function testprefixes(prop){
-var Uprop=prop.charAt(0).toUpperCase()+prop.substr(1),
-All=(prop+' '+CSSprefix.join(Uprop+' ')+Uprop).split(' ');
-for(var n=0,np=All.length;n<np;n++){
-if(d.style[All[n]]==="")return true;}return false;}
-for(p in props){pty=props[p];test[pty]=testprefixes(pty);}return test;
-}());
-</script>
 </div>
 
 <div class="fluiditems">2)
@@ -61,29 +45,11 @@ tout.innerHTML='flex not supported';}
 </div>
 <div class="fluiditems">7
 <span id='tout2'></span>
-<script async>
-var tout2=document.getElementById("tout2");
 
-var html=document.getElementsByTagName("html")[0];
-/*
-for(t in Detect){if(Detect[t])html.className+="flex"+t.toLowerCase();
-//alert(html.className);
-
-}*/
-
-for(t in Detect){
-tout2.innerHTML+="CSS "+t+" support? "+(Detect[t] ? "yes":"no")+"<br>";
-//alert(Detect[t[0]]);
-if(Detect[t]==false){
-//alert('flex yes'+t)
-html.className="noflex";
-};
-}
-</script>
 </div>
 <div class="fluiditems">8
 <span id="tout3"></span>
-<script async>
+<script>
 var ismedia=!!(window && window.matchMedia);
 if(window.matchMedia){tout3.innerHTML='media queries OK';}
 else{tout3.innerHTML='media queries NOT supported';}
@@ -103,7 +69,7 @@ else{tout3.innerHTML='media queries NOT supported';}
 <div class="fluiditems">19</div>
 <div class="fluiditems">20</div>
 <!-- end flex-content -->
-</div>
+</div><div style="clear:both;line-height:0.5em;">, </div>
   <!--
   <div id="container" class="warning"><b>Proba</b></div>
   
