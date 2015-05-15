@@ -168,7 +168,7 @@ border-top: 1px solid #a1cdde;
 height: 100%;
 		}
 		/*.noflex .back{width:100%;background:red;height:100%;}*/
-		
+	.operamini .back{background:red;}	
 .lb-check:after{content: ' \25BC';}/*2713 25BC*/
 #check-box{display:none;}
 #check-box:checked~ .lb-check:after{content:' \25B2';}
@@ -464,6 +464,7 @@ color: #fff;
 
 @media screen and (max-width: 980px) {
 /* pagewrap */
+.operamini .opera{display:block;}
 #pagewrap {
 /*background:red;*/
 width: 100%;
@@ -699,7 +700,7 @@ display:block;
 display:block;
 }*/
 /* end of adminka small */
-.operamini #menu{display:block;}
+.operamini .opera{display:block;}
 	#menu {
 	display:none;
 	}
