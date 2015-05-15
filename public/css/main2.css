@@ -701,10 +701,11 @@ display:block;
 display:block;
 }*/
 /* end of adminka small */
-.operamini .opera{display:block;}
-	#menu {
+#menu {
 	display:none;
 	}
+	
+.operamini #menu{display:block;}
 	
 /*
 .fluiditems{
