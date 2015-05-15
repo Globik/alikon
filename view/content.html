@@ -1,16 +1,8 @@
 
 <div id="flex-content">
-
-<div class="fluiditems" style="color:green;">1
-<span id="out3">kuku</span></br>
-<a href='/show'>all u</a></br>
-<a href="/show/jane">show Jane</a>
-
-<a href="/articles"><b>insert2</b></a>
-</div>
-
 <div class="fluiditems">2)
-version: <%= version %></br> now: <%= now %></br>server time is: <%=: now | format %></br>
+version: <%= version %></br> now: <%= now %></br>
+server time is: <%=: now | format %></br>
 request ip is: <%= ip %>
 </div>
 <div class="fluiditems">3
@@ -30,18 +22,6 @@ request ip is: <%= ip %>
  </div>
 <div class="fluiditems">6
 <span id="tout"></span>
-<script>
-var html=document.getElementsByTagName("html")[0];
-var tout=document.getElementById('tout');
-var dtct=document.createElement('div');
-dtct.style.display='flex';
-if(dtct.style.display === 'flex'){
-//html.className+='flex'
-tout.innerHTML='flex OK';
-}else{
-//html.className+="noflex";
-tout.innerHTML='flex not supported';}
-</script>
 </div>
 <div class="fluiditems">7
 <span id='tout2'></span>
@@ -49,10 +29,15 @@ tout.innerHTML='flex not supported';}
 </div>
 <div class="fluiditems">8
 <span id="tout3"></span>
+<span id="tout45"></span>
 <script>
-var ismedia=!!(window && window.matchMedia);
-if(window.matchMedia){tout3.innerHTML='media queries OK';}
-else{tout3.innerHTML='media queries NOT supported';}
+var isoperamini=(navigator.userAgent.indexOf('Opera Mini')> -1);
+var operaVersion=navigator.userAgent.match(/Version\/([1-9]+\.[0-9]{2})/)[1];
+var kuk=navigator.userAgent.match(/Opera Mini/i);
+//alert(':'+operaVersion);
+if(isoperamini && operaVersion && kuk){
+var tout45=document.getElementById('tout45');
+tout45.innerHTML+='about Opera Mini '+ isoperamini+' : '+operaVersion+'kuk'+kuk;}
 </script>
 </div>
 <div class="fluiditems">9</div>
@@ -69,36 +54,8 @@ else{tout3.innerHTML='media queries NOT supported';}
 <div class="fluiditems">19</div>
 <div class="fluiditems">20</div>
 <!-- end flex-content -->
-</div><div style="clear:both;line-height:0.5em;">, </div>
-  <!--
-  <div id="container" class="warning"><b>Proba</b></div>
-  
-  <script>
-  /***
-var link=document.querySelector('link[rel="import"]');
-link.onload=function(e){
-var content=link.import;
-var el=this.import.querySelector('#warning');
-//var el=this.import.getElementById('warning');
-document.getElementById('warn').appendChild(el.cloneNode(true));}
-***/
-function addimportlink(url){
-var link=document.createElement('link');
-link.rel='import';
-link.href=url;
-link.onload=function(e){
-var post=this.import.querySelector('#warning');
-var container=document.querySelector('#container');
-container.appendChild(post.cloneNode(true));
-};
-link.onerror=function(e){alert("Error loading: "+e.target.href);};
-document.head.appendChild(link);
-}
-addimportlink('/insert2');//from view field
-//from /public - './insert.html'
-</script>
- -->
-  
+
+ 
   <script>
   function vax(meth,url,data,onLoad,onError){
 var xhr=new XMLHttpRequest();
@@ -247,3 +204,21 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
   //alert('error :'+error.message);
   out.innerHTML='<b>Error : '+error.message+'</b>';}
   </script>
+  <script>
+var html=document.getElementsByTagName("html")[0];
+var tout=document.getElementById('tout');
+var dtct=document.createElement('div');
+dtct.style.display='flex';
+if(dtct.style.display === 'flex'){
+//html.className+='flex'
+tout.innerHTML='flex OK';
+}else{
+//html.className+="noflex";
+tout.innerHTML='flex not supported';}
+</script>
+<script>
+var ismedia=!!(window && window.matchMedia);
+if(window.matchMedia){tout3.innerHTML='media queries OK';}
+else{tout3.innerHTML='media queries NOT supported';}
+</script>
+</div><div style="clear:both;line-height:0.5em;">, </div>

@@ -106,14 +106,11 @@ aside id="sidebar"><- include/includes/aside.html ></aside>
 
 <footer id="footer"><%- include includes/footer.html %></footer>
 </div>
+<!--
 <script>
 var tout2=document.getElementById("tout2");
 var html=document.getElementsByTagName("html")[0];
-/*
-for(t in Detect){if(Detect[t])html.className+="flex"+t.toLowerCase();
-//alert(html.className);
 
-}*/
 for(t in Detect){
 tout2.innerHTML+="CSS "+t+" support? "+(Detect[t] ? "yes":"no")+"<br>";
 //alert(Detect[t[0]]);
@@ -122,6 +119,6 @@ if(Detect[t]==false){
 html.className="noflex";
 };
 }
-</script>
+</script> -->
 </body>
 </html>

@@ -42,7 +42,7 @@
 </ul>
 </nav>
 	
-<div id="cont" class='cont' onclick="" ontouchstart="knopka()">
+<div id="cont" class='cont'>
 <div class="box"><% if(!user){%><a href='#login_form' id='login_pop'>login</a><%}else{%>
 <a href='/logout'>log out</a><%}%>
 </div>
@@ -64,7 +64,8 @@
 
 <%}%>
 <input type="checkbox" id="menu-small-all"/>
-<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="" ontouchstart="serra()">
+<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all">
+
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>
  <div class="spinner diagonal part-2"></div>
@@ -80,18 +81,4 @@
 <li><a href="/logout">log out</a></li><%}%>
 <% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
 </ul>
-<script>
-var ka=document.getElementById('shmn1');
-function serra(){
-//alert("ok - touch");
-//if(knopka.className ==="show-menu1"){
-ka.style.className="show-menu1";
-//}
-}
-function knopka(){
-//alert('ok');
-var elsh=document.getElementById('drug');
-elsh.className="debugshowmenu";
-}
-</script>
 
