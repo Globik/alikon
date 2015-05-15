@@ -35,12 +35,7 @@ console.log("Error loading import: "+e.target.href);
 	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 <![endif]-->
 <script>
-var element=document.getElementById('menu');
-var html=document.getElementsByTagName("html")[0];
-//alert(element);
-if(navigator.userAgent.match(/Opera Mini/i)){
-html.className="operamini";
-}
+
 var Detect=(function(){
 var props="flex,flexWrap,justifyContent".split(","),
 CSSprefix="Webkit,Moz,O,ms,Khtml".split(","),
