@@ -35,7 +35,15 @@ console.log("Error loading import: "+e.target.href);
 	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 <![endif]-->
 <script>
-
+var element=document.getElementById('menu');
+//alert(element);
+if(navigator.userAgent.match(/Opera Mini/i)){
+var men1=document.querySelector('.show-menu');//adminka
+var men2=document.querySelector('.show-menu1');
+men2.style.display="none";
+if(men1){men1.style.display="none";}
+element.style.display="block";
+}
 var Detect=(function(){
 var props="flex,flexWrap,justifyContent".split(","),
 CSSprefix="Webkit,Moz,O,ms,Khtml".split(","),
