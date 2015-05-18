@@ -1,15 +1,17 @@
 <style>
-#huiaper{width:90%;background:red;margin:0 auto;}
+#huiaper{width:90%;background:lightgray;margin:0 auto;display:block;position:relative;
+clear:both;padding:2em;box-sizing:border-box;margin-top:50px;}
 </style>
-<!--<div id="flex-content"> -->
-<h1 class="post-title">Get paid for nothing!</h1>
 <div id='huiaper'>
-<div class="fluiditems">2)
+
+<div style="padding-top:.2em;margin-top:.2em;">
+<caption"><h1 class="post-title">Get paid for nothing!</h1></caption>
+2)
 version: <%= version %></br> now: <%= now %></br>
 server time is: <%=: now | format %></br>
 request ip is: <%= ip %>
 </div>
-<div class="fluiditems">3
+<div>3
 <% if(message){%>
 <b><%= message %></b><%}%>
 
@@ -17,21 +19,21 @@ request ip is: <%= ip %>
 <a href="/app">app</a><%}%></br>
 <a href="/show/tobi">show user tobi</a>
 </div>
-<div class="fluiditems">4
+<div class="">4
   <button onclick="doit(this)">xhr</button>
   <button onclick="addT(this)">get xhr</button></br>
   <span id="out"></span>
 </div>
-<div class="fluiditems">5<button onclick="sendSock()">send message via WebSocket</button>
+<div class="">5<button onclick="sendSock()">send message via WebSocket</button>
  </div>
-<div class="fluiditems">6
+<div class="">6
 <span id="tout"></span>
 </div>
-<div class="fluiditems">7
+<div class="">7
 <span id='tout2'></span>
 
 </div>
-<div class="fluiditems">8
+<div class="">8
 <span id="tout3"></span>
 <span id="tout45"></span>
 <script>
@@ -50,12 +52,8 @@ menu.style.display="block";
 
 </script>
 </div>
-<div class="fluiditems">9</div>
-<div class="fluiditems">10</div>
 
-<!--
-</div> -->
-<!-- end flex-content -->
+</div>
 
  
   <script>
@@ -223,4 +221,3 @@ var ismedia=!!(window && window.matchMedia);
 if(window.matchMedia){tout3.innerHTML='media queries OK';}
 else{tout3.innerHTML='media queries NOT supported';}
 </script>
-</div><div style="clear:both;line-height:0.5em;">, </div>

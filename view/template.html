@@ -18,8 +18,8 @@
 
 <%- body %>
 
-</div>
 
+</div>
 <%- include includes/login_form.html %>
 <script>
 
@@ -55,24 +55,7 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
 	 ev.preventDefault();},false);
 	 </script>
 	 <script>
-	/***
-  var usface=document.forms.namedItem("adus");
-usface.addEventListener('submit',function(ev){
-var odata=new FormData(document.forms.namedItem("adus"));
-var xhr=new XMLHttpRequest();
-    xhr.open("post","/addingfuckinguser",true);
-	xhr.onload=function(e){
-	 if(xhr.status==200){
-	 var data=JSON.parse(this.response);
-	 out5.innerHTML=this.response;
-	 }
-	 else{out5.innerHTML=this.response;
-	 }}
-	 //alert('df')
-	 xhr.send(odata);
-	 ev.preventDefault();},false);
-
-***/
+	
  var forma=document.forms.namedItem("adus");
   forma.addEventListener('submit',function(ev){
 var pw=forma.password.value;

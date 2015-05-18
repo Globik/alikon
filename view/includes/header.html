@@ -1,20 +1,25 @@
 <!-- includes/header.html -->
 <style>
 #logo{display:block;position:relative;width:3.9em;background:green;float:left;text-align:center;
-margin-left:2em;margin-right:0.8em;margin-top:0.3em;
-border-radius:1em;border:0.4em solid lightgreen;
-z-index:20;}
+margin-left:2.4em;margin-right:0.8em;margin-top:0.3em;
+-ms-border-radius:1em;
+-moz-border-radius:1em;
+-o-border-radius:1em;
+-webkit-border-radius:1em;
+border-radius:1em;
+border:0.4em solid lightgreen;
+z-index:2;}
 #logo h4{font-size:80%;line-height:0.8em;color:white;padding-bottom:0.8em;padding-right:0.2em;}
 .losm{padding-right:1.3em;float:right;font-size:0.6em;}
 @media screen and (max-width: 480px) {
-#logo{width:3.2em;margin-left:0.5em;}
+#logo{width:3.2em;margin-left:40%;}
 
 .losm{font-size:0.5em;float:right;padding-right:0.4em;}
 }
 </style>
-
-<div id="logo"><h4>Attariku </br><small class="losm">group</small></h4></div>
 <nav class="back">
+<div id="logo"><h4>Attariku </br><small class="losm">group</small></h4></div>
+
 <ul id="menu" class="opera">
 <li><a href="/">home</a></li>
 <li>
@@ -41,7 +46,7 @@ z-index:20;}
 <ul>
 <li><a href="#">Подпункт №1</a></li>
 </ul>
-</li> -->
+</li> --><!--
 <% if(user && user.role == "admin"){ %>
 <li>
 <input type="checkbox" id="check-box"/><label class="lb-check" for="check-box">profi</label>
@@ -53,33 +58,47 @@ z-index:20;}
 <li><a href="/app/modules">modules</a></li>
 <li><a href="/app/agenda">agenda</a></li>
 </ul>
-</li><%}%>
+</li><%}%> -->
 </ul>
 </nav>
-	
-<div id="cont" class='cont'>
-<div class="box"><% if(!user){%><a href='#login_form' id='login_pop'>login</a><%}else{%>
-<a href='/logout'>log out</a><%}%>
-</div>
-<div class="box">
-<% if(signup=='on'){%> <a href="#join_form" id="join_pop">sign up</a><%}%></div>
 
+<!--	
+<div id="cont" class="cont">
+<div class="box"><% if(!user){%><a href="#login_form" id="login_pop">login</a><%}else{%>
+<a href="/logout">logout</a><%}%>
 </div>
+<div class="box"><% if(signup == "on"){%>
+<a href="#join_form" id="join_pop">sign up</a></div><%}%>
+</div> -->
 <% if(user && user.role == "admin"){ %>
 <input type="checkbox" id="menu-small-admin"/>
-<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin">a</label>
-<ul class="show-menu" id="drug">
-<li><a href="/app">app</a></li>
+<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin" onclick="dowas()" ontouchstart="dowas()">a</label>
+<ul id="sd" class="show-menu" id="drug">
+
+<li style=""><a href="/app">app</a>
+<div style="display:table;background:violet;
+width:30%;position:relative;bottom:60px;left:70%;" onclick="closedas()" ontouchstart="closedas()">
+<b style="">X</b></div></li>
 <li><a href="/app/articlesmanager">write</a></li>
 <li><a href="/app/files">files</a></li>
-<li><a href="/app/adduser">Users</a></li>
+<li><a href="/app/adduser">users</a></li>
 <li><a href="/app/modules">modules</a></li>
 <li><a href="/app/agenda">agenda</a></li>
 </ul>
-
 <%}%>
-<input type="checkbox" id="menu-small-all"/>
-<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all">
+<script>
+var sd=document.getElementById('sd');
+function dowas(){
+sd.className="fuck";
+//alert('da');
+}
+function closedas(){
+sd.className="show-menu";
+//alert('f');
+}
+</script>
+<input type="checkbox" id="menu-small-all" onchange="situation(this)"/>
+<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="dowas1()" ontouchstart="dowas1()">
 
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>
@@ -87,7 +106,11 @@ z-index:20;}
 </label>
 
 <ul id="shmn1" class="show-menu1">
-<li><a href="/">homed</a></li>
+<li><a href="/">home</a>
+<div style="display:table;background:rgb(214,138,89);
+width:30%;position:relative;bottom:60px;left:0px;" onclick="closedas1()" ontouchstart="closedas1()">
+<b style="">X</b></div>
+</li>
 <li><a href="/articles">articles</a></li>
 <li><a href="/labo">labs</a></li>
 <% if(user && user.role == "admin"){ %>
@@ -96,4 +119,18 @@ z-index:20;}
 <li><a href="/logout">log out</a></li><%}%>
 <% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
 </ul>
-
+<script>
+var sd2=document.getElementById('shmn1');
+function dowas1(){
+sd2.className="clickmenuall";
+}
+function closedas1(){
+sd2.className="show-menu1";
+var chd=document.getElementById('menu-small-all');
+chd.checked=false;
+}
+function situation(el){
+//alert(el.checked);
+if(el.checked==false){closedas1();}
+}
+</script>
