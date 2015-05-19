@@ -1,6 +1,12 @@
 <style>
-#huiaper{width:90%;background:lightgray;margin:0 auto;display:block;position:relative;
-clear:both;padding:2em;box-sizing:border-box;margin-top:50px;}
+#huiaper{width:90%;background:lightgray;margin:1.5em auto;display:block;position:relative;
+clear:both;padding:2em 2.8em;-webkit-box-sizing:border-box;box-sizing:border-box;word-wrap:break-word;
+/*white-space:pre-wrap;*/}
+@media screen and (max-width: 650px) {
+#huiaper{width:100%;padding:1em 1em;}
+
+
+}
 </style>
 <div id='huiaper'>
 
@@ -168,7 +174,7 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
   //alert("location.port :"+location.port);
   var koaws={};
   //var socket=new WebSocket('ws://'+location.hostname+':3000',['soap','jsonrpc-2.0']);
-   var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
+  var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
   socket.onopen=function(){
   //alert('connected');
   out.innerHTML='Connected!';
