@@ -8,7 +8,7 @@ margin-left:2.4em;margin-right:0.8em;margin-top:0.3em;
 -webkit-border-radius:1em;
 border-radius:1em;
 border:0.4em solid lightgreen;
-z-index:101;}
+z-index:2;}
 #logo h4{font-size:80%;line-height:0.8em;color:white;padding-bottom:0.8em;padding-right:0.2em;}
 .losm{padding-right:1.3em;float:right;font-size:0.6em;}
 @media screen and (max-width: 480px) {
@@ -21,7 +21,7 @@ z-index:101;}
 <div id="logo"><h4>Attariku </br><small class="losm">group</small></h4></div>
 
 <ul id="menu" class="opera">
-<li><a href="/">home</a></li>
+<li><a href="/">Home</a></li>
 <li>
 <a href="/articles">articles</a>
 <!-- <ul>
@@ -76,7 +76,7 @@ z-index:101;}
 <ul id="sd" class="show-menu" id="drug">
 
 <li style=""><a href="/app">app</a>
-<div style="display:table;background:violet;
+<div style="display:table;background:rgb(0,164,120);
 width:30%;position:relative;bottom:60px;left:70%;" onclick="closedas()" ontouchstart="closedas()">
 <b style="">X</b></div></li>
 <li><a href="/app/articlesmanager">write</a></li>
@@ -97,12 +97,15 @@ sd.className="show-menu";
 //alert('f');
 }
 </script>
-<input type="checkbox" id="menu-small-all" onchange="situation(this)"/>
-<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="dowas1()" ontouchstart="dowas1()">
 
+<input type="checkbox" id="menu-small-all" onchange="situation(this)"/>
+
+<label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="dowas1()" ontouchstart="dowas1()">
+<!--<div class="fal" style="background:red;z-index:2;margin-top:5px;"> -->
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>
  <div class="spinner diagonal part-2"></div>
+ <!--</div> -->
 </label>
 
 <ul id="shmn1" class="show-menu1">

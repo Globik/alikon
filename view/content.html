@@ -1,5 +1,5 @@
 <style>
-#huiaper{width:90%;background:lightgray;margin:1.5em auto;display:block;position:relative;
+#huiaper{width:90%;background:lightgray;margin:3em auto;display:block;position:relative;
 clear:both;padding:2em 2.8em;-webkit-box-sizing:border-box;box-sizing:border-box;word-wrap:break-word;
 /*white-space:pre-wrap;*/}
 @media screen and (max-width: 650px) {
@@ -37,11 +37,16 @@ request ip is: <%= ip %>
 </div>
 <div class="">7
 <span id='tout2'></span>
+<select id='level' onchange='shownames(this.value)'>
+<option value='admins'>ADMIN</option>
+<option value='users'>USER</option>
+</select>
 
 </div>
 <div class="">8
 <span id="tout3"></span>
 <span id="tout45"></span>
+<!--
 <script>
 var isoperamini=(navigator.userAgent.indexOf('Opera Mini')> -1);
 var operaVersion=navigator.userAgent.match(/Version\/([1-9]+\.[0-9]{2})/)[1];
@@ -57,6 +62,7 @@ menu.style.display="block";
 }
 
 </script>
+-->
 </div>
 
 </div>

@@ -104,5 +104,19 @@ html.className="noflex";
 };
 }
 </script> -->
+<script>
+var isoperamini=(navigator.userAgent.indexOf('Opera Mini')> -1);
+var operaVersion=navigator.userAgent.match(/Version\/([1-9]+\.[0-9]{2})/)[1];
+var kuk=navigator.userAgent.match(/Opera Mini/i);
+var html=document.getElementsByTagName("html")[0];
+var menu=document.getElementById('menu');
+//alert(':'+operaVersion);
+if(isoperamini && operaVersion && kuk){
+var tout45=document.getElementById('tout45');
+tout45.innerHTML+='about Opera Mini '+ isoperamini+' : '+operaVersion+'kuk'+kuk;
+html.className="operamini";
+menu.style.display="block";
+}
+</script>
 </body>
 </html>
