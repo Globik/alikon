@@ -624,7 +624,7 @@ height: 2.8rem;
 #menu {
 	display:none;
 	}
-	
+.operamini #menu{display:block;}	
 
 
 .fluiditems{
