@@ -104,7 +104,7 @@ box-sizing:border-box;
 	width:100%;
 	/*border-bottom:2px solid blue;*/
 }
-#menu{font-family: Calibri,"Lucida Grande",Verdana,Arial,Helvetica,sans-serif;
+.operamini #menu,#menu{font-family: Calibri,"Lucida Grande",Verdana,Arial,Helvetica,sans-serif;
 			list-style:none;
 			padding:0;
 			margin:0;
@@ -124,7 +124,7 @@ box-sizing:border-box;
 			
 		}
 		
-		#menu li{
+		.operamini #menu li,#menu li{
 			float:left;
 			height:100%;
 			padding:0;
@@ -135,7 +135,7 @@ box-sizing:border-box;
 			padding-top: 12px;
 		}
 		
-		#menu ul{
+		.operamini #menu ul,#menu ul{
 			list-style:none;
 			padding:0;
 			margin:0;
@@ -146,7 +146,7 @@ box-sizing:border-box;
 			top:100%;
 		}
 		
-	#menu ul li{
+	.operamini #menu ul li,#menu ul li{
 	float:none;
 	height:30px;
 	margin:0;
@@ -157,7 +157,7 @@ box-sizing:border-box;
 }
 /*#menu ul li a{background:brown;}*/
 
-	#menu li a{
+	.operamini #menu li a,#menu li a{
 	display:block;
 	width:9.8em;
 	line-height:1.2em;
@@ -352,7 +352,7 @@ display:block;
 .fuck{
 display:block;z-index:3;
 }
-.operamini #menu{display:block;}
+/*.operamini #menu{display:block;}*/
 .operamini #logo{display:none;}
 .operamini .lb-menu-all{display:none;}
 /*#menu-small-admin:checked ~ .show-menu li{
@@ -574,7 +574,7 @@ color: #fff;
 
 @media screen and (max-width: 700px) {
 /* pagewrap */
-.operamini #menu{display:block;}
+
 #pagewrap {
 /*background:red;*/
 width: 100%;
@@ -625,7 +625,7 @@ height: 2.8rem;
 	display:none;
 	}
 	
-.operamini #menu{display:block;}
+
 
 .fluiditems{
 float:none;
