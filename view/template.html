@@ -90,34 +90,8 @@ aside id="sidebar"><- include/includes/aside.html ></aside>
 
 <footer id="footer"><%- include includes/footer.html %></footer>
 </div>
-<!--
-<script>
-var tout2=document.getElementById("tout2");
-var html=document.getElementsByTagName("html")[0];
 
-for(t in Detect){
-tout2.innerHTML+="CSS "+t+" support? "+(Detect[t] ? "yes":"no")+"<br>";
-//alert(Detect[t[0]]);
-if(Detect[t]==false){
-//alert('flex yes'+t)
-html.className="noflex";
-};
-}
-</script> -->
-<script>
-var isoperamini=(navigator.userAgent.indexOf('Opera Mini')> -1);
-var operaVersion=navigator.userAgent.match(/Version\/([1-9]+\.[0-9]{2})/)[1];
-var kuk=navigator.userAgent.match(/Opera Mini/i);
-var html=document.getElementsByTagName("html")[0];
-var menu=document.getElementById('menu');
-//alert(':'+operaVersion);
-if(isoperamini && operaVersion && kuk){
-var tout45=document.getElementById('tout45');
-tout45.innerHTML+='about Opera Mini '+ isoperamini+' : '+operaVersion+'kuk'+kuk;
-html.className="operamini";
-//menu.style.display="block";
-logo.style.display="none";
-}
-</script>
+
+
 </body>
 </html>
