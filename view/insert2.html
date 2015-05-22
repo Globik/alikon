@@ -1,9 +1,9 @@
 <style>
-#huiaper{width:90%;background:blue;margin:0 auto;}
+#huiaper{width:90%;background:black;margin:0 auto;border:1px solid green;box-sizing:border-box;}
 </style>
 
 <!--<div id="flex-content"> -->
-<div style="padding:0.8em;background:red;width:85%;margin:0 auto;margin-top:50px;">
+<div style="padding:0.8em;background:pink;width:85%;margin:0 auto;margin-top:50px;border:1px solid yellow;">
 <h4 class="post-title">Didn't you know?</h4></div>
 <div id='huiaper'>
 
@@ -11,15 +11,64 @@
 <div class="fluiditems">
 <a href='/articles/<%= formated %><%= d.title %>' id=<%= d._id %> ><%= d.postname %></a></br>
 <%= d.shorti %></br>
-<b>Created :</b><%=d.created %> </br>by <%= d.autor %></br>
+<b>Created :</b><%=d.created %>+ <time datetime="<%= d.created %>">-<%= d.created %></time>"</br>by <%= d.autor %></br>
 
 <%- d.caption %>
 <!-- <b>Main content :</b>< d.maincontent > -->
 <b>Formatted :</b><%= formated %>
 </br>
 <a href='/articles/<%= formated %><%= d.title %>'>Read more...</a></div><%});}%>
-<div class="fluiditems">6</div>
-<div class="fluiditems">7</div>
+<style>
+.user{
+position:relative;
+width:100%;height:240px;
+border:5px solid #000;
+box-sizing:border-box;
+}
+.user-info{
+background:green;
+width:100%;
+position:absolute;
+bottom:0px;
+overflow:hidden;
+z-index:1;
+}
+.bio{
+position:absolute;
+width:100%;
+bottom:0;
+height:30px;
+z-index:0;
+overflow:hidden;
+min-height:40px;
+background:rgba(183,191,185,0.95);
+transition:all 0.7s linear;
+transition:all 0.7s linear;
+}
+p{color:red;padding:1px;}
+.user-info:hover + .bio,.user-info:focus .bio{
+min-height:160px;
+}
+</style>
+<div class="fluiditems">
+<div class="user-info">
+<h2>@somej. 6</h2></div>
+<div class='bio'><p>Frontend cons and dev,bla bla bla</p>
+<p>Noch bla bla bla</p>
+</div>
+</div>
+<style>
+.fig{}
+.fig ul{position:absolute;bottom:0;margin:0;}
+.fig ul li{display:inline;background:green;}
+</style>
+<div class="fluiditems">
+<figure style="background:yellow;height:100%;box-sizing:border-box;margin:0;">
+<div style="background:brown;height:70%;">foto</div>
+<figcaption style="background:lightgreen;height:34%;"><p>Fig caption</p></figcaption>
+<div class="fig"><ul><li>a</li><li>b</li></ul></div>
+</figure>
+</div>
 <div class="fluiditems">8</div>
 <div class="fluiditems">9</div>
 <div class="fluiditems">10</div>

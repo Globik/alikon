@@ -108,15 +108,15 @@ box-sizing:border-box;
 			list-style:none;
 			padding:0;
 			margin:0;
-			font-size: 72%;
-			font-weight:bold;
-			letter-spacing:0.0625em;
+			
+			
+			leter-spacing:0.0625em;
 			/*text-shadow: 0px 1px 1px white;*/
 			font-weight:bold;
 	text-align:center;
 	
 			/*font-family: Georgia;*/
-			text-transform:uppercase;
+			text-transorm:uppercase;
 			height:3.3rem;
 			position:relative;
 			display:block;
@@ -160,13 +160,14 @@ box-sizing:border-box;
  #menu li a{
 	display:block;
 	width:9.8em;
-	line-height:1.2em;
+	line-height:0.8em;
 	height:0px;
 	text-align:center;
 	text-decoration: none;
 	padding-right:0px;
-	color:rgb(25,20,10);
-	padding-bottom:27px;padding-top:17px;/*background:red;*/margin-top:-12px;
+	color:rgb(255,230,255);
+	padding-bottom:1.6em;padding-top:1.1em;/*background:red;*/margin-top:-1em;
+	text-shadow: 0px 1px 3px black;
 	}
 	
 	#menu li:hover, #menu li.jshover{
@@ -412,22 +413,25 @@ flex-content
 #flex-content{
 display:block;
 width:100%;
-min-height:90%;
-min-height:90vh;
+min-height:94.3%;
+min-height:94.3vh;
 height:auto;
 margin-top:0px;
 padding-top:0em;
+box-sizing:border-box;
+border:1px solid blue;
 /*background:green;*/
 }
 
 .fluiditems{
 position:relative;
 float:left;
-padding:2em 3%;
+paddng:2em 3%;
 margin:0.8em 0 0 1%;
 box-sizing:border-box;
 background:blue;
 width:32%;
+
 height:200px;
 min-height:16em;
 text-align:center;
@@ -568,18 +572,25 @@ color: #fff;
 .clearfix { display: block; zoom: 1; }
 /*media query */
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 808px) {
 /* pagewrap */
 
 #pagewrap {
-/*background:red;*/
+background:red;
 width: 100%;
+
 }
 /* content */
 #content {
 width: auto/*60%*/;
 float:none;
 padding: 3% 4%;
+}
+.fluiditems{
+margin:/*1em 2.6852% 1px 0*/0.8em 1.84%;/*top rite bottom left* 12px*/
+width:46.318944%;
+font-size:0.8em;
+height:300px;
 }
 /* sidebar */
 #sidebar {
@@ -627,8 +638,9 @@ height: 2.8rem;
 float:none;
 width:100%;
 margin-left:0;
-margin-top:0.1em;
+margin-top:1.1em;
 margin-bottom:0.1em;
+font-size:1em;
 }
 	#content {
 		width: auto;
