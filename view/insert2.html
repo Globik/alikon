@@ -1,17 +1,22 @@
 <style>
 #huiaper{width:90%;background:black;margin:0 auto;border:1px solid green;box-sizing:border-box;}
+@media screen and (max-width: 650px) {
+#huiaper{width:100%;}
+
+.post-title{width:100%; margin:0;}
+}
 </style>
 
 <!--<div id="flex-content"> -->
-<div style="padding:0.8em;background:pink;width:85%;margin:0 auto;margin-top:50px;border:1px solid yellow;">
-<h4 class="post-title">Didn't you know?</h4></div>
+<div id="bu">
+<h4 class="post-titl">Didn't you know?</h4></div>
 <div id='huiaper'>
 
 <% if(posts) {posts.forEach(function(d){ %>
 <div class="fluiditems">
 <a href='/articles/<%= formated %><%= d.title %>' id=<%= d._id %> ><%= d.postname %></a></br>
 <%= d.shorti %></br>
-<b>Created :</b><%=d.created %>+ <time datetime="<%= d.created %>">-<%= d.created %></time>"</br>by <%= d.autor %></br>
+<b>Created :</b><%=d.created %><time datetime="<%= d.created %>"></time></br>by <%= d.autor %></br>
 
 <%- d.caption %>
 <!-- <b>Main content :</b>< d.maincontent > -->
@@ -43,7 +48,7 @@ overflow:hidden;
 min-height:40px;
 background:rgba(183,191,185,0.95);
 transition:all 0.7s linear;
-transition:all 0.7s linear;
+-webkit-transition:all 0.7s linear;
 }
 p{color:red;padding:1px;}
 .user-info:hover + .bio,.user-info:focus .bio{
@@ -64,7 +69,7 @@ min-height:160px;
 </style>
 <div class="fluiditems">
 <figure style="background:yellow;height:100%;box-sizing:border-box;margin:0;">
-<div style="background:brown;height:70%;">foto</div>
+<div style="background:brown;height:70%;"><img src='/images/emblema-a.svg' width="50%" height="auto"/></div>
 <figcaption style="background:lightgreen;height:34%;"><p>Fig caption</p></figcaption>
 <div class="fig"><ul><li>a</li><li>b</li></ul></div>
 </figure>
