@@ -33,6 +33,7 @@ box-sizing:border-box;
 .user-info{
 background:green;
 width:100%;
+min-height:30%;
 position:absolute;
 bottom:0px;
 overflow:hidden;
@@ -54,10 +55,25 @@ p{color:red;padding:1px;}
 .user-info:hover + .bio,.user-info:focus .bio{
 min-height:160px;
 }
+.fluiditems img{width:100%;height:auto;margin:auto 0;}
+.user-info ul{position:absolute;bottom:0;margin:0;}
+.user-info ul li{display:inline;background:lightgreen;padding-left:1em;padding-right:1em;}
+.user-info .chli{position:relative;margin-left:0;top:0;font-size:0.8em;}
+.fluiditems #redaktor{position:absolute;width:2em;height:2em;background:silver;right:0;top:0;}
 </style>
 <div class="fluiditems">
+<div id="redaktor">
+<ul style="display:block;
+position:absolute;list-style:none;margin-top:0;background:red;width:4.2em;top:2.5em;
+left:-4em;">
+<li>redact</li><li>remove</li><li>visibility</li></ul>
+</div>
+<img src="/images/kuku.png" />
 <div class="user-info">
-<h2>@somej. 6</h2></div>
+<ul class="chli"><li>Apr 9</li><li>2 coms</li><li>23 Shares</li></ul>
+How to install nodejs on windows
+<ul><li>nodejs</li><li>javascript</li><li>c</li></ul>
+</div>
 <div class='bio'><p>Frontend cons and dev,bla bla bla</p>
 <p>Noch bla bla bla</p>
 </div>
