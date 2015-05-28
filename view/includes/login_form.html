@@ -86,9 +86,11 @@ border-radius: 10px;
     transition: opacity .5s, top .5s;
 }
 .overlay:target+.popup {
-    top: 50%;
+    top: 45%;
+	left:30%;
     opacity: 1;
     visibility: visible;
+	
 }
 .close {
     background-color: rgba(0, 0, 0, 0.8);
@@ -132,6 +134,13 @@ border-radius: 10px;
 }
 .popup input[type="text"]:hover, .popup input[type="password"]:hover {
     border-color: #555 #888 red #888;
+}
+@media screen and (max-width: 1024px) {
+.popup{width:50%;}
+.overlay:target+.popup {left:50%;}
+}
+@media screen and (max-width: 650px) {
+.popup{width:90%;}
 }
 </style>
 <a href="#x" class="overlay" id="login_form"></a>

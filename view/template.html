@@ -41,13 +41,13 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
 	 oreq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	 
 	 oreq.onload=function(oevent){
-	 if(oreq.status==200){
-	 var data=JSON.parse(this.response);
+	 if(this.status==200){
+	 var data=JSON.parse(this.responseText);
 	 //out4.innerHTML=this.response;
 	 out4.innerHTML=data.success+" : "+data.redirect;
 	 window.location.href=data.redirect;
 	 }
-	 else{out4.innerHTML=this.response;//oreq.status;
+	 else{out4.innerHTML=this.responseText + this.status;//oreq.status;
 	 //window.location.href="#";
 	 }}
 	 //oreq.send(odata);
@@ -68,14 +68,14 @@ encodeURIComponent(email);
 	 oreq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	 
 	 oreq.onload=function(e){
-	 if(oreq.status==200){
-	 var data=JSON.parse(this.response);
-	 out5.innerHTML=this.response;
+	 if(this.status==200){
+	 var data=JSON.parse(this.responseText);
+	 out5.innerHTML=this.responseText;
 	 //out5.innerHTML=+data.success+" : "+data.redirect;
 	 //alert(data.redirect);
 	 window.location.href=data.redirect;
 	 }
-	 else{out5.innerHTML=this.response;//oreq.status;
+	 else{out5.innerHTML=this.responseText + this.status;//oreq.status;
 	 
 	 }}
 	 oreq.send(params);

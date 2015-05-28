@@ -126,6 +126,7 @@ var date=moment(posts.created);
 var formated=date.format('YYYY[/]MM[/]DD[/]');
 yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated});
 });
+
 //iojs index
 /***
 fuckall.get('/articles/:id', function *(id) {
@@ -143,6 +144,7 @@ console.log('formated :',formated);
  }
 });
 ***/
+
 fuckall.get('/articles/:year/:month/:day/:title',function *(){
 	var db=this.fuck;
  var doc=wrap(db.get('posts'));

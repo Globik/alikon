@@ -426,17 +426,16 @@ border:1px solid blue;
 .fluiditems{
 position:relative;
 float:left;
-paddng:2em 3%;
-margin:0.8em 0 0 1%;
+margin:1% 1% 1% 1%;
 box-sizing:border-box;
 background:blue;
-width:32%;
+width:31.3%;
 
-height:200px;
-min-height:16em;
+height:auto;
+min-height:19em;
 text-align:center;
 color:white;
-font-weight:bold;
+
 overflow:hidden;
 }
 
@@ -566,7 +565,7 @@ text-align:center;
 color: #fff;
 }
 
-#bu{padding:0.8em;background:pink;width:90%;margin:40px auto;
+#bu{padding:0.8em;background:pink;width:88%;margin:40px auto;
 margin-bottom:0;border:1px solid yellow;box-sizing:border-box;}
 .clearfix:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
 .clearfix { display: inline-block; }
@@ -587,13 +586,13 @@ width: auto/*60%*/;
 float:none;
 padding: 3% 4%;
 }
+#bu{width:86%;}
 .fluiditems{
 margin:/*1em 2.6852% 1px 0*/1em 1.84%;/*top rite bottom left* 12px*/
 width:46.318944%;
-font-size:0.9em;
 height:300px;
 }
-.fluiditems img{width:50%;}
+.fluiditems img{width:100%;}
 /*
 #bu{width:100%;
 background:lightgreen;;}*/
@@ -625,7 +624,7 @@ smaller than 650
 @media screen and (max-width: 650px) {
 html{font-size:100%;}
 body{
-font-size:1.1em;
+font-size:1.1rem;
 }
 #bu{background:lightgreen;width:90%;}
 #header {
@@ -644,7 +643,7 @@ height: 2.8rem;
 .fluiditems{
 float:none;
 width:90%;
-height:400px;
+
 /*
 margin-left:0;
 margin-top:1.1em;

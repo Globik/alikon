@@ -9,20 +9,9 @@
 
 <!--<div id="flex-content"> -->
 <div id="bu">
-<h4 class="post-titl">Didn't you know?</h4></div>
+<h4 class="post-titl">Didn't you know? <span id="demo" style="color:blue;"></span></h4></div>
 <div id='huiaper'>
 
-<% if(posts) {posts.forEach(function(d){ %>
-<div class="fluiditems">
-<a href='/articles/<%= formated %><%= d.title %>' id=<%= d._id %> ><%= d.postname %></a></br>
-<%= d.shorti %></br>
-<b>Created :</b><%=d.created %><time datetime="<%= d.created %>"></time></br>by <%= d.autor %></br>
-
-<%- d.caption %>
-<!-- <b>Main content :</b>< d.maincontent > -->
-<b>Formatted :</b><%= formated %>
-</br>
-<a href='/articles/<%= formated %><%= d.title %>'>Read more...</a></div><%});}%>
 <style>
 .user{
 position:relative;
@@ -33,66 +22,125 @@ box-sizing:border-box;
 .user-info{
 background:green;
 width:100%;
-min-height:30%;
+min-height:28%;
+
+height:41%;
 position:absolute;
-bottom:0px;
+bottom:0;
+left:0;
 overflow:hidden;
 z-index:1;
+padding:0.1em;
+margin:0;
+box-sizing:border-box;
 }
+.user-info h5{font-size:/*2rem*/0.9em;line-height:1.2;margin-top:0em;padding:1px;}
 .bio{
 position:absolute;
 width:100%;
+left:0;
 bottom:0;
-height:30px;
+height:41%;
 z-index:0;
 overflow:hidden;
-min-height:40px;
+min-height:41%;
 background:rgba(183,191,185,0.95);
 transition:all 0.7s linear;
 -webkit-transition:all 0.7s linear;
 }
-p{color:red;padding:1px;}
+.user-info p{color:white;padding:0px;
+font-size:/*1.2rem*/0.6em;
+margin-left:0px;
+font-family:sans-serif;
+line-height:/*1.5rem*/0.8em;}
 .user-info:hover + .bio,.user-info:focus .bio{
-min-height:160px;
+min-height:50%;
 }
 .fluiditems img{width:100%;height:auto;margin:auto 0;}
-.user-info ul{position:absolute;bottom:0;margin:0;}
-.user-info ul li{display:inline;background:lightgreen;padding-left:1em;padding-right:1em;}
-.user-info .chli{position:relative;margin-left:0;top:0;font-size:0.8em;}
-.fluiditems #redaktor{position:absolute;width:2em;height:2em;background:silver;right:0;top:0;}
+.user-info .tags{position:absolute;bottom:-0.29em;left:0;margin:0;list-style:none;}
+.user-info .tags .ta{display:inline-block;background:pink;margin-left:0em;padding:0.5em;font-size:0.6em;
+line-height:0.5em;color:red;
+}
+.user-info .chli{position:relative;margin:0em;padding:0;line-height:/*1.6rem*/;top:-0.5em;left:0;}
+.user-info .chli li{display:inline-block;background:lightgreen;padding-left:1em;padding-right:1em;
+font-size:0.6em;line-height:1.5em;}
+
+.fluiditems #redaktor{display:block;
+position:absolute;width:2em;height:2em;background:silver;right:0;top:0;
+}
+.adm{display:none;
+position:relative;
+list-style:none;margin-top:2em;background:brown;width:10em;top:0em;
+left:-9em;}
+.fluiditems #redaktor:hover .adm{display:block;}
+@media screen and (max-width: 650px) {
+.ser-info h{font-size:/*1.2rem*/1em;}
+.user-info p{font-size:0.6em;}
+.user-info .tags .ta{}
+}
+
 </style>
 <div class="fluiditems">
 <div id="redaktor">
-<ul style="display:block;
-position:absolute;list-style:none;margin-top:0;background:red;width:4.2em;top:2.5em;
-left:-4em;">
-<li>redact</li><li>remove</li><li>visibility</li></ul>
+<ul class="adm" style="">
+<li>X</li><li>redact</li><li>remove</li><li>visibility</li></ul>
 </div>
 <img src="/images/kuku.png" />
 <div class="user-info">
 <ul class="chli"><li>Apr 9</li><li>2 coms</li><li>23 Shares</li></ul>
-How to install nodejs on windows
-<ul><li>nodejs</li><li>javascript</li><li>c</li></ul>
+<h5>10 детективов, которые отлично тренируют мозг and trulalal noch einmal</h5>
+<p>Для начала - снимем отпечатки пальцев.</p>
+<ul class="tags"><li class="ta">nodejs</li><li class="ta">javascript</li><li class="ta">c</li></ul> 
 </div>
 <div class='bio'><p>Frontend cons and dev,bla bla bla</p>
 <p>Noch bla bla bla</p>
 </div>
 </div>
+<% if(posts) {posts.forEach(function(d){ %>
+<div class="fluiditems">
+<div id="redaktor">
+<ul class="adm">
+<li>X</li><li>redact</li><li data-id="<%= d._id %>" onclick="removePost(this);">remove</li><li>visibility</li></ul>
+</div>
+<img src="/images/kuku.png" />
+<div class="user-info">
+<ul class="chli"><li><%= formated %></li><li>2 coms</li><li>23 Shares</li></ul>
+<h5><a href="/articles/<%= formated %><%= d.title %>"><%= d.postname %></a></h5>
+<p><%= d.shorti %></p>
+<ul class="tags"><li class="ta"><%= d.meta %></li></ul> 
+</div>
+<div class='bio'><p>Frontend cons and dev,bla bla bla</p>
+<p>Noch bla bla bla</p>
+</div>
+</div><%});}%>
 <style>
 .fig{}
 .fig ul{position:absolute;bottom:0;margin:0;}
 .fig ul li{display:inline;background:green;}
+
+figcaption{}
 </style>
+
 <div class="fluiditems">
-<figure style="background:yellow;height:100%;box-sizing:border-box;margin:0;">
-<div style="background:brown;height:70%;"><img src='/images/emblema-a.svg' width="50%" height="auto"/></div>
-<figcaption style="background:lightgreen;height:34%;"><p>Fig caption</p></figcaption>
-<div class="fig"><ul><li>a</li><li>b</li></ul></div>
-</figure>
+<img src='/images/kuku.png' width="100%" height="100%"/>
+
+<!--<div class="fig"><ul><li>a</li><li>b</li></ul></div> -->
 </div>
+
 <div class="fluiditems">8</div>
 <div class="fluiditems">9</div>
 <div class="fluiditems">10</div>
 </div>
 <!-- </div>-->
 <div style="clear:both;line-height:0.5em;min-height:80px;">, </div>
+<script>
+function removePost(el){
+var x;
+if(confirm("Delete this post? Press a button!")==true){
+x="About deleting the post "+el.getAttribute('data-id');
+//alert(el.getAttribute('data-id'));
+}
+else{x="You pressed Cancel!";}
+demo.innerHTML=x;
+}
+</script>
