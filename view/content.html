@@ -47,7 +47,40 @@ request ip is: <%= ip %>
 <span id="tout3"></span>
 <span id="tout45"></span>
 </div>
+<img src="/images/w5.png"/>
+<style>
+canvas{width:6em;height:6em;}
+</style>
+<canvas id="fcanv" width='100' height='100' style="border:1px solid red;"></canvas>
+<script>
+var cnv=document.getElementById('fcanv');
+var c=cnv.getContext('2d');
+var img=new Image();
+img.onload=function(){
+c.fillStyle="white";
+c.beginPath();
+c.arc(cnv.width/2,cnv.height/2,cnv.width/2-5,0,2*Math.PI,false);
+c.fill();
+c.stroke();
+c.drawImage(img,-2,20,50,50);
+c.font='19px "Marker Felt" cursive,sans-serif';
+c.fillStyle="blue";
+c.fillText('tariku',37,59);
+c.fillStyle="black";
+c.font='bold 11px Verdana';
+c.fillText('group',48,70);
+c.beginPath();
+c.arc(cnv.width/2,cnv.height/2,cnv.width/2-5,0,2*Math.PI,false);
+//c.fillStyle="red";
+//c.fill();
+c.lineWidth=5;
+c.strokeStyle='green';
+c.stroke();
+}
 
+img.src="/images/w4.png";
+
+</script>
 </div>
 
  

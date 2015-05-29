@@ -100,7 +100,9 @@ left:-9em;}
 <div class="fluiditems">
 <div id="redaktor">
 <ul class="adm">
-<li>X</li><li>redact</li><li data-id="<%= d._id %>" onclick="removePost(this);">remove</li><li>visibility</li></ul>
+<li>X</li><li><a onclick="redaktorHref(this)" data-id="<%= d._id %>" href="#popredaktor">redact</a></li>
+<li data-id="<%= d._id %>" onclick="removePost(this);">remove</li>
+<li>visibility</li></ul>
 </div>
 <img src="/images/kuku.png" />
 <div class="user-info">
@@ -133,14 +135,46 @@ figcaption{}
 </div>
 <!-- </div>-->
 <div style="clear:both;line-height:0.5em;min-height:80px;">, </div>
+<style>
+</style>
+<a href="#x" class="overlay" id="popredaktor"></a>
+<div class="popup" id="poredactor">
+<b>Redaktor</b></br><span id="outinfo" style="background:green;"></span></br>
+<textarea id="textredactor" placeholder="for edit" style="width:300px;height:400px;"></textarea>
+</br><button onclick="savePost(this)">save</button>
+</div>
 <script>
+var y;
 function removePost(el){
 var x;
+
 if(confirm("Delete this post? Press a button!")==true){
 x="About deleting the post "+el.getAttribute('data-id');
 //alert(el.getAttribute('data-id'));
 }
 else{x="You pressed Cancel!";}
 demo.innerHTML=x;
+}
+outinfo.innerHTML='';
+function redaktorHref(el){
+//alert('ok');
+//alert(el.getAttribute('data-id'));
+outinfo.innerHTML='connecting database...';
+var x=el.getAttribute('data-id');
+y=x;
+var xhr=new XMLHttpRequest();
+    xhr.open('GET','/takePost/'+x);
+	xhr.onload=function(e){
+  if(this.status == 200){
+  outinfo.innerHTML='';
+  var data=JSON.parse(this.responseText);
+  textredactor.value=data.data;}}
+xhr.onerror=function(e){alert("fuck" +e.status);
+outinfo.innerHTML=e.status +' : '+JSON.parse(this.responseText).err;}
+xhr.send();
+}
+function savePost(el){
+//alert('about saving the post '+y);
+demo.innerHTML='about saving the post '+y;
 }
 </script>

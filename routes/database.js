@@ -168,8 +168,8 @@ fuckall.get('/labo',function *(){
 fuckall.get('/alfa',function *(){
 	
  /***
- sendgrid.send({to:'gru5@yandex.ru',
-               from:'ag1@yandex.ru',
+ sendgrid.send({to:'gr@yandex.ru',
+               from:'a@yandex.ru',
                subject:'Hello Hujarkus!!!',
                text:'Sending email from heroku, eine Probe,alikon.herokuapp,  by admin Globi. OK?'},
 function(err,json){
@@ -178,10 +178,21 @@ console.log(json);});
 ***/
 	yield this.body={str:"get alfa: OK xhr"};});
 	
-	
-	fuckall.get('/beta/:name',function *(name){
-		console.log('this.params.name',this.params.name);
-		yield this.body={str:this.params.name};
+fuckall.get('/beta/:name',function *(name){
+console.log('this.params.name',this.params.name);
+yield this.body={str:this.params.name};
 	});
+fuckall.get('/takePost/:dataid',function *(dataid){
+//console.log('this.params.dataid',this.params.dataid);
+var db=this.fuck;
+var doc=wrap(db.get('posts'));
+try{
+ var post= yield doc.findById(this.params.dataid);
+//console.log('post.maincontent',post.maincontent);
+yield this.body={data:post.maincontent};}
+catch(err){
+//console.log('err',err);
+yield this.body={data:err};}
+});
 
 module.exports=fuckall;
