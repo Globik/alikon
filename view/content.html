@@ -1,17 +1,9 @@
 <style>
-#huiaper{width:90%;background:lightgray;margin:3em auto;display:block;
-padding:2em 2.8em;-webkit-box-sizing:border-box;box-sizing:border-box;word-wrap:break-word;
-/*white-space:pre-wrap;*/}
-@media screen and (max-width: 650px) {
-#huiaper{width:100%;padding:1em 1em;}
-
-
-}
+#aper{width:90%;margin:10px auto;padding:30px 60px;border:1px solid red;}
 </style>
-<div id='huiaper'>
-
-<div style="padding-top:.2em;margin-top:.2em;">
-<caption"><h1 class="post-title">Get paid for nothing!</h1></caption>
+<div id="aper">
+<h1 class="" style="clar:both">Some</h1>
+<div>
 2)
 version: <%= version %></br> now: <%= now %></br>
 server time is: <%=: now | format %></br>
@@ -52,6 +44,7 @@ request ip is: <%= ip %>
 canvas{width:6em;height:6em;}
 </style>
 <canvas id="fcanv" width='100' height='100' style="border:1px solid red;"></canvas>
+
 <script>
 var cnv=document.getElementById('fcanv');
 var c=cnv.getContext('2d');
@@ -82,9 +75,7 @@ img.src="/images/w4.png";
 
 </script>
 </div>
-
- 
-  <script>
+<script>
   function vax(meth,url,data,onLoad,onError){
 var xhr=new XMLHttpRequest();
 xhr.open(meth,url);
