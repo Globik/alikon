@@ -199,7 +199,7 @@ display:block;z-index:1;
 /*.show-menu1 li{display:none}*/
 
 .show-menu1,.clickmenuall{
-display:block;
+display:none;
 top:1.465em;
 position:absolute;
 
