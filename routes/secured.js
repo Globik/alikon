@@ -22,8 +22,8 @@ var iceConfig=[];
 secured.post('/gamma',bodyParser({multipart:true,formidable:{}}),
 function *(next){
 	/***
-	sendgrid.send({to:'gru5@yandex.ru',
-               from:'ag1@yandex.ru',
+	sendgrid.send({to:'gru@yandex.ru',
+               from:'ag@yandex.ru',
                subject:'Hello Hujarkus!!!',
                text:'Sending email from heroku, eine Probe,alikon.herokuapp,  by admin Globi. OK?'},
 function(err,json){
@@ -395,12 +395,12 @@ function *(next){
 	var serial=this.request.body.fields.serial;
 	var tim=new Date();
 	var date=moment(tim);
-	var format=date.format('YYYY[/]MM[/]DD');
+	var forma=date.format('YYYY[/]MM[/]DD');
 	var db=this.fuck;
 	var posts=wrap(db.get('posts'));
 	yield posts.insert({postname:postname,title:slug,autor:autor,shorti:shorti,caption:caption,maincontent:maincontent,meta:meta,category:category,rubrik:rubrik,serial:serial,created:tim,redaktiert:tim,visa:1});
 this.body=JSON.stringify(this.request.body,null,2);
-this.body={"result":this.request.body,"slugified":slug,"time":format};
+this.body={"result":this.request.body,"slugified":slug,"time":forma};
 yield next;});
 
 function slugify(text){
@@ -414,6 +414,63 @@ var users_id=wrap(db.get('users'));
 	var res=yield admin.findById({username:"Bob"});
 })
 ***/
+
+secured.get('/takePost/:dataid',function *(dataid){
+//console.log('this.params.dataid',this.params.dataid);
+var db=this.fuck;
+var doc=wrap(db.get('posts'));
+try{
+ var post= yield doc.findById(this.params.dataid);
+//console.log('post.maincontent',post.maincontent);
+yield this.body={postname:post.postname,autor:post.autor,created:post.created, shorti:post.shorti,caption:post.caption,maincontent:post.maincontent,category:post.category,rubrik:post.rubrik,meta:post.meta,redaktiert:post.redaktiert,visa:post.visa,title:post.title,serial:post.serial};}
+catch(err){
+//console.log('err',err);
+yield this.body={data:err};}
+});
+
+secured.post('/saveaneditedpost',bodyParser({multipart:true,formidable:{}}),
+function *(next){
+var postname=this.request.body.fields.postname;
+	var slug=slugify(postname);
+// autor shorti caption maincontent meta category rubrik serial * 
+//created redaktiert
+var title=slug;/***this.request.body.fields.title;***/
+console.log(title);
+	var autor=this.request.body.fields.autor;
+	var shorti=this.request.body.fields.shorti;
+	var caption=this.request.body.fields.caption;
+	var maincontent=this.request.body.fields.maincontent;
+	var meta=this.request.body.fields.meta;
+	var category=this.request.body.fields.category;
+	var rubrik=this.request.body.fields.rubrik;
+	var serial=this.request.body.fields.serial;
+	var redaktiert=new Date();
+	var created=this.request.body.fields.created;
+var visa=this.request.body.fields.visa;
+console.log('visa :'+visa);
+var id=this.request.body.fields.id;
+var db=this.fuck;
+
+var doc=wrap(db.get('posts'));
+yield doc.updateById(id,{
+postname:postname,
+title:title,
+autor:autor,
+shorti:shorti,
+caption:caption,
+maincontent:maincontent,
+meta:meta,
+category:category,
+rubrik:rubrik,
+serial:serial,
+redaktiert:redaktiert,
+created:created,
+visa:visa
+});
+this.body=JSON.stringify(this.request.body,null,2);
+this.body={"result":"OK - saved an edited post "+title}
+});
+
 //iojs index
 function *authed(next){
 if(this.req.isAuthenticated() && this.req.user.role == "admin"){

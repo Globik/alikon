@@ -120,30 +120,17 @@ var res=yield admin.findOne({username:"Bob"});
 console.log('db :'+res.username);}catch(er){console.log("error in username :"+er);}
 ***/
 this.session.dorthin=this.path;
-var doc=wrap(db.get('posts'));//catalog
+var doc=wrap(db.get('posts'));
 var posts=yield doc.find({});
-var date=moment(posts.created);
+var date=moment(posts[0].created);
+//console.log('date posts created :',date);
+console.log('posts.created :',posts[0].created);
 var formated=date.format('YYYY[/]MM[/]DD[/]');
-yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated});
+var datefake=date.format('MMM D');
+yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated,datefake:datefake});
 });
 
 //iojs index
-/***
-fuckall.get('/articles/:id', function *(id) {
-var db=this.fuck;
- var catalogs=wrap(db.get('catalog'));
- try{
- var article= yield catalogs.findById(this.params.id);
-console.log('article created at: ',article.created);
-var date=moment(article.created);
-var formated=date.format('YYYY[/]MM[/]DD[/]');
-console.log('formated :',formated);
- yield this.render('article-view',{user:this.req.user,article:article});
- } catch(err){
-	 yield this.render('error-view',{user:this.req.user,err:err});
- }
-});
-***/
 
 fuckall.get('/articles/:year/:month/:day/:title',function *(){
 	var db=this.fuck;
@@ -151,8 +138,14 @@ fuckall.get('/articles/:year/:month/:day/:title',function *(){
  try{
  var post= yield doc.findOne({'title':this.params.title});
  console.log('post :',post.postname);
-	yield this.render('formated-article-view',{user:this.req.user,
-	parametr:this.params.year+this.params.month+this.params.title,post:post});
+var date=moment(post.created);
+var formated=date.format('YYYY[/]MM[/]DD[/]');
+var datedurak=date.format('MM DD');
+var datefake=date.format('MMM D');
+console.log('formated :',formated);
+
+yield this.render('formated-article-view',{user:this.req.user,
+	parametr:this.params.year+this.params.month+this.params.title,post:post,formated:formated,datedurak:datedurak,datefake:datefake});
  }catch(err){
 	 yield this.render('error-view',{user:this.req.user,err:err});
  }
@@ -182,6 +175,7 @@ fuckall.get('/beta/:name',function *(name){
 console.log('this.params.name',this.params.name);
 yield this.body={str:this.params.name};
 	});
+/***
 fuckall.get('/takePost/:dataid',function *(dataid){
 //console.log('this.params.dataid',this.params.dataid);
 var db=this.fuck;
@@ -194,5 +188,6 @@ catch(err){
 //console.log('err',err);
 yield this.body={data:err};}
 });
+***/
 
 module.exports=fuckall;

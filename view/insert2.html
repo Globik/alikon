@@ -103,7 +103,7 @@ left:-9em;}
 </div>
 <img src="/images/kuku.png" />
 <div class="user-info">
-<ul class="chli"><li><%= formated %></li><li>2 coms</li><li>23 Shares</li></ul>
+<ul class="chli"><li><%= datefake %></li><li>2 coms</li><li>23 Shares</li></ul>
 <h5><a href="/articles/<%= formated %><%= d.title %>"><%= d.postname %></a></h5>
 <p><%= d.shorti %></p>
 <ul class="tags"><li class="ta"><%= d.meta %></li></ul> 
@@ -127,8 +127,40 @@ left:-9em;}
 <a href="#x" class="overlay" id="popredaktor"></a>
 <div class="popup" id="poredactor">
 <b>Redaktor</b></br><span id="outinfo" style="background:green;"></span></br>
-<textarea id="textredactor" placeholder="for edit" style="width:300px;height:400px;"></textarea>
-</br><button onclick="savePost(this)">save</button>
+<form name="post" method="post" enctype="multipart/form-data">
+<span><b>Postname: </b></span></br>
+<input type="text" name="postname" required placeholder="postname" value="" style="width:400px;"></br>
+<b>Title: </b></br>
+<input type="text" name="title" required placeholder="title" value=""></br>
+<b>Visa - visability(0,1,2 - nur mir,all,2): </b></br>
+<input type="text" name="visa" required placeholder="visa" value=""></br>
+
+<b>shorti - ein KurzAnonce(3-4 Worte): </b></br>
+<input type="text" name="shorti" required placeholder="shorti - kurzAnonce" value=""></br>
+<b>Autor: </b></br>
+<input type="text" name="autor" required placeholder="autor" value=""></br>
+<b>Created: </b></br>
+<input type="text" name="created" required placeholder="created" value=""></br>
+<b>Redaktiert: </b></br>
+<input type="text" name="redaktiert" required placeholder="redaktiert" value=""></br>
+<b>Some caption: </b></br>
+<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;"></textarea></br>
+<b>Maincontent :</b></br>
+<textarea name="maincontent" style="width:400px;height:200px;" required placeholder="maincontent"></textarea></br>
+<b>meta - metatags: </b></br>
+<input type="text" name="meta" value="" placeholder="meta tags"></br>
+<b>category -(webdesign): </b></br>
+<input type="text" name="category" value="" required placeholder="category - WebDesign"></br>
+<b>rubrik - css3: </b></br>
+<input type="text" name="rubrik" value="" required placeholder="rubrik - css3"></br>
+<b>serial: </b></br>
+<input type="text" name="serial" value="" placeholder="serial - 1?"></br>
+<b>id: </b></br>
+<input type="text" name="id" value="" required placeholder="id"></br>
+<% if(user && user.role == "admin"){ %><input type="submit" value="save"></br><%}else{%><b>You ar not admin)</b></br><%}%>
+</form>
+<!-- <textarea id="textredactor" placeholder="for edit" style="width:300px;height:400px;"></textarea>
+</br><button onclick="savePost(this)">save</button> -->
 </div>
 
 <script>
@@ -156,13 +188,52 @@ var xhr=new XMLHttpRequest();
   if(this.status == 200){
   outinfo.innerHTML='';
   var data=JSON.parse(this.responseText);
-  textredactor.value=data.data;}}
+  //textredactor.value=data.data;
+  var d=document.forms.namedItem("post");
+  d.postname.value=data.postname;
+  d.title.value=data.title;
+  d.visa.value=data.visa;
+  d.shorti.value=data.shorti;
+  d.autor.value=data.autor; 
+  d.created.value=data.created; 
+  d.redaktiert.value=data.redaktiert;
+  d.caption.value=data.caption;
+  d.maincontent.value=data.maincontent;
+  d.meta.value=data.meta;
+  d.category.value=data.category;
+  d.rubrik.value=data.rubrik; 
+  d.serial.value=data.serial;
+  d.id.value=x;
+  }}
 xhr.onerror=function(e){alert("fuck" +e.status);
 outinfo.innerHTML=e.status +' : '+JSON.parse(this.responseText).err;}
 xhr.send();
 }
+/***
 function savePost(el){
 //alert('about saving the post '+y);
 demo.innerHTML='about saving the post '+y;
+var xhr=new XMLHttpRequest();
+    xhr.open('GET','/saveRedactPost/');
+	xhr.onload=function(e){
+  if(this.status == 200){}
+  xhr.onerror=function(e){alert("fuck" +e.status);
+  xhr.send();
 }
+***/
+
+var formface=document.forms.namedItem("post");
+formface.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("post"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/saveaneditedpost",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 demo.innerHTML=this.response;
+	 }
+	 else{demo.innerHTML=this.response;
+	 }}
+	 xhr.send(data);
+	 ev.preventDefault();},false);
 </script>

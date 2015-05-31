@@ -3,25 +3,28 @@
 textarea[name=caption] {height:200px,width:400px;}
 input[type=text]{width:400px;}
 </style>
+<div id="daper">
 <h3>Articles Manager</h3>
 <p> Create one:</p>
 <form name="post" method="post" enctype="multipart/form-data">
 <input type="text" name="postname" required placeholder="postname" value="How to install Linux on Windows7" style="width:400px;"></br>
 <!--
 <input type="text" name="title" required placeholder="title" value="" style="width:400px;"> --></br>
-<input type="text" name="shorti" required placeholder="shorti" value="Ein kurzer Anonce in drei-vier Worte">
-<input type="text" name="autor" required placeholder="autor" value="<%= user.username %>"></br></br>
-<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;"></textarea>
-<textarea name="maincontent" style="width:400px;height:200px;" required></textarea>
-<input type="text" name="meta" value="js,css">
-<input type="text" name="category" value="webdesign" required placeholder="category">
-<input type="text" name="rubrik" value="css3" required placeholder="rubrik">
+
+<input type="text" name="shorti" required placeholder="shorti" value="Ein kurzer Anonce in drei-vier Worte"></br>
+<input type="text" name="autor" required placeholder="autor" value="<%= user.username %>"></br>
+<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;"></textarea></br>
+<textarea name="maincontent" style="width:400px;height:200px;" required placeholder="maincontent"></textarea></br>
+<input type="text" name="meta" value="js,css"></br>
+<input type="text" name="category" value="webdesign" required placeholder="category"></br>
+<input type="text" name="rubrik" value="css3" required placeholder="rubrik"></br>
 <input type="text" name="serial" value="1" placeholder="serial">
-<input type="submit" value="save">
+<input type="submit" value="save"></br>
 </form>
 
 <br>
 <span id="out"></span>
+</div>
 <script>
 var formface=document.forms.namedItem("post");
 formface.addEventListener('submit',function(ev){
