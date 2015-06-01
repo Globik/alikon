@@ -90,6 +90,14 @@ http://lh:3000/app/adduser
 =============================================================================================
 =============================================================================================
 ***/
+
+secured.post('/app/upload',authed,bodyParser({multipart:true,formidable:{uploadDir:'./public/images/uploads'}}),function *(next){
+console.log(this.request.body.fields);
+console.log(this.request.body.files);
+this.body=JSON.stringify(this.request.body,null,2);
+yield next;})
+
+
 secured.get('/app/adduser',authed,function *(){
 	var db=this.fuck;
 	var allusers=wrap(db.get('users'));
@@ -370,7 +378,8 @@ agenda.start();
 //************************************************************************
 //articles manager
 secured.get('/app/articlesmanager',authed,function *(){
-	yield this.render('articles-manager',{user:this.req.user});
+var fotos=yield fs.readdir('public/images/uploads');
+	yield this.render('articles-manager',{user:this.req.user,fotos:fotos});
 });
 
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),

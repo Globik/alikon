@@ -4,6 +4,8 @@ textarea[name=caption] {height:200px,width:400px;}
 input[type=text]{width:400px;}
 </style>
 <div id="daper">
+<img src="/images/f6a1bfb335a7ca44643f7ea1343237d9"/>
+
 <h3>Articles Manager</h3>
 <p> Create one:</p>
 <form name="post" method="post" enctype="multipart/form-data">
@@ -24,6 +26,17 @@ input[type=text]{width:400px;}
 
 <br>
 <span id="out"></span>
+<ul>
+<% if(fotos) fotos.forEach(function(it,k){%>
+<li onclick=""><%= fotos[k] %></li><%})%>
+</ul>
+</br>
+<form action="upload" enctype="multipart/form-data" method="post">
+<input type="text" name="username"
+placeholder="username" value="Bob"><br>
+<input type="text" name="title" placeholder="title of file" value=""><br>
+<input type="file" name="uploads" multiple="multiple"><br>
+<input type="submit" value="upload">
 </div>
 <script>
 var formface=document.forms.namedItem("post");

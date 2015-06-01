@@ -93,7 +93,7 @@ left:-9em;}
 <p>Noch bla bla bla</p>
 </div>
 </div>
-<% if(posts) {posts.forEach(function(d){ %>
+<% if(posts) {posts.forEach(function(d,i){ %>
 <div class="fluiditems">
 <div id="redaktor">
 <ul class="adm">
@@ -103,13 +103,13 @@ left:-9em;}
 </div>
 <img src="/images/kuku.png" />
 <div class="user-info">
-<ul class="chli"><li><%= datefake %></li><li>2 coms</li><li>23 Shares</li></ul>
-<h5><a href="/articles/<%= formated %><%= d.title %>"><%= d.postname %></a></h5>
+<ul class="chli"><li><%= bube[i] %></li><li>2 coms</li><li>23 Shares</li></ul>
+<h5><a href="/articles/<%= formated[i] %><%= d.title %>"><%= d.postname %></a></h5>
 <p><%= d.shorti %></p>
 <ul class="tags"><li class="ta"><%= d.meta %></li></ul> 
 </div>
 <div class='bio'><p>Frontend cons and dev,bla bla bla</p>
-<p>Noch bla bla bla</p>
+<p>Noch bla bla bla.</p>
 </div>
 </div><%});}%>
 

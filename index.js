@@ -10,7 +10,7 @@ var serve=require('koa-static');
 var Router=require('koa-router');
 var flash=require('koa-flash');
 var koaws=require('koa-ws');
-
+var moment=require('moment');
 //var parse=require('co-body');
 //var bodyParser=require('koa-bodyparser');
 var bodyParser=require('koa-body');
@@ -125,7 +125,7 @@ module:function *(){try{
 //console.log('mdl.status :'+ mdl.status);
 return mdl.status}catch(err){console.log('err :'+err);}} ,
 now:function(){
-return new Date();},
+return moment(new Date()).format('MMM D');},
 ip: function *(){
 yield wait(100);
 return this.ip;}
@@ -133,6 +133,7 @@ return this.ip;}
 var filters={
     format: function (time){
     return time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate();
+	
  }};
 
 render(app,{
