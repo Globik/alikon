@@ -12,14 +12,19 @@
 <article class="post">
 <% if(post){%>
 <h1><%= post.postname %></h1>
-</br>
- <%= formated %> by <%= post.autor %>
 
-<p><%= post.caption %></p></br>
+<small><%= formated %> by <%= post.autor %></small>
+
+<p><i><%= post.caption %></i></p>
 <!--<img src="/images/result-blume-400.jpg"/> -->
-</br>
 
 <%- post.maincontent %>
+
+<% for(var i in post.images){%>
+<p><%= post.images[i].title %></p>
+<p><%= post.images[i].content %></p>
+<div><img src='<%= post.images[i].src %>' title='<%= post.images[i].title%>' alt='<%=post.images[i].title%>'/></div>
+<%}%>
 
 </br>
 Last time edited: <%= redformat %>
@@ -32,6 +37,9 @@ Rubrik: <%= post.rubrik %>
 </br>
 Visibility: <%= post.visa %>
 </br>Serial: <%= post.serial %>
+</br><b>Fotos: </b>
+<ul>
+
 </br><% if(user && user.role == "admin"){ %>
 <a onclick="redaktorHref(this)" data-id="<%= post._id %>" href="#popredaktor">redact</a></br><%}%>
 <span id="demo" style="background:blue;"></span>

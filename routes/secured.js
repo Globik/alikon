@@ -8,6 +8,8 @@ var rekwest=require('koa-request');//1.0.0
 // var request=require('request');
 var wrap=require('co-monk');
 var fs=require('co-fs');
+var fso=require('fs');
+var path=require('path');
 var moment=require('moment');
 //var parse=require('co-body');
 
@@ -90,12 +92,13 @@ http://lh:3000/app/adduser
 =============================================================================================
 =============================================================================================
 ***/
-
-secured.post('/app/upload',authed,bodyParser({multipart:true,formidable:{uploadDir:'./public/images/uploads'}}),function *(next){
+/***
+secured.post('/app/upload',authed,bodyParser({multipart:true,formidable:{uploadDir:'./public/images/uploads',keepExtensions:true}}),function *(next){
+var form= new formidable.IncomingForm();
 console.log(this.request.body.fields);
 console.log(this.request.body.files);
 this.body=JSON.stringify(this.request.body,null,2);
-yield next;})
+yield next;})***/
 
 
 secured.get('/app/adduser',authed,function *(){
@@ -378,22 +381,18 @@ agenda.start();
 //************************************************************************
 //articles manager
 secured.get('/app/articlesmanager',authed,function *(){
+var db=this.fuck;
+var posts=wrap(db.get('posts'));
+var doc=yield posts.find({});
 var fotos=yield fs.readdir('public/images/uploads');
-	yield this.render('articles-manager',{user:this.req.user,fotos:fotos});
+yield this.render('articles-manager',{user:this.req.user,fotos:fotos,posts:doc});
 });
 
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
 function *(next){
-	//var db=this.fuck;
-	//var users=wrap(db.get('users'));
-	/*** yield users.insert({username:this.request.body.fields.username,
-	                    email:this.request.body.fields.email,
-						password:this.request.body.fields.password,
-						role: this.request.body.fields.role});
-	//console.log('in :'+this.request.body.fields.username);***/
 	var postname=this.request.body.fields.postname;
 	var slug=slugify(postname);
-	// autor shorti caption maincontent meta category rubrik serial * created redaktiert
+	
 	var autor=this.request.body.fields.autor;
 	var shorti=this.request.body.fields.shorti;
 	var caption=this.request.body.fields.caption;
@@ -402,12 +401,24 @@ function *(next){
 	var category=this.request.body.fields.category;
 	var rubrik=this.request.body.fields.rubrik;
 	var serial=this.request.body.fields.serial;
-	var tim=new Date();
-	var date=moment(tim);
+	
+	var date=moment();
 	var forma=date.format('YYYY[/]MM[/]DD');
 	var db=this.fuck;
 	var posts=wrap(db.get('posts'));
-	yield posts.insert({postname:postname,title:slug,autor:autor,shorti:shorti,caption:caption,maincontent:maincontent,meta:meta,category:category,rubrik:rubrik,serial:serial,created:tim,redaktiert:tim,visa:1});
+yield posts.insert({
+	postname:postname,
+	title:slug,autor:autor,
+	shorti:shorti,caption:caption,
+	maincontent:maincontent,
+	meta:meta,
+	category:category,
+	rubrik:rubrik,
+	serial:serial,
+	created:new Date(),
+	redaktiert:new Date(),
+	visa:2
+	});
 this.body=JSON.stringify(this.request.body,null,2);
 this.body={"result":this.request.body,"slugified":slug,"time":forma};
 yield next;});
@@ -416,24 +427,29 @@ function slugify(text){
 	return text.toString().toLowerCase().replace(/\s+/g,'-')
 	.replace(/[^\w\-]+/g,'').replace(/\-\-+/g,'-').replace(/^-+/,'').replace(/-+$/,'');
 }
-/***
-secured.get('/getinguser,function*(){
-var db=this.fuck;
-var users_id=wrap(db.get('users'));
-	var res=yield admin.findById({username:"Bob"});
-})
-***/
 
 secured.get('/takePost/:dataid',function *(dataid){
-//console.log('this.params.dataid',this.params.dataid);
 var db=this.fuck;
 var doc=wrap(db.get('posts'));
 try{
  var post= yield doc.findById(this.params.dataid);
 //console.log('post.maincontent',post.maincontent);
-yield this.body={postname:post.postname,autor:post.autor,created:post.created, shorti:post.shorti,caption:post.caption,maincontent:post.maincontent,category:post.category,rubrik:post.rubrik,meta:post.meta,redaktiert:post.redaktiert,visa:post.visa,title:post.title,serial:post.serial};}
+yield this.body={
+	postname:post.postname,
+	autor:post.autor,
+	created:post.created, 
+	shorti:post.shorti,
+	caption:post.caption,
+	maincontent:post.maincontent,
+	category:post.category,
+	rubrik:post.rubrik,
+	meta:post.meta,
+	redaktiert:post.redaktiert,
+	visa:post.visa,
+	title:post.title,
+	serial:post.serial};
+	}
 catch(err){
-//console.log('err',err);
 yield this.body={data:err};}
 });
 
@@ -442,8 +458,8 @@ function *(next){
 var postname=this.request.body.fields.postname;
 	var slug=slugify(postname);
 // autor shorti caption maincontent meta category rubrik serial * 
-//created redaktiert
-var title=slug;/***this.request.body.fields.title;***/
+//created redaktiert visa(1 2 3)
+var title=slug;
 console.log(title);
 	var autor=this.request.body.fields.autor;
 	var shorti=this.request.body.fields.shorti;
@@ -480,6 +496,98 @@ this.body=JSON.stringify(this.request.body,null,2);
 this.body={"result":"OK - saved an edited post "+title}
 });
 
+secured.get('/deletePost/:dataid',authed,function *(dataid){
+var db=this.fuck;
+var doc=wrap(db.get('posts'));
+
+try{
+ var post= yield doc.remove({_id:this.params.dataid});
+yield this.body={"info":"ok - deleted!"}
+}
+catch(err){
+yield this.body={data:err};}
+});
+
+secured.post('/addingfotos',authed,bodyParser({multipart:true,formidable:{uploadDir:'./public/images/upload/tmp',
+keepExtensions:true}}),function *(next){
+if('POST' !=this.method)return yield next;
+var files;
+var a=this.request.body.fields.nochwas;
+console.log('A :',a);
+var b=this.request.body.files.file.name;
+var p=this.request.body.files.file.path;
+ files=this.request.body.files.file;
+console.log('isArray? :',Array.isArray(files));
+var fils=Array.isArray(files);
+console.log("PATH :",p);
+var file_ext;
+if(yield fs.exists('./public/images/upload/'+a)){
+		console.log('exist!');
+}
+else{console.log('fuck');
+yield fs.mkdir('./public/images/upload/'+a);
+}
+
+if(fils == true){
+for(var i=0;i<files.length;i++){
+console.log('PATH[i] :',files[i].path);
+p=files[i].path;
+b=files[i].name;
+console.log('PATH.EXTNAME of FILENAME :',path.extname(b));
+renameFile(a,p,b);
+}} else{
+	console.log('PATH.EXTNAME of FILENAME :',path.extname(b));
+renameFile(a,p,b);
+	 }
+function renameFile(papka,srcpath,targetname){
+	var file_ex=path.extname(targetname);
+	switch(file_ex){ case file_ex='.jpg':case file_ex='.png':
+	fso.rename(srcpath,path.join('./public/images/upload/'+papka+'/',targetname),function(err){
+	if(err)
+    fso.unlink(srcpath);
+fso.rename(p,path.join('./public/images/upload/'+papka+'/',targetname),function(err){console.log('Erst some err im ersten unlink');});
+console.log('Files downloaded finally');});
+	break;
+	default:console.log('DEFAULT');
+	fso.unlink(srcpath,function(err){console.log('Some err im zweiten unlink');});
+	}}
+yield this.body={inf:"OK",fields:a,files:b}
+yield next;
+});
+
+
+secured.post('/picstopost',authed,function *(){
+var db=this.fuck;
+var bu=this.request.body;
+
+console.log('is this json? ',this.is('json'));
+console.log('images data ',bu.images);
+console.log('Identificator: ',bu.bi);
+var doc=wrap(db.get('posts'));
+try{
+//var post=yield doc.updateById('557938a9c16e65600eb9145a',{$set:{images:bu}});
+yield this.body={info:"OK",body:bu}
+}
+catch(err){yield this.body={info:err}
+}
+});
+secured.post('/getdirectory',authed,function *(){
+	var directory=this.request.body.directory;
+	console.log('DIRECTORY :',directory);
+	try{
+	var folders=yield fs.readdir('public/images/upload');
+	yield this.body={info:"OK",directory:directory,folders:folders}
+	}catch(err){yield this.body={info:err};}
+})
+
+secured.post('/showfolder',authed,function *(){
+	var foldername=this.request.body.foldername;
+	console.log('FolderName :',foldername);
+	try{
+	var fotkis=yield fs.readdir('public/images/upload/'+foldername);
+	yield this.body={info:"OK",foldername:foldername,fotkis:fotkis}
+	}catch(err){yield this.body={info:err};}
+})
 //iojs index
 function *authed(next){
 if(this.req.isAuthenticated() && this.req.user.role == "admin"){

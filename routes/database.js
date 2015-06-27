@@ -3,6 +3,7 @@ var Router=require('koa-router');
 var bodyParser=require('koa-body');
 var wrap=require('co-monk');
 var moment=require('moment');//2.10.0
+var fs=require('co-fs');
 // var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
 
 var fuckall=new Router();
@@ -108,7 +109,10 @@ fuckall.get('/articles',function *(){
 var db=this.fuck;
 this.session.dorthin=this.path;
 var doc=wrap(db.get('posts'));
+//console.log('doc.count',doc.count({}));
 var posts=yield doc.find({});
+console.log('count',posts.length);
+
 var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
 var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[/]MM[/]DD[/]');});
 
@@ -150,7 +154,12 @@ function(err,json){
 if(err){return console.log(err);}
 console.log(json);});
 ***/
-	yield this.body={str:"get alfa: OK xhr"};});
+var b=yield fs.readFile('view/username.html','utf-8');
+//this.type="text/html";
+
+ yield this.body={str:"get alfa: OK xhr",data:b};
+//yield this.render('files',{user:this.req.user,str:"str",data:"34"});
+});
 	
 fuckall.get('/beta/:name',function *(name){
 console.log('this.params.name',this.params.name);

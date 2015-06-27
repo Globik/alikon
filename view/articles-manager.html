@@ -2,46 +2,144 @@
 <style>
 textarea[name=caption] {height:200px,width:400px;}
 input[type=text]{width:400px;}
+.img-li{background:lightblue;}
+.img-li > li:nth-child(4n+3){background:#F26663;}
+.img-li > li:nth-child(4n+1){background:lightgreen;}
 </style>
 <div id="daper">
-<img src="/images/f6a1bfb335a7ca44643f7ea1343237d9"/>
 
+<% if(posts){%><b>Total articles : </b><%= posts.length %><%}%>
 <h3>Articles Manager</h3>
-<p> Create one:</p>
-<form name="post" method="post" enctype="multipart/form-data">
-<input type="text" name="postname" required placeholder="postname" value="How to install Linux on Windows7" style="width:400px;"></br>
-<!--
-<input type="text" name="title" required placeholder="title" value="" style="width:400px;"> --></br>
+<% if(posts){posts.forEach(function(p){%>
 
+<span data-id="<%= p._id %>" onclick="insertDataId(this);" ><%= p.postname %></span></br>
+<%})}%>
+<p> Create one:</p>
+<form name="postCreating" method="post" enctype="multipart/form-data">
+<label><b>Name of post:</b></label></br>
+<input type="text" name="postname" required placeholder="postname" value="How to install Linux on Windows7" 
+style="width:400px;"></br>
+<!--
+<input type="text" name="title" required placeholder="title" value="" style="width:400px;"> -->
+<label><b>Short info for cover:</b></label></br>
 <input type="text" name="shorti" required placeholder="shorti" value="Ein kurzer Anonce in drei-vier Worte"></br>
+<label><b>Autor:</b></label></br>
 <input type="text" name="autor" required placeholder="autor" value="<%= user.username %>"></br>
-<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;"></textarea></br>
-<textarea name="maincontent" style="width:400px;height:200px;" required placeholder="maincontent"></textarea></br>
+<label><b>Long info at begining of article:</b></label></br>
+<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;">captions</textarea></br>
+<label><b>Main content:</b></label></br>
+<textarea name="maincontent" style="width:400px;height:200px;" required placeholder="maincontent" 
+>maincontent</textarea></br>
+<label><b>Tags:</b></label></br>
 <input type="text" name="meta" value="js,css"></br>
+<label><b>Category:</b></label></br>
 <input type="text" name="category" value="webdesign" required placeholder="category"></br>
+<label><b>Rubrik:</b></label></br>
 <input type="text" name="rubrik" value="css3" required placeholder="rubrik"></br>
-<input type="text" name="serial" value="1" placeholder="serial">
+<label><b>Serial:</b></label></br>
+<input type="text" name="serial" value="1" placeholder="serial"></br>
 <input type="submit" value="save"></br>
 </form>
 
+
+
 <br>
 <span id="out"></span>
-<ul>
+<h2>Fotos</h2>
+<button onclick="getFolders()">Get Folders</button>
+<div>
+<ul id="directories" style="float:left;">
+</ul>
+<ul id="fotkis" style="float:right;">
+</ul>
+<div style="clear:both;"></div>
+</div>
+
+<script>
+var directories=document.getElementById('directories');
+var fotkis=document.getElementById('fotkis');
+function getFolders(){
+var data={};
+data.directory="getsomefotos";
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/getdirectory');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var docs=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 
+	 for(var i=0;i<docs.folders.length;i++){
+	 if(!directories.childNodes[i+1]){
+
+	 var li=document.createElement('li');
+	 var doc=docs.folders[i];
+	 li.innerHTML='<button onclick="showFots(this)" value='+doc+'>'+doc+'</button>';
+	 directories.appendChild(li);}}
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(JSON.stringify(data));
+}
+function showFots(el){
+alert('now show u some folders in this derictory '+el.value);
+var data={};
+data.foldername=el.value;
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/showfolder');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var docs=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 for(var i=0;i < docs.fotkis.length;i++){
+	 if(!fotkis.childNodes[i+1]){
+
+	 var doc=docs.fotkis[i];
+	 var li=document.createElement('li');
+	 var fold=el.value;
+	 li.innerHTML='<img src=/images/upload/'+fold+'/'+doc+' style="width:200px;height:auto;"/>';
+	 fotkis.appendChild(li);
+	 }}
+	 
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(JSON.stringify(data));
+}
+</script>
+<ul class="img-li">
 <% if(fotos) fotos.forEach(function(it,k){%>
-<li onclick=""><%= fotos[k] %></li><%})%>
+<li onclick="" class=""><%= fotos[k] %></br>
+</br><span class="infotag"></span></br>
+<textarea class="img-text" value="">Description of a Foto <%=[k+1]%></textarea>
+</br><input class="img-title" type="text" value="title <%=[k+1]%>"/>
+</br><input class="img-src" type="text" value="/images/uploads/<%=fotos[k]%>"/>
+<button data-src="/images/uploads/<%= fotos[k] %>" onclick="changeSrc(this)">change src</button>
+</li><%})%><button onclick="addpics()">add all to post</button>
 </ul>
 </br>
-<form action="upload" enctype="multipart/form-data" method="post">
-<input type="text" name="username"
-placeholder="username" value="Bob"><br>
-<input type="text" name="title" placeholder="title of file" value=""><br>
-<input type="file" name="uploads" multiple="multiple"><br>
-<input type="submit" value="upload">
-</div>
+
+</br>
+<form action="/addingfotos" method="post"  name="fotki" enctype="multipart/form-data">
+<input type="text" name="username" value="roni"></br>
+<input type="text" name="username" value="popikov"></br> 
+<input type="text" name="nochwas" value="kuku"></br>  
+<input type="file" name="file" multiple onchange='thumb(this.files)' multiple="multiple" accept="*/*">
+<input type="submit" value="Davaj">
+</form>
+</br>
+<progress min="0" max="100" value="0">0% complete</progress>
+<span id=out2></span>
 <script>
-var formface=document.forms.namedItem("post");
+var dataId;
+var imgText=document.querySelectorAll('.img-text');
+var imgTitle=document.querySelectorAll('.img-title');
+var imgSrc=document.querySelectorAll('.img-src');
+	// alert(cals.innerHTML);
+var formface=document.forms.namedItem("postCreating");
 formface.addEventListener('submit',function(ev){
-var data=new FormData(document.forms.namedItem("post"));
+var data=new FormData(document.forms.namedItem("postCreating"));
 var xhr=new XMLHttpRequest();
     xhr.open("post","/createpost",true);
 	xhr.onload=function(e){
@@ -51,6 +149,97 @@ var xhr=new XMLHttpRequest();
 	 }
 	 else{out.innerHTML=this.response;
 	 }}
+	 xhr.send(data);
+	 ev.preventDefault();},false);
+	 
+	function addpics(){
+	var data={};
+	data.images=[];
+	data.bi=dataId;//"345";
+	alert(dataId);
+	for(var k=0;k<imgText.length;k++){
+	//data.images=imgText[k].value;
+	var s;
+	data.images.push({title:imgTitle[k].value,content:imgText[k].value,src:imgSrc[k].value});
+	//alert(imgText[k].value);
+	}
+	alert(JSON.stringify(data.images));
+	
+	var xhr=new XMLHttpRequest();
+	xhr.open('post','/picstopost');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 //data._id="123456";
+	 //xhr.send(JSON.stringify(data.images));
+	 xhr.send(JSON.stringify(data));
+	 }
+	 
+	function changeSrc(ev){
+	if(typeof dataId !== 'undefined'){
+	alert(dataId+ 'src id '+ev.previousElementSibling.value+' : '+ev.getAttribute('data-src'));
+	} else{alert('press the span of data src!');}
+	var data={};
+	data.id=dataId;
+	/***
+	var xhr=new XMLHttpRequest();
+	xhr.open('post','/changesrc');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(JSON.stringify(data));
+	 ***/
+	}
+	function insertDataId(ev){
+	dataId=ev.getAttribute('data-id');
+	alert(ev.getAttribute('data-id'));
+	var infotag=document.querySelectorAll('.infotag')
+	for(var i=0;i<infotag.length;i++){
+	infotag[i].innerHTML='<small>'+ev.innerHTML+'</small>';}
+	}
+	
+	var formface=document.forms.namedItem("fotki");
+formface.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("fotki"));
+//data.append("number","two");
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/addingfotos",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var sata=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 out2.innerHTML=sata.filenames.files[0].src;
+	 var img=document.createElement('img');
+	 img.src='/kuku/'+sata.filenames.files[0].name;
+	 img.style.width="300px";
+	 img.style.height="auto";
+	 document.body.appendChild(img);
+	 if(sata.inf=="OK"){formface.file.value='';}
+	 }
+	 else{out.innerHTML=this.response+this.status;
+	 }}
+	 xhr.onerror=function(e){//alert(e.status)
+	 }
+	 data.append("number","two");
+	 var progressbar=document.querySelector('progress');
+	 
+	 xhr.upload.onprogress=function(e){
+	 if(e.lengthComputable){
+	 progressbar.value=(e.loaded/e.total)*100;
+	 
+	 }
+	 }
+	 //xhr.onabort=function(e){alert(e.status)}
 	 xhr.send(data);
 	 ev.preventDefault();},false);
 </script>

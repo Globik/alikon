@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!--
 <style>
 .animation{
 width: 128px;
@@ -39,11 +40,12 @@ animation:sprite-animation 2s steps(100) infinite alternate;
 100%{background-position:-12800px 0;}
 }
 </style>
+-->
 <head>
 <body>
 <div id="warning" class="animation" onclick="fass()" ontouchstart="moveit(evt)">
 <b>And web components</b>
-
+<%= user.username %>
 <script>
 function fass()
 {

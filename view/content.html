@@ -76,6 +76,7 @@ c.stroke();
 img.src="/images/w4.png";
 
 </script>
+</br><button onclick="getusername()">get username doc</button>
 </div>
 <script>
   function vax(meth,url,data,onLoad,onError){
@@ -104,7 +105,7 @@ function onError(e){alert('fuck');}
     function onLoad(e){
   var antwort=JSON.parse(this.responseText);
   //out.innerHTML=this.response;
-  out.innerHTML=antwort.str;
+ out.innerHTML=antwort.str+' :'+ antwort.data ;
   }
   }
   
@@ -241,4 +242,16 @@ tout.innerHTML='flex not supported';}
 var ismedia=!!(window && window.matchMedia);
 if(window.matchMedia){tout3.innerHTML='media queries OK';}
 else{tout3.innerHTML='media queries NOT supported';}
+
+function getusername(){
+var xhr=new XMLHttpRequest();
+xhr.open("GET","/insert.html",true);
+xhr.setRequestHeader("Content-Type","text/html"); 
+xhr.onload=function(e){
+if(this.status == 200){
+out.innerHTML=this.response;}}
+xhr.onerror=function(e){alert("fuck");}
+xhr.send();
+  }
+
 </script>

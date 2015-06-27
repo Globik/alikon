@@ -24,7 +24,7 @@ var configDB=require('./config/database.js');
 
 var monk=require('monk');
 var wrap=require('co-monk');
- // var db=module.exports=monk(configDB.url,{w:1});
+  //var db=module.exports=monk('mongodb://127.0.0.1:27017/todo');
   
   //poe
   var db=module.exports=monk(configDB.url || configDB.localurl);
@@ -33,7 +33,7 @@ var wrap=require('co-monk');
   
   var agenda=new Agenda({db:{address:configDB.url || configDB.localurl}});
   //var agenda=new Agenda({db:{address:process.env.MONGOHQ_URL_TEST}});
-  
+  //in index.js::bson=require('../browser_build/bson');c://bson/ext
 
 /***	
 var status;
@@ -147,7 +147,7 @@ filters:filters});
 
 
 
-
+//mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database
 app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];

@@ -93,13 +93,13 @@ left:-9em;}
 <p>Noch bla bla bla</p>
 </div>
 </div>
-<% if(posts) {posts.forEach(function(d,i){ %>
+<% if(posts) {posts.forEach(function (d,i){ %>
 <div class="fluiditems">
 <div id="redaktor">
 <ul class="adm">
 <li>X</li><li><a onclick="redaktorHref(this)" data-id="<%= d._id %>" href="#popredaktor">redact</a></li>
 <li data-id="<%= d._id %>" onclick="removePost(this);">remove</li>
-<li>visibility</li></ul>
+<li>visibility <%= d.visa %></li></ul>
 </div>
 <img src="/images/kuku.png" />
 <div class="user-info">
@@ -116,7 +116,18 @@ left:-9em;}
 <div class="fluiditems">
 <img src='/images/kuku.png' width="100%" height="100%"/>
 </div>
-<div class="fluiditems">8</div>
+<div class="fluiditems">8
+<span id='kuk'></span>
+<script>
+function* foo(){
+y=yield(2);
+yield y*y;
+}
+var it=foo();
+kuk.innerHTML=it.next(1).value +it.next(2).value;
+
+</script>
+</div>
 <div class="fluiditems">9</div>
 <div class="fluiditems">10</div>
 
@@ -171,6 +182,12 @@ var x;
 if(confirm("Delete this post? Press a button!")==true){
 x="About deleting the post "+el.getAttribute('data-id');
 //alert(el.getAttribute('data-id'));
+var xhr=new XMLHttpRequest();
+    xhr.open('GET','/deletePost/'+el.getAttribute('data-id'));
+	xhr.onload=function(e){
+  if(this.status == 200){x=this.responseText;alert(this.responseText);}}
+  xhr.onerror=function(e){alert("fuck" +e.status);}
+  xhr.send();
 }
 else{x="You pressed Cancel!";}
 demo.innerHTML=x;
