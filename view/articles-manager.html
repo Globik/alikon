@@ -12,7 +12,7 @@ input[type=text]{width:400px;}
 <h3>Articles Manager</h3>
 <% if(posts){posts.forEach(function(p){%>
 
-<span data-id="<%= p._id %>" onclick="insertDataId(this);" ><%= p.postname %></span></br>
+<span data-id="<%= p._id %>" onclick="insertDataIda(this);" ><%= p.postname %></span></br>
 <%})}%>
 <p> Create one:</p>
 <form name="postCreating" method="post" enctype="multipart/form-data">
@@ -40,22 +40,33 @@ style="width:400px;"></br>
 <input type="text" name="serial" value="1" placeholder="serial"></br>
 <input type="submit" value="save"></br>
 </form>
-
-
-
 <br>
+<style>
+
+#fotkis{
+display:flex;
+flex-flow: row wrap;
+justify-content: space-around;
+width:100%;
+background:lightblue;
+}
+figure{border:1px solid green;width:250px;}
+img{width:100%;height:auto;}
+</style>
 <span id="out"></span>
 <h2>Fotos</h2>
 <button onclick="getFolders()">Get Folders</button>
 <div>
-<ul id="directories" style="float:left;">
+<ul id="directories" style="list-style:none;display:inline;">
 </ul>
-<ul id="fotkis" style="float:right;">
-</ul>
-<div style="clear:both;"></div>
+</br><button onclick="addpicsar()">send pics to db</button>
+<div id="fotkis">
+</div>
+<div style=""></div>
 </div>
 
 <script>
+var datId;
 var directories=document.getElementById('directories');
 var fotkis=document.getElementById('fotkis');
 function getFolders(){
@@ -96,10 +107,14 @@ var xhr=new XMLHttpRequest();
 	 if(!fotkis.childNodes[i+1]){
 
 	 var doc=docs.fotkis[i];
-	 var li=document.createElement('li');
+	 var div=document.createElement('div');
 	 var fold=el.value;
-	 li.innerHTML='<img src=/images/upload/'+fold+'/'+doc+' style="width:200px;height:auto;"/>';
-	 fotkis.appendChild(li);
+	 div.innerHTML='<figure><caption>'+[i+1]+'<p class="capitan"></p></caption><img src=/images/upload/'+fold+'/'+doc+'><figcaption>'+
+	 '<p class="p-descr" contenteditable=true>Description</p>'+
+	 '<p class="p-title" contenteditable=true>Title</p>'+
+	 '<p class="p-src" contenteditable=true>/images/upload/'+fold+'/'+doc+'</p>'+
+	 '</figcaption></figure>';
+	 fotkis.appendChild(div);
 	 }}
 	 
 	 }
@@ -107,6 +122,47 @@ var xhr=new XMLHttpRequest();
 	 }}
 	 xhr.send(JSON.stringify(data));
 }
+
+function addpicsar(){
+var pTitle=document.querySelectorAll('.p-title');
+var pSrc=document.querySelectorAll('.p-src');
+var pDescr=document.querySelectorAll('.p-descr');
+	var data={};
+	data.images=[];
+	data.bi=dataId;//"345";
+	alert(dataId);
+	for(var k=0;k<pTitle.length;k++){
+	//data.images=imgText[k].value;
+	
+	data.images.push({title:pTitle[k].innerHTML,content:pDescr[k].innerHTML,src:pSrc[k].innerHTML});
+	//alert(imgText[k].value);
+	}
+	alert(JSON.stringify(data));
+	
+	/***var xhr=new XMLHttpRequest();
+	xhr.open('post','/picstopost');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 //data._id="123456";
+	 //xhr.send(JSON.stringify(data.images));
+	 xhr.send(JSON.stringify(data));***/
+	 }
+	 
+
+
+function insertDataIda(ev){
+	dataId=ev.getAttribute('data-id');
+	alert(ev.getAttribute('data-id'));
+	var infotag=document.querySelectorAll('.capitan')
+	for(var i=0;i<infotag.length;i++){
+	infotag[i].innerHTML='<small>'+ev.innerHTML+'</small>';}
+	}
 </script>
 <ul class="img-li">
 <% if(fotos) fotos.forEach(function(it,k){%>

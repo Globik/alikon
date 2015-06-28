@@ -1,2 +1,5 @@
 node_modules
+public/images/upload/**
+!public/images/upload/**/
+!.gitkeep
 
