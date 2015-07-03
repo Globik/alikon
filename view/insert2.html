@@ -101,14 +101,19 @@ left:-9em;}
 <li data-id="<%= d._id %>" onclick="removePost(this);">remove</li>
 <li>visibility <%= d.visa %></li></ul>
 </div>
-<img src="/images/kuku.png" />
+<!--<img src="/images/kuku.png" /> -->
+<% if(d.images){%>
+<div class="foto-cont" style="width:100%;height:19em;overflow:hidden;">
+<img src="<%= d.images.images[0].src %>"/></div><%}else{%>
+<img src="/images/kuku.png" /><%}%>
 <div class="user-info">
 <ul class="chli"><li><%= bube[i] %></li><li>2 coms</li><li>23 Shares</li></ul>
 <h5><a href="/articles/<%= formated[i] %><%= d.title %>"><%= d.postname %></a></h5>
 <p><%= d.shorti %></p>
 <ul class="tags"><li class="ta"><%= d.meta %></li></ul> 
 </div>
-<div class='bio'><p>Frontend cons and dev,bla bla bla</p>
+<div class='bio'><p>Photos: <% if(d.images !==undefined){%>
+<%= d.images.images.length %> <%}%></p>
 <p>Noch bla bla bla.</p>
 </div>
 </div><%});}%>

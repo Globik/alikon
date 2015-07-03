@@ -565,7 +565,7 @@ console.log('images data ',bu.images);
 console.log('Identificator: ',bu.bi);
 var doc=wrap(db.get('posts'));
 try{
-//var post=yield doc.updateById('557938a9c16e65600eb9145a',{$set:{images:bu}});
+var post=yield doc.updateById(bu.bi,{$set:{images:bu}});
 yield this.body={info:"OK",body:bu}
 }
 catch(err){yield this.body={info:err}

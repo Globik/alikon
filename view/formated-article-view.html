@@ -19,12 +19,13 @@
 <!--<img src="/images/result-blume-400.jpg"/> -->
 
 <%- post.maincontent %>
+<% if(post.images !==undefined){%>
+<% for(var i in post.images.images){%>
+<p><%= post.images.images[i].title %></p>
+<p><%= post.images.images[i].content %></p>
+<div><img src='<%= post.images.images[i].src %>' title='<%= post.images.images[i].title%>' alt='<%=post.images.images[i].title%>'/></div>
 
-<% for(var i in post.images){%>
-<p><%= post.images[i].title %></p>
-<p><%= post.images[i].content %></p>
-<div><img src='<%= post.images[i].src %>' title='<%= post.images[i].title%>' alt='<%=post.images[i].title%>'/></div>
-<%}%>
+<%}}%>
 
 </br>
 Last time edited: <%= redformat %>
