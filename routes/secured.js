@@ -387,11 +387,11 @@ var doc=yield posts.find({});
 var fotos=yield fs.readdir('public/images/uploads');
 yield this.render('articles-manager',{user:this.req.user,fotos:fotos,posts:doc});
 });
-
+var sluger=require('limax');
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
 function *(next){
 	var postname=this.request.body.fields.postname;
-	var slug=slugify(postname);
+	var slug=sluger(postname);//slugify(postname);
 	
 	var autor=this.request.body.fields.autor;
 	var shorti=this.request.body.fields.shorti;
@@ -404,6 +404,7 @@ function *(next){
 	
 	var date=moment();
 	var forma=date.format('YYYY[/]MM[/]DD');
+	//format('YYYY[/]MM[/]DD[/]')
 	var db=this.fuck;
 	var posts=wrap(db.get('posts'));
 yield posts.insert({
@@ -416,6 +417,7 @@ yield posts.insert({
 	rubrik:rubrik,
 	serial:serial,
 	created:new Date(),
+	dataformat:forma,
 	redaktiert:new Date(),
 	visa:2
 	});
@@ -456,7 +458,7 @@ yield this.body={data:err};}
 secured.post('/saveaneditedpost',bodyParser({multipart:true,formidable:{}}),
 function *(next){
 var postname=this.request.body.fields.postname;
-	var slug=slugify(postname);
+	var slug=sluger(postname);//slugify(postname);
 // autor shorti caption maincontent meta category rubrik serial * 
 //created redaktiert visa(1 2 3)
 var title=slug;
@@ -565,7 +567,7 @@ console.log('images data ',bu.images);
 console.log('Identificator: ',bu.bi);
 var doc=wrap(db.get('posts'));
 try{
-var post=yield doc.updateById(bu.bi,{$set:{images:bu}});
+var post=yield doc.updateById(bu.bi,{$set:{images:bu.images}});
 yield this.body={info:"OK",body:bu}
 }
 catch(err){yield this.body={info:err}

@@ -2,80 +2,7 @@
 <div id="bu">
 <h4 class="post-titl">Didn't you know? <span id="demo" style="color:blue;"></span></h4></div>
 
-<style>/*
-#daper{
-width:92%;
-margin:1em auto;
--webkit-box-sizing:border-box;
-box-sizing:border-box;
-}*/
-.user{
-position:relative;
-width:100%;height:240px;
-border:5px solid #000;
-box-sizing:border-box;
-}
-.user-info{
-background:green;
-width:100%;
-min-height:28%;
 
-height:41%;
-position:absolute;
-bottom:0;
-left:0;
-overflow:hidden;
-z-index:1;
-padding:0.1em;
-margin:0;
-box-sizing:border-box;
-}
-.user-info h5{font-size:/*2rem*/0.9em;line-height:1.2;margin-top:0em;padding:1px;}
-.bio{
-position:absolute;
-width:100%;
-left:0;
-bottom:0;
-height:41%;
-z-index:0;
-overflow:hidden;
-min-height:41%;
-background:rgba(183,191,185,0.95);
-transition:all 0.7s linear;
--webkit-transition:all 0.7s linear;
-}
-.user-info p{color:white;padding:0px;
-font-size:/*1.2rem*/0.6em;
-margin-left:0px;
-font-family:sans-serif;
-line-height:/*1.5rem*/0.8em;}
-.user-info:hover + .bio,.user-info:focus .bio{
-min-height:50%;
-}
-.fluiditems img{width:100%;height:auto;margin:auto 0;}
-.user-info .tags{position:absolute;bottom:-0.29em;left:0;margin:0;list-style:none;}
-.user-info .tags .ta{display:inline-block;background:pink;margin-left:0em;padding:0.5em;font-size:0.6em;
-line-height:0.5em;color:red;
-}
-.user-info .chli{position:relative;margin:0em;padding:0;line-height:/*1.6rem*/;top:-0.5em;left:0;}
-.user-info .chli li{display:inline-block;background:lightgreen;padding-left:1em;padding-right:1em;
-font-size:0.6em;line-height:1.5em;}
-
-.fluiditems #redaktor{display:block;
-position:absolute;width:2em;height:2em;background:silver;right:0;top:0;
-}
-.adm{display:none;
-position:relative;
-list-style:none;margin-top:2em;background:brown;width:10em;top:0em;
-left:-9em;}
-.fluiditems #redaktor:hover .adm{display:block;}
-@media screen and (max-width: 650px) {
-.ser-info h{font-size:/*1.2rem*/1em;}
-.user-info p{font-size:0.6em;}
-.user-info .tags .ta{}
-}
-
-</style>
 <div id="daper">
 <div class="fluiditems">
 <div id="redaktor">
@@ -93,33 +20,12 @@ left:-9em;}
 <p>Noch bla bla bla</p>
 </div>
 </div>
-<% if(posts) {posts.forEach(function (d,i){ %>
-<div class="fluiditems">
-<div id="redaktor">
-<ul class="adm">
-<li>X</li><li><a onclick="redaktorHref(this)" data-id="<%= d._id %>" href="#popredaktor">redact</a></li>
-<li data-id="<%= d._id %>" onclick="removePost(this);">remove</li>
-<li>visibility <%= d.visa %></li></ul>
-</div>
-<!--<img src="/images/kuku.png" /> -->
-<% if(d.images){%>
-<div class="foto-cont" style="width:100%;height:19em;overflow:hidden;">
-<img src="<%= d.images.images[0].src %>"/></div><%}else{%>
-<img src="/images/kuku.png" /><%}%>
-<div class="user-info">
-<ul class="chli"><li><%= bube[i] %></li><li>2 coms</li><li>23 Shares</li></ul>
-<h5><a href="/articles/<%= formated[i] %><%= d.title %>"><%= d.postname %></a></h5>
-<p><%= d.shorti %></p>
-<ul class="tags"><li class="ta"><%= d.meta %></li></ul> 
-</div>
-<div class='bio'><p>Photos: <% if(d.images !==undefined){%>
-<%= d.images.images.length %> <%}%></p>
-<p>Noch bla bla bla.</p>
-</div>
-</div><%});}%>
+
+<%- include includes/paginationarticlesview.html %>
 
 <div class="fluiditems">
-<img src='/images/kuku.png' width="100%" height="100%"/>
+<div class="foto-cont">
+<img src='/images/kuku.png' width="100%" height="100%"/></div>
 </div>
 <div class="fluiditems">8
 <span id='kuk'></span>
@@ -129,133 +35,13 @@ y=yield(2);
 yield y*y;
 }
 var it=foo();
-kuk.innerHTML=it.next(1).value +it.next(2).value;
-
-</script>
+kuk.innerHTML=it.next(1).value +it.next(2).value;</script>
 </div>
 <div class="fluiditems">9</div>
-<div class="fluiditems">10</div>
+<div class="fluiditems">10</div> 
 
+<%- include includes/pagination.html %>
 
-<!-- <div style="clear:both;line-height:0.5em;min-height:80px;">, </div> -->
-</div>
+</div> 
 
-<a href="#x" class="overlay" id="popredaktor"></a>
-<div class="popup" id="poredactor">
-<b>Redaktor</b></br><span id="outinfo" style="background:green;"></span></br>
-<form name="post" method="post" enctype="multipart/form-data">
-<span><b>Postname: </b></span></br>
-<input type="text" name="postname" required placeholder="postname" value="" style="width:400px;"></br>
-<b>Title: </b></br>
-<input type="text" name="title" required placeholder="title" value=""></br>
-<b>Visa - visability(0,1,2 - nur mir,all,2): </b></br>
-<input type="text" name="visa" required placeholder="visa" value=""></br>
-
-<b>shorti - ein KurzAnonce(3-4 Worte): </b></br>
-<input type="text" name="shorti" required placeholder="shorti - kurzAnonce" value=""></br>
-<b>Autor: </b></br>
-<input type="text" name="autor" required placeholder="autor" value=""></br>
-<b>Created: </b></br>
-<input type="text" name="created" required placeholder="created" value=""></br>
-<b>Redaktiert: </b></br>
-<input type="text" name="redaktiert" required placeholder="redaktiert" value=""></br>
-<b>Some caption: </b></br>
-<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;"></textarea></br>
-<b>Maincontent :</b></br>
-<textarea name="maincontent" style="width:400px;height:200px;" required placeholder="maincontent"></textarea></br>
-<b>meta - metatags: </b></br>
-<input type="text" name="meta" value="" placeholder="meta tags"></br>
-<b>category -(webdesign): </b></br>
-<input type="text" name="category" value="" required placeholder="category - WebDesign"></br>
-<b>rubrik - css3: </b></br>
-<input type="text" name="rubrik" value="" required placeholder="rubrik - css3"></br>
-<b>serial: </b></br>
-<input type="text" name="serial" value="" placeholder="serial - 1?"></br>
-<b>id: </b></br>
-<input type="text" name="id" value="" required placeholder="id"></br>
-<% if(user && user.role == "admin"){ %><input type="submit" value="save"></br><%}else{%><b>You ar not admin)</b></br><%}%>
-</form>
-<!-- <textarea id="textredactor" placeholder="for edit" style="width:300px;height:400px;"></textarea>
-</br><button onclick="savePost(this)">save</button> -->
-</div>
-
-<script>
-var y;
-function removePost(el){
-var x;
-
-if(confirm("Delete this post? Press a button!")==true){
-x="About deleting the post "+el.getAttribute('data-id');
-//alert(el.getAttribute('data-id'));
-var xhr=new XMLHttpRequest();
-    xhr.open('GET','/deletePost/'+el.getAttribute('data-id'));
-	xhr.onload=function(e){
-  if(this.status == 200){x=this.responseText;alert(this.responseText);}}
-  xhr.onerror=function(e){alert("fuck" +e.status);}
-  xhr.send();
-}
-else{x="You pressed Cancel!";}
-demo.innerHTML=x;
-}
-outinfo.innerHTML='';
-function redaktorHref(el){
-//alert('ok');
-//alert(el.getAttribute('data-id'));
-outinfo.innerHTML='connecting database...';
-var x=el.getAttribute('data-id');
-y=x;
-var xhr=new XMLHttpRequest();
-    xhr.open('GET','/takePost/'+x);
-	xhr.onload=function(e){
-  if(this.status == 200){
-  outinfo.innerHTML='';
-  var data=JSON.parse(this.responseText);
-  //textredactor.value=data.data;
-  var d=document.forms.namedItem("post");
-  d.postname.value=data.postname;
-  d.title.value=data.title;
-  d.visa.value=data.visa;
-  d.shorti.value=data.shorti;
-  d.autor.value=data.autor; 
-  d.created.value=data.created; 
-  d.redaktiert.value=data.redaktiert;
-  d.caption.value=data.caption;
-  d.maincontent.value=data.maincontent;
-  d.meta.value=data.meta;
-  d.category.value=data.category;
-  d.rubrik.value=data.rubrik; 
-  d.serial.value=data.serial;
-  d.id.value=x;
-  }}
-xhr.onerror=function(e){alert("fuck" +e.status);
-outinfo.innerHTML=e.status +' : '+JSON.parse(this.responseText).err;}
-xhr.send();
-}
-/***
-function savePost(el){
-//alert('about saving the post '+y);
-demo.innerHTML='about saving the post '+y;
-var xhr=new XMLHttpRequest();
-    xhr.open('GET','/saveRedactPost/');
-	xhr.onload=function(e){
-  if(this.status == 200){}
-  xhr.onerror=function(e){alert("fuck" +e.status);
-  xhr.send();
-}
-***/
-
-var formface=document.forms.namedItem("post");
-formface.addEventListener('submit',function(ev){
-var data=new FormData(document.forms.namedItem("post"));
-var xhr=new XMLHttpRequest();
-    xhr.open("post","/saveaneditedpost",true);
-	xhr.onload=function(e){
-	 if(xhr.status==200){
-	 //var data=JSON.parse(this.response);
-	 demo.innerHTML=this.response;
-	 }
-	 else{demo.innerHTML=this.response;
-	 }}
-	 xhr.send(data);
-	 ev.preventDefault();},false);
-</script>
+<%- include includes/adminarticles.html %>

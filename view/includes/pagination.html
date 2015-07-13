@@ -1,0 +1,56 @@
+﻿<style>
+
+.num,.disable,.pg-arrow,.active{display:inline-block;background:lightgreen;color:rgb(0,120,180);position:relative;width:2em;
+text-align:center;margin:2px 2px;padding:2px;
+}
+
+.active{background:rgb(0,164,120);color:white;}
+.disable{background:red;display:none;}
+.pg-arrow{background:lightgreen;}
+</style>
+
+<!-- paginate -->
+<% if(pages_count >1){%>
+<div class="pagin">
+<!-- preview page -->
+<% if(current_page === 0){%>
+<div class="disable"><span>stop</span></div>
+<%}else{%>
+<a href="/articles/<%= (current_page - 1 === 0 ? '' : (current_page - 1)) %>"><div class="pg-arrow">&laquo;</div></a>
+<%}%>
+<!-- end of preview page -->
+
+<% var w=5; if(current_page > w){%>
+<a href="/articles/0"><div class="num">0</div></a>
+<%}%>
+<% var i=0;var step=2;
+if(current_page > w){
+i=+current_page-step;}%>
+<% if(i !==0){%>
+<div class="num">...</div>
+<%}%>
+<% for(i;i<pages_count;i++){%>
+<% if(current_page==i){%>
+<div class="active"><%= i %></div>
+<%}else{%>
+<a href="/articles/<%= i %>"><div class="num"><%= i %></div></a>
+<%}%>
+
+<% if (i==(+current_page+step) && current_page < ((pages_count)-1)- step-1){%>
+<div class="num"><%= current_page %>/<%= i %></div>
+<% break;}%>
+<%}%>
+
+
+
+<% if(i < (pages_count)-1) {%>
+<a href="/articles/<%= (pages_count)-1 %>"><div class="num"><%= (pages_count)-1 %> </div></a>
+<%}%>
+
+<!-- next page -->
+<% if(current_page === (pages_count)-1){%>
+<div class="disable"><span>stop</span></div>
+<%}else{%>
+<a href="/articles/<%= (current_page+1) %>" ><div class="pg-arrow">&raquo;</div></a>
+<%}%><!-- end of next page -->
+</div><%}%>

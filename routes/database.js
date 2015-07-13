@@ -103,32 +103,75 @@ if (user == false) {
 fuckall.get('/', function *(){
 var body=this.req.user;
 this.session.dorthin=this.path;
-yield this.render('content',{user:body,message:this.flash.berror});});
+var b=yield fs.readFile('view/config.json','utf-8');
+		console.log('file content: '+b);
+yield this.render('content',{user:body,message:this.flash.berror,file:b});});
 
 fuckall.get('/articles',function *(){
 var db=this.fuck;
 this.session.dorthin=this.path;
 var doc=wrap(db.get('posts'));
-//console.log('doc.count',doc.count({}));
-var posts=yield doc.find({});
+
+try{
+var totalposts=yield doc.count({});
+
+	console.log('TOTAL POSTS :',totalposts);
+	var perPage=4;
+var posts=yield doc.find({},{limit:4,skip:0,sort:{_id:-1}});
 console.log('count',posts.length);
 
 var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
 var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[/]MM[/]DD[/]');});
 
-yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated,bube:bube});
+yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated,bube:bube,
+pages_count:Math.floor(totalposts/perPage),current_page:0});
+}catch(err){yield this.render('error-view',{user:this.req.user,err:err});}
+
 });
 
+fuckall.get('/articles/:skip',function *(skip){
+	console.log(this.params.skip);
+	if(isNumber(this.params.skip) == false) return;
+	
+	function isNumber(str){
+		var numstr=/^\d+$/;
+		return numstr.test(str);
+	}
+	var db=this.fuck;
+	var doc=wrap(db.get('posts'));
+	try{
+		var perPage=4;
+	var page=Math.max(0,parseInt(this.params.skip));
+	//var page=parseInt(this.params.skip);
+	var totalposts=yield doc.count({});
+	console.log('TOTAL POSTS :',totalposts);
+		var posts=yield doc.find({},{limit:4,skip:perPage*page,sort:{_id:-1}});
+		var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
+var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[/]MM[/]DD[/]');});
+console.log('Formated into Data: ',formated[0]);
+console.log('Post created : ',posts[0].created);
+yield this.render('skip',{user:this.req.user,posts:posts,formated:formated,bube:bube,
+pages_count:Math.floor(totalposts/perPage),current_page:page});
+	}catch(err){
+		//console.log(err);
+	yield this.render('error-view',{user:this.req.user,err:err});
+	}
+	
+});
 fuckall.get('/articles/:year/:month/:day/:title',function *(){
+	console.log("Params year :",this.params.year);
+	var suka=this.params.year+'/'+this.params.month+'/'+this.params.day;
+	console.log("Suka :",suka);
 	var db=this.fuck;
  var doc=wrap(db.get('posts'));
  try{
- var post= yield doc.findOne({'title':this.params.title});
+ var post= yield doc.findOne({'title':this.params.title,'dataformat':suka});
  console.log('post :',post.postname);
 var date=moment(post.created);
 var redact=moment(post.redaktiert);
 var formated=date.format('MMM D YYYY');
 var redformat=redact.format('MMM D YYYY');
+console.log('Dataformat :',post.dataformat);
 yield this.render('formated-article-view',{user:this.req.user,post:post,formated:formated,redformat:redformat});
  }
 catch(err){

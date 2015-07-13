@@ -16,24 +16,30 @@ z-index:2;}
 #logo{width:100px;margin-left:37%;}
 /*.losm{font-size:0.5em;float:right;padding-right:0.4em;}*/
 }
+
 </style>
 
 <nav class="back">
 <!-- <div id="logo"><h4>Attariku </br><small class="losm">group</small></h4></div> -->
 <img id="logo" src="/images/w5.png"/> 
 <ul id="menu" class="">
+<% if(menu){%>
+<% menu.forEach(function(m){%>
+<li class='<%= (m.href==path ? "panactiv": "")%>'><a href="<%= m.href %>" ><%= m.name %></a></li>
+<%})}%>
+<!-- 3
 <li><a href="/">home</a></li>
 <li>
-<a href="/articles">articles</a>
+<a href="/articles">articles</a>3 -->
 <!-- <ul>
 <li><a href="#">Подпункт №1</a></li>
 <li><a href="#">Подпункт №2</a></li>
 <li><a href="#">Подпункт №3</a></li>
 </ul>
 -->
-</li>
-<li>
-<a href="/labo">labs</a>
+<!-- 3</li>
+<li class=panactiv >
+<a href="/labo">labs</a> 3 -->
 <!-- <ul>
 <li><a href="#">Подпункт №1</a></li>
 <li><a href="#">Подпункт №2</a></li>
@@ -41,14 +47,14 @@ z-index:2;}
 <li><a href="#">Подпункт №4</a></li>
 <li><a href="#">Подпункт №5</a></li>
 			</ul> -->
-			</li>
+			<!-- 3</li> -->
 <!-- <li>
 <a href="#">Пункт №4</a>
 <ul>
 <li><a href="#">Подпункт №1</a></li>
 </ul>
 </li> --><!--
-<% if(user && user.role == "admin"){ %>
+
 <li>
 <input type="checkbox" id="check-box"/><label class="lb-check" for="check-box">profi</label>
 <ul class="menu-show">
@@ -59,7 +65,7 @@ z-index:2;}
 <li><a href="/app/modules">modules</a></li>
 <li><a href="/app/agenda">agenda</a></li>
 </ul>
-</li><%}%> -->
+</li> -->
 </ul>
 </nav>
 
@@ -73,7 +79,9 @@ z-index:2;}
 </div> -->
 <% if(user && user.role == "admin"){ %>
 <input type="checkbox" id="menu-small-admin"/>
-<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin" onclick="dowas()" ontouchstart="dowas()">a</label>
+<div class="burak">
+<label for="menu-small-admin" id="lb-small-admin" class="lb-small-admin" onclick="dowas()" 
+ontouchstart="dowas()">a</label>
 <ul id="sd" class="show-menu" id="drug">
 
 <li style=""><a href="/app">app</a>
@@ -86,21 +94,29 @@ width:30%;position:relative;bottom:60px;left:70%;" onclick="closedas()" ontouchs
 <li><a href="/app/modules">modules</a></li>
 <li><a href="/app/agenda">agenda</a></li>
 </ul>
+</div>
 <%}%>
 <script>
 var sd=document.getElementById('sd');
 function dowas(){
 sd.className="fuck";
+//sd.style.display="block"
 //alert('da');
 }
 function closedas(){
+var sf=document.querySelector('#lb-small-admin > .fuck');
+//sd.className="show-menu";
+//sd.classList.remove('fuck');
+//sd.className="show-menu";
+//sd.removeClass('fuck');
 sd.className="show-menu";
-//alert('f');
+//sd.className="show-menu";
+//alert('f'+sf.classList);
 }
 </script>
 
 <input type="checkbox" id="menu-small-all" onchange="situation(this)"/>
-
+<div class="durak">
 <label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="dowas1()" ontouchstart="dowas1()">
 <!--<div class="fal" style="background:red;z-index:2;margin-top:5px;"> -->
  <div class="spinner diagonal part-1"></div>
@@ -123,6 +139,7 @@ width:30%;position:relative;bottom:60px;left:0px;" onclick="closedas1()" ontouch
 <li><a href="/logout">log out</a></li><%}%>
 <% if(signup == "on"){%><li><a href="#join_form" id="join_pop">sign up</a></li><%}%>
 </ul>
+</div>
 <script>
 var sd2=document.getElementById('shmn1');
 function dowas1(){

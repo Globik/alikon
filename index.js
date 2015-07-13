@@ -18,6 +18,7 @@ var session=require('koa-generic-session');
 var MongoStore=require('koa-generic-session-mongo');
 
 var passport=require('koa-passport');
+var fs=require('co-fs');
 var fuckall=require('./routes/database');
 var secured=require('./routes/secured');
 var configDB=require('./config/database.js');
@@ -62,15 +63,7 @@ done();
     // jobSchedule.setupJobs("fucker");
 //console.log("string: "+jobSchedule.setupJobs("fucker"));
 
-var tasks=wrap(db.get('tasks'));
-var busers = db.get('users');
-/***
-busers.findOne({username:"Bob"}).on('success',function(doc){
-console.log('Document',doc);
-console.log(doc.username);
-//_id: 54c7815186d37cb8a2f49639
-});
-***/
+
 
 //iojs index
 var us=wrap(db.get('users'));
@@ -112,10 +105,17 @@ Connect to the server:
     });
 
 ***/
+var low = require('lowdb')
+var lowdb = low('db.json')
+//lowdb('posts').push({ title: 'home',href:'/'});
+//var qu=lowdb('posts').find({title:'lowdb is awesome'});
+//console.log('LOWDB :',qu);
 
 var locals={
 version:'0.0.1',
 message:'message must be',
+ldb:function *(){try{var s=yield fs.readFile('db.json','utf-8');return JSON.parse(s);}catch(err){console.log('LOWDB API err :',err);}},
+path:function (){var b;if(this.method === 'GET'){b=this.path} return b;},
 signup:function *(){try{
 	var mdsignup=yield mods.findOne({modulname:"signup"});
 return mdsignup.status} catch(err){console.log(err);}
@@ -128,7 +128,8 @@ now:function(){
 return moment(new Date()).format('MMM D');},
 ip: function *(){
 yield wait(100);
-return this.ip;}
+return this.ip;},
+menu:[{name:"home",href:'/'},{name:"articles",href:"/articles"},{name:"labs",href:"/labo"}]
 };
 var filters={
     format: function (time){
@@ -202,6 +203,7 @@ app.use(function *(next) {
   if (this.method === 'GET') {
 	  //console.log(this.flash.error);
 	  console.log("This path in ap use",this.path);
+	  
 	  this.flash={woane:this.path};
     //this.body = this.flash.error || 'No flash data.';
   } 

@@ -1,57 +1,8 @@
-﻿<!-- formated-article-view -->
+﻿<!-- adminarticles.html -->
 
-<div class="codrops-header" style="z-index:1;">
-<% if(post){%><h1><%= post.postname %><span><%= post.shorti %></span></h1><%}%>
-<nav class="codrops-demos">
-<a class="current-demo" href="">fb</a>
-<a href="">vk</a>
-<a href="">g+</a>
-</nav>	
-</div>
-<div id="content">
-<article class="post">
-<% if(post){%>
-<h1><%= post.postname %></h1>
-
-<small><%= formated %> by <%= post.autor %></small>
-
-<p><i><%= post.caption %></i></p>
-<!--<img src="/images/result-blume-400.jpg"/> -->
-
-<%- post.maincontent %>
-<% for(var i in post.images){%>
-<p><%= post.images[i].title %></p>
-
-<div><img src='<%= post.images[i].src %>' title='<%= post.images[i].title%>' alt='<%=post.images[i].title%>'/></div>
-<p><%= post.images[i].content %></p>
-<%}%>
-
-</br>
-Last time edited: <%= redformat %>
-</br>
-Tags: <%= post.meta %>
-</br>
-Category : <%= post.category %>
-</br>
-Rubrik: <%= post.rubrik %>
-</br>
-Visibility: <%= post.visa %>
-</br>Serial: <%= post.serial %>
-</br><b>Fotos: </b>
-<ul>
-
-</br><% if(user && user.role == "admin"){ %>
-<a onclick="redaktorHref(this)" data-id="<%= post._id %>" href="#popredaktor">redact</a></br><%}%>
-<span id="demo" style="background:blue;"></span>
-<%}%>
-
-</article>
-</div>
-<% if(user && user.role == "admin"){ %>
 <a href="#x" class="overlay" id="popredaktor"></a>
 <div class="popup" id="poredactor">
-<b>Redaktor</b></br>
-<span id="outinfo" style="background:green;"></span></br>
+<b>Redaktor</b></br><span id="outinfo" style="background:green;"></span></br>
 <form name="post" method="post" enctype="multipart/form-data">
 <span><b>Postname: </b></span></br>
 <input type="text" name="postname" required placeholder="postname" value="" style="width:400px;"></br>
@@ -66,6 +17,8 @@ Visibility: <%= post.visa %>
 <input type="text" name="autor" required placeholder="autor" value=""></br>
 <b>Created: </b></br>
 <input type="text" name="created" required placeholder="created" value=""></br>
+<b>dataformat: </b></br>
+<input type="text" name="dataformat" required placeholder="dataformat" value=""></br>
 <b>Redaktiert: </b></br>
 <input type="text" name="redaktiert" required placeholder="redaktiert" value=""></br>
 <b>Some caption: </b></br>
@@ -82,13 +35,41 @@ Visibility: <%= post.visa %>
 <input type="text" name="serial" value="" placeholder="serial - 1?"></br>
 <b>id: </b></br>
 <input type="text" name="id" value="" required placeholder="id"></br>
-<input type="submit" value="save"></br>
-</form></div>
+<% if(user && user.role == "admin"){ %><input type="submit" value="save"></br><%}else{%><b>You ar not admin)</b></br><%}%>
+</form>
+
+</div>
+
 <script>
 var y;
+function removePost(el){
+var x;
+
+if(confirm("Delete this post? Press a button!")==true){
+x="About deleting the post "+el.getAttribute('data-id');
+//alert(el.getAttribute('data-id'));
+//alert(el.parentNode.parentNode.parentNode.innerHTML)
+
+
+var xhr=new XMLHttpRequest();
+    xhr.open('GET','/deletePost/'+el.getAttribute('data-id'));
+	xhr.onload=function(e){
+  if(this.status == 200){
+  x=this.responseText;
+  //alert(this.responseText);
+  el.parentNode.parentNode.parentNode.remove();
+  }}
+  xhr.onerror=function(e){alert("fuck" +e.status);}
+  xhr.send();
+  
+}
+else{x="You pressed Cancel!";}
+demo.innerHTML=x;
+}
+outinfo.innerHTML='';
 function redaktorHref(el){
 //alert('ok');
-alert(el.getAttribute('data-id'));
+//alert(el.getAttribute('data-id'));
 outinfo.innerHTML='connecting database...';
 var x=el.getAttribute('data-id');
 y=x;
@@ -105,7 +86,8 @@ var xhr=new XMLHttpRequest();
   d.visa.value=data.visa;
   d.shorti.value=data.shorti;
   d.autor.value=data.autor; 
-  d.created.value=data.created; 
+  d.created.value=data.created;
+d.dataformat.value=data.dataformat;  
   d.redaktiert.value=data.redaktiert;
   d.caption.value=data.caption;
   d.maincontent.value=data.maincontent;
@@ -119,6 +101,19 @@ xhr.onerror=function(e){alert("fuck" +e.status);
 outinfo.innerHTML=e.status +' : '+JSON.parse(this.responseText).err;}
 xhr.send();
 }
+/***
+function savePost(el){
+//alert('about saving the post '+y);
+demo.innerHTML='about saving the post '+y;
+var xhr=new XMLHttpRequest();
+    xhr.open('GET','/saveRedactPost/');
+	xhr.onload=function(e){
+  if(this.status == 200){}
+  xhr.onerror=function(e){alert("fuck" +e.status);
+  xhr.send();
+}
+***/
+
 var formface=document.forms.namedItem("post");
 formface.addEventListener('submit',function(ev){
 var data=new FormData(document.forms.namedItem("post"));
@@ -134,21 +129,3 @@ var xhr=new XMLHttpRequest();
 	 xhr.send(data);
 	 ev.preventDefault();},false);
 </script>
-<%}%>
-<aside id="sidebar">
-<section class="widget">
-<h4 class="widgettitle">attariku</h4>
-<img src='/images/emblema-a.svg' width="100%" height="100%"/>
-</section>
-</aside>
-
-<aside id="sidebar">
-<section class="widget">
-<figure>
-<caption><h4 class="widgettitle">Agenda</h4></caption>
-<div class="agenda" style="background:blue;height:10em;">s</div>
-<figcaption><p>l</p></figcaption>
-</figure>
-</section>
-</aside>
-<footer id="footer2"><p><h3>footer2 for anonce and advertising</h3></p></footer>
