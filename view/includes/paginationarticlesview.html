@@ -1,84 +1,11 @@
 ﻿<!-- includes/paginationarticlesview.html -->
 
-<style>
 
-.fluiditems:nth-child(even) > .user-info{background:#F26663;}
-.user-info{
-background:rgba(200,205,0,1);
-width:100%;
-min-height:28%;
-
-height:41%;
-position:absolute;
-bottom:0;
-left:0;
-overflow:hidden;
-z-index:1;
-padding:0.1em;
-margin:0;
--webkit-box-sizing:border-box;
-box-sizing:border-box;
-}
-
-.user-info h5{font-size:/*2rem*/0.9em;line-height:1.2;margin-top:0em;padding:1px;}
-.bio{
-position:absolute;
-width:100%;
-left:0;
-bottom:0;
-height:41%;
-z-index:0;
-overflow:hidden;
-min-height:41%;
-background:rgba(183,191,185,0.95);
-transition:all 0.7s linear;
--webkit-transition:all 0.7s linear;
-}
-.user-info p{color:black;padding:1px;
-font-size:/*1.2rem*/0.7em;
-font-size:1.2rem;
-margin-left:0px;
-font-family:sans-serif;
-line-height:/*1.5rem*/0.8em;}
-.user-info:hover + .bio,.user-info:focus .bio{
-min-height:50%;
-}
-.fluiditems img{width:100%;height:auto;margin:auto 0;}
-.user-info .tags{position:absolute;bottom:-0.29em;left:0;margin:0;list-style:none;}
-.user-info .tags .ta{display:inline-block;background:pink;margin-left:0em;padding:0.5em;font-size:0.6em;
-line-height:0.5em;color:red;
-}
-.user-info .chli{position:relative;margin:0em;padding:0;line-height:/*1.6rem*/;top:-0.5em;left:0;}
-.user-info .chli li{display:inline-block;background:lightgreen;padding-left:1em;padding-right:1em;
-font-size:0.6em;line-height:1.5em;}
-
-.fluiditems #redaktor{display:block;
-position:absolute;width:2em;height:2em;background:silver;right:0;top:0;
-}
-.adm{display:none;
-position:relative;
-list-style:none;margin-top:2em;background:brown;width:10em;top:0em;
-left:-9em;}
-.foto-cont{width:100%;height:300px;overflow:hidden;}
-.fluiditems #redaktor:hover .adm{display:block;}
-@media screen and (max-width: 650px) {
-.ser-info h{font-size:/*1.2rem*/1em;}
-.user-info p{font-size:0.8em;}
-.user-info .tags .ta{}
-.user-info h5{font-size:1.5em;line-height:1.5;padding:4px;}
-}
-@media screen and (max-width: 480px) {
-.user-info h5{font-size:/*2rem*/1em;line-height:1.3;padding:0.1em;}
-.user-info p{font-size:0.7rem;}
-}
-
-
-</style>
 
 <% if(posts) {posts.forEach(function (d,i){ %>
 <div class="fluiditems">
 <div id="redaktor">
-<ul class="adm">
+<ul class="red-nav">
 <li>X</li><li><a onclick="redaktorHref(this)" data-id="<%= d._id %>" href="#popredaktor">redact</a></li>
 <li data-id="<%= d._id %>" <%if(user && user.role == "admin"){%> onclick="removePost(this);" <%}%>>remove</li>
 <li>visibility <%= d.visa %></li></ul>
@@ -87,14 +14,18 @@ left:-9em;}
 <% if(d.images){%>
 
 <div class="foto-cont">
-<img src="<%= d.images[0].src %>"/></div><%}else{%><div><img src="/images/kuku.png" /></div><%}%>
-<div class="user-info">
-<ul class="chli"><li><%= bube[i] %></li><li>comments 1</li><li>23 Shares</li></ul>
-<h5><a href="/articles/<%= d.dataformat %>/<%= d.title %>"><%= d.postname %></a></h5>
-<p><%= d.shorti %></p>
-<ul class="tags"><li class="ta"><%= d.meta %></li></ul> 
+<img src="<%= d.images[0].src %>"/></div><%}else{%><div class="foto-cont"><img src="/images/kuku.png" /></div><%}%>
+<div class="art-info">
+
+<div class="time-service"><b><%= bube[i] %></b></div>
+<div class="time-service"><b>comments 1</b></div>
+<div class="time-service"><b>23 Shares</b></div>
+
+<h5><a href="/articles/<%= d.dataformat %>/<%= d.title %>"><%=: d.postname | truncate:44 %></a></h5>
+<p><%=: d.shorti | truncate:44 %></p>
+<div class="tags"><b><%= d.meta %></b></div> 
 </div>
-<div class='bio'><p>Photos: <% if(d.images !==undefined){%>
+<div class='art-pop'><p>Photos: <% if(d.images !==undefined){%>
 <%= d.images.length %> <%}%></p>
 <p>Noch bla bla bla.</p>
 </div>
