@@ -1,0 +1,79 @@
+﻿<div class="daper"
+<b>Configuration for navigation(lowdb)</b>
+<h4>Создание, редактирование рубрик, категорий, модульных констант в файле db.json</h4>
+<form name="lowdb" method="post" enctype="multipart/form-data">
+
+<input type="text" name="title" required placeholder="title" value="navminall"> <label><b>Titles for mini menu all</b></label></br>
+
+
+<input type="text" name="name" required placeholder="name"> <label><b>name of nav</b></label></br>
+
+
+<input type="text" name="href" required placeholder="href" value="/"> <label><b>href</b></label></br>
+<input type="submit" value="save"></br>
+</form>
+</br>
+<span id="out"></span>
+</br><button onclick="updateNavigation()">update navigation</button>
+<script>
+var dar=document.forms.namedItem("lowdb");
+dar.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("lowdb"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/lowaddtitle");
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+xhr.onerror=function(e){alert('fuck'+this.status);}
+	 xhr.send(data);
+	 ev.preventDefault();},false);
+
+function updateNavigation(){
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/updatenavigation");
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+xhr.onerror=function(e){alert('fuck'+this.status);}
+	 xhr.send();
+}
+
+function contall(h, ...ns){
+for(var n of ns){
+if(h.indexOf(n)===-1){return false}}return true;}
+var das=contall('ert',['er','55','4']);
+//alert(das);
+//if(contall('1','2','3','4')==das)alert('ok');
+function dall(h,...ns){
+
+return ns.every(x=> h.indexOf(x) !==0);}
+var a=dall('1','2','3');
+//alert(a);
+var ab=['png','jpg','gif'];
+
+function dav(form){
+function teext(el,i,ar){
+return el==form;}
+var res=ab.some(teext);
+return res;
+}
+//alert(dav('gif'))
+function bav(form){
+var res=ab.some(elem => elem == form);
+return res;}
+alert(bav('gif'));
+
+
+
+
+</script>
+
+</div>

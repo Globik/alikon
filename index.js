@@ -162,6 +162,7 @@ app.use(Router(app));
 app.use(bodyParser());
 app.use(flash());
  //iojs index
+ app.use(function *(next){this.lowdb=lowdb;yield next;})
 app.use(function *(next){
 this.fuck=db;
 yield next;});

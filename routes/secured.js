@@ -514,10 +514,15 @@ secured.post('/addingfotos',authed,bodyParser({multipart:true,formidable:{upload
 keepExtensions:true}}),function *(next){
 if('POST' !=this.method)return yield next;
 var files;
+var extarr=['.png','.jpg','.gif'];
+var mimetypes=['image/png','image/jpeg'];
 var a=this.request.body.fields.nochwas;
 console.log('A :',a);
 var b=this.request.body.files.file.name;
 var p=this.request.body.files.file.path;
+var size=this.request.body.files.file.size;
+var t=this.request.body.files.file.type;
+
  files=this.request.body.files.file;
 console.log('isArray? :',Array.isArray(files));
 var fils=Array.isArray(files);
@@ -535,12 +540,14 @@ for(var i=0;i<files.length;i++){
 console.log('PATH[i] :',files[i].path);
 p=files[i].path;
 b=files[i].name;
+t=files[i].type;
 console.log('PATH.EXTNAME of FILENAME :',path.extname(b));
-renameFile(a,p,b);
+renameFile(a,p,b,t);
 }} else{
 	console.log('PATH.EXTNAME of FILENAME :',path.extname(b));
-renameFile(a,p,b);
+renameFile(a,p,b,t);
 	 }
+	 /***
 function renameFile(papka,srcpath,targetname){
 	var file_ex=path.extname(targetname);
 	switch(file_ex){ case file_ex='.jpg':case file_ex='.png':
@@ -553,7 +560,35 @@ console.log('Files downloaded finally');});
 	default:console.log('DEFAULT');
 	fso.unlink(srcpath,function(err){console.log('Some err im zweiten unlink');});
 	}}
-yield this.body={inf:"OK",fields:a,files:b}
+	***/
+	function renameFile(papka,srcpath,targetname,mtype){
+	var file_ex=path.extname(targetname);
+	
+	if(file_ex_isvalid(file_ex) == true && mimetype_isvalid(mtype) == true){
+	fso.rename(srcpath,path.join('./public/images/upload/'+papka+'/',targetname),function(err){
+	if(err)
+    fso.unlink(srcpath);
+    fso.rename(p,path.join('./public/images/upload/'+papka+'/',targetname),function(err){
+	console.log('Erst some err im ersten unlink');});
+    console.log('Files downloaded finally');});	
+		}else{console.log('DEFAULT');
+	fso.unlink(srcpath,function(err){console.log('Some err im zweiten unlink');});}
+	}
+	
+	/***function file_ex_isvalid(ext){
+		var res=extarr.some(elem => elem == ext.toLowerCase());
+            return res;
+	}***/
+	function file_ex_isvalid(ext){
+		var res=extarr.some(function(el,i,ar){return el == ext.toLowerCase()});
+		return res;
+	}
+	function mimetype_isvalid(mtype){
+		var res=mimetypes.some(function(el,i,ar){return el==mtype;});
+		return res;
+	}
+	
+yield this.body={inf:"OK",fields:a,files:b,headers:this.request.body}
 yield next;
 });
 
@@ -590,6 +625,24 @@ secured.post('/showfolder',authed,function *(){
 	yield this.body={info:"OK",foldername:foldername,fotkis:fotkis}
 	}catch(err){yield this.body={info:err};}
 })
+/* config.html */
+
+secured.get('/app/config',authed,function *(){
+yield this.render('configur',{user:this.req.user})	
+})
+secured.post('/lowaddtitle',authed,bodyParser({multipart:true,formidable:{}}),function *(next){
+var lowdb=this.lowdb;
+var req=this.request.body.fields;
+var s=lowdb("navigation").push({ title:req.title,name:req.name,href:req.href});
+yield this.body={info:"OK", res:this.request.body,s:s}	
+	})
+secured.post('/updatenavigation',authed,function *(){
+var lowdb=this.lowdb;
+//pervoje popavshee
+var s=lowdb("navigation").chain().find({ name: 'sign up' }).assign({status: 'on'}).value(2);	
+	yield this.body={s:s}
+})	
+	
 //iojs index
 function *authed(next){
 if(this.req.isAuthenticated() && this.req.user.role == "admin"){

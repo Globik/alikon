@@ -1,8 +1,39 @@
 {
   "posts": [
-      {
+    {
       "title": "home",
       "href": "/"
+    }
+  ],
+  "navigation": [
+    {
+      "name": "home",
+      "href": "/"
+    },
+    {
+      "name": "articles",
+      "href": "/articles"
+    },
+    {
+      "name": "labs",
+      "href": "/labo"
+    },
+    {
+      "name": "profi",
+      "href": "/app"
+    },
+    {
+      "name": "log in",
+      "href": "/custom2"
+    },
+    {
+      "name": "log out",
+      "href": "/logout"
+    },
+    {
+      "name": "sign up",
+      "href": "/signup",
+      "status": "on"
     }
   ]
 }
