@@ -63,11 +63,32 @@ request ip is: <%= ip %>
 <span id="tout3"></span>
 <span id="tout45"></span>
 </div>
+</br><hr/><b>window.innerWidth :</b><span id="gout"></span></br>
+<button onclick="getcursrc()"><b>currentSrc :</b></button><span id="gout2"></span><hr/>
+<div class="container" style="width:100%;border:1px solid blue;margin:0 auto;">
+<div style="border:2px solid green;width:100%;background:red;">
+<picture>
+<source media="(min-width: 1900px)" srcset="/images/upload/tempo/gorod1-m4.png">
+<source media="(min-width: 1024px)" srcset="/images/upload/tempo/gorod1-m3.png 1x,/images/upload/tempo/gorod1-m4.png 2x" onload="alert('ok')">
+<source media="(min-width: 650px)" srcset="/images/upload/tempo/gorod1-m2.png">
+<source media="(min-width: 200px)" srcset="/images/upload/tempo/gorod1-m1.png">
 
-<form>
-<input type="text"/>
-</form>
+<img id="fuckimg" src="/images/upload/tempo/gorod1-m2.png" alt="media picture element" title="title1" onerror=""
+sizes="100vw" 
+srcset="/images/ipload/tempo/gorod1-m1.png 384w,/images/upload/tempo/gorod1-m2.png 768w, /images/upload/tempo/gorod1-m3.png 1152w,/images/upload/tempo/gorod1-m4.png 1536w" width='100%'>
+</picture>
+</div>
+</div>
+<script>
+function getcursrc(){
+gout2.innerHTML=fuckimg.currentSrc;
+}
+gout.innerHTML=window.innerWidth;
+window.onresize=function(){
+gout.innerHTML=window.innerWidth;
+}
 
+</script>
 
 
 <img src="/images/w5.png"/>
