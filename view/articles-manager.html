@@ -71,6 +71,8 @@ img{width:100%;}
 </div>
 
 <script>
+//blalbala
+var adidas;
 var datId;
 var directories=document.getElementById('directories');
 var fotkis=document.getElementById('fotkis');
@@ -297,19 +299,7 @@ var elar=Array.prototype.slice.apply(elcol);
 return elar;
 }
 </script>
-<!--
-<ul class="img-li">
-<% if(fotos) fotos.forEach(function(it,k){%>
-<li onclick="" class=""><%= fotos[k] %></br>
-</br><span class="infotag"></span></br>
-<textarea class="img-text" value="">Description of a Foto <%=[k+1]%></textarea>
-</br><input class="img-title" type="text" value="title <%=[k+1]%>"/>
-</br><input class="img-src" type="text" value="/images/uploads/<%=fotos[k]%>"/>
-<button data-src="/images/uploads/<%= fotos[k] %>" onclick="changeSrc(this)">change src</button>
-</li><%})%><button onclick="addpics()">add all to post</button>
-</ul>
-</br>
--->
+
 
 </br>
 <form action="/addingfotos" method="post"  name="fotki" enctype="multipart/form-data">

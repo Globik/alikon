@@ -379,13 +379,13 @@ agenda.start();
 
 
 //************************************************************************
-//articles manager
+//articles manager warum gehts nicht
 secured.get('/app/articlesmanager',authed,function *(){
 var db=this.fuck;
 var posts=wrap(db.get('posts'));
 var doc=yield posts.find({});
-var fotos=yield fs.readdir('public/images/uploads');
-yield this.render('articles-manager',{user:this.req.user,fotos:fotos,posts:doc});
+//var fotos=yield fs.readdir('public/images/uploads');
+yield this.render('articles-manager',{user:this.req.user,posts:doc});
 });
 var sluger=require('limax');
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
