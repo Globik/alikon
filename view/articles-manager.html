@@ -5,6 +5,7 @@ input[type=text]{width:400px;}
 .img-li{background:lightblue;}
 .img-li > li:nth-child(4n+3){background:#F26663;}
 .img-li > li:nth-child(4n+1){background:lightgreen;}
+.zapret{color:red;}
 </style>
 <div class="daper">
 
@@ -14,6 +15,8 @@ input[type=text]{width:400px;}
 
 <span data-id="<%= p._id %>" onclick="insertDataIda(this);" ><%= p.postname %></span></br>
 <%})}%>
+
+</br>
 <p> Create one:</p>
 <form name="postCreating" method="post" enctype="multipart/form-data">
 <label><b>Name of post:</b></label></br>
@@ -61,7 +64,8 @@ img{width:100%;}
 <div>
 <ul id="directories" style="list-style:none;display:inline;">
 </ul>
-</br><button onclick="addpicsar()">send pics to db</button>
+</br><button id="btnPicstar" onclick="addpicsar()" style="display:none;">send pics to db</button></hr>
+ | <button id="btnOrder" onclick="inOrdnung()">Упорядочить!</button><hr/>
 <div id="fotkis">
 </div>
 </div>
@@ -70,6 +74,7 @@ img{width:100%;}
 var datId;
 var directories=document.getElementById('directories');
 var fotkis=document.getElementById('fotkis');
+btnOrder.style.display="none";
 function getFolders(){
 var data={};
 data.directory="getsomefotos";
@@ -86,7 +91,8 @@ var xhr=new XMLHttpRequest();
 
 	 var li=document.createElement('li');
 	 var doc=docs.folders[i];
-	 li.innerHTML='<button onclick="showFots(this)" value='+doc+'>'+doc+'</button>';
+	 li.innerHTML='<button class='+(doc !== "tmp" ? "z" : "zapret")+' onclick='+(doc !== "tmp" ? "showFots(this)" : null)+' value='+doc+'>'+doc+'</button>';
+	 if(doc=='tmp'){doc='x';}
 	 directories.appendChild(li);}}
 	 }
 	 else{out.innerHTML=this.response;
@@ -98,41 +104,87 @@ function showFots(el){
 var fl=0;
 var data={};
 data.foldername=el.value;
+
 var xhr=new XMLHttpRequest();
 	xhr.open('post','/showfolder');
 	xhr.setRequestHeader('Content-Type','application/json','utf-8');
 	xhr.onload=function(e){
 	 if(xhr.status==200){
+	 btnPicstar.style.display="inline-block";
+	 btnOrder.style.display="inline-block";
 	 var docs=JSON.parse(this.response);
 	 out.innerHTML=this.response;
 	 if(fotkis.hasChildNodes()){
 while(fotkis.hasChildNodes()){
 fotkis.removeChild(fotkis.firstChild);
 }}
-	 for(var i=0;i < docs.fotkis.length;i++){
+	 for(var i=0;i < docs.fotkis.length;i+=1){
 	 
 	 var doc=docs.fotkis[i];
+	 var boc=docs.fotkis[i];
 	 var div=document.createElement('figure');
 	 var fold=el.value;
 	 div.className='pig';
-	 
+	 div.setAttribute("data-src",'/images/upload/'+fold+'/'+doc+'');
+	 //div.onclick=function(){alert(this.getAttribute("data-identif"))}
 	 div.innerHTML='<caption>'+[i+1]+'<p class="capitan"></p></caption>'+
 	 '<div class="img-cont"><img src="/images/upload/'+fold+'/'+doc+'"></div>'+
 	   '<figcaption>'+
 	 '<span class="p-descr" contenteditable=true>Description</span></br>'+
 	 '<span class="p-title" contenteditable=true>Title</span></br>'+
-	 '<span class="p-src" contenteditable=true>/images/upload/'+fold+'/'+doc+'</span>'+
+	 '<span class="srcset" contenteditable=true>/images/upload/'+fold+'/'+doc+'</span></br>'+
 	 '</figcaption>'
-	 fotkis.appendChild(div);
-	 }
+	 fotkis.appendChild(div);}
+	 
 	 doit();
 }
 	 }
-	 
-	 
-	 
 	 xhr.send(JSON.stringify(data));
+	 }
 	 
+	 var kasak=false;
+     var sabat=[];
+	 function inOrdnung(){
+	 
+var figs=getDomArray('.pig');
+figs.forEach(function(el,i){
+var fig=figs[i];
+if(i % 4 === 0){
+//fig.style.background="red";
+fig.setAttribute("data-identif","oldfucker");
+} 
+else{
+sabat.push(fig.getAttribute('data-src'));
+fig.remove();
+}
+});
+kasak=true;
+rabota();
+btnPicstar.style.display="inline-block";
+btnOrder.style.display="none";
+}
+	 
+function rabota(){
+if(kasak == true)
+var step=0;
+var mass=getDomArray('[data-identif="oldfucker"]');
+var infocaption=getDomArray('[data-identif="oldfucker"] figcaption');
+
+mass.forEach(function(el,k){
+var w=sabat.slice(step,step+=3);
+    focuspocus(infocaption[k],w);
+});
+}
+
+function focuspocus(ob,arr){
+arr.forEach(function(el,k){
+var span=document.createElement('span');
+    span.className='srcset'+[k+1];
+	span.setAttribute('contenteditable',true);
+    span.innerHTML=arr[k]+'<br>';
+    ob.appendChild(span)
+});
+
 }
 
 function doit(){
@@ -180,20 +232,35 @@ return false;
 
 
 function addpicsar(){
-var pTitle=document.querySelectorAll('.p-title');
-var pSrc=document.querySelectorAll('.p-src');
-var pDescr=document.querySelectorAll('.p-descr');
+var pTitle=getDomArray('.p-title');
+var pSrc=getDomArray('.srcset');
+var pSrc1;
+var pSrc2;
+var pSrc3;
+
+var pDescr=getDomArray('.p-descr');
+
+if(kasak == true){
+pSrc1=getDomArray('.srcset1');
+pSrc2=getDomArray('.srcset2');
+pSrc3=getDomArray('.srcset3');
+}
+
 	var data={};
 	data.images=[];
 	data.bi=dataId;//"345";
-	alert(dataId);
+	//alert(dataId);
 	if(dataId !==undefined){
-	for(var k=0;k<pTitle.length;k++){
-	//data.images=imgText[k].value;
 	
-	data.images.push({title:pTitle[k].innerHTML,content:pDescr[k].innerHTML,src:pSrc[k].innerHTML});
-	//alert(imgText[k].value);
+	pTitle.forEach(function(el,k){
+
+	if(kasak==true){
+	data.images.push({title:pTitle[k].innerHTML,content:pDescr[k].innerHTML,src:pSrc[k].textContent,
+	src1:pSrc1[k].textContent,src2:pSrc2[k].textContent,src3:pSrc3[k].textContent});}else{
+	data.images.push({title:pTitle[k].innerHTML,content:pDescr[k].innerHTML,src:pSrc[k].textContent});
 	}
+	//alert(imgText[k].value);
+	});
 	alert(JSON.stringify(data));
 	
 	var xhr=new XMLHttpRequest();
@@ -208,7 +275,10 @@ var pDescr=document.querySelectorAll('.p-descr');
 	 }}
 	 //data._id="123456";
 	 //xhr.send(JSON.stringify(data.images));
-	 xhr.send(JSON.stringify(data));}else{alert('datid not fullfilled');}
+	 xhr.send(JSON.stringify(data));
+	
+	 } 
+	 else{alert('datid not fullfilled');}
 	 }
 	 
 
@@ -220,7 +290,14 @@ function insertDataIda(ev){
 	for(var i=0;i<infotag.length;i++){
 	infotag[i].innerHTML='<small>'+ev.innerHTML+'</small>';}
 	}
+	
+	function getDomArray(selector){
+var elcol=document.querySelectorAll(selector);
+var elar=Array.prototype.slice.apply(elcol);
+return elar;
+}
 </script>
+<!--
 <ul class="img-li">
 <% if(fotos) fotos.forEach(function(it,k){%>
 <li onclick="" class=""><%= fotos[k] %></br>
@@ -232,6 +309,7 @@ function insertDataIda(ev){
 </li><%})%><button onclick="addpics()">add all to post</button>
 </ul>
 </br>
+-->
 
 </br>
 <form action="/addingfotos" method="post"  name="fotki" enctype="multipart/form-data">

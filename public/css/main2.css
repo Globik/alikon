@@ -99,18 +99,21 @@ box-sizing:border-box;
 #menu{font-family: Calibri,"Lucida Grande",Verdana,Arial,Helvetica,sans-serif;
 			list-style:none;
 			padding:0;
-			margin-top:0px;
+			margin-top:0;
+			
 			margin-left:8em;
-			leter-spacing:0.0625em;
+
+			letter-spacing:0.06em;
 			/*text-shadow: 0px 1px 1px white;*/
 			font-weight:bold;
 	text-align:center;
-	/*font-family: Georgia;*/
+	
 			height:2.4em;
 			
 			position:relative;
 			display:block;
-			/*z-indx:4;*/
+			
+			-webkit-box-sizing:border-box;
 			box-sizing:border-box;
 		}
 		
@@ -118,11 +121,12 @@ box-sizing:border-box;
 			float:left;
 			height:100%;
 			
-		
-			width:10.5em;
+		width:10.5em;
+			
 			position:relative;
 			padding-top: 10px;
-			
+			/*background:red;*/
+			-webkit-box-sizing:border-box;
 			box-sizing:border-box;
 			
 		}
@@ -365,14 +369,15 @@ BENEMUNG
 
 .codrops-header{
 width:100%;
-min-height:100px;
+min-height:8em;
 background: /*#F17370*/#F26663;
 display:block;
 position:relative;
 margin: 0 auto;
-padding: 50px 0px;
+padding: 6.5em 0;
 margin-top:-1.75em;
 text-align: center;
+
 font-family;'Lato', Arial, sans-serif;
 
 }
@@ -455,7 +460,7 @@ word-wrap:break-word;
 height:auto;
 
 }
-.dper{margin-top:3em;}
+.daper{padding:3em;}
 .fluiditems{
 position:relative;
 float:left;
@@ -486,6 +491,7 @@ justify-content:center;align-items:center;margin-top:20px;
  line-height:1.5em;
  background:pink;
  padding:0.8em;
+ -webkit-box-sizing:border-box;
  box-sizing:border-box;
  }
 /**************************************************************************
@@ -622,7 +628,8 @@ color: #fff;
 
 @media screen and (max-width: 1024px) {
 /* pagewrap * 808*/
-
+/*#menu{margin-left:8em;} */
+#menu li{width: 9.5em;}
 
 .codrops-header{
 margin-top:-1.765em;
@@ -740,7 +747,8 @@ font-size:1;
 -webkit-text-size-adjust: none;
 }
 
-#content{padding:1em;}
+#content{padding:1.8em;}
+.post-title{font-size:1.2rem;}
 #cnv{background-color:yellow;width:45px;height:200px;}
 /* main nav */
 .fluiditems{width:100%;height:20em;}
