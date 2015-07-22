@@ -17,6 +17,20 @@
 
 <p><i><%= post.caption %></i></p>
 <!--<img src="/images/result-blume-400.jpg"/> -->
+<div class="container" style="width:100%;border:1px solid blue;margin:0 auto;box-sizing:border-box;-webkit-box-sizing:border-box;">
+<!--808 <div style="border:2px solid green;width:100%;background:red;"> -->
+<picture>
+
+<source media="(min-width: 1366px)" srcset="/images/upload/tempo/gorod1-m4.png">
+<source media="(min-width: 808px)" srcset="/images/upload/tempo/gorod1-m3.png">
+<source media="(min-width: 600px)" srcset="/images/upload/tempo/gorod1-m2.png"> 
+
+<img id="fuckimg" src="/images/upload/tempo/gorod1-m2.png"> 
+</picture>
+
+<!-- </div> -->
+</div>
+
 
 <p><%- post.maincontent %></p>
 <% for(var i in post.images){%>
@@ -26,12 +40,12 @@
 <figure style="background:rgba(0,0,244,0.1);width:100%;margin-left:0;">
 <% if (post.images[i].hasOwnProperty("src1")){%>
 <picture>
-<source media="(min-width: 1910px)" srcset="<%= post.images[i].src3 %>">
-<source media="(min-width: 900px)" srcset="<%= post.images[i].src2 %> 1x,<%= post.images[i].src3 %> 2x">
-<source media="(min-width: 600px)" srcset="<%= post.images[i].src1 %> 1x,<%= post.images[i].src2 %> 2x">
-<source media="(min-width: 480px)" srcset="<%= post.images[i].src %> 1x,<%= post.images[i].src1 %> 2x">
-<img  sizes="100vw" src='<%= post.images[i].src1 %>' title='<%= post.images[i].title%>' alt='<%=post.images[i].title%>'
-srcset="<%= post.images[i].src %> 384w,<%= post.images[i].src1 %> 768w, <%= post.images[i].src2 %> 1152w,<%= post.images[i].src3 %> 1536w" width='100%'/>
+<source media="(min-width: 1366px)" srcset="<%= post.images[i].src3 %>">
+<source media="(min-width: 808px)" srcset="<%= post.images[i].src2 %>">
+<source media="(min-width: 600px)" srcset="<%= post.images[i].src1 %>">
+
+<img src='<%= post.images[i].src1 %>' title='<%= post.images[i].title%>' alt='<%=post.images[i].title%>'
+/>
 </picture>
 <%}else{%>
 <img src="<%= post.images[i].src %>" alt="" title="<%= post.images[i].title %>"/>
