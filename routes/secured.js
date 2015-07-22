@@ -409,8 +409,10 @@ function *(next){
 	var posts=wrap(db.get('posts'));
 yield posts.insert({
 	postname:postname,
-	title:slug,autor:autor,
-	shorti:shorti,caption:caption,
+	title:slug,
+	autor:autor,
+	shorti:shorti,
+	caption:caption,
 	maincontent:maincontent,
 	meta:meta,
 	category:category,
@@ -443,23 +445,25 @@ yield this.body={
 	shorti:post.shorti,
 	caption:post.caption,
 	maincontent:post.maincontent,
+	dataformat:post.dataformat,
 	category:post.category,
 	rubrik:post.rubrik,
 	meta:post.meta,
 	redaktiert:post.redaktiert,
 	visa:post.visa,
 	title:post.title,
-	serial:post.serial};
+	serial:post.serial,
+	};
 	}
 catch(err){
 yield this.body={data:err};}
 });
 
-secured.post('/saveaneditedpost',bodyParser({multipart:true,formidable:{}}),
+secured.post('/saveaneditedpost', bodyParser({multipart:true,formidable:{}}),
 function *(next){
 var postname=this.request.body.fields.postname;
 	var slug=sluger(postname);//slugify(postname);
-// autor shorti caption maincontent meta category rubrik serial * 
+// autor shorti caption maincontent dataformat meta category rubrik serial * 
 //created redaktiert visa(1 2 3)
 var title=slug;
 console.log(title);
@@ -467,6 +471,7 @@ console.log(title);
 	var shorti=this.request.body.fields.shorti;
 	var caption=this.request.body.fields.caption;
 	var maincontent=this.request.body.fields.maincontent;
+	var dataformat=this.request.body.fields.dataformat;
 	var meta=this.request.body.fields.meta;
 	var category=this.request.body.fields.category;
 	var rubrik=this.request.body.fields.rubrik;
@@ -479,21 +484,25 @@ var id=this.request.body.fields.id;
 var db=this.fuck;
 
 var doc=wrap(db.get('posts'));
+/***
 yield doc.updateById(id,{
 postname:postname,
 title:title,
-autor:autor,
+//autor:autor,
 shorti:shorti,
 caption:caption,
 maincontent:maincontent,
 meta:meta,
-category:category,
-rubrik:rubrik,
-serial:serial,
+//dataformat:dataformat,
+//category:category,
+//rubrik:rubrik,
+//serial:serial,
 redaktiert:redaktiert,
-created:created,
+//created:created,
 visa:visa
-});
+});***/
+yield doc.updateById(id,{$set:{postname:postname,title:title,
+caption:caption,maincontent:maincontent,shorti:shorti,redaktiert:redaktiert,meta:meta,visa:visa}});
 this.body=JSON.stringify(this.request.body,null,2);
 this.body={"result":"OK - saved an edited post "+title}
 });

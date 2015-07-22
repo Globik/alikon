@@ -62,7 +62,7 @@ Visibility: <%= post.visa %>
 
 </article>
 </div>
-<% if(user && user.role == "admin"){ %>
+<!--
 <a href="#x" class="overlay" id="popredaktor"></a>
 <div class="popup" id="poredactor">
 <b>Redaktor</b></br>
@@ -99,7 +99,10 @@ Visibility: <%= post.visa %>
 <input type="text" name="id" value="" required placeholder="id"></br>
 <input type="submit" value="save"></br>
 </form></div>
+-->
+<%- include includes/adminarticles.html %>
 <script>
+/***
 var y;
 function redaktorHref(el){
 //alert('ok');
@@ -148,8 +151,9 @@ var xhr=new XMLHttpRequest();
 	 }}
 	 xhr.send(data);
 	 ev.preventDefault();},false);
+	 ***/
 </script>
-<%}%>
+
 <aside id="sidebar">
 <section class="widget">
 <h4 class="widgettitle">attariku</h4>

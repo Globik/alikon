@@ -3,7 +3,9 @@
 <a href="#x" class="overlay" id="popredaktor"></a>
 <div class="popup" id="poredactor">
 <b>Redaktor</b></br><span id="outinfo" style="background:green;"></span></br>
+
 <form name="post" method="post" enctype="multipart/form-data">
+<% if(user && user.role == "admin"){ %><input type="submit" value="save"></br><%}%>
 <span><b>Postname: </b></span></br>
 <input type="text" name="postname" required placeholder="postname" value="" style="width:400px;"></br>
 <b>Title: </b></br>
