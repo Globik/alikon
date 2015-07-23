@@ -45,7 +45,7 @@ srcset="/images/upload/tempo/gorod1-m1.jpg 384w,
 <source media="(min-width: 1366px)" srcset="<%= post.images[i].src3 %>">
 <source media="(min-width: 808px)" srcset="<%= post.images[i].src2 %>">
 <source media="(min-width: 600px)" srcset="<%= post.images[i].src1 %>">
-<source media="(min-width: 320px)" srcset="<%= post.images[i].src %>">
+<source media="(max-width: 320px)" srcset="<%= post.images[i].src %>">
 
 <img src='<%= post.images[i].src1 %>' title='<%= post.images[i].title%>' alt='<%=post.images[i].title%>'
 sizes="100vw" srcset="<%= post.images[i].src %> 384w,
