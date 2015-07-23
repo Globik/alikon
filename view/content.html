@@ -68,18 +68,23 @@ request ip is: <%= ip %>
 <div class="container" style="width:100%;border:1px solid blue;margin:0 auto;box-sizing:border-box;-webkit-box-sizing:border-box;">
 <!-- <div style="border:2px solid green;width:100%;background:red;"> -->
 <picture>
-<source media="(min-width: 1910px)" srcset="/images/upload/tempo/gorod1-m4.png">
-<source media="(min-width: 800px)" srcset="/images/upload/tempo/gorod1-m3.png 1x,/images/upload/tempo/gorod1-m4.png 2x" onload="alert('ok')">
-<source media="(min-width: 509px)" srcset="/images/upload/tempo/gorod1-m2.png">
-<source media="(min-width: 200px)" srcset="/images/upload/tempo/gorod1-m1.png">
+<source media="(min-width: 1366px)" srcset="/images/upload/tempo/gorod1-m4.jpg">
+<source media="(min-width: 808px)" srcset="/images/upload/tempo/gorod1-m3.jpg 1x,/images/upload/tempo/gorod1-m4.jpg 2x">
+<source media="(min-width: 600px)" srcset="/images/upload/tempo/gorod1-m2.jpg">
+<source media="(max-width: 220px)" srcset="/images/upload/tempo/gorod1-m2.jpg">
 
-<img id="fuckimg" src="/images/upload/tempo/gorod1-m2.png" 
+<img id="fuckimg" src="/images/upload/tempo/gorod1-m2.jpg" 
 alt="media picture element" title="title1" 
-sizes="100vw" srcset="/images/upload/tempo/gorod1-m1.png 384w,/images/upload/tempo/gorod1-m2.png 768w, /images/upload/tempo/gorod1-m3.png 1152w,/images/upload/tempo/gorod1-m4.png 1536w" width='100%'>
+sizes="100vw" srcset="/images/upload/tempo/gorod1-m1.jpg 384w,
+/images/upload/tempo/gorod1-m2.jpg 768w, 
+/images/upload/tempo/gorod1-m3.jpg 1152w,
+/images/upload/tempo/gorod1-m4.jpg 1536w">
 </picture>
 
 <!-- </div> -->
 </div></br>
+
+
 <script>
 function getcursrc(){
 gout2.innerHTML=fuckimg.currentSrc;
