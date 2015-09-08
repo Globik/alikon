@@ -6,8 +6,8 @@ var koa = require('koa');
 var monk=require('monk');
 var wrap=require('co-monk');
 var Agenda=require('Agenda');
-var agenda=new Agenda({db:{address:'localhost:27017/todo'}});
-  var db=monk("mongodb://localhost:27017/todo");
+var agenda=new Agenda({db:{address:'127.0.0.1:27017/todo'}});
+  var db=monk("mongodb://127.0.0.1:27017/todo");
  //var db=monk(process.env.MONGOHQ_URL,{w:1});
 
 //var tasks=wrap(db.get('tasks'));

@@ -21,11 +21,12 @@
 <div class="time-service"><b>comments 1</b></div>
 <div class="time-service"><b>23 Shares</b></div>
 
-<h5><a href="/articles/<%= d.dataformat %>/<%= d.title %>"><%=: d.postname | truncate:44 %></a></h5>
+<h5><a href="/articles/<%= d._id %>/<%= d.title %>"><%=: d.postname | truncate:44 %></a></h5>
 <p><%=: d.shorti | truncate:44 %></p>
-<div class="tags"><b><%= d.meta %></b></div> 
+<div class="tags">
+<% for(var s=0;s<d.meta.length;s++){%><b> <%= d.meta[s] %>  </b><%}%></div> 
 </div>
-<div class='art-pop'><p>Photos: <% if(d.images !==undefined){%>
+<div class='art-pop'><p>Photos: <% if(d.images){%>
 <%= d.images.length %> <%}%></p>
 <p>Noch bla bla bla.</p>
 </div>

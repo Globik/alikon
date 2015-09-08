@@ -1,0 +1,35 @@
+﻿<!-- fileedition.html -->
+<style>
+#texFileContent{width:80%;height:800px;}
+</style>
+<div id="aper" style="padding:30px;">
+<% if(user){%>hallo <%=user.username %><br><%}%>
+<% if(error_message){%><b class="error-message"><%= error_message %></b><br><%}%>
+
+A File For Edit:<br>
+Path: <span id="file_path"><% if(file_path){%><%= file_path %><%}%></span><br>
+<% if(file_content){%><div class="div_file_content">
+<textarea id="texFileContent" placeholder="file_content"><%= file_content %></textarea></div>
+<%}%>
+<br><button onclick="save_file_content(this)">save</button><br>
+<span id="out"></span><br>
+<span id="debug"></span><br>
+</div>
+<script>
+function save_file_content(el){
+//alert(texFileContent.value);
+var data={};
+data.path=file_path.textContent;
+data.val=texFileContent.value;
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/save_file_content');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	if(xhr.status==200){
+	//alert(this.response);
+	document.getElementById('out').textContent=this.response;
+	}else{debug.textContent=this.response;}}
+	xhr.onerror=function(e){alert(e.status);};
+	xhr.send(JSON.stringify(data));
+}
+</script>

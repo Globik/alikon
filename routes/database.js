@@ -121,64 +121,91 @@ var posts=yield doc.find({},{limit:4,skip:0,sort:{_id:-1}});
 console.log('count',posts.length);
 
 var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
-var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[/]MM[/]DD[/]');});
+var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[-]MM[-]DD[-]');});
 
 yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated,bube:bube,
 pages_count:Math.floor(totalposts/perPage),current_page:0});
-}catch(err){yield this.render('error-view',{user:this.req.user,err:err});}
+}catch(err){yield this.redirect('error-view',{user:this.req.user,err:err});}
 
 });
-
-fuckall.get('/articles/:skip',function *(skip){
-	console.log(this.params.skip);
-	if(isNumber(this.params.skip) == false) return;
+fuckall.param('skip',function *(skip,next){
+	if(isNumber(this.params.skip) == false){ 
+	this.flash={fucker:"Not a number type"};
+	this.redirect('/error-view');}
 	
 	function isNumber(str){
 		var numstr=/^\d+$/;
 		return numstr.test(str);
 	}
-	var db=this.fuck;
-	var doc=wrap(db.get('posts'));
 	try{
-		var perPage=4;
+var db=this.fuck;
+	var doc=wrap(db.get('posts'));	
+	var perPage=4;
 	var page=Math.max(0,parseInt(this.params.skip));
 	//var page=parseInt(this.params.skip);
 	var totalposts=yield doc.count({});
 	console.log('TOTAL POSTS :',totalposts);
 		var posts=yield doc.find({},{limit:4,skip:perPage*page,sort:{_id:-1}});
+		if(!posts)console.log('scheisse');
 		var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
 var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[/]MM[/]DD[/]');});
+
 console.log('Formated into Data: ',formated[0]);
 console.log('Post created : ',posts[0].created);
-yield this.render('skip',{user:this.req.user,posts:posts,formated:formated,bube:bube,
-pages_count:Math.floor(totalposts/perPage),current_page:page});
-	}catch(err){
-		//console.log(err);
-	yield this.render('error-view',{user:this.req.user,err:err});
-	}
-	
+this.posts=posts;
+this.formated=formated;
+this.bube=bube;
+this.pages_count=Math.floor(totalposts/perPage);
+this.current_page=page;
+	yield next;}
+	catch(err){console.log("fUCK ERROR");
+	this.flash={fucker:err.toString()};
+	this.redirect('/error-view')}
+}).get('/articles/:skip',function *(){
+	yield this.render('skip',{user:this.req.user,posts:this.posts,formated:this.formated,bube:this.bube,
+pages_count:this.pages_count,current_page:this.current_page});
 });
-fuckall.get('/articles/:year/:month/:day/:title',function *(){
-	console.log("Params year :",this.params.year);
-	var suka=this.params.year+'/'+this.params.month+'/'+this.params.day;
+
+fuckall.get('/articles/:id/:title',function *(next){
+/*if(isNumber(this.params.id) == false){ 
+	this.flash={fucker:"Not a number type"};
+	this.redirect('/error-view');}*/
+	
+	
+	console.log("Params id :",this.params.id);
+	var suka=this.params.id;
+	//this.params.year+'/'+this.params.month+'/'+this.params.day;
 	console.log("Suka :",suka);
+	//console.log("THIS STATUS in articles params",this.status)
+	if(!suka){this.redirect('/error-view');}
 	var db=this.fuck;
  var doc=wrap(db.get('posts'));
  try{
- var post= yield doc.findOne({'title':this.params.title,'dataformat':suka});
+ var post= yield doc.findOne({'_id':this.params.id,'title':this.params.title});
  console.log('post :',post.postname);
 var date=moment(post.created);
 var redact=moment(post.redaktiert);
 var formated=date.format('MMM D YYYY');
 var redformat=redact.format('MMM D YYYY');
 console.log('Dataformat :',post.dataformat);
-yield this.render('formated-article-view',{user:this.req.user,post:post,formated:formated,redformat:redformat});
+yield this.render('formated-article-view',{user:this.req.user,post:post,
+formated:formated,redformat:redformat});
  }
 catch(err){
-yield this.render('error-view',{user:this.req.user,err:err});
+ this.status=404;
+ this.flash={fucker:err.toString()};
+ //console.log('err5',err.toString());
+ //console.log("HERE FLASCH")
+ 
+ this.redirect('/error-view');
  }
 });
-
+fuckall.get('/error-view',function *(){
+	//console.log('THIS.MESSAGE :',this.message)
+	//console.log('THIS FLASH in ERROR VIEW :',this.flash.fucker)
+	yield this.render('error-view',{err:this.message,status:this.status,
+	user:this.req.user,fly:this.flash.fucker})
+})
 fuckall.get('/labo',function *(){
 yield this.render('labo',{user:this.req.user});
 });

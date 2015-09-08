@@ -1,3 +1,4 @@
 ﻿<!-- error-view.html -->
 <h3>Some error page</h3>
-<% if(err){%> <b><%= err %></b><%}%>
+<% if(err){%> <b><%= err %>|<%= status %></b><%}%>
+</br><b>Flash message :</b><%= fly %>

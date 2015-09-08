@@ -1,0 +1,321 @@
+﻿<!-- files-manager.html -->
+<style>
+
+table#myt caption {
+font-size:2rem;
+color:#444;
+}
+table#myt{
+border-collapse:collapse;
+font-family:Agenda-Light; font-weight:100;
+background:#333;color:#fff;
+text-rendering:optimizeLegibility;
+border-radius:8px;
+float:left;
+}
+table#myt thead th{ font-weight:600;}
+table#myt thead th,table#myt tbody td{
+padding: .8rem;font-size:1.4rem;}
+table#myt tbody td{
+padding:.8rem;font-size:1.4rem;
+color:#444;background:#eee;
+}
+table#myt tbody tr:not(:last-child){
+border-top:1px solid #ddd;
+border-bottom:1px solid #ddd;
+}
+@media screen and (max-width:600px){
+table#myt thead{display:none;}
+table#myt tbody td{display:block;padding:.6rem;}
+table#myt tbody tr td:first-child{background:#333;color:#fff;}
+table#myt tbody td:before{
+content:attr(data-th);font-weight:bold;
+display:inline-block;width:6rem;
+}
+}
+table#myt tbody tr .blue-file{background:lightblue;}
+table#myt tbody tr .brown-file{background:brown;}
+table#myt tbody tr .blue-file.fick-check{background:red;}
+</style> 
+<!-- <div style="clear:both">.</div> -->
+<div id="aper" style="padding:30px;">
+<h1>Files manager</h1>
+
+<br>
+<span id="debug" style="background:pink;"></span>
+</br><hr/>
+length: : <span id="lenar"></span></br>
+next array: <span id="nextarray"></span></br>
+<b>publik for next: </b><span id="basedir" style="background:lightblue;"></span></br>
+Content for next array: <span id="tent"></span></br>
+<hr/>
+prev array:<span id="prevarray"></span></br>
+for prev array join:<span id="prevarjoin" style="background:lightblue;"></span></br>
+<span id="guk"></span></br>
+<hr/>
+fuck:<span id="fuckable"></span><br>
+<button id="btn-back" onclick="backdas(this)" value="back">back</button>
+<button style="margin-left:300px;" onclick="createFolder()">Создать папку</button>
+<input id="namefolder" type="text" value="baby"/>
+<div>
+
+<table id="myt">
+<thead><tr><th>tasks</th><th>status</th><th>delete</th><th>check</th></tr></thead>
+<tbody id="rs3">
+<% if(mata){%>
+<% Object.keys(mata).forEach(function(el,i){
+ var fsext=[".html",".svg",".css",".js"];
+var baba2=(file_ex_isvalid(mata[i].ext));
+function file_ex_isvalid(ext){
+		var res=fsext.some(function(el,k,ar){return el == ext.toLowerCase()});
+		return res;};var path=mata[i].path; %>
+<tr><td class="<%= (mata[i].isFile==true ? "blue-file" : "brown-file")%>"  
+onclick="<%= (mata[i].ext=="" ? "kickdas(this)":"getAttr(this)")%>" data-path="<%=path%>"><%= mata[i].file %></td>
+
+<td><%-(baba2==true ? `<button onclick="do_file_edit(this)" value="${path}" >edt</button>`:``)%></td>
+<td class=""><button class="del" value="<%= path %>" data-isfile="<%= mata[i].isFile %>" >del</button></td>
+<td><input type="checkbox" onchange="fick_check(this)" data-path="<%=path%>"/></td></tr>
+
+<%})%>
+<%}%>
+
+</tbody>
+
+</table>
+<div style="background:pink;position:relative;float:left;margin-left:5em;"><b>dropdown</b>
+<% 
+if(answerfiles)
+var arr=answerfiles.ab;
+var bladi="public";
+var root={name:bladi,_id:bladi,ino_id:"0",_id:bladi,children:[]}
+var tree={root:root}
+function getParent(rootNode,rootId){
+for(var i=0 in rootNode.children){
+var child=rootNode.children[i];
+if(child._id === rootId) return child;
+if(child.children.length > 0)
+var childResult=getParent(child,rootId);
+if(childResult !=null) return childResult;
+} 
+if(rootNode._id == rootId){return rootNode;}else{return null}
+}
+function buildTree(tree){
+for(var i in arr){
+var elem=arr[i];
+if(elem.name === bladi) continue;
+elem["children"]=[];
+var rootId=elem.parent_id;
+var parent=getParent(tree.root,rootId);
+parent.children.push(elem);}}
+buildTree(tree);
+var mr="";
+function prwas(ites){
+if(ites.children.length>0){mr+=`<details><summary>${ites.name}</summary><ul class="fuku">`;}else{
+if(!ites.is_file) mr+=`${ites.name}`;}
+for(var i=0;i<ites.children.length;i++){
+mr+=`<li title="${ites.children[i]._id}">`;
+if(ites.children[i].is_file) mr+=`${ites.children[i].name}`;
+prwas(ites.children[i]);
+mr+="</li>";
+}
+if(ites.children.length > 0){mr+="</ul></details>";}
+}
+prwas(tree.root);
+%>
+<%- mr %>
+</div>
+<div style="clear:both;">clear</div>
+</div>
+<script>
+//var ab=["kiku.css","miku.css","main.css","papka1","papka2","papka3"];
+//var cd=["papka1","papka2","papka3"];
+//var mama=["kiku","diku","","papa","","","brother"];
+//var saa=mama.filter(function(x){if(x !=='')return x;})
+//console.log(saa);
+var fsext=[".html",".svg",".css",".js"];
+
+var buka=[];
+lenar.textContent=buka.length;
+
+function kickdas(el){
+var data={};
+lenar.textContent=buka.length;
+data.foldername=el.textContent;
+data.basedir=basedir.textContent;
+
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/that_direction');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	if(xhr.status==200){
+	//tent.textContent='';
+	tent.textContent=el.textContent+(el.textContent=="" ? "":"/");
+	if(el.textContent !==""){buka.push(tent.textContent);}
+	//var luka=buka.filter(function(x){if(x !=='')return x;})
+	nextarray.textContent=buka;
+	basedir.textContent=buka.join('');
+	lenar.textContent=buka.length;
+    var dat=JSON.parse(this.response);
+    ins(dat);
+	 suka2();
+	 debug.textContent='';
+	 }else{
+	 debug.textContent=this.response+' = '+xhr.staus;}}
+	xhr.onerror=function(e){alert(e.status)}
+	xhr.send(JSON.stringify(data));}
+
+function backdas(el){
+lenar.textContent=buka.length;
+var data={};
+
+var sri=buka.slice(0,buka.length-1);
+prevarray.textContent=sri;
+data.foldername='';
+prevarjoin.textContent=sri.join('');
+data.basedir=sri.join('');//prevarjoin.textContent;
+
+nextarray.textContent=sri;
+basedir.textContent=sri.join('');
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/that_direction');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	if(xhr.status==200){
+	lenar.textContent=buka.length;
+	tent.textContent='';
+	var dat=JSON.parse(this.response);
+	ins(dat);
+	suka2();
+	buka.length--;
+	debug.textContent='';
+	}else{debug.textContent=this.response;}
+}
+xhr.onerror=function(e){alert(e)}
+xhr.send(JSON.stringify(data))
+}
+function giblen(){alert(buka.length)}
+
+function ins(dat){
+var kukfiles;
+    var els=dat.mata;
+    if(rs3.hasChildNodes()){
+    while(rs3.hasChildNodes()){
+    rs3.removeChild(rs3.firstChild);}}
+	els.forEach(function(el,i){
+	var tr=document.createElement('tr');
+    var td=document.createElement('td');
+	//(el.value=="back" ? "":"/");
+	//alert(els[i].isFile)
+	var st='class="'+(els[i].isFile == true ? "blue-file" : "brown-file")+'"';
+	var st1=els[i].path;
+	//if(file_ex_isvalid(els[i].ext)){kukfiles='onclick="do_file_edit(this)"';}
+	var baba=(file_ex_isvalid(els[i].ext));
+	var clickretr=(els[i].ext=="" ? "kickdas(this)":"getAttr(this)");
+	var daba3=(baba ? `<button onclick="do_file_edit(this)" value="${els[i].path}">edt</button>`:``);
+//tr.innerHTML='<td '+st+' onclick="kickdas(this)">'+els[i].file+'</td><td>'+(baba == true ? "<button>n</button>":"")+'</td><td class="del">del</td>';
+tr.innerHTML=`<td ${st} onclick=${clickretr} data-path=${st1} >${els[i].file}</td><td>${daba3}</td><td><button class="del" data-isfile="${els[i].isFile}" value="${st1}">del</button></td>
+<td><input type="checkbox" onchange="fick_check(this)" data-path="${st1}"/></td>`;
+rs3.appendChild(tr);
+	 });
+}
+function getAttr(el){alert(el.getAttribute('data-path'))}
+function suka2(){
+var dels=document.getElementsByClassName('del');
+for(var i=0;i<dels.length;i++){
+dels[i].addEventListener('click',do_del);
+}}
+
+function do_del(e){
+if(confirm("Delete this file or dir: "+e.target.value+"? Press a button!")==true){
+var data={};
+var sifa=e.target;
+//alert('about deleting: '+sifa.value)
+data.path=sifa.value;
+data.isfile=sifa.getAttribute("data-isfile");
+//alert('Is file? :'+sifa.getAttribute("data-isfile"))
+//data.basedir=basedir
+//sifa.parentNode.parentNode.remove();
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/delete_that_pass');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	if(xhr.status==200){alert(this.response);debug.textContent=this.response;
+	kickdas(fuckable);
+	}else{debug.textContent=this.response;}
+	xhr.onerror=function(e){alert(e.status)}
+}
+xhr.send(JSON.stringify(data))
+}else{alert("otmena")}
+}
+
+suka2();
+function do_file_edit(el){
+var a=basedir.textContent;
+//alert('edit_path: '+a+' : '+el.value+' == '+el.value.replace(/[\\]/g,"%"));
+var ds=el.value.replace(/[\\]/g,"8");
+//alert(ds);
+var ps=ds.replace(/[8]/g,"/");
+//alert(ps);
+window.location.href='/app/filesmanager/'+ds;
+//lh:3000/app/elvalue
+}
+
+function createFolder(){
+var data={};
+var val=basedir.textContent;
+data.path=val;
+data.name=namefolder.value;
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/create_that_folder');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	if(xhr.status==200){
+	debug.textContent=this.response;
+	var fuckable=document.getElementById('fuckable');
+	kickdas(fuckable);
+	}else{
+	debug.textContent=this.response;}}
+	xhr.onerror=function(e){alert(e.status)}
+	xhr.send(JSON.stringify(data))
+}
+function fick_check(el){
+var sis=document.getElementsByClassName('blue-file');
+alert(el.getAttribute('data-path'));
+var pel=el.getAttribute('data-path');
+alert(el.parentNode.parentNode.getAttribute('data-path'))
+
+for(var i=0;i<sis.length;i++){
+var si=sis[i];
+if(pel==si.getAttribute('data-path')){
+if(el.checked){
+si.classList.add('fick-check');
+//si.classList.add('fick-check');
+}else{si.classList.remove('fick-check')}}
+}
+}
+function file_ex_isvalid(ext){
+		var res=fsext.some(function(el,k,ar){return el == ext.toLowerCase()});
+		return res;}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>

@@ -1,4 +1,4 @@
-<div id="flex-content">
+<div class="daper">
 <div class="fluiditems">
 <%- version %>
 <% if(user){%><b>Hallo Admin!</b><h3><%= user.username %></h3> <%}%>
@@ -133,17 +133,20 @@ var xhr=new XMLHttpRequest();
 				
             //});
     </script>
-<div class="fluiditems">	
+<div class="flu">	
 <h4>Users manager</h4>
 <a href="/app/adduser">adduser</a>
 <h4>System files</h4>
 <a href="/app/files">File manager</a></br>	
-<a href="/app/modules">Modules</a>
-<h4>Agenda</h4>
+<h4><a href="/app/modules">Modules</a></h4>
+<h4>
 <a href="/app/agenda">agenda</a>
-<br></br>
-<h4>Articles Manager</h4>
-<a href='/app/articlesmanager'>Articles Manager</a>
+</h4>
+<h4>
+<a href='/app/articlesmanager'>Articles Manager</a></h4>
+
+<h4><a href='/app/filesuploader'>Multi Pics Uploader</a></h4>
+<h4><a href="/app/filesmanager">Files Manager</a></h4>
 </div>
 
 </div>

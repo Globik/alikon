@@ -1,12 +1,7 @@
 var koa = require('koa');
 var session = require('koa-generic-session');
 var MongoStore = require('koa-generic-session-mongo');
-/***
-public/images/upload/**
-!public/images/upload/**/
 
-
-***/
 var app = koa();
 app.keys = ['keys', 'keykeys'];
 app.use(session({

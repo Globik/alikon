@@ -1,4 +1,5 @@
 'use strict';
+
 var crypto=require('crypto');
 var koa=require('koa');
 var render=require('koa-ejs');
@@ -118,12 +119,16 @@ ldb:function *(){try{var s=yield fs.readFile('db.json','utf-8');return JSON.pars
 path:function (){var b;if(this.method === 'GET'){b=this.path} return b;},
 signup:function *(){try{
 	var mdsignup=yield mods.findOne({modulname:"signup"});
-return mdsignup.status} catch(err){console.log(err);}
+return mdsignup.status} catch(err){
+	//console.log(err);
+}
 },
 module:function *(){try{
 		var mdl=yield mods.findOne({modulname:"aside"});
 //console.log('mdl.status :'+ mdl.status);
-return mdl.status}catch(err){console.log('err :'+err);}} ,
+return mdl.status}catch(err){
+	//console.log('err :'+err);
+	}} ,
 now:function(){
 return moment(new Date()).format('MMM D');},
 ip: function *(){
@@ -202,20 +207,68 @@ app.use(function *(next) {
 	console.log('sess dorth in apuse :'+this.session.dorthin);
   } else
   if (this.method === 'GET') {
-	  //console.log(this.flash.error);
+	  //console.log(this.flash.error); 
 	  console.log("This path in ap use",this.path);
-	  
+	  console.log('this.session.err :',this.message);
+	  //console.log("THIS FLASH FUCKER : ",this.flash.fucker);
 	  this.flash={woane:this.path};
-    //this.body = this.flash.error || 'No flash data.';
+	  
+	  //yield this.redirect('/error-view');
+	 //yield this.render('/error-view',{err:this.message,user:'is',status:this.status});
+    //this.body = this.flash.error || this.message;
   } 
   yield next;
 });
 app.use(fuckall.middleware());
 app.use(secured.middleware());
 
+app.use(function *(next){
+	yield next;
+	if(404 !=this.status) return;
+	this.status=404;
+	console.log('NOW status :',this.status+':'+this.flash.fucker)
+	yield this.render('/error-view',{err:this.message,fly:this.flash.fucker,status:this.status,user:this.req.user});
+})
+/*
+app.use(function *(next){
+try{yield next;}catch(err){
+	this.app.emit('error',err,this);
+	//yield this.render('/error-view',{err:err,user:'es'})
+	//yield this.body={err:err}
+	console.log("Some error in app use :",err);
+	this.redirect('/error-view');
+}	
+})*/
+
+
+app.on('error',function(err){
+	console.log('some err in app on error :', err.message)
+})
 if(process.env.NODE_ENV === 'test'){
 module.exports=app.callback();}
 else{
 
 console.log(3000);
 app.listen(process.env.PORT || 3000);}
+/***
+3. mongod --dbpath ../data/db --auth
+4. mongo --port 27017 -u manager -p admin --autheticationDatabase admin?
+use admin
+//1. create a system user administrator
+db.createUser({
+	user:"admin",//siteUserAdmin
+	pwd:"admin",
+	roles:[{role:'userAdminAnyDatabase',
+	db:'admin'}]
+})
+//done
+//check: db.getUser("admin")
+//2. create an user administrator for a single database
+use todo
+db.createUser({
+	user:'todouseradmin',
+	pwd:'admin',
+	roles:[{role:'userAdmin',db:'todo'}]
+})
+//undone
+***/

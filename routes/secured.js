@@ -181,7 +181,7 @@ secured.get('/alfafile/:name',authed,function *(name){
 		yield this.body={str:this.params.name,file:b};
 	});
 	
-	secured.post('/savefile',function *(next){
+	secured.post('/savefile',authed,function *(next){
 		//if(this.is('json')=='json')
 		var bu=this.request.body;
 		console.log('is this json? '+this.is('json'))
@@ -387,6 +387,12 @@ var doc=yield posts.find({});
 //var fotos=yield fs.readdir('public/images/uploads');
 yield this.render('articles-manager',{user:this.req.user,posts:doc});
 });
+//file-upload.html
+
+secured.get('/app/filesuploader',authed,function *(){
+	yield this.render('files-upload',{user:this.req.user});
+});
+
 var sluger=require('limax');
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
 function *(next){
@@ -482,7 +488,7 @@ var visa=this.request.body.fields.visa;
 console.log('visa :'+visa);
 var id=this.request.body.fields.id;
 var db=this.fuck;
-
+try{
 var doc=wrap(db.get('posts'));
 /***
 yield doc.updateById(id,{
@@ -502,9 +508,11 @@ redaktiert:redaktiert,
 visa:visa
 });***/
 yield doc.updateById(id,{$set:{postname:postname,title:title,
-caption:caption,maincontent:maincontent,shorti:shorti,redaktiert:redaktiert,meta:meta,visa:visa}});
+caption:caption,
+maincontent:maincontent,shorti:shorti,meta:meta,visa:visa}},{$currentDate:{redaktiert:true}});
 this.body=JSON.stringify(this.request.body,null,2);
 this.body={"result":"OK - saved an edited post "+title}
+}catch(err){this.body={err:err}}
 });
 
 secured.get('/deletePost/:dataid',authed,function *(dataid){
@@ -519,17 +527,25 @@ catch(err){
 yield this.body={data:err};}
 });
 
-secured.post('/addingfotos',authed,bodyParser({multipart:true,formidable:{uploadDir:'./public/images/upload/tmp',
+secured.post('/adding_fotos',authed,bodyParser({multipart:true,formidable:{uploadDir:'./public/images/upload/tmp',
 keepExtensions:true}}),function *(next){
-if('POST' !=this.method)return yield next;
+	var errs=[];
+if('post' !=this.method)return yield next;
 var files;
-var extarr=['.png','.jpg','.gif'];
+//console.log('HEADERS :',this.headers);
+//content-length,referer
+var extarr=['.png','.jpg'];
 var mimetypes=['image/png','image/jpeg'];
-var a=this.request.body.fields.nochwas;
+var a=this.request.body.fields.nochwas;//=name of folder(aka album ._id)
+var who=this.request.body.fields.who//=user._id
 console.log('A :',a);
 var b=this.request.body.files.file.name;
 var p=this.request.body.files.file.path;
 var size=this.request.body.files.file.size;
+console.log('SIZE :',size);
+if(size === 0){fso.unlink(p,function(err){console.log('ERROR in err.length :',err)});
+this.throw(400,"no file provided")}
+
 var t=this.request.body.files.file.type;
 
  files=this.request.body.files.file;
@@ -537,57 +553,57 @@ console.log('isArray? :',Array.isArray(files));
 var fils=Array.isArray(files);
 console.log("PATH :",p);
 var file_ext;
-if(yield fs.exists('./public/images/upload/'+a)){
+
+if(yield fs.exists('./public/images/upload/'+who)){
 		console.log('exist!');
 }
 else{console.log('fuck');
-yield fs.mkdir('./public/images/upload/'+a);
+yield fs.mkdir('./public/images/upload/'+who);
 }
-
-if(fils == true){
-for(var i=0;i<files.length;i++){
-console.log('PATH[i] :',files[i].path);
-p=files[i].path;
-b=files[i].name;
-t=files[i].type;
-console.log('PATH.EXTNAME of FILENAME :',path.extname(b));
-renameFile(a,p,b,t);
-}} else{
-	console.log('PATH.EXTNAME of FILENAME :',path.extname(b));
-renameFile(a,p,b,t);
-	 }
-	 /***
-function renameFile(papka,srcpath,targetname){
-	var file_ex=path.extname(targetname);
-	switch(file_ex){ case file_ex='.jpg':case file_ex='.png':
-	fso.rename(srcpath,path.join('./public/images/upload/'+papka+'/',targetname),function(err){
-	if(err)
-    fso.unlink(srcpath);
-fso.rename(p,path.join('./public/images/upload/'+papka+'/',targetname),function(err){console.log('Erst some err im ersten unlink');});
-console.log('Files downloaded finally');});
-	break;
-	default:console.log('DEFAULT');
-	fso.unlink(srcpath,function(err){console.log('Some err im zweiten unlink');});
-	}}
-	***/
-	function renameFile(papka,srcpath,targetname,mtype){
-	var file_ex=path.extname(targetname);
-	
-	if(file_ex_isvalid(file_ex) == true && mimetype_isvalid(mtype) == true){
-	fso.rename(srcpath,path.join('./public/images/upload/'+papka+'/',targetname),function(err){
-	if(err)
-    fso.unlink(srcpath);
-    fso.rename(p,path.join('./public/images/upload/'+papka+'/',targetname),function(err){
-	console.log('Erst some err im ersten unlink');});
-    console.log('Files downloaded finally');});	
-		}else{console.log('DEFAULT');
-	fso.unlink(srcpath,function(err){console.log('Some err im zweiten unlink');});}
+if(yield fs.exists('./public/images/upload/'+who+'/'+a)){
+		console.log('exist!');
+}
+else{console.log('fuck');
+yield fs.mkdir('./public/images/upload/'+who+'/'+a);
+}
+	var readstr;
+	var writeStream;
+	if(fils){
+	var bs=files.length;
+	var i=0;
+	while(bs > 0){
+		var file_ex=path.extname(files[i].name);
+	if(file_ex_isvalid(file_ex) && mimetype_isvalid(files[i].type)){
+	readstr=fso.createReadStream(files[i].path);
+	writeStream=fso.createWriteStream(path.join('./public/images/upload/'+who+'/'+a+'/',files[i].name));
+	readstr.pipe(writeStream);}
+	bs--;i+=1;
 	}
+	//readstr.pipe(writeStream);
+	readstr.on('error',function(err){console.log('In readstream :',err);});
+	writeStream.on('error',function(err){console.log('In write stream: ',err);});
+	readstr.on('close',function(){console.log('It looks like closed');
+	for(var k=0;k<files.length;k++)
+	fso.unlink(files[k].path,function(er){console.log('Error in unlink :',er);});
+	});
+	}else{
+		var file_ex=path.extname(files.name);
+	if(file_ex_isvalid(file_ex) && mimetype_isvalid(files.type)){
+	readstr=fso.createReadStream(files.path);
+	writeStream=fso.createWriteStream(path.join('./public/images/upload/'+who+'/'+a+'/',files.name));
+	readstr.pipe(writeStream);
 	
-	/***function file_ex_isvalid(ext){
-		var res=extarr.some(elem => elem == ext.toLowerCase());
-            return res;
-	}***/
+	readstr.on('error',function(err){console.log('In readstream :',err);});
+	writeStream.on('error',function(err){console.log('In write stream: ',err);});
+	readstr.on('close',function(){console.log('It looks like closed');
+	fso.unlink(files.path,function(er){console.log('Error in unlink :',er);});
+	});
+	}else{
+	//fso.unlink(files.path,function(er){console.log('ERR in mime type :',er);});
+	try{fs.unlink(files.path);} catch(err){console.log('ERR in mime type :',er);}
+	this.throw(404.3,'mime type only png and jps');
+	 }
+	}
 	function file_ex_isvalid(ext){
 		var res=extarr.some(function(el,i,ar){return el == ext.toLowerCase()});
 		return res;
@@ -602,6 +618,120 @@ yield next;
 });
 
 
+var parse=require('co-busboy');
+
+secured.post('/multipics',authed,function *(next){
+	if ('POST' != this.method) 
+return yield next;
+var parts=parse(this,{autoFields:true});
+//console.log('parts :',parts)
+var part;
+var picsSammler={};
+
+ picsSammler.pics=[];
+
+while(part=yield parts){
+	var who=parts.field.who;
+	console.log('USER ',who)
+	var p=parts.field.nochwas;
+if(yield fs.exists('./public/images/upload/'+who)){
+		console.log('exist!');}
+else{console.log('doesnt exist - moment mal');
+yield fs.mkdir('./public/images/upload/'+who);
+}
+if(yield fs.exists('./public/images/upload/'+who+'/'+p)){
+		console.log('exist!');
+}
+else{console.log('doesnt exist - moment mal');
+yield fs.mkdir('./public/images/upload/'+who+'/'+p);
+}
+	if(part.length){console.log(part)}
+	else{
+		console.log('name :',part.filename+' k '+parts.field.nochwas);
+		picsSammler.folder=parts.field.nochwas;
+		//picsSammler.autor=who;
+		//picsSammler.title='';
+		//picsSammler.createdat=new Date();
+		//picsSammler.multi=4;
+	var stream= fso.createWriteStream(path.join('./public/images/upload/'+who+'/'+p+'/',part.filename));
+         part.pipe(stream);
+}
+console.log('DONE ',parts.field.nochwas);
+picsSammler.pics.push('/images/upload/'+who+'/'+p+'/'+part.filename);
+part.on('error',function(er){console.log('error in part ',er)})
+stream.on('error',function(er){console.log('err in stream',er)})
+//part.on('end',function(){console.log('end part')});//true
+ stream.on('close',function(){console.log('it looks like a close event in stream')})
+}
+//var db=this.fuck;
+//var doc=wrap(db.get('fotoalbums'));
+//var album=yield doc.insert(picsSammler);
+yield this.body={inf:'ok',picssammler:picsSammler/*,album:album*/}	;
+})
+secured.post('/create_album',authed,function *(){
+	var db=this.fuck;
+	var docs=wrap(db.get('fotoalbums'));
+	var title=this.request.body.title;
+	var userId=this.request.body.userId;
+	var multi=this.request.body.multi;
+	var album;
+	//var multi=4;
+	var created_on=new Date();
+	var flagexist;
+	var folderexist;
+	if(yield fs.exists('./public/images/upload/'+userId)){
+		console.log('exist!');flagexist="schon";}
+    else{console.log('doesnt exist - moment mal');
+    yield fs.mkdir('./public/images/upload/'+userId);
+	flagexist=true;
+     }
+	
+	 var ind=yield docs.ensureIndex({title:1},{unique:true});
+	 console.log('ensure index :',ind);
+	 try{
+	 album=yield docs.insert({title:title,user:userId,multi:multi,created_on:created_on});}catch(er){
+		 console.log('er in catch insert',er);
+		 console.log('er code :',er.code+' '+er.name);
+		 if(er && (11000 === er.code || 11001 === er.code)){console.log('er ocured');
+		 this.throw(400,"имя альбома уже существует. Дай другое имя.")
+		 }
+	 }
+	
+	if(album){
+		if(yield fs.exists('./public/images/upload/'+userId+'/'+album._id)){
+		console.log('exist!');folderexist="schon";}
+        else{console.log('doesnt exist - moment mal');
+        yield fs.mkdir('./public/images/upload/'+userId+'/'+album._id);
+	    folderexist=true;
+     }
+	}
+	yield this.body={info:"OK",flagexist:flagexist,folderexist:folderexist,album:album};
+	 
+	 //catch(err){yield this.body={info:"albums name is existing already!!! Do name diffrerent!",err:err}}
+});
+secured.get('/getalbumlist',authed,function *(){
+	var db=this.fuck;
+	try{
+	var albums=wrap(db.get('fotoalbums'));
+	var folders;
+	var falschf
+	var album=yield albums.find({});
+	
+	 try{folders=yield fs.readdir('public/images/upload/'+album[0].user);
+	 console.log('folders :',folders);}catch(err){console.log(err);}
+	for(var i=0;i<album.length;i++){
+	try{falschf=yield fs.readdir('public/images/upload/'+album[0].user+'/'+album[i]._id)}
+	catch(err){console.log(err);
+	console.log('falsch file :',falschf);
+	try{var sa=yield albums.remove({_id:album[i]._id});console.log('sa :',sa);
+	//yield doc.remove({_id:this.params.dataid});
+	}catch(err){console.log('err in try of remove  :',err)}
+	}}
+	album=yield albums.find({});
+	yield this.body={album:album,folders:folders}  
+	}
+	catch(err){yield this.body={err:err}}
+})
 secured.post('/picstopost',authed,function *(){
 var db=this.fuck;
 var bu=this.request.body;
@@ -617,6 +747,13 @@ yield this.body={info:"OK",body:bu}
 catch(err){yield this.body={info:err}
 }
 });
+secured.post('/multipicstodb',authed,function *(){
+	var db=this.fuck;
+	var doc=wrap(db.get('pics'));
+	var fotos=this.request.body;
+	try{var smf=yield doc.insert(fotos);
+	yield this.body={info:smf};}catch(err){yield this.body={info:err};}
+})
 secured.post('/getdirectory',authed,function *(){
 	var directory=this.request.body.directory;
 	console.log('DIRECTORY :',directory);
@@ -627,11 +764,22 @@ secured.post('/getdirectory',authed,function *(){
 })
 
 secured.post('/showfolder',authed,function *(){
+	console.log("USER : ",this.req.user._id);
 	var foldername=this.request.body.foldername;
 	console.log('FolderName :',foldername);
 	try{
 	var fotkis=yield fs.readdir('public/images/upload/'+foldername);
 	yield this.body={info:"OK",foldername:foldername,fotkis:fotkis}
+	}catch(err){yield this.body={info:err};}
+})
+secured.post('/open_this_fold',authed,function *(){
+	console.log("USER :",this.req.user._id);
+	var basedir='/images/upload/';
+	var foldername=this.request.body.foldername;
+	var who=this.request.body.who;
+	try{
+	var fotkis=yield fs.readdir('public/images/upload/'+who+'/'+foldername);
+	yield this.body={info:"OK",foldername:foldername,fotkis:fotkis,basedir:basedir,who:who}
 	}catch(err){yield this.body={info:err};}
 })
 /* config.html */
@@ -651,11 +799,259 @@ var lowdb=this.lowdb;
 var s=lowdb("navigation").chain().find({ name: 'sign up' }).assign({status: 'on'}).value(2);	
 	yield this.body={s:s}
 })	
+	/*************************************
+	files-manager.html
+	**************************************/
+	//var w=require('co-walk');
+	'use strict';
+	var fsplus=require('co-fs-plus');
+	var proc=require('prochan');
+	//import {proc, chan, receive, send, select} = 'prochan';
+	// import {go, chan, take, put, alts} = 'prochan';
+	secured.get('/app/filesmanager',authed,function *(){
+	/*var sath='./public';
+var iles=yield w(sath,{symlinks:false});
+console.log('files :',iles);	
+*/	
+//var fil=yield w.walk('public');
+
+var fil=yield fsplus.readdir('public',null,[]);
+var ch1=proc.chan();console.log(ch1);
+var receive=proc.receive;
+var send=proc.send;
+var y= yield fs.readdir('public');
+proc.proc(function* (){var sss=yield receive(ch1);console.log('sss',sss)})
+	proc.proc(function* (){yield proc.send(ch1,y)})
+//proc(function* (){var val='k';yield send(ch1,val);console.log('chan')})
+//node index --harmony
+var dir='public';
+try{
+var folds_dir=yield fs.readdir('public');
+mata=[];
+var hui=[];
+
+for(var i=0;i<folds_dir.length;i++){
+	var el=folds_dir[i];
+	var a= yield fs.stat('public/'+el);
+	//if(a.isDirectory())
+	mata.push({file:el,isFile:a.isFile(),path:path.join('',el),ext:path.extname(el)})
+	}
+	//console.log('alles :',mata);
+	/**** 
+	recursive
+	***/
+	var rec=co.wrap(function* (r){
+var ab=[];
+var inos=[];
+var redr=co.wrap(function* (r){
+var items=yield fs.readdir(r);
+for(var i=0;i<items.length;i++){
+//for(let i of items){
+var fp=path.join(r,items[i]);
+var stats=yield fs.stat(fp);
+inos.push(stats.ino);
+ab.push({name:items[i],/*_id:items[i],
+/*parent_id:str.split("\\")[str.split("\\").length-2]*/
+/*parent_id:str.split(path.sep)[str.split(path.sep).length-2],*/ino_id:stats.ino,
+ino_prev_id:(inos[inos.length-2] == undefined ? "0" : inos[inos.length-2]),
+_id:fp,parent_id:path.dirname(fp),is_file:stats.isFile()
+});
+if (stats.isDirectory()) yield redr(fp);
+} 
+return {ab:ab};
+});
+//console.log(' :',ab);
+return redr(r).then(function(re){return re;}).catch(function(e){throw e;})
+});
+var answerfiles;
+yield rec('public').then(function(d){
+//console.log(d);
+answerfiles=d;}).catch(function(err){console.log(err);});
+/*** end of recursive ************************************************** ***/
 	
+yield this.render('files-manager',{user:this.req.user,foldsdir:folds_dir,mata:mata,
+answerfiles:answerfiles});
+}catch(err){this.flash={fucker:err.toString()};this.redirect('/error-view');}
+});
+
+secured.post('/that_direction',authed,function *(){
+	var mata=[];
+	var dublic='public/';
+	var name=this.request.body.foldername;
+	console.log("NAME :",name);
+	var basedir=this.request.body.basedir;
+	console.log("BASEDIR :",basedir);
+	try{
+	var folds_dir=yield fs.readdir(dublic+basedir+name);
+	for(var i=0;i<folds_dir.length;i++){
+var el=folds_dir[i];
+	var a=yield fs.stat(path.join(dublic+basedir+name,el));
+	mata.push({file:el,isFile:a.isFile(),relpath:path.join(''+basedir,name+'/'),path:path.join(''+basedir,name+'/'+el),ext:path.extname(el)});
+	//console.log("ABS PATH :",path.join(/*__dirname,'../public/',*/'/'+basedir,name+'/'+el))
+	//console.log('this path :',this.path);
+	//console.log('url :',this.url);
+	}
+	}
+    catch(er){this.throw(404,"No such dir : "+er);}
+	//console.log('ALLES MATA :',mata);
+yield this.body={folds_dir:folds_dir,mata:mata}
+});
+
+secured.get('/app/filesmanager/:name',authed,function *(name){
+		console.log('this.params.name',this.params.name);
+		var ds=this.params.name;
+		var ps=ds.replace(/[8]/g,"/");
+		console.log('ps :',ps);
+
+		try{
+		var file_content=yield fs.readFile('./public/'+ps,'utf-8');}
+		catch(err){console.log(err);this.flash={fucker:err.toString()};qu=err.toString();}
+		//console.log('file content: '+file_content);
+		yield this.render('fileedition',{user:this.req.user,file_content:file_content,file_path:ps,
+		error_message:this.flash.fucker})
+	});
+	
+	secured.post('/save_file_content',authed,function *(next){
+		if ('POST' != this.method) return yield next;
+		var path=this.request.body.path;
+		console.log('path :',path);
+	var val=this.request.body.val;
+if(val=="") this.throw(404,"must be some content");	
+		try{
+			var ws=yield fs.writeFile('./public/'+path,val);
+		}
+		catch(err){
+			this.throw(404,`Some error :${err}`);
+		}
+		//node index
+	yield this.body={info:"ok - saved!"};
+	});
+	secured.post('/create_that_folder',authed,function *(next){
+	if ('POST' != this.method) return yield next;	
+	var pat=this.request.body.path;
+	var name=this.request.body.name;
+	console.log('name :',name)
+	//if(name="") this.throw(404,"Give a name for folder")
+try{
+//if(yield fs.exists(path.join('./public',name))){
+		//console.log('exist!');}
+//else{console.log('doesnt exist - moment mal');
+yield fs.mkdir(path.join('./public/',pat+name));
+//console.log('b :',b)
+
+}catch(err){this.throw(404,"Some error :"+err);}	
+yield this.body={info:"ok - the folder created!"}
+	});
+	secured.post('/delete_that_pass',authed,function *(next){
+		if('POST' !==this.method) return yield next;
+		var error=[];
+		var pat=this.request.body.path;
+		console.log('removing this path:',pat);
+		var isfile=this.request.body.isfile;
+		try{yield fs.unlink(path.join('./public/',pat));}catch(err){
+			console.log('About deleting the file');
+			error.push(err);
+			/*this.throw(404,`Some error: ${err}`);*/
+			try{yield fs.rmdir(path.join('./public/',pat))}catch(err){
+				error.push(err)
+				console.log('About deleting dir in co-fs',path.join('./public/',pat));
+				try {console.log('About deleting dir in co-fs-plus :',path.join('./public/',pat))
+					yield fsplus.rimraf(path.join('./public/',pat));
+				}catch(err){error.push(err);this.throw(404,err)}
+				
+				}
+		}
+		//try{yield fs.rmdir(path.join('./public/',pat));}catch(err){this.throw(404,"err :"+err)}
+		yield this.body={info:"ok - deleted!",body:this.request.body,error:error}
+	})
+	/*
+	secured.post('/savefile',authed,function *(next){
+		//if(this.is('json')=='json')
+		var bu=this.request.body;
+		console.log('is this json? '+this.is('json'))
+		console.log('bu filename '+bu.file_name);
+		console.log('bu file content:  '+bu.file_content);
+		yield fs.writeFile('./view/includes/footer.html',bu.file_content);
+		this.body=JSON.stringify(this.request.body,null,2);
+	this.body={resultA:this.request.body,result:"OK - saved!"};
+	yield next;
+	});*/
+/******************************************************************************************/
 //iojs index
 function *authed(next){
 if(this.req.isAuthenticated() && this.req.user.role == "admin"){
  
 yield next;}
 else{ this.redirect('/');}}
+/*
+function * main(){return ret=yield Promise.all([ 'hi, man!',2,3]);}
+run(main).then(function fulfilled(v){console.log('promise success :',v);},function rejected(reason){
+	console.log('reason :',reason);
+})
+function run(gen){
+	var args=[].slice.call(arguments,1),it;
+	it=gen.apply(this,args);
+	return Promise.resolve()
+	.then(function handlenext(value){
+		var next=it.next(value);
+		return(function handleresult(next){
+			if(next.done){
+				return next.value;
+			}else{
+				return Promise.resolve(next.value)
+				.then(handlenext,function handleerr(err){
+					return Promise.resolve(it.throw(err)).then(handleresult);
+				})
+			}
+		})(next);
+	});
+}
+function go_(machine,step){
+	while(!step.done){
+		var arr=step.value(),state=arr[0],value=arr[1];
+		switch (state){
+			case "park":
+			setImmediate(function(){go_(machine,step);});
+			return;
+			case "continue":
+			step=machine.next(value);
+			break;
+		}
+	}
+}
+
+function go(machine){
+	var gen=machine();
+	go_(gen,gen.next());
+}
+function put(chan,val){
+	return function(){
+		if(chan.length == 0){
+			chan.unshift(val);
+			return ["continue",null];
+		}else{return ["park",null];}
+	};
+}
+function take(chan){
+	return function(){
+		if(chan.length == 0){
+			return ["park",null];
+		}else{var val=chan.pop();
+		return ["continue",val]}
+	};
+}
+var c=[];
+go(function *(){
+	for(var i=0;i<10;i++){
+		yield put(c,i);
+		console.log('process one put ',i);
+	}
+	yield put(c,null);
+});
+go(function *(){
+	while(true){
+		var val=yield take(c);
+		if(val == null){break;}
+else{console.log('process two took ',val);}	}
+});*/
 module.exports=secured;

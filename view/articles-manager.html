@@ -45,7 +45,7 @@ style="width:400px;"></br>
 </form>
 <br>
 <style>
-
+.redChecked{background:red;}
 #fotkis{
 display:flex;
 flex-flow: row wrap;
@@ -57,15 +57,35 @@ figure{border:1px solid green;width:15em;}
 span{font-size:0.8em;line-height:0.01em;}
 .img-cont{width:100%;height:10em;overflow:hidden;}
 img{width:100%;}
+
 </style>
+<% if(user){%><b>User._id :</b><span id="who"><%= user._id %></span></br><%}%>
 <span id="out"></span>
 <h2>Fotos</h2>
-<button onclick="getFolders()">Get Folders</button>
+</br><div id="albumlistout"></div></br>
+<button onclick="getFolders()">Get Folders</button>|<button onclick="getAlbumList()">Get Folders via DB</button>
 <div>
-<ul id="directories" style="list-style:none;display:inline;">
+<ul id="direction" style="list-style:none;display:inline;">
 </ul>
 </br><button id="btnPicstar" onclick="addpicsar()" style="display:none;">send pics to db</button></hr>
- | <button id="btnOrder" onclick="inOrdnung()">Упорядочить!</button><hr/>
+ | <button id="btnOrder" onclick="inOrdnung()">Упорядочить!</button>
+ </br><b>Mult-info :</b><span id="multInfo"></span>
+ <div style="display:inline-blobk;">
+ <select id="level" >onchange="change_was(this.value)"
+ <option value="menu">menu</option>
+<option value="remove_checked">remove_checked</option>
+
+</select>
+<input type="text" list="fuck">
+<datalist id="fuck">
+<option value="1">1<option>
+<option value="2">2</option>
+<option value="3">
+</datalist>
+<details><li style="list-style:none;">
+<button onclick="remove_checked()">remove_checked</button></li></details>
+</div>
+ <hr/>
 <div id="fotkis">
 </div>
 </div>
@@ -74,9 +94,12 @@ img{width:100%;}
 //blalbala
 var adidas;
 var datId;
-var directories=document.getElementById('directories');
+var direction=document.getElementById('direction');
 var fotkis=document.getElementById('fotkis');
 btnOrder.style.display="none";
+function getFoldersViaDB(){
+
+}
 function getFolders(){
 var data={};
 data.directory="getsomefotos";
@@ -89,18 +112,100 @@ var xhr=new XMLHttpRequest();
 	 out.innerHTML=this.response;
 	 
 	 for(var i=0;i<docs.folders.length;i++){
-	 if(!directories.childNodes[i+1]){
+	 if(!direction.childNodes[i+1]){
 
 	 var li=document.createElement('li');
 	 var doc=docs.folders[i];
 	 li.innerHTML='<button class='+(doc !== "tmp" ? "z" : "zapret")+' onclick='+(doc !== "tmp" ? "showFots(this)" : null)+' value='+doc+'>'+doc+'</button>';
-	 if(doc=='tmp'){doc='x';}
-	 directories.appendChild(li);}}
+	
+	 direction.appendChild(li);}}
 	 }
 	 else{out.innerHTML=this.response;
 	 }}
 	 xhr.send(JSON.stringify(data));
 }
+function getAlbumList(){
+var xhr=new XMLHttpRequest();
+xhr.open('get','/getalbumlist');
+var docfr=document.createDocumentFragment();
+xhr.onload=function(e){
+if(xhr.status == 200){
+var data=JSON.parse(this.response);
+albumlistout.innerHTML=this.response;
+if(direction.hasChildNodes()){
+while(direction.hasChildNodes()){
+direction.removeChild(direction.firstChild);}}
+for(var i=0;i<data.album.length;i++){
+var li=document.createElement('li');
+var title=data.album[i].title;
+var multik=data.album[i].multi;
+var albumFold=data.folders[i];
+var str1='<button class='+(title !== "tmp" ? "z" : "zapret")+' onclick='+(title !== "tmp" ? "showFots2(this)" : null)+' data-multi='+multik+' value='+albumFold+'>'+title+'</button>';
+	
+//(user*aka user._id*,multi,createdat,_id,[fotkis])
+li.innerHTML=str1;
+docfr.appendChild(li);
+}
+direction.appendChild(docfr);
+}else{alert(this.status)}
+}
+xhr.onerror=function(e){alert('fu')}
+xhr.send();
+}
+function showFots2(el){
+//alert('now show u some folders in this derictory '+el.value);
+var data={};
+data.foldername=el.value;
+data.who=who.textContent;
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/open_this_fold');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 multInfo.textContent=el.getAttribute('data-multi');
+	 btnPicstar.style.display="inline-block";
+	if(multInfo.textContent == '4'){ btnOrder.style.display="inline-block";}
+	 var data=JSON.parse(this.response);
+	 var fold=el.value;
+	 var who=data.who;
+	 var basedir=data.basedir;
+	 
+	 alert(this.response);
+	 //out.innerHTML=this.response;
+	 
+	 if(fotkis.hasChildNodes()){
+while(fotkis.hasChildNodes()){
+fotkis.removeChild(fotkis.firstChild);
+}}
+var len=data.fotkis.length;
+var docfrag=document.createDocumentFragment();
+	for(var i=0;i < len;i+=1){
+	 
+	 var pics=data.fotkis[i];
+	//(foldername,fotkis,basedir,who)
+	 var div=document.createElement('figure');
+	 //var fold=el.value;
+	 //var who=data.who;
+	 div.className='pig';
+	 div.setAttribute('data-picname',pics);
+	 div.setAttribute("data-src",'/images/upload/'+who+'/'+fold+'/'+pics+'');
+	 //div.onclick=function(){alert(this.getAttribute("data-identif"))}
+var str1='<caption>'+[i+1]+'<p class="capitan"></p><input type="checkbox" data-picname='+pics+' onchange="ckeckboxVal(this)"></caption>';
+var str2='<div class="img-cont"><img src="'+basedir+who+'/'+fold+'/'+pics+'"></div>';
+var str3='<figcaption><span class="p-descr" contenteditable=true>Description</span></br>';
+var str4='<span class="p-title" contenteditable=true>Title</span></br>';
+var str5='<span class="srcset" contenteditable=true>'+basedir+who+'/'+fold+'/'+pics+'</span></details></br></figcaption>';
+	 div.innerHTML=[str1,str2,str3,str4,str5].join('');
+	 docfrag.appendChild(div);
+	 }
+	 fotkis.appendChild(docfrag);
+	 
+	 doit();
+}else{alert(this.status)}
+	 }
+	 xhr.send(JSON.stringify(data));
+	 }
+	 
 function showFots(el){
 //alert('now show u some folders in this derictory '+el.value);
 var fl=0;
@@ -171,7 +276,7 @@ if(kasak == true)
 var step=0;
 var mass=getDomArray('[data-identif="oldfucker"]');
 var infocaption=getDomArray('[data-identif="oldfucker"] figcaption');
-
+var unititle=getDomArray('.p-title');
 mass.forEach(function(el,k){
 var w=sabat.slice(step,step+=3);
     focuspocus(infocaption[k],w);
@@ -179,13 +284,18 @@ var w=sabat.slice(step,step+=3);
 }
 
 function focuspocus(ob,arr){
+var detail=document.createElement('details');
+var strin='</details>';
 arr.forEach(function(el,k){
+
 var span=document.createElement('span');
     span.className='srcset'+[k+1];
 	span.setAttribute('contenteditable',true);
     span.innerHTML=arr[k]+'<br>';
+
     ob.appendChild(span)
 });
+//ob.insertBefore(detail,ru);
 
 }
 
@@ -231,8 +341,28 @@ return false;
     col.addEventListener('dragend', handleDragEnd, false);
   });
 }
-
-
+function ckeckboxVal(el){
+//alert(el.checked);
+var buka=el.getAttribute('data-picname');
+var rmvs=getDomArray('[data-picname="'+buka+'"]');
+rmvs.forEach(function(l,i){
+//rmvs[i].remove();
+if(el.checked){
+l.className="redChecked";}
+else{l.className="";}
+});
+}
+function remove_checked(el){
+//alert('ok')
+var rmvs=getDomArray('.redChecked');
+rmvs.forEach(function(el,i){
+rmvs[i].remove();
+})
+}
+level.options.onclick=function(){alert('da')}
+function do_rem(el){
+alert('ok')
+}
 function addpicsar(){
 var pTitle=getDomArray('.p-title');
 var pSrc=getDomArray('.srcset');
@@ -302,12 +432,17 @@ return elar;
 
 
 </br>
+</br><button onclick="createAlbum()">create Album!</button>
+</br><b>Multi: </b><span id="multi">1</span>
+</br><b>Album info _id :</b><span id="albuminfo"></span>
+</br><b>Album-out-info :</b><span id="albumoutinfo"/></span></br>
+
 <form action="/addingfotos" method="post"  name="fotki" enctype="multipart/form-data">
-<input type="text" name="username" value="roni"></br>
-<input type="text" name="username" value="popikov"></br> 
-<input type="text" name="nochwas" value="kuku-1"></br>  
-<input type="file" name="file" multiple onchange='thumb(this.files)' multiple="multiple" accept="*/*">
-<input type="submit" value="Davaj">
+<input type="text" name="username" value="<% if(user){%><%= user.username %><%}%>"></br>
+<input type="text" name="who" value="<% if(user){%><%= user._id %><%}%>"></br>
+<input id="texFolder" type="text" name="albId" value="album-1" required></br>  
+<input type="file" name="file" multiple="multiple" accept="*/*">
+<input type="submit" value="upload">
 </form>
 </br>
 <progress min="0" max="100" value="0">0% complete</progress>
@@ -317,6 +452,32 @@ var dataId;
 var imgText=document.querySelectorAll('.img-text');
 var imgTitle=document.querySelectorAll('.img-title');
 var imgSrc=document.querySelectorAll('.img-src');
+
+function createAlbum(){
+var data={};
+
+data.userId=who.textContent;
+data.title=texFolder.value;
+data.multi=multi.textContent;
+var xhr=new XMLHttpRequest();
+    xhr.open('post','/create_album');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 albuminfo.textContent=JSON.parse(this.response).album._id;
+	 albumoutinfo.innerHTML=this.response;
+	 }
+	 else{albumoutinfo.innerHTML=this.response+this.status;
+	 }}
+	 xhr.onerror=function(e){alert(this.response + e)}
+//alert(JSON.stringify(data));
+xhr.send(JSON.stringify(data));
+/** servak:
+var title=this.request.body.title;
+	var userId=this.request.body.userId;
+	var multi=this.request.body.multi; **/
+}
 	// alert(cals.innerHTML);
 var formface=document.forms.namedItem("postCreating");
 formface.addEventListener('submit',function(ev){
@@ -394,33 +555,24 @@ formface.addEventListener('submit',function(ev){
 var data=new FormData(document.forms.namedItem("fotki"));
 //data.append("number","two");
 var xhr=new XMLHttpRequest();
-    xhr.open("post","/addingfotos",true);
+    xhr.open("post","/adding_fotos",true);
 	xhr.onload=function(e){
 	 if(xhr.status==200){
 	 var sata=JSON.parse(this.response);
 	 out.innerHTML=this.response;
-	 out2.innerHTML=sata.filenames.files[0].src;
-	 var img=document.createElement('img');
-	 img.src='/kuku/'+sata.filenames.files[0].name;
-	 img.style.width="300px";
-	 img.style.height="auto";
-	 document.body.appendChild(img);
-	 if(sata.inf=="OK"){formface.file.value='';}
+	 }else{alert(this.status+' : '+ this.response)}
 	 }
-	 else{out.innerHTML=this.response+this.status;
-	 }}
-	 xhr.onerror=function(e){//alert(e.status)
-	 }
-	 data.append("number","two");
+	 xhr.onerror=function(e){alert('im onerror event :'+this.status+this.response);}
+	 //formi.append("who",document.getElementById('who').textContent);
+     //formi.append("nochwas",document.getElementById('albuminfo').textContent);
+	 data.append("nochwas",document.getElementById('albuminfo').textContent);
 	 var progressbar=document.querySelector('progress');
 	 
 	 xhr.upload.onprogress=function(e){
 	 if(e.lengthComputable){
-	 progressbar.value=(e.loaded/e.total)*100;
-	 
-	 }
-	 }
-	 //xhr.onabort=function(e){alert(e.status)}
+	 progressbar.value=(e.loaded/e.total)*100;}};
+	 xhr.onabort=function(e){alert(e.status)};
 	 xhr.send(data);
 	 ev.preventDefault();},false);
 </script>
+</br>

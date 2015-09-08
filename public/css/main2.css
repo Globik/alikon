@@ -453,7 +453,7 @@ width:92%;
 position:relative;
 margin:1em auto;
 display:block;
-border:1px solid green;
+
 -webkit-box-sizing:border-box;
 box-sizing:border-box;
 word-wrap:break-word;
@@ -477,9 +477,9 @@ text-align:center;
 color:white;
 overflow:hidden;
 }
-.flex #daper{border:1px solid red;display:flex;flex-wrap:wrap;
+.flex #daper{display:flex;flex-wrap:wrap;
 justify-content:center;align-items:center;margin-top:20px;
-/*flex-direction:column;*/
+
 }
 .flex .fluiditems{background:pink;margin-bottom:5px;margin-top:20px;}
 
@@ -740,14 +740,14 @@ font-size:1em;
 /************************************************************************************
 smaller than 560
 *************************************************************************************/
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 360px) {
 /* disable webkit text size adjust (for iPhone) */
 html {
 font-size:1;
 -webkit-text-size-adjust: none;
 }
 
-#content{padding:1.8em;}
+#content{padding:0.5em;}
 .post-title{font-size:1.2rem;}
 #cnv{background-color:yellow;width:45px;height:200px;}
 /* main nav */
