@@ -13,7 +13,7 @@ var path=require('path');
 var moment=require('moment');
 //var parse=require('co-body');
 
-var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
+//var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
 var secured=new Router();
 
 secured.get('/app',authed,function *(){
@@ -805,7 +805,7 @@ var s=lowdb("navigation").chain().find({ name: 'sign up' }).assign({status: 'on'
 	//var w=require('co-walk');
 	'use strict';
 	var fsplus=require('co-fs-plus');
-	var proc=require('prochan');
+	//var proc=require('prochan');
 	//import {proc, chan, receive, send, select} = 'prochan';
 	// import {go, chan, take, put, alts} = 'prochan';
 	secured.get('/app/filesmanager',authed,function *(){
@@ -815,13 +815,13 @@ console.log('files :',iles);
 */	
 //var fil=yield w.walk('public');
 
-var fil=yield fsplus.readdir('public',null,[]);
-var ch1=proc.chan();console.log(ch1);
-var receive=proc.receive;
-var send=proc.send;
-var y= yield fs.readdir('public');
-proc.proc(function* (){var sss=yield receive(ch1);console.log('sss',sss)})
-	proc.proc(function* (){yield proc.send(ch1,y)})
+//var fil=yield fsplus.readdir('public',null,[]);
+//var ch1=proc.chan();console.log(ch1);
+//var receive=proc.receive;
+//var send=proc.send;
+//var y= yield fs.readdir('public');
+//proc.proc(function* (){var sss=yield receive(ch1);console.log('sss',sss)})
+//	proc.proc(function* (){yield proc.send(ch1,y)})
 //proc(function* (){var val='k';yield send(ch1,val);console.log('chan')})
 //node index --harmony
 var dir='public';
