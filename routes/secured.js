@@ -803,7 +803,7 @@ var s=lowdb("navigation").chain().find({ name: 'sign up' }).assign({status: 'on'
 	files-manager.html
 	**************************************/
 	//var w=require('co-walk');
-	'use strict';
+
 	var fsplus=require('co-fs-plus');
 	//var proc=require('prochan');
 	//import {proc, chan, receive, send, select} = 'prochan';
