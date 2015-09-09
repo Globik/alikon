@@ -160,12 +160,13 @@ app.keys=['fg'];
 
  //app.use(session({store:new MongoStore({db:"todo"})}));
  //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST,db:"alikon-fantastic-database"})}));
- app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
+ //app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
 app.use(session());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(Router(app));
 app.use(bodyParser());
+app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
 app.use(flash());
  //iojs index
  app.use(function *(next){this.lowdb=lowdb;yield next;})
