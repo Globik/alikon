@@ -393,11 +393,11 @@ secured.get('/app/filesuploader',authed,function *(){
 	yield this.render('files-upload',{user:this.req.user});
 });
 
-var sluger=require('limax');
+//var sluger=require('limax');
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
 function *(next){
 	var postname=this.request.body.fields.postname;
-	var slug=sluger(postname);//slugify(postname);
+	var slug=slugify(postname);
 	
 	var autor=this.request.body.fields.autor;
 	var shorti=this.request.body.fields.shorti;
@@ -468,7 +468,8 @@ yield this.body={data:err};}
 secured.post('/saveaneditedpost', bodyParser({multipart:true,formidable:{}}),
 function *(next){
 var postname=this.request.body.fields.postname;
-	var slug=sluger(postname);//slugify(postname);
+	var slug="sluger(postname)";
+	//slugify(postname);
 // autor shorti caption maincontent dataformat meta category rubrik serial * 
 //created redaktiert visa(1 2 3)
 var title=slug;
