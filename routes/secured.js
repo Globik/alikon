@@ -617,7 +617,7 @@ yield this.body={inf:"OK",fields:a,files:b,headers:this.request.body}
 yield next;
 });
 
-
+/*
 var parse=require('co-busboy');
 
 secured.post('/multipics',authed,function *(next){
@@ -666,8 +666,8 @@ stream.on('error',function(er){console.log('err in stream',er)})
 //var db=this.fuck;
 //var doc=wrap(db.get('fotoalbums'));
 //var album=yield doc.insert(picsSammler);
-yield this.body={inf:'ok',picssammler:picsSammler/*,album:album*/}	;
-})
+yield this.body={inf:'ok',picssammler:picsSammler}
+})*/
 secured.post('/create_album',authed,function *(){
 	var db=this.fuck;
 	var docs=wrap(db.get('fotoalbums'));
@@ -707,7 +707,6 @@ secured.post('/create_album',authed,function *(){
 	}
 	yield this.body={info:"OK",flagexist:flagexist,folderexist:folderexist,album:album};
 	 
-	 //catch(err){yield this.body={info:"albums name is existing already!!! Do name diffrerent!",err:err}}
 });
 secured.get('/getalbumlist',authed,function *(){
 	var db=this.fuck;
@@ -802,28 +801,12 @@ var s=lowdb("navigation").chain().find({ name: 'sign up' }).assign({status: 'on'
 	/*************************************
 	files-manager.html
 	**************************************/
-	//var w=require('co-walk');
+/*
 
 	var fsplus=require('co-fs-plus');
-	//var proc=require('prochan');
-	//import {proc, chan, receive, send, select} = 'prochan';
-	// import {go, chan, take, put, alts} = 'prochan';
+	
 	secured.get('/app/filesmanager',authed,function *(){
-	/*var sath='./public';
-var iles=yield w(sath,{symlinks:false});
-console.log('files :',iles);	
-*/	
-//var fil=yield w.walk('public');
-
-//var fil=yield fsplus.readdir('public',null,[]);
-//var ch1=proc.chan();console.log(ch1);
-//var receive=proc.receive;
-//var send=proc.send;
-//var y= yield fs.readdir('public');
-//proc.proc(function* (){var sss=yield receive(ch1);console.log('sss',sss)})
-//	proc.proc(function* (){yield proc.send(ch1,y)})
-//proc(function* (){var val='k';yield send(ch1,val);console.log('chan')})
-//node index --harmony
+	
 var dir='public';
 try{
 var folds_dir=yield fs.readdir('public');
@@ -836,10 +819,11 @@ for(var i=0;i<folds_dir.length;i++){
 	//if(a.isDirectory())
 	mata.push({file:el,isFile:a.isFile(),path:path.join('',el),ext:path.extname(el)})
 	}
-	//console.log('alles :',mata);
+	//console.log('alles :',mata);*/
 	/**** 
 	recursive
 	***/
+	/*
 	var rec=co.wrap(function* (r){
 var ab=[];
 var inos=[];
@@ -852,7 +836,7 @@ var stats=yield fs.stat(fp);
 inos.push(stats.ino);
 ab.push({name:items[i],/*_id:items[i],
 /*parent_id:str.split("\\")[str.split("\\").length-2]*/
-/*parent_id:str.split(path.sep)[str.split(path.sep).length-2],*/ino_id:stats.ino,
+/*parent_id:str.split(path.sep)[str.split(path.sep).length-2],*//*ino_id:stats.ino,
 ino_prev_id:(inos[inos.length-2] == undefined ? "0" : inos[inos.length-2]),
 _id:fp,parent_id:path.dirname(fp),is_file:stats.isFile()
 });
@@ -866,9 +850,9 @@ return redr(r).then(function(re){return re;}).catch(function(e){throw e;})
 var answerfiles;
 yield rec('public').then(function(d){
 //console.log(d);
-answerfiles=d;}).catch(function(err){console.log(err);});
+answerfiles=d;}).catch(function(err){console.log(err);});*/
 /*** end of recursive ************************************************** ***/
-	
+/*	
 yield this.render('files-manager',{user:this.req.user,foldsdir:folds_dir,mata:mata,
 answerfiles:answerfiles});
 }catch(err){this.flash={fucker:err.toString()};this.redirect('/error-view');}
@@ -887,7 +871,7 @@ secured.post('/that_direction',authed,function *(){
 var el=folds_dir[i];
 	var a=yield fs.stat(path.join(dublic+basedir+name,el));
 	mata.push({file:el,isFile:a.isFile(),relpath:path.join(''+basedir,name+'/'),path:path.join(''+basedir,name+'/'+el),ext:path.extname(el)});
-	//console.log("ABS PATH :",path.join(/*__dirname,'../public/',*/'/'+basedir,name+'/'+el))
+	
 	//console.log('this path :',this.path);
 	//console.log('url :',this.url);
 	}
@@ -896,7 +880,7 @@ var el=folds_dir[i];
 	//console.log('ALLES MATA :',mata);
 yield this.body={folds_dir:folds_dir,mata:mata}
 });
-
+*/
 secured.get('/app/filesmanager/:name',authed,function *(name){
 		console.log('this.params.name',this.params.name);
 		var ds=this.params.name;
@@ -942,6 +926,7 @@ yield fs.mkdir(path.join('./public/',pat+name));
 }catch(err){this.throw(404,"Some error :"+err);}	
 yield this.body={info:"ok - the folder created!"}
 	});
+	/*
 	secured.post('/delete_that_pass',authed,function *(next){
 		if('POST' !==this.method) return yield next;
 		var error=[];
@@ -951,7 +936,7 @@ yield this.body={info:"ok - the folder created!"}
 		try{yield fs.unlink(path.join('./public/',pat));}catch(err){
 			console.log('About deleting the file');
 			error.push(err);
-			/*this.throw(404,`Some error: ${err}`);*/
+			
 			try{yield fs.rmdir(path.join('./public/',pat))}catch(err){
 				error.push(err)
 				console.log('About deleting dir in co-fs',path.join('./public/',pat));
@@ -964,6 +949,7 @@ yield this.body={info:"ok - the folder created!"}
 		//try{yield fs.rmdir(path.join('./public/',pat));}catch(err){this.throw(404,"err :"+err)}
 		yield this.body={info:"ok - deleted!",body:this.request.body,error:error}
 	})
+	*/
 	/*
 	secured.post('/savefile',authed,function *(next){
 		//if(this.is('json')=='json')
