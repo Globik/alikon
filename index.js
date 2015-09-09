@@ -203,7 +203,7 @@ function remove() {
   this.body = 0;
 }
 
-/*
+
 app.use(function *(next) {
   if (this.method === 'POST') {
     this.flash = { error: 'This is a flash error message.' };
@@ -222,7 +222,7 @@ app.use(function *(next) {
   } 
   yield next;
 });
-*/
+
 app.use(fuckall.middleware());
 app.use(secured.middleware());
 
