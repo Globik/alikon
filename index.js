@@ -160,8 +160,8 @@ app.keys=['fg'];
 
  //app.use(session({store:new MongoStore({db:"todo"})}));
  //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST,db:"alikon-fantastic-database"})}));
- //app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
- app.use(session({store:new MongoStore({url:configDB.newUrl})}))
+ app.use(session({store:new MongoStore({url:configDB.url})}));
+ //app.use(session({store:new MongoStore({url:configDB.newUrl})}))
  //app.use(session({store:new MongoStore({url:"mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database"})}))
 //app.use(session());
 app.use(passport.initialize());
