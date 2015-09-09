@@ -153,7 +153,6 @@ filters:filters});
 
 
 
-//mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database
 app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
@@ -162,8 +161,7 @@ app.keys=['fg'];
  //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST,db:"alikon-fantastic-database"})}));
  app.use(session({store:new MongoStore({url:configDB.url})}));
  //app.use(session({store:new MongoStore({url:configDB.newUrl})}))
- //app.use(session({store:new MongoStore({url:"mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database"})}))
-//app.use(session());
+ 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(Router(app));

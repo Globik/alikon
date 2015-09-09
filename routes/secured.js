@@ -393,11 +393,11 @@ secured.get('/app/filesuploader',authed,function *(){
 	yield this.render('files-upload',{user:this.req.user});
 });
 
-//var sluger=require('limax');
+var sluger=require('limax');
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
 function *(next){
 	var postname=this.request.body.fields.postname;
-	var slug=slugify(postname);
+	var slug=sluger(postname);//slugify(postname);
 	
 	var autor=this.request.body.fields.autor;
 	var shorti=this.request.body.fields.shorti;
@@ -468,7 +468,7 @@ yield this.body={data:err};}
 secured.post('/saveaneditedpost', bodyParser({multipart:true,formidable:{}}),
 function *(next){
 var postname=this.request.body.fields.postname;
-	var slug="sluger(postname)";
+	var slug=sluger(postname);
 	//slugify(postname);
 // autor shorti caption maincontent dataformat meta category rubrik serial * 
 //created redaktiert visa(1 2 3)
@@ -618,7 +618,7 @@ yield this.body={inf:"OK",fields:a,files:b,headers:this.request.body}
 yield next;
 });
 
-/*
+
 var parse=require('co-busboy');
 
 secured.post('/multipics',authed,function *(next){
@@ -668,7 +668,7 @@ stream.on('error',function(er){console.log('err in stream',er)})
 //var doc=wrap(db.get('fotoalbums'));
 //var album=yield doc.insert(picsSammler);
 yield this.body={inf:'ok',picssammler:picsSammler}
-})*/
+});
 secured.post('/create_album',authed,function *(){
 	var db=this.fuck;
 	var docs=wrap(db.get('fotoalbums'));
@@ -802,7 +802,7 @@ var s=lowdb("navigation").chain().find({ name: 'sign up' }).assign({status: 'on'
 	/*************************************
 	files-manager.html
 	**************************************/
-/*
+
 
 	var fsplus=require('co-fs-plus');
 	
@@ -824,7 +824,7 @@ for(var i=0;i<folds_dir.length;i++){
 	/**** 
 	recursive
 	***/
-	/*
+	
 	var rec=co.wrap(function* (r){
 var ab=[];
 var inos=[];
@@ -835,9 +835,9 @@ for(var i=0;i<items.length;i++){
 var fp=path.join(r,items[i]);
 var stats=yield fs.stat(fp);
 inos.push(stats.ino);
-ab.push({name:items[i],/*_id:items[i],
+ab.push({name:items[i],/*_id:items[i],*/
 /*parent_id:str.split("\\")[str.split("\\").length-2]*/
-/*parent_id:str.split(path.sep)[str.split(path.sep).length-2],*//*ino_id:stats.ino,
+/*parent_id:str.split(path.sep)[str.split(path.sep).length-2],*/ino_id:stats.ino,
 ino_prev_id:(inos[inos.length-2] == undefined ? "0" : inos[inos.length-2]),
 _id:fp,parent_id:path.dirname(fp),is_file:stats.isFile()
 });
@@ -851,9 +851,9 @@ return redr(r).then(function(re){return re;}).catch(function(e){throw e;})
 var answerfiles;
 yield rec('public').then(function(d){
 //console.log(d);
-answerfiles=d;}).catch(function(err){console.log(err);});*/
+answerfiles=d;}).catch(function(err){console.log(err);});
 /*** end of recursive ************************************************** ***/
-/*	
+	
 yield this.render('files-manager',{user:this.req.user,foldsdir:folds_dir,mata:mata,
 answerfiles:answerfiles});
 }catch(err){this.flash={fucker:err.toString()};this.redirect('/error-view');}
@@ -881,7 +881,7 @@ var el=folds_dir[i];
 	//console.log('ALLES MATA :',mata);
 yield this.body={folds_dir:folds_dir,mata:mata}
 });
-*/
+
 secured.get('/app/filesmanager/:name',authed,function *(name){
 		console.log('this.params.name',this.params.name);
 		var ds=this.params.name;
@@ -927,7 +927,7 @@ yield fs.mkdir(path.join('./public/',pat+name));
 }catch(err){this.throw(404,"Some error :"+err);}	
 yield this.body={info:"ok - the folder created!"}
 	});
-	/*
+	
 	secured.post('/delete_that_pass',authed,function *(next){
 		if('POST' !==this.method) return yield next;
 		var error=[];
@@ -950,7 +950,7 @@ yield this.body={info:"ok - the folder created!"}
 		//try{yield fs.rmdir(path.join('./public/',pat));}catch(err){this.throw(404,"err :"+err)}
 		yield this.body={info:"ok - deleted!",body:this.request.body,error:error}
 	})
-	*/
+	
 	/*
 	secured.post('/savefile',authed,function *(next){
 		//if(this.is('json')=='json')
