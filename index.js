@@ -158,9 +158,9 @@ app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
 var errrr="lumpen";
- //app.use(session({store:new MongoStore({db:"todo"})}));
+ app.use(session({store:new MongoStore({db:"todo"})}));
  //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST,db:"alikon-fantastic-database"})}));
- app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
+ //app.use(session({store:new MongoStore({url:configDB.url,db:"alikon-fantastic-database"})}));
 
 app.use(passport.initialize());
 app.use(passport.session());
