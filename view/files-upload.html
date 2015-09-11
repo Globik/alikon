@@ -4,7 +4,8 @@
 display:flex;
 flx-flow: row wrap;
 justify-content: space-around;
-width:100%;
+width:80%;
+height:auto;
 background:lightblue;
 align-content:center;
 align-items:center;
@@ -91,9 +92,14 @@ position:relative;
 }
 .redChecked{background:red;}
 </style>
-<div style="clear:both;">.</div>
+<!-- <div style="clear:both;">.</div> -->
+<div class="daper">
 <b>Files uploader via html 5 Canvas</b>
-
+<!--[if IE 9]><b>F</b>FFFFFFFFFFFFFFFFFFFFFFFF No IE
+<![endif]-->
+<% var a=["a","b","c","c"];
+var a3=a.map(s => s);%>
+<%= a3 %>
 </br><button onclick="createAlbum()">create Album!</button>
 </br><b>Multi: </b><span id="multi">4</span>
 </br><b>Album info _id :</b><span id="albuminfo"></span>
@@ -125,7 +131,11 @@ position:relative;
  <ul id="albumlist"></ul>
  <div id="albumlistout"></div>
 </br> <button onclick="getAlbumList()">Album's list</button>
+
+</div>
 <script>
+//if( Promise){alert('Promise native is ok')}else{alert('No promise native');}
+//if(FileReader){alert('ok')}
 function createAlbum(){
 var data={};
 data.userId=who.textContent;
@@ -209,6 +219,8 @@ var bi=e.name.lastIndexOf('.');
 var basename=e.name.substr(0,bi);
 bext=e.name.substr(bi);
 var a=cnv.toDataURL('image/jpeg',0.1);
+//var a=cnv.toBlob()
+alert(a);
 toDataUri(a,basename,tsize,ab[i],cnv);});}}
 var si=0;
 function toDataUri(uri,basename,tsize,perW,cnv){

@@ -7,16 +7,12 @@
 <div style="height:30px;"></div>
 <h1 class="" style="clar:both">Some</h1>
 <div>
-<nav class="back">
-<img id="logo" src="/images/w5.png"/> 
+
+
 <ul id="menu">
-<%= path %>
-<% if(menu){%>
-<% menu.forEach(function(m){%>
-<li class="acti"><a class=<%= (m.href==path ? "activ": "") %> href="<%= m.href %>"><%= m.name %></a></li>
-<%})}%>
+
 </ul>
-</nav>
+
 </br>
 <% if(file){%><span id="data"><%- JSON.parse(file).user.name %></span>
 <select id="level" onchange="showname(this.value)">
@@ -25,16 +21,9 @@
 </select>
 <%}%>
 </br>
-<b>LDB: </b><%= ldb.posts[0].title %>
-<script>
-//alert(JSON.parse(data.innerHTML).user.role)
-function showname(el){//alert(el)
-}
-</script>
+
+
 2)
-version: <%= version %></br> now: <%= now %></br>
-server time is: <%=: now %></br>
-request ip is: <%= ip %>
 </div>
 <div>3
 <% if(message){%>
@@ -71,7 +60,7 @@ request ip is: <%= ip %>
 <source media="(min-width: 1366px)" srcset="/images/upload/tempo/gorod1-m4.jpg">
 <source media="(min-width: 808px)" srcset="/images/upload/tempo/gorod1-m3.jpg 1x,/images/upload/tempo/gorod1-m4.jpg 2x">
 <source media="(min-width: 600px)" srcset="/images/upload/tempo/gorod1-m2.jpg">
-<source media="(max-width: 221px)" srcset="/images/upload/tempo/gorod1-m1.jpg">
+<source media="(max-width: 320px)" srcset="/images/upload/tempo/gorod1-m1.jpg">
 
 <img id="fuckimg" src="/images/upload/tempo/gorod1-m2.jpg" 
 alt="media picture element" title="title1" 

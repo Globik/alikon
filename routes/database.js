@@ -158,7 +158,7 @@ this.bube=bube;
 this.pages_count=Math.floor(totalposts/perPage);
 this.current_page=page;
 	yield next;}
-	catch(err){console.log("fUCK ERROR");
+	catch(err){console.log("fUCK ERROR by skiping articles");
 	this.flash={fucker:err.toString()};
 	this.redirect('/error-view')}
 }).get('/articles/:skip',function *(){

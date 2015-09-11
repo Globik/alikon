@@ -813,12 +813,12 @@ try{
 var folds_dir=yield fs.readdir('public');
 mata=[];
 var hui=[];
-
-for(var i=0;i<folds_dir.length;i++){
-	var el=folds_dir[i];
-	var a= yield fs.stat('public/'+el);
-	//if(a.isDirectory())
-	mata.push({file:el,isFile:a.isFile(),path:path.join('',el),ext:path.extname(el)})
+	for(var i of folds_dir.entries()){
+	var el=i[1];
+	var fpp=path.join(dir,el);
+	var a= yield fs.stat(fpp);
+		console.log('FPP :',fpp);
+	mata.push({file:el,isFile:a.isFile(),path:fpp,ext:path.extname(fpp)})
 	}
 	//console.log('alles :',mata);*/
 	/**** 
@@ -830,12 +830,12 @@ var ab=[];
 var inos=[];
 var redr=co.wrap(function* (r){
 var items=yield fs.readdir(r);
-for(var i=0;i<items.length;i++){
-//for(let i of items){
-var fp=path.join(r,items[i]);
+for(var i of items.entries()){
+	var itel=i[1];
+var fp=path.join(r,itel);
 var stats=yield fs.stat(fp);
 inos.push(stats.ino);
-ab.push({name:items[i],/*_id:items[i],*/
+ab.push({name:itel,/*_id:items[i],*/
 /*parent_id:str.split("\\")[str.split("\\").length-2]*/
 /*parent_id:str.split(path.sep)[str.split(path.sep).length-2],*/ino_id:stats.ino,
 ino_prev_id:(inos[inos.length-2] == undefined ? "0" : inos[inos.length-2]),
@@ -861,20 +861,23 @@ answerfiles:answerfiles});
 
 secured.post('/that_direction',authed,function *(){
 	var mata=[];
-	var dublic='public/';
-	var name=this.request.body.foldername;
-	console.log("NAME :",name);
+console.log("NAME :",this.request.body);
 	var basedir=this.request.body.basedir;
 	console.log("BASEDIR :",basedir);
 	try{
-	var folds_dir=yield fs.readdir(dublic+basedir+name);
-	for(var i=0;i<folds_dir.length;i++){
-var el=folds_dir[i];
-	var a=yield fs.stat(path.join(dublic+basedir+name,el));
-	mata.push({file:el,isFile:a.isFile(),relpath:path.join(''+basedir,name+'/'),path:path.join(''+basedir,name+'/'+el),ext:path.extname(el)});
-	
-	//console.log('this path :',this.path);
-	//console.log('url :',this.url);
+	var folds_dir=yield fs.readdir(basedir);
+for(var i of folds_dir.entries()){
+var el=i[1];
+var fpp=path.join(basedir,el);
+//console.log('FPP2 :',fpp);
+	var a=yield fs.stat(fpp);
+	var str=path.dirname(fpp);
+	var as=str.split(path.sep);
+	var as2=as.splice(0,as.length-1);
+	//console.log(path.join(as2.join("/")))
+	var backing=path.join(as2.join("/"));
+	//console.log('BACKING :',backing);
+	mata.push({file:el,isFile:a.isFile(),path:fpp,ext:path.extname(fpp),back:backing});
 	}
 	}
     catch(er){this.throw(404,"No such dir : "+er);}
@@ -882,17 +885,20 @@ var el=folds_dir[i];
 yield this.body={folds_dir:folds_dir,mata:mata}
 });
 
-secured.get('/app/filesmanager/:name',authed,function *(name){
+secured.get('/app/filesmanager/:name/*',authed,function *(name){
 		console.log('this.params.name',this.params.name);
 		var ds=this.params.name;
-		var ps=ds.replace(/[8]/g,"/");
-		console.log('ps :',ps);
-
+		//var ps=ds.replace(/[-]/g,"/");
+		//console.log('ps :',ps);
+console.log('ds :',ds);
+console.log('this.params :',this.params)
 		try{
-		var file_content=yield fs.readFile('./public/'+ps,'utf-8');}
-		catch(err){console.log(err);this.flash={fucker:err.toString()};qu=err.toString();}
+		var file_content=yield fs.readFile(path.join(ds,this.params[0]),'utf-8');}
+		catch(err){console.log(err);this.flash={fucker:err.toString()};qu=err.toString();
 		//console.log('file content: '+file_content);
-		yield this.render('fileedition',{user:this.req.user,file_content:file_content,file_path:ps,
+		this.redirect('/error-view');}
+		yield this.render('fileedition',{user:this.req.user,file_content:file_content,
+		file_path:path.join(ds,this.params[0]),
 		error_message:this.flash.fucker})
 	});
 	
@@ -903,7 +909,7 @@ secured.get('/app/filesmanager/:name',authed,function *(name){
 	var val=this.request.body.val;
 if(val=="") this.throw(404,"must be some content");	
 		try{
-			var ws=yield fs.writeFile('./public/'+path,val);
+			var ws=yield fs.writeFile(path,val);
 		}
 		catch(err){
 			this.throw(404,`Some error :${err}`);

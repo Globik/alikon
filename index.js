@@ -8,7 +8,7 @@ var wait=require('co-wait');
 var logger=require('koa-logger');
 var serve=require('koa-static');
 //var route=require('koa-route');
-var Router=require('koa-router');
+//var Router=require('koa-router');
 var flash=require('koa-flash');
 var koaws=require('koa-ws');
 var moment=require('moment');
@@ -67,7 +67,7 @@ done();
 
 
 //iojs index
-var us=wrap(db.get('users'));
+//var us=wrap(db.get('users'));
 
 
 require('./config/passport')(passport);
@@ -115,7 +115,8 @@ var lowdb = low('db.json')
 var locals={
 version:'0.0.1',
 message:'message must be',
-ldb:function *(){try{var s=yield fs.readFile('db.json','utf-8');return JSON.parse(s);}catch(err){console.log('LOWDB API err :',err);}},
+ldb:function *(){try{var s=yield fs.readFile('db.json','utf-8');return JSON.parse(s);}
+catch(err){console.log('LOWDB API err :',err);}},
 path:function (){var b;if(this.method === 'GET'){b=this.path} return b;},
 signup:function *(){try{
 	var mdsignup=yield mods.findOne({modulname:"signup"});
@@ -148,7 +149,6 @@ layout:'template',
 viewExt:'html',
 cache:false,
 debug:true,
-locals:locals,
 filters:filters});
 
 
@@ -164,11 +164,12 @@ app.keys=['fg'];
  
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(Router(app));
+//app.use(Router(app));
 app.use(bodyParser());
 
 app.use(flash());
  //iojs index
+ app.use(function *(next){this.state=locals;yield next;})
  app.use(function *(next){this.lowdb=lowdb;yield next;})
 app.use(function *(next){
 this.fuck=db;
@@ -222,9 +223,10 @@ app.use(function *(next) {
   yield next;
 });
 
-app.use(fuckall.middleware());
-app.use(secured.middleware());
-
+//app.use(fuckall.middleware());
+//app.use(secured.middleware());
+app.use(fuckall.routes());
+app.use(secured.routes());
 app.use(function *(next){
 	yield next;
 	if(404 !=this.status) return;

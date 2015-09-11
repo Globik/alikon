@@ -746,11 +746,15 @@ html {
 font-size:1;
 -webkit-text-size-adjust: none;
 }
-
+.daper{margin:0 auto;padding:1px;}
 #content{padding:0.5em;}
 .post-title{font-size:1.2rem;}
 #cnv{background-color:yellow;width:45px;height:200px;}
 /* main nav */
 .fluiditems{width:100%;height:20em;}
+}
+@media screen and (min-width:359px){
+.daer{background:pink;color:red;width:100%;}
+#flex-ontent{background:red;}
 }
 
