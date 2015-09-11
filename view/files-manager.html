@@ -164,7 +164,7 @@ var kukfiles;
 	var clickretr=(els[i].ext=="" ? "kickdas(this)":"getAttr(this)");
 	var daba3=(baba ? `<button onclick="do_file_edit(this)" value="${els[i].path}">edt</button>`:``);
 tr.innerHTML='<td '+st+' onclick="kickdas(this)" data-path='+st1+'>'+els[i].file+'</td>'+
-'<td>'+(baba ? "<button>n</button>":"")+'</td>'+
+'<td>'+(baba ? '<button onclick="do_file_edit(this)" value="'+st1+'">edt</button>':'')+'</td>'+
 '<td class="del">del</td>'+
 '<td><input type="checkbox" onchange="fick_check(this)" data-path="'+st1+'"/></td>';
 //tr.innerHTML=`<td ${st} onclick=${clickretr} data-path=${st1} >${els[i].file}</td>
@@ -206,7 +206,7 @@ xhr.send(JSON.stringify(data))
 
 suka2();
 function do_file_edit(el){
-var a=basedir.textContent;
+// var a=basedir.textContent;
 //alert('edit_path: '+a+' : '+el.value+' == '+'el.value.replace(/[\\]/g,"%")');
 // var ds=el.value.replace(/[\\]/g,"8");
 //alert(ds);
