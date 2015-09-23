@@ -1,9 +1,9 @@
 'use strict';
 
 //var crypto=require('crypto');
-var koa=require('koa');
-var render=require('koa-ejs');
-var path=require('path');
+const koa=require('koa');
+const render=require('koa-ejs');
+const path=require('path');
 var wait=require('co-wait');
 var logger=require('koa-logger');
 var serve=require('koa-static');
@@ -29,13 +29,13 @@ var wrap=require('co-monk');
   //var db=module.exports=monk('mongodb://127.0.0.1:27017/todo');
   
   //poe
-  var db=module.exports=monk(configDB.url || configDB.localurl);
-  //var db=module.exports=monk(process.env.MONGOHQ_URL_TEST);
+  var db=module.exports=monk(configDB.url || configDB.localurl);//prod
+  //var db=module.exports=monk(process.env.MONGOHQ_URL_TEST); //remote test
   var Agenda=require('agenda');
   
-  var agenda=new Agenda({db:{address:configDB.url || configDB.localurl}});
-  //var agenda=new Agenda({db:{address:process.env.MONGOHQ_URL_TEST}});
-  //in index.js::bson=require('../browser_build/bson');c://bson/ext
+  var agenda=new Agenda({db:{address:configDB.url || configDB.localurl}});//prod
+  //var agenda=new Agenda({db:{address:process.env.MONGOHQ_URL_TEST}});//remote test
+ 
 
 /***	
 var status;
@@ -137,11 +137,52 @@ yield wait(100);
 return this.ip;},
 menu:[{name:"home",href:'/'},{name:"articles",href:"/articles"},{name:"labs",href:"/labo"}]
 };
-var filters={
-    format: function (time){
-    return time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate();
-	
- }};
+
+var esc_html= n => n.replace(/([\'])/g,`&apos;`)
+.replace(/([\"])/g,`&quot;`)
+.replace(/(<(.*?)>)/g,(str,p1,p2,ofs,s)=> `&lt;${p2}&gt`);
+var js_pretty= tex =>{
+return tex.
+replace(/\b(function|var|if|in|of|return)\b/g,`<span class='blue'>$1</span>`)
+.replace(/\b(i|k|l|m)\b/g,`<span class='one-fit'>$1</span>`)
+.replace(/("[^"]*")/g,`<span class='dbqw'>$1</span>`)
+.replace(/(\d+|\.\d+|\d+\.\d*)/g,`<span class='zifra'>$1</span>`)
+.replace(/(\/\/.*|\/\*[^]*?\*\/)/g,`<span class='comments'>$1</span>`)
+.replace(/(\{|\}|\]|\[|\|)/g,`<span class='figskobki'>$1</span>`)
+.replace(/(new)\s+(.*)(?=\()/g,`<span class='constructor'><b>$1</b> $2</span>`)
+.replace(/\.(push|length|getElementById|getElementsByClassName|innerHTML|textContent|querySelector)/g,
+`<span class='attribute'>.$1</span>`)
+.replace(/(&apos;[\s\S]*?&apos;)/g,`<span class="kavichki">$1</span>`)
+.replace(/(&quot;[^"]*?&quot;)/g,`<span class="dbquot">$1</span>`)
+}
+
+const filters={
+    format: time => time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate(),
+	js_pretty,
+    esc_html,
+    css_pretty,
+    aprecoded: se => {
+	let shortcodename='$REKLAMA';
+	let reg=new RegExp(`\\${shortcodename}`,`g`);
+var ba=se.replace(reg,"Some box:<div class='reklamabox'>advert block</div>");
+var ab=ba.replace(/<pre class="(.*?)">([\s\S]*?)<\/pre>/g,(str,p1,p2,ofs,s) => {
+if(p1=="pre-code-js"){return `<pre class="pre-code-js">${js_pretty(esc_html(p2))}</pre>`;}
+else if(p1=="pre-code-css"){return `<pre class="pre-code-css">${css_pretty(p2)}</pre>`}
+else{return "";}
+});
+return ab;
+}
+ };
+ 
+var css_pretty= n =>
+ n.replace(/(\/\*[\s\S]*?\*\/)/gm,`<span class="orange">$1</span>`)
+.replace(/(\.[\w\-_]+)/g,`<span class="yellow">$1</span>`)
+.replace(/(\#[\w\-_]+)/g,`<span class="blue">$1</span>`)
+.replace(/\b(pre|textarea)\b/g,`<span class="green">$1</span>`)
+.replace(/(\{|\}|\]|\[|\|)/g,`<span class='figskobki'>$1</span>`)
+.replace(/(:[\w\-_]+)/g,`<span class="brown">$1</span>`)
+.replace(/(\d+|\.\d+|\d+\.\d*)/g,`<span class='blue'>$1</span>`);
+
 
 render(app,{
 root:path.join(__dirname,'view'),
@@ -157,9 +198,9 @@ app.use(serve(__dirname+'/public'));
 app.use(logger());
 app.keys=['fg'];
 
- //app.use(session({store:new MongoStore({db:"todo"})}));
- //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST,db:"alikon-fantastic-database"})}));
- app.use(session({store:new MongoStore({url:configDB.url})}));
+ //remote db test:
+ //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST+"/alikon-fantastic-database"})}));
+ app.use(session({store:new MongoStore({url:configDB.url || configDB.localurl})}));
  //app.use(session({store:new MongoStore({url:configDB.newUrl})}))
  
 app.use(passport.initialize());

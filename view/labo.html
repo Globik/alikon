@@ -1,179 +1,21 @@
-<!--labo.html -->
-<div class="daper">
-<div style="height:30px;"></div>
-<h1>WebRTC Labo</h1>
-<div class="pure-u-2-3" id="video-container">
-        <video id="their-video" autoplay></video>
-        <video id="my-video" muted="true" autoplay></video>
-      </div>
+<div id="daper">
+<%if(user){%><b>Hallo, <%user%>.<a href="/app/codeblog">Post to code blog</a><%}%>
+<h4>Labo lists</h4>
+<% if(post){%>
 
-
-        <h2>PeerJS Video Chat</h2>
-
-
-        <div id="step1">kplplplp
-          <p>Please click `allow` on the top of the screen so we can access your webcam and microphone for calls.</p>
-          <div id="step1-error">
-            <p>Failed to access the webcam and microphone. Make sure to run this demo on an http server and click allow when asked for permission by the browser.</p>
-            <a href="#" class="pure-button pure-button-error" id="step1-retry">Try again</a>
-          </div>
-        </div>
-
-      
-        <div id="step2" class="u">
-		kookokokokokok
-          <p>Your id: <span id="my-id">...</span></p>
-          <p>Share this id with others so they can call you.</p>
-          <h3>Make a call</h3>
-          <div class="pure-form">
-            <input type="text" placeholder="Call user id..." id="callto-id">
-            <a href="#" class="pure-button pure-button-success" id="make-call">Call</a>
-          </div>
-        </div>
-
-        
-        <div id="step3" class="u">
-          <p>Currently in call with <span id="their-id">...</span></p>
-          <p><a href="#" class="pure-button pure-button-error" id="end-call">End call</a></p>
-        </div>
-      
-  
-  <button onclick="dostun()" style="height:40px;">ajax to stun</button>
-  <span id="out">vasja</span>
-  
-  </div>
-  <script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
-  <script>
-var customConfig;
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-	/***
-    var peer = new Peer({ key: 'lwjd5qra8257b9', debug: 3, config: {'iceServers': [
-      { url: 'stun:stun.l.google.com:19302' } // Pass in optional STUN and TURN server for maximum network compatibility
-    ]}});
-***/
-
-				var ident="rony";
-var secret="ff6a4897-e05c-4a19-9d2d-f555857a024a";
-var domain="alikon.herokuapp.com";
-var application="default";
-var room="default";
-var secure=1;
-
-var xhr=new XMLHttpRequest();
-    xhr.open("POST","https://api.xirsys.com/getIceServers",true);//getIceServers
-	var params='ident='+encodeURIComponent(ident)+'&secret='+encodeURIComponent(secret)
-	+'&domain='+encodeURIComponent(domain)+
-	'&application='+encodeURIComponent(application)+
-	'&room='+encodeURIComponent(room)+
-	'&secure='+encodeURIComponent(secure);
-	 xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-	 
-	 xhr.onload=function(e,data,status){
-	 if(this.status==200){
-	 var data=JSON.parse(this.response);
-	 out.innerHTML=data;
-	 customConfig=data.d;
-	 //alert(data.d);
-	 }
-	 else{out.innerHTML=this.response;
-	 }}
-	 xhr.send(params);
-				
-				
-//}
-var peer=new Peer({key:'u8nhjnd4h3fh6w29',debug:3,config:customConfig})
-    peer.on('open', function(){
-      document.getElementById('my-id').innerHTML=peer.id;//text(peer.id);
-    });
-
-    // Receiving a call
-    peer.on('call', function(call){
-      // Answer the call automatically (instead of prompting user) for demo purposes
-      call.answer(window.localStream);
-      step3(call);
-    });
-    peer.on('error', function(err){
-      alert(err.message);
-      // Return to step 2 if error occurs
-      step2();
-    });
-
-    // Click handlers setup
-    //$
-	(function(){
-      //$('#make-call').click(function(){
-	  document.getElementById('make-call').addEventListener('click',function(){
-        // Initiate a call!
-        //var call = peer.call($('#callto-id').val(), window.localStream);
-          var call=peer.call(document.getElementById('callto-id').value,window.localStream);
-        step3(call);
-      });
-
-      //$('#end-call').click(function(){
-	  document.getElementById('end-call').addEventListener('click',function(){
-        window.existingCall.close();
-        step2();
-      });
-
-      // Retry if getUserMedia fails
-      //$('#step1-retry').click(function(){
-	  document.getElementById('step1-retry').addEventListener('click',function(){
-        //$('#step1-error').hide();
-		document.getElementById('step1-error').style="hidden";
-        step1();
-      });
-
-      // Get things started
-      step1();
-    })();
-
-    function step1 () {
-      // Get audio/video stream
-      navigator.getUserMedia({audio: true, video: true}, function(stream){
-        // Set your video displays
-        //$('#my-video').prop('src', URL.createObjectURL(stream));
- document.getElementById('my-video').setAttribute('src',URL.createObjectURL(stream));
-        window.localStream = stream;
-        step2();
-      }, function(){ 
-	  //$('#step1-error').show(); 
-	  document.getElementById('step1-error').style.visibility="visible";
-	  
-	  });
-    }
-
-    function step2 () {
-      //$('#step1, #step3').hide();
-	  document.getElementById('step1').style.visibility="hidden";
-	  document.getElementById('step3').style.visibility="hidden";
-	  document.getElementById('step2').style.visibility="visible";
-     // $('#step2').show();
-    }
-
-    function step3 (call) {
-      // Hang up on an existing call if present
-      if (window.existingCall) {
-        window.existingCall.close();
-      }
-
-      // Wait for stream on the call, then set peer video display
-      call.on('stream', function(stream){
-        //$('#their-video').prop('src', URL.createObjectURL(stream));
-		document.getElementById('their-video').setAttribute('src',URL.createObjectURL(stream));
-      });
-
-      // UI stuff
-      window.existingCall = call;
-      document.getElementById('their-id').innerHTML=call.peer;//text(call.peer);
-      call.on('close', step2);
-      //$('#step1, #step2').hide();
-	  //$('#step2').hide();
-	 
-	  document.getElementById('step1').style.visibility="hidden";
-	  document.getElementById('step2').style.visibility="hidden";
-      //$('#step3').show();
-	  document.getElementById('step3').style.visibility="visible";
-    }
-
-  </script>
-
+<%post.forEach(function(m){%>
+<ul>
+<li><b>Title:</b><%=post[0].title%>
+<li><b>Teaser:</b><%=m.teaser%>
+<li><b>Autor:</b><%=m.autor%>
+<li><b>Visa:</b><%=m.visa%>
+<li><b>Type:</b><%=m.type%>
+<li><b>Rubrika:</b><%=m.rubrika%>
+<li><b>Tags:</b><%=m.tags%>
+<li><b>Slugged_title:</b><%=m.slugged_title%>
+<li><b>Created_on:</b><%=m.created_on%>
+<li><b>Read more:</b><a href="/labo/<%=m._id%>"><%=m._id%></a>
+</ul>
+<%})%>
+<%}%>
+</div>

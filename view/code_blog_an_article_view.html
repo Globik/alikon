@@ -1,0 +1,165 @@
+﻿<!-- code_blog_an_article_view.html -->
+<!-- public -->
+<div class="daper">
+<style>
+pre{
+color:#C6DAC6 /*black*/;
+background: #0C0638 /*gray*/;
+white-space:pre\9;
+white-space:-moz-pre-wrap;
+white-space:-pre-wrap !important;
+white-space:-o-pre-wrap;
+white-space:pre-wrap;
+word-break:break-all;
+word-break:keep-all;
+word-wrap:break-word;
+overflow-x:auto;
+padding:60px;
+}
+summary{background:pink;}
+.lightgreen{background:lightgreen;}
+.lightblue{background:lightblue;}
+.reklamabox{background:lightblue;width:100%;}
+.green{color:lightgreen;}
+.yellow{color:yellow;}
+.brown{color:brown;}
+.orange{color:orange;}
+.attribute{color:green;}
+.constructor{color:green;}
+.red{color:red;}
+textarea{width:400px;height:300px;}
+
+.blue{color:#62DAC5/*blue*/;}
+.figskobki{color:#DC6C3F/*red*/;}
+.comments{color:orange;}
+.zifra{color:#61BFB3/*lightgreen*/;}
+.constructor{color:green;}
+.attribute{color:#EF6C6C/*brown*/;}
+.kavichki{color:#8250D4/*yellow*/;}
+.dbqw{color:#58F158/*darkgreen*/;}
+.one-fit{color:#0CF78C/*violet*/;}
+</style>
+<h5>Code blog</h5>
+
+<p><% if(post){ 
+
+repl=n=>n; 
+
+%>
+<ul>
+<li><b>Title:</b><%=post.title%>
+<li><b>Teaser:</b><%=post.teaser%>
+<li><b>Autor:</b><%=post.autor%>
+<li><b>Visa:</b><%=post.visa%>
+<li><b>Type:</b><%=post.type%>
+<li><b>Rubrika:</b><%=post.rubrika%>
+<li><b>Tags:</b><%=post.tags%>
+<li><b>Slugged_title:</b><%=post.slugged_title%>
+<li><b>Created_on:</b><%=post.created_on%>
+<li><b>Read more:</b><a href="/labo/<%=post._id%>"><%=post._id%></a>
+<li><b>Created_on2:</b><%-: post.created_on | format %>
+
+</ul>
+<%
+var das=post._id.toString().substring(0,8)
+var da=new Date(parseInt(das,16)*1000);
+%><li><b>data:</b><%= das %>|<%=: da | format %>
+
+<div>
+<b>Preformated code_blog_textarea: </b>
+<%-: post.code_blog_textarea | aprecoded %>
+<hr><p><h5>js_textarea</h5>
+<%if(post.js_textarea){%>
+<pre contenteditable=false><code>
+<%-: post.js_textarea | esc_html| js_pretty %>
+</code></pre><%}%></p>
+</div>
+<%-(post.js_textarea ? `<script>${post.js_textarea}</script>` :"fuck_no_script" )%>
+<li><a onclick="edit_an_blog_code_article(this)" data-id="<%= post._id %>" href="#popredaktor_code_blog">edit</a></li>
+<%}%>
+
+<a href="#x" class="overlay" id="popredaktor_code_blog"></a>
+<div class="popup" id="poredactor_code_blog">
+<b>code blog</b><br>
+<progress id="progressbar2" min="0" max="100" value="0">0% complete</progress><br>
+<output id="output22" style="color:white;"></output>
+<form name="edit-code-blog" method="post" enctype="multipart/form-data">
+<% if(user && user.role == "admin"){ %><input type="submit" value="save"></br><%}%>
+<span><b>Title: </b></span></br>
+<input type="text" name="title" required placeholder="title" value="" style="width:400px;"></br>
+<b>Teaser: </b></br>
+<input type="text" name="teaser" required placeholder="title" value=""></br>
+<label>code_blog_textarea: </label><br>
+<textarea name="code_blog_textarea" placeholder="for html text"></textarea><br>
+<label>js_textarea:</label><br>
+<textarea name="js_textarea"></textarea><br>
+<label>autor:</label><input type="text" name="autor" value=""><br>
+<label>visa:</label><input type="text" name="visa" value=""><br>
+<label>type:</label><input type="text" name="type" value=""><br>
+<label>rubrika:</label><input type="text" name="rubrika" value=""><br>
+<label>tags:</label><input type="text" name="tags" value=""><br>
+<label>Created_on</label><input type="text" name="created_on" value=""><br>
+<label>Slugged_title</label><input type="text" name="slugged_title"><br>
+<b>id: </b></br>
+<input type="text" name="id" value="" required placeholder="id"></br>
+<% if(user && user.role == "admin"){ %>
+<input type="submit" value="save"></br><%}else{%><b>You ar not admin)</b></br><%}%>
+</form>
+</div>
+<script>
+var y;
+var progressbar=document.getElementById('progressbar2');
+function edit_an_blog_code_article(el){
+
+//edit_an_blog_code_article(this)
+output22.textContent='connecting database...';
+var x=el.getAttribute('data-id');
+y=x;
+var d=document.forms.namedItem("edit-code-blog");
+var xhr=new XMLHttpRequest();
+    xhr.open("get","/take_an_blog_code_article/"+x);
+	xhr.onload=function(e){
+  if(this.status == 200){
+  //alert(JSON.parse(this.response).data.title);
+  output22.textContent='';
+  var data=JSON.parse(this.response).data;
+ d.title.value=data.title;
+  d.teaser.value=data.teaser;
+  d.code_blog_textarea.value=data.code_blog_textarea;
+  d.js_textarea.value=data.js_textarea;
+  d.autor.value=data.autor; 
+  d.visa.value=data.visa;
+  d.type.value=data.type;  
+  d.rubrika.value=data.rubrika;
+  d.tags.value=data.tags;
+  d.created_on.value=data.created_on;
+ d.slugged_title.value=data.slugged_title;
+  d.id.value=x;
+  }
+  else{output22.textContent=this.response}}
+xhr.onerror=function(e){alert("fuck" +e.status);}
+
+	 xhr.onabort=function(e){alert("onabort")}; 
+xhr.send();
+  }
+  var formcodeblog=document.forms.namedItem("edit-code-blog");
+formcodeblog.addEventListener("submit",function(ev){
+var data=new FormData(document.forms.namedItem("edit-code-blog"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/save_an_edited_blog_code_article/",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 output22.textContent=this.response;
+	 }
+	 else{output22.textContent=this.response;
+	 }}
+	 xhr.onerror=function(e){alert("fuck" +e.status);}
+     xhr.upload.onprogress=function(e){
+	 if(e.lengthComputable){
+	 progressbar.value=(e.loaded/e.total)*100;}};
+	 xhr.onabort=function(e){alert("onabort")}; 
+	 xhr.send(data);
+	 ev.preventDefault();},false);
+</script>
+</div>

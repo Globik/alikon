@@ -1,0 +1,144 @@
+﻿<!-- codeblog.html -->
+<style>
+textarea{width:500px;min-height:100px;}
+</style>
+<div class="daper">
+<h4>Code's blog</h4>
+<%if(user){%><b>Hallo,<%=user.username%></b><%}%><br>
+<form name="codingform" method="post">
+<!-- <button onclick="send_das()">send</button><br> -->
+<label>title:</label><input type="text" name="title" value="recursion function"><br>
+<label>teaser:</label><input type="text" name="teaser" value="teaser"><br>
+<label>code_blog_textarea: </label><br>
+<textarea name="code_blog_textarea" placeholder="for html text">
+<h4>How to recursive</h4>
+<p>Bla bla bla here is lesson how to build a tree from file system.</p>
+'suka',
+<p>Bla bla bla here is lesson how to build a tree from file system.</p>
+<p>Advertisment: $REKLAMA </p>
+<p><pre class="pre-code-js">
+var b=function(x){return x}
+var a=23;
+/*** coment ***/
+/*  some coment */
+var ab=new String(); ab="cap"; //comment
+var papa = "moby";
+var smal= 'schmal';
+var d=document.getElementById("drum");
+var li= '<li class="fu">'+d+'</li>';
+</pre>
+</p>
+<p>Some code 2: with function 
+<pre class="pre-code-js">
+var fi='<li class="'+b+'" >';
+var d='<li class='+b+'>';
+var ga=function(m){return m; var as=2+m;}
+if(ga){alert('ok'); 
+var mass=[];
+for (var i=0;i<10;i++){
+mass.push(i);}
+</pre></p>
+<p><h4>Some CSS snippet</h4>
+<pre class="pre-code-css">
+summary{color: pink;}
+.lightgreen{color: lightgreen;}
+.lightblue{color: lightblue;}
+/* comment */
+</pre></p>
+<p><output id="output"></output></p>
+<p><b>Pupkin pre code html</b></p>
+<p><pre class="pre-code-html"><b>Misha</b></pre></p>
+<p><output id="output"></output></p>
+</textarea>
+<button onclick="addField()">add folder</button><br>
+<label>js_textarea:</label><br>
+<textarea name="js_textarea">
+var catalog = [
+ {name :"level-1", _id:"level-1", parent_id:"null",is_file: false},
+ {name :"level-2", _id:"level-2", parent_id:"level-1", is_file: false},
+ {name :"brother", _id:"brother", parent_id:"level-2", is_file: false},
+ {name :"mama",    _id:"mama",    parent_id:"level-2", is_file: false},
+ {name :"sister",  _id:"sister",  parent_id:"mama",    is_file: false},
+ {name :"papa",    _id:"papa",    parent_id:"level-2", is_file: false},
+ {name :"html-1.html", _id:"html-1.html",  parent_id:"level-1", is_file: true},
+ {name :"html2.html", _id:"html2.html",  parent_id:"papa", is_file: true},
+ {name :"html4.html", _id :"html4.html", parent_id:"papa", is_file: true},
+ {name :"show.html",  _id :"show.html",  parent_id :"mama", is_file: true}
+];
+
+var startlevel = "level-1"; //comment
+var root = {name: startlevel, _id: startlevel, children:[]};
+var tree = {root:root}
+/* comment */
+function getParent(node, root){
+for(var i in node.children){
+var child = node.children[i];
+if(child._id === root) return child;
+if(child.children.length > 0)
+var childResult = getParent(child,root);
+if(childResult != null) return childResult;
+} 
+if(node._id === root) return node;
+}
+
+function buildTree(tree){
+for(var i in catalog){
+var elem = catalog[i];
+if(elem.name === startlevel) continue;
+elem.children = [];
+var root = elem.parent_id;
+var parent = getParent(tree.root,root);
+parent.children.push(elem);
+}
+}
+
+function displayTree(node){
+var str = '';
+var clasName=(node.is_file ? "lightblue" : "lightgreen");
+if(node.children.length > 0){ str += '<details><summary>'+node.name+'</summary><ul class="pi">';}
+ else { if(!node.is_file) str+= node.name;}
+
+for(var i in node.children){
+var bas =(node.children[i].is_file ? "lightgreen" : "lightblue")
+str+= '<li class='+bas+'>';
+if(node.children[i].is_file) str+= node.children[i].name;
+str+= displayTree(node.children[i]);
+str+= '</li>';
+}
+if(node.children.length > 0) str+= '</ul></details>';
+return str;
+}
+
+buildTree(tree);
+output.innerHTML = displayTree(tree.root);
+
+
+</textarea><br>
+<label>autor:</label><input type="text" name="autor" value="<%=user.username%>"><br>
+<label>visa:</label><input type="text" name="visa" value="0"><br>
+<label>type:</label><input type="text" name="type" value="codeblog"><br>
+<label>rubrika:</label><input type="text" name="rubrika" value="javascript"><br>
+<label>tags:</label><input type="text" name="tags" value="js,nodejs"><br>
+<input type="submit" value="send"><br>
+
+</form>
+<output id="output"></output>
+<script>
+var coder=document.forms.namedItem("codingform");
+coder.addEventListener("submit",function(ev){
+
+var codata=new FormData(document.forms.namedItem("codingform"));
+var xhr=new XMLHttpRequest();
+xhr.open("post","/code_bl_send_to_insert");
+//xhr.setRequestHeader('Content-Type','multipart/form-data');
+xhr.onload=function(e){
+if(xhr.status==200){
+output.textContent=this.response;
+}else{output.textContent=this.response;}
+}
+xhr.onerror=function(e){alert(e.status);};
+xhr.send(codata);
+ev.preventDefault();
+},false);
+</script>
+</div>

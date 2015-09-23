@@ -207,7 +207,22 @@ fuckall.get('/error-view',function *(){
 	user:this.req.user,fly:this.flash.fucker})
 })
 fuckall.get('/labo',function *(){
-yield this.render('labo',{user:this.req.user});
+	var db=this.fuck;
+	var posts=wrap(db.get("codeblogs"));
+	var post=yield posts.find({});
+yield this.render('labo',{user:this.req.user,post:post});
+});
+fuckall.get("/labo/:id",function *(id){
+var db=this.fuck;
+console.log('PARAMS :',this.params.id)
+try{
+var posts=wrap(db.get('codeblogs'));
+var post=yield posts.findById(this.params.id);
+//console.log('post :',post)
+}catch(err){this.status=404;
+ this.flash={fucker:err.toString()};
+ this.redirect('/error-view');}
+yield this.render('code_blog_an_article_view',{user:this.req.user,post:post});	
 });
 
 

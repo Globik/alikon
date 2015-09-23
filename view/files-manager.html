@@ -165,7 +165,7 @@ var kukfiles;
 	var daba3=(baba ? `<button onclick="do_file_edit(this)" value="${els[i].path}">edt</button>`:``);
 tr.innerHTML='<td '+st+' onclick="kickdas(this)" data-path='+st1+'>'+els[i].file+'</td>'+
 '<td>'+(baba ? '<button onclick="do_file_edit(this)" value="'+st1+'">edt</button>':'')+'</td>'+
-'<td class="del">del</td>'+
+'<td><button class="del" data-isfile="'+els[i].isFile+'" value="'+st1+'">del</button></td>'+
 '<td><input type="checkbox" onchange="fick_check(this)" data-path="'+st1+'"/></td>';
 //tr.innerHTML=`<td ${st} onclick=${clickretr} data-path=${st1} >${els[i].file}</td>
 //<td>${daba3}</td>
