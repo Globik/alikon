@@ -17,9 +17,7 @@ border:2px solid #194;
     padding: 5px 10px;
     text-decoration: none;
     text-shadow: 1px 1px #000;
-
-    
-    border-radius: 10px;
+border-radius: 10px;
 }
 a#login_pop:hover, a#join_pop:hover {
     border-color: #eee;
@@ -45,6 +43,7 @@ a#login_pop:hover, a#join_pop:hover {
 box-shadow: inset 0 0 6px rgba(255,255,240,0.3);
 border-radius:2px;
 }
+
 .popup::-webkit-scrollbar-thumb{
 border-radius:2px;
 
@@ -62,36 +61,42 @@ background:rgba(255,0,0,0.4);
     visibility: visible;
     opacity: 1;
 }
+
 .popup {
+scrollbar-arrow-color:gray;
 color:gray;
     background-color: rgba(0,0,0,.2);
     border: 3px solid rgba(255,255,255,0.4);
     display: inline-block;
-    left: 50%;
+	
+    left: 25%;
+	left:calc(50% - 25%);
+	 top: 20%;
+	 top:calc(50vmin - 15em - 1em);
     opacity: 0;
     padding: 15px;
-
-    position: fixed;
+position: fixed;
     text-align: justify;
-    top: 40%;
-height:300px;
+   height:15em;
     overflow-y:scroll;
+
    min-height:50px;
     visibility: hidden;
-
-    z-index: 10;
-transform: translate(-50%, -50%);
+z-index: 10;/*
+-o-transform: translate(-50%,-30%);
+-ms-transform: translate(-50%,-30%);
+-moz-transform: translate(-50%,-30%);
+-webkit-trasform: translate(-50%,-30%);
+transform: translate(-50%, -30%);*/
 border-radius: 10px;
 	/*box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;*/
     transition: opacity .5s, top .5s;
 }
 .overlay:target+.popup {
-    top: 48%;
-	
-    opacity: 1;
+
+	opacity: 1;
     visibility: visible;
-	
-}
+	}
 .close {
     background-color: rgba(0, 0, 0, 0.8);
     height: 30px;
@@ -102,9 +107,7 @@ border-radius: 10px;
     text-decoration: none;
     top: -15px;
     width: 30px;
-
-    
-    border-radius: 15px;
+ border-radius: 15px;
 }
 .close:before {
     color: rgba(255, 255, 255, 0.9);
@@ -135,12 +138,20 @@ border-radius: 10px;
 .popup input[type="text"]:hover, .popup input[type="password"]:hover {
     border-color: #555 #888 red #888;
 }
-@media screen and (max-width: 1024px) {
+/*@media screen and (max-width: 1024px) {
 .popup{width:50%;}
 
-}
+}*/
 @media screen and (max-width: 650px) {
-.popup{width:90%;}
+.popup{color:red;left:0%;top:30%;width:91%;}
+overlay:target+.popup{left:0;}
+
+}
+@media screen and (max-width: 360px) {
+.popup{width:82%;left:calc(100% - 100%);}
+textarea{width:96%;}
+.popup input[type="text"]{width:90%;}
+.overlay:target+.popup {color:green;top:20%;}
 }
 </style>
 <a href="#x" class="overlay" id="login_form"></a>

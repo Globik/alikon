@@ -71,7 +71,7 @@ max-width:1365px;
 	margin-top:0;
 }
 @media screen and (min-width: 1900px) {
-body{font: 1.9em/180% Calibri, Arial, Helvetica, sans-serif;background:violet;}
+body{font: 1.9em/180% Calibri, Arial, Helvetica, sans-serif;}
 #pagewrap{
 margin-top:8px;
 min-width:1365px;
