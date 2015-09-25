@@ -27,7 +27,7 @@ summary{background:pink;}
 .attribute{color:green;}
 .constructor{color:green;}
 .red{color:red;}
-textarea{width:400px;height:300px;}
+textarea{width:90%;height:300px;}
 
 .blue{color:#62DAC5/*blue*/;}
 .figskobki{color:#DC6C3F/*red*/;}
@@ -38,6 +38,13 @@ textarea{width:400px;height:300px;}
 .kavichki{color:#8250D4/*yellow*/;}
 .dbqw{color:#58F158/*darkgreen*/;}
 .one-fit{color:#0CF78C/*violet*/;}
+@media screen and (max-width: 1024px) {
+
+pre{
+padding:20px;
+font-size:0.9em;
+}
+}
 </style>
 <h5>Code blog</h5>
 
@@ -86,7 +93,7 @@ var da=new Date(parseInt(das,16)*1000);
 <form name="edit-code-blog" method="post" enctype="multipart/form-data">
 <% if(user && user.role == "admin"){ %><input type="submit" value="save"></br><%}%>
 <span><b>Title: </b></span></br>
-<input type="text" name="title" required placeholder="title" value="" style="width:100%;"></br>
+<input type="text" name="title" required placeholder="title" value="" style="width:80%;"></br>
 <b>Teaser: </b></br>
 <input type="text" name="teaser" required placeholder="title" value=""></br>
 <label>code_blog_textarea: </label><br>

@@ -460,7 +460,7 @@ word-wrap:break-word;
 height:auto;
 
 }
-.daper{padding:3em;}
+.daper{padding:1em;}
 .fluiditems{
 position:relative;
 float:left;
@@ -641,11 +641,11 @@ float:none;
 padding: 3% 4%;
 }
 #bu{width:86%;margin-left:6.4%;}
-#daper{
+#daper,{
 width:90%;
 margin-top:0.7em;
 }
-
+.daper{width:100%;margin:0;padding:1px;}
 .fluiditems{
 margin:/*1em 2.6852% 1px 0*/0.7em 1.5%;/*top rite bottom left* 12px*/
 width:46.318944%;

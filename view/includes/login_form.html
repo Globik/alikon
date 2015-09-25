@@ -68,18 +68,16 @@ color:gray;
     background-color: rgba(0,0,0,.2);
     border: 3px solid rgba(255,255,255,0.4);
     display: inline-block;
-	
-    left: 50%;
-
-	 top: 50%;
+	left: 50%;
+    top: 50%;
+	width:50%;
     opacity: 0;
     padding: 15px;
 position: fixed;
     text-align: justify;
    height:300px;
     overflow-y:scroll;
-
-   min-height:50px;
+min-height:50px;
     visibility: hidden;
 z-index: 30;
 -o-transform: translate(-50%,-50%);
@@ -92,7 +90,6 @@ border-radius: 10px;
     transition: opacity .5s, top .5s;
 }
 .overlay:target+.popup {
-top:40%;
 	opacity: 1;
     visibility: visible;
 	}
@@ -141,12 +138,13 @@ top:40%;
 .popup{width:50%;}
 
 }*/
-/*
+
 @media screen and (max-width: 650px) {
-.popup{color:red;left:0%;top:30%;width:91%;}
+.popup{color:red;left:50%;top:50%;width:91%;height:70vmin;}
 overlay:target+.popup{left:0;}
 
 }
+/*
 @media screen and (max-width: 360px) {
 .popup{width:82%;left:calc(100% - 100%);}
 textarea{width:96%;}
