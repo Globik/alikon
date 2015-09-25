@@ -77,16 +77,16 @@ color:gray;
 position: fixed;
     text-align: justify;
    height:300px;
-    overflow:scroll;
+    overflow-y:scroll;
 
    min-height:50px;
     visibility: hidden;
-z-index: 10;
--o-transform: translate(-50%,-30%);
--ms-transform: translate(-50%,-30%);
--moz-transform: translate(-50%,-30%);
--webkit-transform: translate(-50%,-30%);
-transform: translate(-50%, -30%);
+z-index: 30;
+-o-transform: translate(-50%,-50%);
+-ms-transform: translate(-50%,-50%);
+-moz-transform: translate(-50%,-50%);
+-webkit-transform: translate(-50%,-50%);
+transform: translate(-50%, -50%);
 border-radius: 10px;
 	/*box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;*/
     transition: opacity .5s, top .5s;
@@ -141,6 +141,7 @@ top:40%;
 .popup{width:50%;}
 
 }*/
+/*
 @media screen and (max-width: 650px) {
 .popup{color:red;left:0%;top:30%;width:91%;}
 overlay:target+.popup{left:0;}
@@ -151,7 +152,7 @@ overlay:target+.popup{left:0;}
 textarea{width:96%;}
 .popup input[type="text"]{width:90%;}
 .overlay:target+.popup {color:green;top:20%;}
-}
+}*/
 </style>
 <a href="#x" class="overlay" id="login_form"></a>
 
