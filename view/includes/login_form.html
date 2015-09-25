@@ -208,8 +208,15 @@ textarea{width:96%;}
 
 <script>
 var poppi=document.getElementsByClassName('popup');
-var isOperaMini = (navigator.userAgent.indexOf('Opera Mini') > -1);
-if(isOperaMini){alert('opera mini');poppi.style.left=0+"px";}
+//alert('ok')
+//alert(poppi[0]);
+var isOperaMini = (navigator.userAgent.indexOf('Opera Mini')>-1);
+if(isOperaMini){
+alert('opera mini');
+for(var i=0;i<poppi.length;i++){
+poppi[i].style.left=0+"px";
+}
+}
 /***
      var form=document.forms.namedItem("fileinfo");
   //alert(document.forms.namedItem("fileinfo").username.value);
