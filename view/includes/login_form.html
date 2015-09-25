@@ -71,14 +71,14 @@ color:gray;
 	
     left: 25%;
 	left:calc(50% - 25%);
-	 top: 20%;
-	 top:calc(50vmin - 15em - 1em);
+	 top: 50%;
+	 top:calc(50vmin - 12em - 1em);
     opacity: 0;
     padding: 15px;
 position: fixed;
     text-align: justify;
    height:15em;
-    overflow-y:scroll;
+    overflow:scroll;
 
    min-height:50px;
     visibility: hidden;
@@ -93,7 +93,7 @@ border-radius: 10px;
     transition: opacity .5s, top .5s;
 }
 .overlay:target+.popup {
-
+top:40%;
 	opacity: 1;
     visibility: visible;
 	}
