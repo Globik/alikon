@@ -9,21 +9,68 @@
 <div>
 
 
-<ul id="menu">
 
-</ul>
-
-</br>
-<% if(file){%><span id="data"><%- JSON.parse(file).user.name %></span>
-<select id="level" onchange="showname(this.value)">
 <option value="role"><%- JSON.parse(file).user.role %></option>
 <option value="user"><%- JSON.parse(file).user.name %></option>
+<style>
+select{background:green;}
+.notrans select::-ms-expand{display:none;}
+.notrans select{-webkit-appearance:none;
+-o-appearance:none;appearance:none;outline:none;
+background:red;width:300px;height:60px;font-size:32px;color:gray;padding:10px;
+border-radius:10px;-o-border-radius:10px;cursor:pointer;
+}
+.notrans option{color:pink;-o-border-radius:10px;border-radius:10px;}
+
+
+.trans .tragreen{-webkit-appearance:none;
+-o-appearance:none;appearance:none;outline:none;
+background:green;width:300px;height:60px;font-size:32px;color:gray;padding:10px;
+border-radius:10px;-o-border-radius:10px;cursor:pointer;
+}
+
+.trans option{color:pink;-o-border-radius:10px;border-radius:10px;}
+</style>
+<select id="leveloption" onchange="showname(this.value)">
+<option>menu</option>
+<option value="/">home</option>
+<option value="/articles">articles</option>
+<option value="/labo">labs</option>
 </select>
-<%}%>
-</br>
+<br>Anderer select:
+<select>
+<option class="tragreen" value="option1">option1</option>
+<option value="option2">option2</select>
+<br>
+transform: translate() - <span id="outrans"></span>
+<script>
+var colimator=[];
+var transli=document.getElementById("outrans");
+//transli.style.msTransform="translate("+10px)";
+if(transli.style.transform !== undefined){
+outrans.textContent=" is OK"}
+else{outrans.textContent=" does not work";}
+var props=['transform','webkitTransform','msTransform','mozTransform','oTransform'];
+function mobidick(el){
 
-
-2)
+var p;
+while(p=props.shift()){
+if (typeof el.style[p] !='undefined'){
+outrans.textContent+=' = '+p;
+return p;
+}
+}
+return false;
+}
+function showname(el){
+//alert(el);
+window.location.href=el;
+//alert(window.location.href)
+}
+//alert(mobidick(transli))
+var levelopt=document.getElementById('leveloption');
+if(mobidick(levelopt) == false){document.body.className="notrans"}else{document.body.className="trans";}
+</script>
 </div>
 <div>3
 <% if(message){%>
@@ -234,8 +281,9 @@ var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent
   //alert('location.hostname :'+location.hostname);//alikon.herokuapp.com
   //alert("location.port :"+location.port);
   var koaws={};
-  //var socket=new WebSocket('ws://'+location.hostname+':3000',['soap','jsonrpc-2.0']);
-  var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
+  var socket=new WebSocket('ws://'+location.hostname+':'+location.port,['soap','jsonrpc-2.0']);
+  //var socket=new WebSocket('ws://alikon.herokuapp.com',['soap','jsonrpc-2.0']);
+ // var socket=new Websocket('ws://'+window.location.href+',['soap','jsonrpc-2.0']);
   socket.onopen=function(){
   //alert('connected');
   out.innerHTML='Connected!';
