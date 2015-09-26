@@ -119,8 +119,13 @@ sd.className="show-menu";
 }
 </script>
 <style>
-#operamini-menu-selector{display:none;position:relative;z-index:200;color:red;top:-2.5em;}
+
+#operamini-menu-selector{display:none;position:absolute;z-index:200;color:red;top:0.2em;left:0.2em;
+background:#65acc8;background: linear-gradient(#65acc8, #4586ae);border-width:0;width:5em;
+}
+
 </style>
+
 <select id="operamini-menu-selector" onchange="showname1(this.value)">
 <option>menu</option>
 <option value="/">homa</option>
