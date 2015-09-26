@@ -27,6 +27,7 @@ z-index:2;}
 <% menu.forEach(function(m){%>
 <li class='<%= (m.href==path ? "panactiv": "")%>'><a href="<%= m.href %>" ><%= m.name %></a></li>
 <%})}%>
+
 <!-- 3
 <li><a href="/">home</a></li>
 <li>
@@ -117,9 +118,17 @@ sd.className="show-menu";
 //alert('f'+sf.classList);
 }
 </script>
-
+<style>
+#operamini-menu-selector{display:none;position:relative;z-index:200;color:red;top:-2.5em;}
+</style>
+<select id="operamini-menu-selector" onchange="showname1(this.value)">
+<option>menu</option>
+<option value="/">homa</option>
+<option value="/articles">articles</option>
+<option value="/labo">labs</option>
+</select>
 <input type="checkbox" id="menu-small-all" onchange="situation(this)"/>
-<div class="durak">
+<div id="duri" class="durak">
 <label for="menu-small-all" id="lb-menu-all" class="lb-menu-all" onclick="dowas1()" ontouchstart="dowas1()">
 <!--<div class="fal" style="background:red;z-index:2;margin-top:5px;"> -->
  <div class="spinner diagonal part-1"></div>
@@ -144,6 +153,8 @@ width:30%;position:relative;bottom:60px;left:0px;" onclick="closedas1()" ontouch
 </ul>
 </div>
 <script>
+var duri=document.getElementById("duri");
+var elmini=document.getElementById("operamini-menu-selector");
 var sd2=document.getElementById('shmn1');
 function dowas1(){
 sd2.className="clickmenuall";
@@ -157,4 +168,10 @@ function situation(el){
 //alert(el.checked);
 if(el.checked==false){closedas1();}
 }
+var isOperaMini = (navigator.userAgent.indexOf('Opera Mini')>-1);
+if(isOperaMini){
+duri.style.display="none";
+elmini.style.display="block";
+}
+function showname1(el){window.location.href=el;}
 </script>
