@@ -16,9 +16,10 @@ word-wrap:break-word;
 overflow-x:auto;
 padding:60px;
 }
-summary{background:pink;}
+/*summary{background:pink;}
 .lightgreen{background:lightgreen;}
 .lightblue{background:lightblue;}
+*/
 .reklamabox{background:lightblue;width:100%;}
 .green{color:lightgreen;}
 .yellow{color:yellow;}
@@ -39,20 +40,28 @@ textarea{width:90%;height:300px;}
 .dbqw{color:#58F158/*darkgreen*/;}
 .one-fit{color:#0CF78C/*violet*/;}
 @media screen and (max-width: 1024px) {
-
 pre{
 padding:20px;
 font-size:0.9em;
-}
-}
+}}
+
+.precoded-container{height:400px;overflow:auto;background: #0C0638}
+.precoded-css{display:none;}
+.precoded-js{display:none;}
+.precoded-html{display:none;}
+
+#pre-css:checked ~ .precoded-container .precoded-css{display:block;}
+#pre-css:checked ~ .precoded-container .precoded-sample{display:none;}
+
+#pre-js:checked ~ .precoded-container .precoded-js{display:block;}
+#pre-js:checked ~ .precoded-container .precoded-sample{display:none;}
+#pre-html:checked ~ .precoded-container .precoded-html{display:block;}
+#pre-html:checked ~ .precoded-container .precoded-sample{display:none;}
+#pre-sample:checked ~ .precoded-container .precoded-sample{display:block;}
+<% if(post){ if(post.css_textarea){%> <%=post.css_textarea%> <%}}%>
 </style>
 <h5>Code blog</h5>
-
-<p><% if(post){ 
-
-repl=n=>n; 
-
-%>
+<p><% if(post){ %>
 <ul>
 <li><b>Title:</b><%=post.title%>
 <li><b>Teaser:</b><%=post.teaser%>
@@ -80,6 +89,29 @@ var da=new Date(parseInt(das,16)*1000);
 <pre contenteditable=false><code>
 <%-: post.js_textarea | esc_html| js_pretty %>
 </code></pre><%}%></p>
+<p><h4>Codes in container.</h4>
+<hr>
+<label class="puc" for="pre-css">css</label>
+<input type="radio"  name="precoderadio" id="pre-css" selected="false">
+<label class="puc" for="pre-js">js</label>
+<input type="radio"  name="precoderadio" id="pre-js" selected="false">
+<label class="puc" for="pre-html">html</label>
+<input type="radio"  name="precoderadio" id="pre-html" selected="false">
+<label class="puc" for="pre-sample">result</label>
+<input type="radio"  name="precoderadio" id="pre-sample" checked="false" selected="false">
+<hr>
+<div class="precoded-container">
+<% if(post.css_textarea){%>
+<pre class="precoded-css" data-type="precoded_container"><%-: post.css_textarea | css_pretty %></pre>
+<%}%>
+<% if(post.js_textarea){%>
+<pre class="precoded-js"  data-type="precoded_container"><%-: post.js_textarea | esc_html| js_pretty%></pre>
+<%}%><% if(post.html_textarea){%>
+<pre class="precoded-html" data-type="precoded_container"><%= post.html_textarea %></pre>
+<div class="precoded-sample" data-type="precoded_container"><%- post.html_textarea %></div>
+<%}%>
+</div>
+</p>
 </div>
 <%-(post.js_textarea ? `<script>${post.js_textarea}</script>` :"fuck_no_script" )%>
 <li><a onclick="edit_an_blog_code_article(this)" data-id="<%= post._id %>" href="#popredaktor_code_blog">edit</a></li>
@@ -96,10 +128,19 @@ var da=new Date(parseInt(das,16)*1000);
 <input type="text" name="title" required placeholder="title" value="" style="width:80%;"></br>
 <b>Teaser: </b></br>
 <input type="text" name="teaser" required placeholder="title" value=""></br>
+
 <label>code_blog_textarea: </label><br>
 <textarea name="code_blog_textarea" placeholder="for html text"></textarea><br>
+
+<label>css_textarea:</label><br>
+<textarea name="css_textarea"></textarea><br>
+
 <label>js_textarea:</label><br>
 <textarea name="js_textarea"></textarea><br>
+
+<label>html_textarea:</label><br>
+<textarea name="html_textarea"></textarea><br>
+
 <label>autor:</label><input type="text" name="autor" value=""><br>
 <label>visa:</label><input type="text" name="visa" value=""><br>
 <label>type:</label><input type="text" name="type" value=""><br>
@@ -133,7 +174,9 @@ var xhr=new XMLHttpRequest();
  d.title.value=data.title;
   d.teaser.value=data.teaser;
   d.code_blog_textarea.value=data.code_blog_textarea;
+  d.css_textarea.value=data.css_textarea;
   d.js_textarea.value=data.js_textarea;
+  d.html_textarea.value=data.html_textarea;
   d.autor.value=data.autor; 
   d.visa.value=data.visa;
   d.type.value=data.type;  

@@ -45,12 +45,20 @@ summary{color: pink;}
 .lightblue{color: lightblue;}
 /* comment */
 </pre></p>
-<p><output id="output"></output></p>
+
 <p><b>Pupkin pre code html</b></p>
 <p><pre class="pre-code-html"><b>Misha</b></pre></p>
-<p><output id="output"></output></p>
+<p>Apropos, html tag &lt;summary&gt; works only on web-kit browsers. For a cross-browser solution you
+may need a &lt;input type="checkbox"&gt;.</p>
+<p><output id="output-lid"></output></p>
 </textarea>
 <button onclick="addField()">add folder</button><br>
+<label>css_textarea:</label><br>
+<textarea name="css_textarea">
+ summary{background: pink;}
+.lightgreen{background: lightgreen;}
+.lightblue{background: lightblue;}
+</textarea><br>
 <label>js_textarea:</label><br>
 <textarea name="js_textarea">
 var catalog = [
@@ -108,11 +116,17 @@ str+= '</li>';
 if(node.children.length > 0) str+= '</ul></details>';
 return str;
 }
-
 buildTree(tree);
-output.innerHTML = displayTree(tree.root);
-
-
+document.getElementById("output-lid").innerHTML = displayTree(tree.root);
+document.getElementById("output-erst").innerHTML = displayTree(tree.root);
+</textarea><br>
+<label>html_textarea:</label><br>
+<textarea name="html_textarea">
+<output id="output-erst"></output>
+</textarea><br>
+<!--<label>sample_textarea:</label><br>
+<textarea name="sample_textarea">
+<output id="output-erst"></output> -->
 </textarea><br>
 <label>autor:</label><input type="text" name="autor" value="<%=user.username%>"><br>
 <label>visa:</label><input type="text" name="visa" value="0"><br>
@@ -120,7 +134,6 @@ output.innerHTML = displayTree(tree.root);
 <label>rubrika:</label><input type="text" name="rubrika" value="javascript"><br>
 <label>tags:</label><input type="text" name="tags" value="js,nodejs"><br>
 <input type="submit" value="send"><br>
-
 </form>
 <output id="output"></output>
 <script>

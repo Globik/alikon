@@ -358,11 +358,7 @@ background:red;
 .fuck{
 display:block;z-index:3;
 }
-
-
 /* end of adminka small */
-
-
 /*****************************************
 BENEMUNG
 ******************************************/
@@ -377,11 +373,8 @@ margin: 0 auto;
 padding: 6.5em 0;
 margin-top:-1.75em;
 text-align: center;
-
 font-family;'Lato', Arial, sans-serif;
-
 }
-
 .codrops-header h1 {
 	margin: 0;
 	font-weight: 300;
@@ -389,7 +382,6 @@ font-family;'Lato', Arial, sans-serif;
 	line-height: 1.3;
 	color:white;
 }
-
 .codrops-header span {
 	display: block;
 	padding: 0 0 0.6em 0.1em;
@@ -429,10 +421,7 @@ box-sizing:border-box;
 /*************************************
 flex-content
 **************************************/
-
-
 .fluiditems:nth-child(odd){background:#F26663;}
-
 #flex-content{
 display:block;
 width:100%;
@@ -441,24 +430,23 @@ min-height:94.3vh;
 height:auto;
 margin-top:0px;
 padding-top:0em;
+-moz-box-sizing:border-box;
 -webkit-box-sizing:border-box;
 box-sizing:border-box;
 /*border:1px solid blue;*/
 /*background:green;*/
 }
-
 #daper,.daper{
 width:92%;
 /*background:blue;*/
 position:relative;
 margin:1em auto;
 display:block;
-
+-moz-box-sizing:border-box;
 -webkit-box-sizing:border-box;
 box-sizing:border-box;
 word-wrap:break-word;
 height:auto;
-
 }
 .daper{padding:1em;}
 .fluiditems{
@@ -470,19 +458,15 @@ padding:0;
 box-sizing:border-box;
 background:blue;
 width:31.3%;
-
 height:360px;
-
 text-align:center;
 color:white;
 overflow:hidden;
 }
 .flex #daper{display:flex;flex-wrap:wrap;
 justify-content:center;align-items:center;margin-top:20px;
-
 }
 .flex .fluiditems{background:pink;margin-bottom:5px;margin-top:20px;}
-
 .flex .pagin{display:block;position:relative;width:100%;margin-top:15px;}
  #daper .pagin{
  clear:both;
@@ -497,8 +481,8 @@ justify-content:center;align-items:center;margin-top:20px;
 /**************************************************************************
 CONTENT top right bottom left
 **************************************************************************/
-
 #content {
+-moz-box-sizing:border-box;
 -webkit-box-sizing:border-box;
 box-sizing:border-box;
 	background: rgba(255,255,230,1);

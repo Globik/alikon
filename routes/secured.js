@@ -981,7 +981,9 @@ secured.post("/code_bl_send_to_insert",authed,bodyParser({multipart:true,formida
 	var title=this.request.body.fields.title;
 	var teaser=this.request.body.fields.teaser;
 	var code_blog_textarea=this.request.body.fields.code_blog_textarea;
+	var css_textarea=this.request.body.fields.css_textarea;
 	var js_textarea=this.request.body.fields.js_textarea;
+	var html_textarea=this.request.body.fields.html_textarea;
 	var autor=this.request.body.fields.autor;
 	var visa=this.request.body.fields.visa;
 	var type=this.request.body.fields.type;
@@ -995,7 +997,9 @@ secured.post("/code_bl_send_to_insert",authed,bodyParser({multipart:true,formida
 	title:title,
 teaser:teaser,
 code_blog_textarea:code_blog_textarea,
+css_textarea:css_textarea,
 js_textarea:js_textarea,
+html_textarea:html_textarea,
 autor:autor,
 visa:visa,
 type:type,
@@ -1024,7 +1028,9 @@ secured.post("/save_an_edited_blog_code_article/",bodyParser({multipart:true,for
 	var title=this.request.body.fields.title;
 	var teaser=this.request.body.fields.teaser;
 	var code_blog_textarea=this.request.body.fields.code_blog_textarea;
+	var css_textarea=this.request.body.fields.css_textarea;
 	var js_textarea=this.request.body.fields.js_textarea;
+	var html_textarea=this.request.body.fields.html_textarea;
 	var autor=this.request.body.fields.autor;
 	var visa=this.request.body.fields.visa;
 	var type=this.request.body.fields.type;
@@ -1037,8 +1043,8 @@ secured.post("/save_an_edited_blog_code_article/",bodyParser({multipart:true,for
 	try{
 		var posts=wrap(db.get("codeblogs"));
 	var post=yield posts.updateById(id,{$set:{title:title,
-teaser:teaser,
-js_textarea:js_textarea,code_blog_textarea:code_blog_textarea,
+teaser:teaser,css_textarea:css_textarea,
+js_textarea:js_textarea,html_textarea:html_textarea,code_blog_textarea:code_blog_textarea,
 tags:tags,visa:visa}}/*,{$currentDate:{redaktiert:true}}*/);
 	}catch(err){this.throw(404,err)}
 	yield this.body={info:"ok - saved!"}

@@ -155,6 +155,14 @@ replace(/\b(function|var|if|in|of|return)\b/g,`<span class='blue'>$1</span>`)
 .replace(/(&apos;[\s\S]*?&apos;)/g,`<span class="kavichki">$1</span>`)
 .replace(/(&quot;[^"]*?&quot;)/g,`<span class="dbquot">$1</span>`)
 }
+var css_pretty= n =>
+ n.replace(/(\/\*[\s\S]*?\*\/)/gm,`<span class="orange">$1</span>`)
+.replace(/(\.[\w\-_]+)/g,`<span class="yellow">$1</span>`)
+.replace(/(\#[\w\-_]+)/g,`<span class="blue">$1</span>`)
+.replace(/\b(pre|textarea)\b/g,`<span class="green">$1</span>`)
+.replace(/(\{|\}|\]|\[|\|)/g,`<span class='figskobki'>$1</span>`)
+.replace(/(:[\w\-_]+)/g,`<span class="brown">$1</span>`)
+.replace(/(\d+|\.\d+|\d+\.\d*)/g,`<span class='blue'>$1</span>`);
 
 const filters={
     format: time => time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate(),
@@ -174,6 +182,7 @@ return ab;
 }
  };
  
+ /*
 var css_pretty= n =>
  n.replace(/(\/\*[\s\S]*?\*\/)/gm,`<span class="orange">$1</span>`)
 .replace(/(\.[\w\-_]+)/g,`<span class="yellow">$1</span>`)
@@ -182,7 +191,7 @@ var css_pretty= n =>
 .replace(/(\{|\}|\]|\[|\|)/g,`<span class='figskobki'>$1</span>`)
 .replace(/(:[\w\-_]+)/g,`<span class="brown">$1</span>`)
 .replace(/(\d+|\.\d+|\d+\.\d*)/g,`<span class='blue'>$1</span>`);
-
+*/
 
 render(app,{
 root:path.join(__dirname,'view'),
