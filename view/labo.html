@@ -1,5 +1,5 @@
-<div class="daper">
-<%if(user){%><b>Hallo, <%user%>.<a href="/app/codeblog">Post to code blog</a><%}%>
+<main class="daper">
+
 <h4>Labo lists</h4>
 <% if(post){%>
 
@@ -14,36 +14,8 @@
 <li><b>Tags:</b><%=m.tags%>
 <li><b>Slugged_title:</b><%=m.slugged_title%>
 <li><b>Created_on:</b><%=m.created_on%>
-<li><b>Read more:</b><a href="/labo/<%=m._id%>"><%=m._id%></a>
+<li><b>Read more:</b><a href="/labo/<%=m._id%>">Read more...</a>
 </ul>
 <%})%>
 <%}%>
-
-<style>
-
-.popup1{box-sizing:border-box;
-display:inline-block;
-background:gray;
-width:28em/*13.29em*/;
-height:16em;
-position:fixed;
-visibility:hidden;
-z-index:100;
-padding:2em;
-left:calc(50% - 14em);
-top:50%;
-/*top:calc(50vmin - 8em - 1em);*/
- 
-}
-.overlay2:target+.popup1 {visibility: visible;}
-
-@media screen and (max-width: 360px) {
-.popup1{left:0px;background:lightgreen;height: 200px;width:100%;height:16em;margin:0 auto;}
-}
-</style>
-</div>
-<br><a href="#sec1" class="overlay2" id="sec1">popup1</a>
-<sector class="popup1"><b>Hallo 1</b>
-<a class="clos" href="#">close</a><br>
-
-</sector>
+</main>

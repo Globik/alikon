@@ -115,6 +115,7 @@ var lowdb = low('db.json')
 var locals={
 version:'0.0.1',
 message:'message must be',
+somefunc:"alert('some Func')",
 ldb:function *(){try{var s=yield fs.readFile('db.json','utf-8');return JSON.parse(s);}
 catch(err){console.log('LOWDB API err :',err);}},
 path:function (){var b;if(this.method === 'GET'){b=this.path} return b;},
@@ -137,6 +138,17 @@ yield wait(100);
 return this.ip;},
 menu:[{name:"home",href:'/'},{name:"articles",href:"/articles"},{name:"labs",href:"/labo"}]
 };
+var esc2_html = n => n.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+var esc_atrs=s=> s.replace(/(\w+)="(.*?)"/g,`<span class=brown>$1</span>=<span class=green>"$2"</span>`);
+var html_pretty = ns => {return ns.replace(/&lt;(\w+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^(&gt;)\s]+))?)*)\s*(\/?)&gt;/g,
+(s,p1,p2,p3,ofs) =>{
+return `<span class=orange>&lt;</span>
+<span class=blue>${p1}</span>${esc_atrs(p2)}<span class=violet>${p3}</span><span class=orange>></span>`;})
+.replace(/((&lt;)\/(\w+)(&gt;))/g,`<span class="orange">$2</span>
+<span class=violet>/</span><span class=blue>$3</span>
+<span class=orange>$4</span>`).replace(/\b(disabled)\b/g,`<span class=red>$1</span>`).replace(/(&lt;\!--[\S\s]*?--&gt;)/g,`<span class=green>$1</span>`).replace(/\n/g,'');
+}
+
 
 var esc_html= n => n.replace(/([\'])/g,`&apos;`)
 .replace(/([\"])/g,`&quot;`)
@@ -168,14 +180,20 @@ const filters={
     format: time => time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate(),
 	js_pretty,
     esc_html,
+	esc2_html,
     css_pretty,
+	html_pretty,
     aprecoded: se => {
 	let shortcodename='$REKLAMA';
 	let reg=new RegExp(`\\${shortcodename}`,`g`);
-var ba=se.replace(reg,"Some box:<div class='reklamabox'>advert block</div>");
+var ba=se.replace(reg,`Some box:<sector role='note' class='reklamabox' itemscope itemtype="http://schema.org/WPAdBlock">
+<meta itemprop="name" content="Adsense for pagetitle"/>
+<meta itemprop="name" content="Support Atariku by using Adsense and other advertisments."/>
+<div class="reklamabox">My AD block.</div></sector>`);
 var ab=ba.replace(/<pre class="(.*?)">([\s\S]*?)<\/pre>/g,(str,p1,p2,ofs,s) => {
 if(p1=="pre-code-js"){return `<pre class="pre-code-js">${js_pretty(esc_html(p2))}</pre>`;}
 else if(p1=="pre-code-css"){return `<pre class="pre-code-css">${css_pretty(p2)}</pre>`}
+else if(p1=="pre-code-html"){return `<pre class="pre-code-html">${html_pretty(esc2_html(p2))}</pre>`}
 else{return "";}
 });
 return ab;
@@ -265,34 +283,22 @@ app.use(function *(next) {
 	  console.log('this.session.err :',this.message);
 	  //console.log("THIS FLASH FUCKER : ",this.flash.fucker);
 	  this.flash={woane:this.path};
-	  
-	  //yield this.redirect('/error-view');
-	 //yield this.render('/error-view',{err:this.message,user:'is',status:this.status});
-    //this.body = this.flash.error || this.message;
   } 
   yield next;
 });
-
-//app.use(fuckall.middleware());
-//app.use(secured.middleware());
-app.use(fuckall.routes());
-app.use(secured.routes());
-app.use(function *(next){
-	yield next;
-	if(404 !=this.status) return;
-	this.status=404;
-	console.log('NOW status :',this.status+':'+this.flash.fucker)
-	yield this.render('/error-view',{err:this.message,fly:this.flash.fucker,status:this.status,user:this.req.user});
+//node index
+app.use(fuckall.middleware());
+app.use(secured.middleware());
+app.use(function *(){
+	this.message=this.session.err;
+	this.status=302;this.redirect('/');
 })
-/*
-app.use(function *(next){
-try{yield next;}catch(err){
-	this.app.emit('error',err,this);
-	//yield this.render('/error-view',{err:err,user:'es'})
-	//yield this.body={err:err}
-	console.log("Some error in app use :",err);
-	this.redirect('/error-view');
-}	
+
+/*app.use(function *(next){
+if(404 !=this.status) return;
+	this.status=404;
+	//console.log('NOW status :',this.status+':'+this.flash.fucker)
+	yield this.render('/error-view',{err:this.message,fly:this.flash.fucker,status:this.status,user:this.req.user});
 })*/
 
 

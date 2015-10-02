@@ -1,4 +1,63 @@
 ﻿<!-- error-view.html -->
+<main class="daper">
+<style>
+textarea{width:400;height:150;}
+.blue{color:blue;}
+.orange{color:orange;}
+.red{color:red;}
+.green{color:green;}
+.violet{color:violet;}
+.brown{color:brown;}
+</style>
 <h3>Some error page</h3>
 <% if(err){%> <b><%= err %>|<%= status %></b><%}%>
-</br><b>Flash message :</b><%= fly %>
+</br><b>Flash message :</b><%= fly %><br>
+<textarea id="tx"><a href="d">aliks</a><output id="fu" class="ba" disabled>Text<br class="er"></output><out class="df">
+<div id="container">
+<img src="pic.gif" alt="fuck" class="duck"/>
+
+</div>
+</textarea>
+<pre id="pr">
+
+</pre>
+<pre id=par></pre>
+<script>
+var str=tx.innerHTML;
+//str.replace(/<(\w+)="(.*?)"/g,'n');
+/*
+pr.innerHTML=str.replace(/<(\w+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>(\w+)/g,function(s,p1,p2,p3,p4,ofs){
+console.log('p1 :',p1);
+console.log('p2 :',p2.replace(/(\w+)="(.*?)"/g,"<span class=green>$1</span>=<span class=red>'$2'</span>"));
+console.log('p3 :',p3);
+console.log('p4 :',p4);
+console.log('ofs :',ofs);
+return `<span class=violet>&lt;</span><span class=orange>${p1}</span>${p2.replace(/(\w+)="(.*?)"/g,"<span class=green>$1</span>=<span class=red>'$2'</span>")}<span class=violet>></span>${p4}<span class=violet>&lt;/</span><span class=orange>${p1}</span><span class=violet>></span>`;
+})
+*/
+
+//pr.innerHTML=str.replace(/&lt;\w+(\s*\w+=(\w+|"[^"]*")\s*)*&gt;/g,"<span class=red>$1</span>");
+
+
+function esc1(s){
+return s.replace(/href/g,"KAV");}
+function esc2(s){
+return s.replace(/(\w+)="(.*?)"/g,`<span class=brown>$1</span>=<span class=green>"$2"</span>`);}
+
+
+pr.innerHTML=str.replace(/&lt;(\w+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^(&gt;)\s]+))?)*)\s*(\/?)&gt;/g,
+`<span class=red>&lt;$1H$2H></span>`);
+
+par.innerHTML=str.replace(/&lt;(\w+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^(&gt;)\s]+))?)*)\s*(\/?)&gt;/g,function(s,p1,p2,p3,ofs){
+
+return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<span class=violet>${p3}</span><span class=orange>></span>`;
+
+}).replace(/((&lt;)\/(\w+)(&gt;))/g,`<span class="orange">$2</span><span class=violet>/</span><span class=blue>$3</span>_<span class=orange>$4</span>`).replace(/\b(disabled)\b/g,`<span class=red>$1</span>`);
+
+//str.replace(/(<(.*?)=("|\')[^"\'>]+>)/g,(str,p1,p2,ofs,s)=> `<span class=blue>&lt;</span>${p2}<span class=blue><span class=violet>/</span>&gt;</span>`);
+function esc(s){
+return s.replace(/</g,"&lt;");
+}
+
+</script>
+</main>

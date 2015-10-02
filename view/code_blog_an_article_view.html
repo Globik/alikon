@@ -1,6 +1,20 @@
 ﻿<!-- code_blog_an_article_view.html -->
 <!-- public -->
-<div class="daper">
+<div class="codrops-header" style="z-index:1;">
+<!-- <script><%- somefunc %></script> -->
+<% if(post){%>
+<h1><%= post.title %><span><%= post.teaser %></span></h1><%}%>
+
+<nav class="codrops-demos">
+<a class="current-demo" href="">fb</a>
+<a href="">vk</a>
+<a href="">g+</a>
+</nav>	
+</div>
+<main role="main" class="daper" itemscope itemtype="http://schema.org/Blog" >
+<meta itemprop="name" content="CodeBlogs Atariku"/>
+<meta itemprop="description" content="CodeBlogs Atariku is a Blog about coding in Webdevelopment"/>
+<meta itemprop="keywords" content="css,javascript,html,nodejs"/>
 <style>
 pre{
 color:#C6DAC6 /*black*/;
@@ -14,17 +28,15 @@ word-break:break-all;
 word-break:keep-all;
 word-wrap:break-word;
 overflow-x:auto;
-padding:60px;
+padding:20px;
 }
-/*summary{background:pink;}
-.lightgreen{background:lightgreen;}
-.lightblue{background:lightblue;}
-*/
-.reklamabox{background:lightblue;width:100%;}
+
+ .reklamabox{background:lightblue;width:100%;}
 .green{color:lightgreen;}
 .yellow{color:yellow;}
 .brown{color:brown;}
 .orange{color:orange;}
+.violet{color:violet;}
 .attribute{color:green;}
 .constructor{color:green;}
 .red{color:red;}
@@ -37,31 +49,133 @@ textarea{width:90%;height:300px;}
 .constructor{color:green;}
 .attribute{color:#EF6C6C/*brown*/;}
 .kavichki{color:#8250D4/*yellow*/;}
-.dbqw{color:#58F158/*darkgreen*/;}
+.dbquot{color:/*#58F158*/darkgreen;}
 .one-fit{color:#0CF78C/*violet*/;}
-@media screen and (max-width: 1024px) {
-pre{
-padding:20px;
-font-size:0.9em;
-}}
 
-.precoded-container{height:400px;overflow:auto;background: #0C0638}
-.precoded-css{display:none;}
-.precoded-js{display:none;}
-.precoded-html{display:none;}
+.precoded-container::-webkit-scrollbar{background:#0C0638;}
+.precoded-container{scrollbar-base-color:#0C0638;
+scrollbar-track-color:#0C0238;}
+.precoded-container{height:400px;
+-webkit-overflow:touch;
+overflow:touch;
+overflow:auto;background: #0C0638;
+width:70%;padding:0;
+-webkit-animation: 0.1s hack infinite;
+@-webkit-keyframes hack{
+from{margin:0;padding:0}
+to{margin:0;padding:0;}
+}
+}
+.precoded-css,.precoded-js,.precoded-html{display:none;}
 
-#pre-css:checked ~ .precoded-container .precoded-css{display:block;}
-#pre-css:checked ~ .precoded-container .precoded-sample{display:none;}
+#pre-css:checked ~ .precoded-container .precoded-css, 
+#pre-js:checked ~ .precoded-container .precoded-js,
+#pre-html:checked ~ .precoded-container .precoded-html{
+display:block;
+}
 
-#pre-js:checked ~ .precoded-container .precoded-js{display:block;}
-#pre-js:checked ~ .precoded-container .precoded-sample{display:none;}
-#pre-html:checked ~ .precoded-container .precoded-html{display:block;}
+#pre-css:checked ~ .precoded-container .precoded-sample,
+#pre-js:checked ~ .precoded-container .precoded-sample,
 #pre-html:checked ~ .precoded-container .precoded-sample{display:none;}
-#pre-sample:checked ~ .precoded-container .precoded-sample{display:block;}
+
+#pre-css:checked + label,
+#pre-js:checked + label,
+#pre-html:checked + label,
+#pre-sample:checked + label{background:gray;
+border:1px solid silver;
+background-image:-ms-linear-gradient(rgb(200,200,200),rgb(224,224,224));
+background-image:-moz-linear-gradient(rgb(200,200,200),rgb(224,224,224));
+background-image:-o-linear-gradient(rgb(200,200,200),rgb(224,224,224));
+background-image:linear-gradient(rgb(200,200,200),rgb(224,224,224));}
+
+input[type=radio]{display:none;}
+.puc{
+display:inline-block;
+text-align:center;
+font-size:1.25em;
+font-weight:700;
+background:silver;
+background-image:linear-gradient(rgb(240,240,240),rgb(224,224,224));
+box-sizing:border-box;
+width:4em;
+cursor:pointer;
+border:1px solid transparent;
+}
+@media screen and (max-width: 1250px) {
+pre{
+padding:0px;
+font-size:0.9em;
+}
+.precoded-container{width:100%;}
+}
 <% if(post){ if(post.css_textarea){%> <%=post.css_textarea%> <%}}%>
 </style>
-<h5>Code blog</h5>
-<p><% if(post){ %>
+<article role="main" class="code-blog-article" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting" >
+<% if(post){ %>
+<h1 class="post-title" itemprop="headline"><%= post.title %></h1>
+
+<p><small>Posted on <time datetime="<%-: post.created_on %>" itemprop="datePublished"><%-: post.created_on | format %></time> by <span itemprop="author"><%= post.autor %></span></small></p>
+<p><i itemprop="description"><%= post.teaser %></i></p>
+<!-- <data itemprop="interactionCount" value="UserCheckins:4">1 shares</data>
+<meta itemprop="interactionCount" content="UserTweets:0"/>
+<meta itemprop="interactionCount" content="UserLikes:0"/>
+ <meta itemprop="interactionCount" content="UserPlusOnes:0"/> -->
+<!--or alternativeHeadline into h2 -->
+<%
+var das=post._id.toString().substring(0,8)
+var da=new Date(parseInt(das,16)*1000);
+%><li><b>data:</b><%= das %>|<%=: da | format %><small> September 25, 2015</small>
+
+<section itemprop="articleBody"><%-: post.code_blog_textarea | aprecoded %></section>
+<hr>
+<p><h4>Codes in container.</h4>
+<hr>
+<input type="radio"  name="precoderadio" id="pre-css" selected="false">
+<label class="puc" for="pre-css">css</label>
+
+<input type="radio"  name="precoderadio" id="pre-js" selected="false">
+<label class="puc" for="pre-js"><span></span>js</label>
+
+<input type="radio"  name="precoderadio" id="pre-html" selected="false">
+<label class="puc" for="pre-html">html</label>
+
+<input type="radio"  name="precoderadio" id="pre-sample" checked="false" selected="false">
+<label class="puc" for="pre-sample"><span></span>result</label>
+
+<label class="puc" style="" onclick="machdas(this)">?</label>
+<section class="precoded-container" itemscope itemtype="http://schema.org/Code">
+<% if(post.css_textarea){%>
+<meta itemprop="programmigLanguage" content="css"/>
+<pre class="precoded-css" data-type="precoded_container" itemprop="sampleType"><%-: post.css_textarea | css_pretty %></pre>
+<%}%>
+<% if(post.js_textarea){%>
+<meta itemprop="programmigLanguage" content="javascript"/>
+<pre class="precoded-js"  data-type="precoded_container" itemprop="sampleType"><%-: post.js_textarea | esc_html| js_pretty%></pre>
+<%}%><% if(post.html_textarea){%>
+<%
+function esc1(sr){return sr.replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function esc2(s){
+return s.replace(/(\w+)="(.*?)"/g,`<span class=brown>$1</span>=<span class=green>"$2"</span>`);}
+var html_pretty = ns => {
+	return ns.replace(/&lt;(\w+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^(&gt;)\s]+))?)*)\s*(\/?)&gt;/g,
+function(s,p1,p2,p3,ofs){
+return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<span class=violet>${p3}</span><span class=orange>></span>`;}).replace(/((&lt;)\/(\w+)(&gt;))/g,`<span class="orange">$2</span><span class=violet>/</span><span class=blue>$3</span><span class=orange>$4</span>`).replace(/\b(disabled)\b/g,`<span class=red>$1</span>`);
+}
+%>
+<meta itemprop="programmigLanguage" content="html"/>
+<pre class="precoded-html" data-type="precoded_container" itemprop="sampleType"><%-: post.html_textarea | esc2_html |html_pretty %></pre>
+<div class="precoded-sample" data-type="precoded_container"><%- post.html_textarea%> </div>
+<%}%>
+</section>
+</p>
+
+<%-(post.js_textarea ? `<script>${post.js_textarea}</script>` :"fuck_no_script" )%>
+<li><a onclick="edit_an_blog_code_article(this)" data-id="<%= post._id %>" href="#popredaktor_code_blog">edit</a></li>
+<%}%>
+
+</article>
+
+<% if(post){%>
 <ul>
 <li><b>Title:</b><%=post.title%>
 <li><b>Teaser:</b><%=post.teaser%>
@@ -74,49 +188,8 @@ font-size:0.9em;
 <li><b>Created_on:</b><%=post.created_on%>
 <li><b>Read more:</b><a href="/labo/<%=post._id%>"><%=post._id%></a>
 <li><b>Created_on2:</b><%-: post.created_on | format %>
-
 </ul>
-<%
-var das=post._id.toString().substring(0,8)
-var da=new Date(parseInt(das,16)*1000);
-%><li><b>data:</b><%= das %>|<%=: da | format %>
-
-<div>
-<b>Preformated code_blog_textarea: </b>
-<%-: post.code_blog_textarea | aprecoded %>
-<hr><p><h5>js_textarea</h5>
-<%if(post.js_textarea){%>
-<pre contenteditable=false><code>
-<%-: post.js_textarea | esc_html| js_pretty %>
-</code></pre><%}%></p>
-<p><h4>Codes in container.</h4>
-<hr>
-<label class="puc" for="pre-css">css</label>
-<input type="radio"  name="precoderadio" id="pre-css" selected="false">
-<label class="puc" for="pre-js">js</label>
-<input type="radio"  name="precoderadio" id="pre-js" selected="false">
-<label class="puc" for="pre-html">html</label>
-<input type="radio"  name="precoderadio" id="pre-html" selected="false">
-<label class="puc" for="pre-sample">result</label>
-<input type="radio"  name="precoderadio" id="pre-sample" checked="false" selected="false">
-<hr>
-<div class="precoded-container">
-<% if(post.css_textarea){%>
-<pre class="precoded-css" data-type="precoded_container"><%-: post.css_textarea | css_pretty %></pre>
 <%}%>
-<% if(post.js_textarea){%>
-<pre class="precoded-js"  data-type="precoded_container"><%-: post.js_textarea | esc_html| js_pretty%></pre>
-<%}%><% if(post.html_textarea){%>
-<pre class="precoded-html" data-type="precoded_container"><%= post.html_textarea %></pre>
-<div class="precoded-sample" data-type="precoded_container"><%- post.html_textarea %></div>
-<%}%>
-</div>
-</p>
-</div>
-<%-(post.js_textarea ? `<script>${post.js_textarea}</script>` :"fuck_no_script" )%>
-<li><a onclick="edit_an_blog_code_article(this)" data-id="<%= post._id %>" href="#popredaktor_code_blog">edit</a></li>
-<%}%>
-
 <a href="#x" class="overlay" id="popredaktor_code_blog"></a>
 <div class="popup" id="poredactor_code_blog">
 <b>code blog</b><br>
@@ -155,6 +228,18 @@ var da=new Date(parseInt(das,16)*1000);
 </form>
 </div>
 <script>
+//document.addEventListener('mousewheel',function(e){e.preventDefault()},false);
+/*document.getElementsByClassName('precoded-container')[0].addEventListener('mousewheel',function(e){
+var e=e.wheelDeltaY;
+document.body.onmousemove=function(ev){ev.preventDefault()}},false);
+*/
+
+document.getElementsByClassName('precoded-container')[0].onmousewheel=function(e){
+//var e=e.originalEvent;
+var delta=e.wheelDelta || -e.detail;
+document.getElementsByClassName('precoded-container')[0].scrollTop +=(delta < 0 ? 1 : -1)*30;
+e.preventDefault();
+}
 var y;
 var progressbar=document.getElementById('progressbar2');
 function edit_an_blog_code_article(el){
@@ -211,5 +296,22 @@ var xhr=new XMLHttpRequest();
 	 xhr.onabort=function(e){alert("onabort")}; 
 	 xhr.send(data);
 	 ev.preventDefault();},false);
-</script>
-</div>
+	 var bels=document.querySelectorAll("pre[data-type='precoded_container']");
+var kasha=document.getElementsByClassName('precoded-container')[0];
+function machdas(el){
+if(confirm("Display this code as a block element? Press a button!")==true){
+
+for(var i=0;i<bels.length;i++){
+bels[i].style.display="block";
+}
+kasha.style.height="auto";
+kasha.style.background="inherit";
+el.textContent="X";
+el.style.color="red";
+el.style.border="1px solid red";
+el.onclick=null;
+kasha.onmousewheel=null;
+}
+}
+	 </script>
+</main>

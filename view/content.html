@@ -1,15 +1,5 @@
-<style>
-#aper{width:90%;margin:10px auto;padding:30px 60px;border:1px solid red;}
-.activ{color:red;background:green;border:3px solid red;}
-</style>
-
-<div class="daper">
-<div style="height:30px;"></div>
-<h1 class="" style="clar:both">Some</h1>
-<div>
-
-
-
+<!-- content.html -->
+<main class="daper">
 <option value="role"><%- JSON.parse(file).user.role %></option>
 <option value="user"><%- JSON.parse(file).user.name %></option>
 <style>
@@ -38,12 +28,10 @@ border-radius:10px;-o-border-radius:10px;cursor:pointer;
 </style>
 <div id="fucklev">
 <select id="leveloption" onchange="showname(this.value)">
-<option>menu</option>
-<div id="pik">
+<option disabled>menu</option>
 <option value="/">home</option>
 <option value="/articles">articles</option>
 <option value="/labo">labs</option>
-</div>
 </select>
 </div>
 <br>Anderer select:
@@ -84,35 +72,19 @@ if(mobidick(levelopt) !== false){
 //document.body.className="trans";
 }
 </script>
-</div>
-<div>3
 <% if(message){%>
 <b><%= message %></b><%}%>
 
 <% if(user){%><b>Hallo User!</b> <%= user.username %></br>
 <a href="/app">app</a><%}%></br>
 <a href="/show/tobi">show user tobi</a>
-</div>
-<div class="">4
+
   <button onclick="doit(this)">xhr</button>
   <button onclick="addT(this)">get xhr</button></br>
   <span id="out"></span>
-</div>
-<div class="">5<button onclick="sendSock()">send message via WebSocket</button>
- </div>
-<div class="">6
-<span id="tout"></span>
-</div>
-<div class="">7
-<span id='tout2'></span>
-
-
-</div>
-<div class="">8
 <span id="tout3"></span>
 <span id="tout45"></span>
-</div>
-</br><hr/><b>window.innerWidth :</b><span id="gout"></span></br>
+<hr><b>window.innerWidth :</b><span id="gout"></span>
 <button onclick="getcursrc()"><b>currentSrc :</b></button><span id="gout2"></span><hr/>
 <div class="container" style="width:100%;margin:0 auto;box-sizing:border-box;-webkit-box-sizing:border-box;">
 
@@ -121,7 +93,6 @@ if(mobidick(levelopt) !== false){
 <source media="(min-width: 808px)" srcset="/images/upload/tempo/gorod1-m3.jpg 1x,/images/upload/tempo/gorod1-m4.jpg 2x">
 <source media="(min-width: 600px)" srcset="/images/upload/tempo/gorod1-m2.jpg">
 <source media="(max-width: 320px)" srcset="/images/upload/tempo/gorod1-m1.jpg">
-
 <img id="fuckimg" src="/images/upload/tempo/gorod1-m2.jpg" 
 alt="media picture element" title="title1" 
 sizes="100vw" srcset="/images/upload/tempo/gorod1-m1.jpg 384w,
@@ -129,11 +100,7 @@ sizes="100vw" srcset="/images/upload/tempo/gorod1-m1.jpg 384w,
 /images/upload/tempo/gorod1-m3.jpg 1152w,
 /images/upload/tempo/gorod1-m4.jpg 1536w">
 </picture>
-
-
-</div></br>
-
-
+</div>
 <script>
 function getcursrc(){
 gout2.innerHTML=fuckimg.currentSrc;
@@ -142,47 +109,9 @@ gout.innerHTML=window.innerWidth;
 window.onresize=function(){
 gout.innerHTML=window.innerWidth;
 }
-
 </script>
-
-
-
-<style>
-canvas{width:6em;height:6em;}
-</style>
-<canvas id="fcanv" width='100' height='100' style="border:1px solid red;"></canvas>
-
-<script>
-var cnv=document.getElementById('fcanv');
-var c=cnv.getContext('2d');
-var img=new Image();
-img.onload=function(){
-c.fillStyle="white";
-c.beginPath();
-c.arc(cnv.width/2,cnv.height/2,cnv.width/2-5,0,2*Math.PI,false);
-c.fill();
-c.stroke();
-c.drawImage(img,-2,20,50,50);
-c.font='19px "Marker Felt" cursive,sans-serif';
-c.fillStyle="blue";
-c.fillText('tariku',37,59);
-c.fillStyle="black";
-c.font='bold 11px Verdana';
-c.fillText('group',48,70);
-c.beginPath();
-c.arc(cnv.width/2,cnv.height/2,cnv.width/2-5,0,2*Math.PI,false);
-//c.fillStyle="red";
-//c.fill();
-c.lineWidth=5;
-c.strokeStyle='green';
-c.stroke();
-}
-
-img.src="/images/w4.png";
-
-</script>
-</br><button onclick="getusername()">get username doc</button>
-</div>
+<button onclick="getusername()">get username doc</button>
+</main>
 <script>
   function vax(meth,url,data,onLoad,onError){
 var xhr=new XMLHttpRequest();

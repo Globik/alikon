@@ -21,7 +21,7 @@ else {
   //iojs index
   console.log('Where are you from :'+ctx.session.dorthin);
   console.log("You are from the this.flash.woane direction in custom :"+ctx.flash.woane);
-  ctx.body={success:true,redirect:ctx.session.dorthin || '/app'};
+  ctx.body={success:true,redirect:ctx.session.dorthin || '/'};
   //ctx.redirect(ctx.session.dorthin || '/app');
     }
   }).call(this, next)
@@ -162,6 +162,7 @@ this.current_page=page;
 	this.flash={fucker:err.toString()};
 	this.redirect('/error-view')}
 }).get('/articles/:skip',function *(){
+	this.session.dorthin=this.path;
 	yield this.render('skip',{user:this.req.user,posts:this.posts,formated:this.formated,bube:this.bube,
 pages_count:this.pages_count,current_page:this.current_page});
 });
@@ -188,6 +189,7 @@ var redact=moment(post.redaktiert);
 var formated=date.format('MMM D YYYY');
 var redformat=redact.format('MMM D YYYY');
 console.log('Dataformat :',post.dataformat);
+this.session.dorthin=this.path;
 yield this.render('formated-article-view',{user:this.req.user,post:post,
 formated:formated,redformat:redformat});
  }
@@ -210,6 +212,7 @@ fuckall.get('/labo',function *(){
 	var db=this.fuck;
 	var posts=wrap(db.get("codeblogs"));
 	var post=yield posts.find({});
+	this.session.dorthin=this.path;
 yield this.render('labo',{user:this.req.user,post:post});
 });
 fuckall.get("/labo/:id",function *(id){
@@ -222,6 +225,7 @@ var post=yield posts.findById(this.params.id);
 }catch(err){this.status=404;
  this.flash={fucker:err.toString()};
  this.redirect('/error-view');}
+ this.session.dorthin=this.path;
 yield this.render('code_blog_an_article_view',{user:this.req.user,post:post});	
 });
 
