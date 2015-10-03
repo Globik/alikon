@@ -99,13 +99,18 @@ if (user == false) {
    }
   }).call(this, next)
 });
-
+//node index
 fuckall.get('/', function *(){
-var body=this.req.user;
+var user=this.req.user;
 this.session.dorthin=this.path;
 var b=yield fs.readFile('view/config.json','utf-8');
 		console.log('file content: '+b);
-yield this.render('content',{user:body,message:this.flash.berror,file:b});});
+		var page_title="Main page";
+		var page_type="Main type";
+		var page_image="";
+		var page_description="";
+		var locvar={page_title,page_type,page_image,page_description};
+yield this.render('content',{user,file:b,locvar});});
 
 fuckall.get('/articles',function *(){
 var db=this.fuck;
@@ -122,9 +127,13 @@ console.log('count',posts.length);
 
 var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
 var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[-]MM[-]DD[-]');});
-
-yield this.render('insert2',{user:this.req.user,posts:posts,formated:formated,bube:bube,
-pages_count:Math.floor(totalposts/perPage),current_page:0});
+var page_title="Article page view";
+		var page_type="Paginated type";
+		var page_image="";
+		var page_description="all Articles description";
+		var locvar={page_title,page_type,page_image,page_description};
+yield this.render('insert2',{user:this.req.user,posts,formated:formated,bube:bube,
+pages_count:Math.floor(totalposts/perPage),current_page:0,locvar});
 }catch(err){yield this.redirect('error-view',{user:this.req.user,err:err});}
 
 });
@@ -163,8 +172,13 @@ this.current_page=page;
 	this.redirect('/error-view')}
 }).get('/articles/:skip',function *(){
 	this.session.dorthin=this.path;
+	var page_title="Article page view";
+		var page_type="Paginated type";
+		var page_image="";
+		var page_description="Some articles in blog description";
+		var locvar={page_title,page_type,page_image,page_description};
 	yield this.render('skip',{user:this.req.user,posts:this.posts,formated:this.formated,bube:this.bube,
-pages_count:this.pages_count,current_page:this.current_page});
+pages_count:this.pages_count,current_page:this.current_page,locvar});
 });
 
 fuckall.get('/articles/:id/:title',function *(next){
@@ -190,8 +204,17 @@ var formated=date.format('MMM D YYYY');
 var redformat=redact.format('MMM D YYYY');
 console.log('Dataformat :',post.dataformat);
 this.session.dorthin=this.path;
+var page_title=post.postname;
+		var page_type="Article";
+		var page_image;
+		if(!post.hasOwnProperty("images")){page_image="/images/kuku.png"}else{
+		if (post.images && post.images[0].hasOwnProperty("src1")){page_image=post.images[0].src;}
+		else{page_image=post.images[0].src;}
+		}
+		var page_description=post.shorti;
+		var locvar={page_title,page_type,page_image,page_description};
 yield this.render('formated-article-view',{user:this.req.user,post:post,
-formated:formated,redformat:redformat});
+formated:formated,redformat:redformat,locvar});
  }
 catch(err){
  this.status=404;
@@ -205,15 +228,21 @@ catch(err){
 fuckall.get('/error-view',function *(){
 	//console.log('THIS.MESSAGE :',this.message)
 	//console.log('THIS FLASH in ERROR VIEW :',this.flash.fucker)
+	var locvar={};
 	yield this.render('error-view',{err:this.message,status:this.status,
-	user:this.req.user,fly:this.flash.fucker})
+	user:this.req.user,fly:this.flash.fucker,locvar,og_plugin:false,schema_plugin:false})
 })
 fuckall.get('/labo',function *(){
 	var db=this.fuck;
 	var posts=wrap(db.get("codeblogs"));
 	var post=yield posts.find({});
 	this.session.dorthin=this.path;
-yield this.render('labo',{user:this.req.user,post:post});
+	var page_title="Labo page";
+		var page_type="Paginated type";
+		var page_image="";
+		var page_description="";
+		var locvar={page_title,page_type,page_image,page_description};
+yield this.render('labo',{user:this.req.user,post,locvar});
 });
 fuckall.get("/labo/:id",function *(id){
 var db=this.fuck;
@@ -226,7 +255,12 @@ var post=yield posts.findById(this.params.id);
  this.flash={fucker:err.toString()};
  this.redirect('/error-view');}
  this.session.dorthin=this.path;
-yield this.render('code_blog_an_article_view',{user:this.req.user,post:post});	
+ var page_title=post.title;
+		var page_type="Article";
+		var page_image="/images/kuku.png";
+		var page_description=post.teaser;
+		var locvar={page_title,page_type,page_image,page_description};
+yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar});	
 });
 
 
@@ -256,4 +290,4 @@ yield this.body={str:this.params.name};
 	});
 
 
-module.exports=fuckall;
+module.exports=fuckall

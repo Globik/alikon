@@ -114,6 +114,13 @@ var lowdb = low('db.json')
 
 var locals={
 version:'0.0.1',
+site_name:"Atariku",
+site_creator:"Globik",
+site_url:"http://alikon.herokuapp.com",
+main_site_description:"Attariku blog codelab",
+og_plugin:true,
+schema_plugin:true,
+shema_canonical_href:"http://alikon.herokuapp.com/",
 message:'message must be',
 somefunc:"alert('some Func')",
 ldb:function *(){try{var s=yield fs.readFile('db.json','utf-8');return JSON.parse(s);}
@@ -131,8 +138,6 @@ module:function *(){try{
 return mdl.status}catch(err){
 	//console.log('err :'+err);
 	}} ,
-now:function(){
-return moment(new Date()).format('MMM D');},
 ip: function *(){
 yield wait(100);
 return this.ip;},
@@ -178,6 +183,7 @@ var css_pretty= n =>
 
 const filters={
     format: time => time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate(),
+	subtime:date =>{var mate=moment(date);return mate.format('MMM D, YYYY');},
 	js_pretty,
     esc_html,
 	esc2_html,

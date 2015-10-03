@@ -114,7 +114,7 @@ font-size:0.9em;
 <% if(post){ %>
 <h1 class="post-title" itemprop="headline"><%= post.title %></h1>
 
-<p><small>Posted on <time datetime="<%-: post.created_on %>" itemprop="datePublished"><%-: post.created_on | format %></time> by <span itemprop="author"><%= post.autor %></span></small></p>
+<p><small>Posted in <span style="color:blue;"><%=post.rubrika%></span> on <time datetime="<%-: post.created_on %>" itemprop="datePublished"><%-: post.created_on | subtime %></time> by <span itemprop="author"><%= post.autor %></span></small></p>
 <p><i itemprop="description"><%= post.teaser %></i></p>
 <!-- <data itemprop="interactionCount" value="UserCheckins:4">1 shares</data>
 <meta itemprop="interactionCount" content="UserTweets:0"/>
@@ -124,8 +124,10 @@ font-size:0.9em;
 <%
 var das=post._id.toString().substring(0,8)
 var da=new Date(parseInt(das,16)*1000);
-%><li><b>data:</b><%= das %>|<%=: da | format %><small> September 25, 2015</small>
+%><li><b>data:</b><%= das %>|<%=: da | format %>
 
+<div><img itemprop="image" src="/images/kuku.png" alt="labcoding"/></div>
+<h3 itemprop="alternativeHeadline">Codes in container. Bla bla</h3>
 <section itemprop="articleBody"><%-: post.code_blog_textarea | aprecoded %></section>
 <hr>
 <p><h4>Codes in container.</h4>
@@ -143,14 +145,16 @@ var da=new Date(parseInt(das,16)*1000);
 <label class="puc" for="pre-sample"><span></span>result</label>
 
 <label class="puc" style="" onclick="machdas(this)">?</label>
-<section class="precoded-container" itemscope itemtype="http://schema.org/Code">
+<section class="precoded-container" itemscope itemtype="http://schema.org/SoftwareSourceCode"
+title="To scroll the page up and down move yor mouse out from here">
 <% if(post.css_textarea){%>
-<meta itemprop="programmigLanguage" content="css"/>
-<pre class="precoded-css" data-type="precoded_container" itemprop="sampleType"><%-: post.css_textarea | css_pretty %></pre>
+<meta itemprop="name" content="rec func to show file's tree to - article title"/>
+<meta itemprop="codeSampleType" content="inline"/>
+
+<pre class="precoded-css" data-type="precoded_container" itemprop="programmingLanguage" content="css"><%-: post.css_textarea | css_pretty %></pre>
 <%}%>
 <% if(post.js_textarea){%>
-<meta itemprop="programmigLanguage" content="javascript"/>
-<pre class="precoded-js"  data-type="precoded_container" itemprop="sampleType"><%-: post.js_textarea | esc_html| js_pretty%></pre>
+<pre class="precoded-js"  data-type="precoded_container" itemprop="programmingLanguage" content="javascript"><%-: post.js_textarea | esc_html| js_pretty%></pre>
 <%}%><% if(post.html_textarea){%>
 <%
 function esc1(sr){return sr.replace(/</g,"&lt;").replace(/>/g,"&gt;");}
@@ -162,8 +166,7 @@ function(s,p1,p2,p3,ofs){
 return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<span class=violet>${p3}</span><span class=orange>></span>`;}).replace(/((&lt;)\/(\w+)(&gt;))/g,`<span class="orange">$2</span><span class=violet>/</span><span class=blue>$3</span><span class=orange>$4</span>`).replace(/\b(disabled)\b/g,`<span class=red>$1</span>`);
 }
 %>
-<meta itemprop="programmigLanguage" content="html"/>
-<pre class="precoded-html" data-type="precoded_container" itemprop="sampleType"><%-: post.html_textarea | esc2_html |html_pretty %></pre>
+<pre class="precoded-html" data-type="precoded_container" itemprop="programmingLanguage" content="html"><%-: post.html_textarea | esc2_html |html_pretty %></pre>
 <div class="precoded-sample" data-type="precoded_container"><%- post.html_textarea%> </div>
 <%}%>
 </section>
@@ -311,6 +314,7 @@ el.style.color="red";
 el.style.border="1px solid red";
 el.onclick=null;
 kasha.onmousewheel=null;
+kasha.title="";
 }
 }
 	 </script>
