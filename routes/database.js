@@ -110,7 +110,7 @@ var b=yield fs.readFile('view/config.json','utf-8');
 		var page_image="";
 		var page_description="";
 		
-		var canonical_href=this.path;
+		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
 		var article_author="";
 		var article_modified="";
@@ -142,7 +142,7 @@ var page_title="Atariku blog";
 		var page_image="";
 		var page_description="all Articles description";
 		
-		var canonical_href=this.path;
+		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
 		var article_author="";
 		var article_modified="";
@@ -197,7 +197,7 @@ this.current_page=page;
 		var page_type="website";
 		var page_image="";
 		var page_description="Some articles in blog description";
-		var canonical_href=this.path;
+		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
 		var article_author="";
 		var article_modified="";
@@ -243,7 +243,7 @@ var page_title=post.postname;
 		else{page_image=post.images[0].src;}
 		}
 		var page_description=post.shorti;
-		var canonical_href=this.path;
+		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section=post.rubrik;
 		var article_author=post.autor;
 		var article_modified=post.redaktiert;
@@ -280,7 +280,7 @@ fuckall.get('/labo',function *(){
 		var page_image="";
 		var page_description="";
 		
-		var canonical_href=this.path;
+		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
 		var article_author="";
 		var article_modified="";
@@ -305,7 +305,8 @@ var page_title=post.title;
 		var page_image="/images/kuku.png";
 		var page_description=post.teaser;
 		
-		var canonical_href=this.path;
+		var canonical_href=`http://${this.host}${this.path}`;
+		console.log("URL :",this.host)
 		var article_section=post.rubrika;
 		var article_author=post.autor;
 		var article_modified=post.created_on;
