@@ -106,10 +106,20 @@ this.session.dorthin=this.path;
 var b=yield fs.readFile('view/config.json','utf-8');
 		console.log('file content: '+b);
 		var page_title="Main page";
-		var page_type="Main type";
+		var page_type="website";
 		var page_image="";
 		var page_description="";
-		var locvar={page_title,page_type,page_image,page_description};
+		
+		var canonical_href=this.path;
+		var article_section="";
+		var article_author="";
+		var article_modified="";
+		var article_publisher="";
+		var article_tag="";
+		var article_published_time="";
+		var locvar={page_title,page_type,page_image,page_description,
+		canonical_href,article_section,article_author,article_modified,article_publisher,article_tag,
+		article_published_time};
 yield this.render('content',{user,file:b,locvar});});
 
 fuckall.get('/articles',function *(){
@@ -127,11 +137,22 @@ console.log('count',posts.length);
 
 var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
 var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[-]MM[-]DD[-]');});
-var page_title="Article page view";
-		var page_type="Paginated type";
+var page_title="Atariku blog";
+		var page_type="website";
 		var page_image="";
 		var page_description="all Articles description";
-		var locvar={page_title,page_type,page_image,page_description};
+		
+		var canonical_href=this.path;
+		var article_section="";
+		var article_author="";
+		var article_modified="";
+		var article_publisher="";
+		var article_tag="";
+		var article_published_time="";
+		var locvar={page_title,page_type,page_image,page_description,
+		canonical_href,article_section,article_author,article_modified,article_publisher,article_tag,
+		article_published_time};
+	
 yield this.render('insert2',{user:this.req.user,posts,formated:formated,bube:bube,
 pages_count:Math.floor(totalposts/perPage),current_page:0,locvar});
 }catch(err){yield this.redirect('error-view',{user:this.req.user,err:err});}
@@ -172,11 +193,21 @@ this.current_page=page;
 	this.redirect('/error-view')}
 }).get('/articles/:skip',function *(){
 	this.session.dorthin=this.path;
-	var page_title="Article page view";
-		var page_type="Paginated type";
+	var page_title="Atariku Blog";
+		var page_type="website";
 		var page_image="";
 		var page_description="Some articles in blog description";
-		var locvar={page_title,page_type,page_image,page_description};
+		var canonical_href=this.path;
+		var article_section="";
+		var article_author="";
+		var article_modified="";
+		var article_publisher="";
+		var article_tag="";
+		var article_published_time="";
+		var locvar={page_title,page_type,page_image,page_description,
+		canonical_href,article_section,article_author,article_modified,article_publisher,article_tag,
+		article_published_time};
+	
 	yield this.render('skip',{user:this.req.user,posts:this.posts,formated:this.formated,bube:this.bube,
 pages_count:this.pages_count,current_page:this.current_page,locvar});
 });
@@ -205,23 +236,30 @@ var redformat=redact.format('MMM D YYYY');
 console.log('Dataformat :',post.dataformat);
 this.session.dorthin=this.path;
 var page_title=post.postname;
-		var page_type="Article";
+		var page_type="article";
 		var page_image;
 		if(!post.hasOwnProperty("images")){page_image="/images/kuku.png"}else{
 		if (post.images && post.images[0].hasOwnProperty("src1")){page_image=post.images[0].src;}
 		else{page_image=post.images[0].src;}
 		}
 		var page_description=post.shorti;
-		var locvar={page_title,page_type,page_image,page_description};
+		var canonical_href=this.path;
+		var article_section=post.rubrik;
+		var article_author=post.autor;
+		var article_modified=post.redaktiert;
+		var article_publisher="https://facebook.com/globigoose";
+		var article_tag=post.meta;
+		var article_published_time=post.created;
+		var locvar={page_title,page_type,page_image,page_description,
+		canonical_href,article_section,article_author,article_modified,article_publisher,article_tag,
+		article_published_time};
+	
 yield this.render('formated-article-view',{user:this.req.user,post:post,
 formated:formated,redformat:redformat,locvar});
  }
 catch(err){
  this.status=404;
  this.flash={fucker:err.toString()};
- //console.log('err5',err.toString());
- //console.log("HERE FLASCH")
- 
  this.redirect('/error-view');
  }
 });
@@ -238,10 +276,21 @@ fuckall.get('/labo',function *(){
 	var post=yield posts.find({});
 	this.session.dorthin=this.path;
 	var page_title="Labo page";
-		var page_type="Paginated type";
+		var page_type="website";
 		var page_image="";
 		var page_description="";
-		var locvar={page_title,page_type,page_image,page_description};
+		
+		var canonical_href=this.path;
+		var article_section="";
+		var article_author="";
+		var article_modified="";
+		var article_publisher="";
+		var article_tag="";
+		var article_published_time="";
+		var locvar={page_title,page_type,page_image,page_description,
+		canonical_href,article_section,article_author,article_modified,article_publisher,article_tag,
+		article_published_time};
+		
 yield this.render('labo',{user:this.req.user,post,locvar});
 });
 fuckall.get("/labo/:id",function *(id){
@@ -251,16 +300,28 @@ try{
 var posts=wrap(db.get('codeblogs'));
 var post=yield posts.findById(this.params.id);
 //console.log('post :',post)
+var page_title=post.title;
+		var page_type="article";
+		var page_image="/images/kuku.png";
+		var page_description=post.teaser;
+		
+		var canonical_href=this.path;
+		var article_section=post.rubrika;
+		var article_author=post.autor;
+		var article_modified=post.created_on;
+		var article_publisher="https://www.facebook.com/globigoose";
+		var article_tag=post.tags;
+		var article_published_time=post.created_on;
+		var locvar={page_title,page_type,page_image,page_description,
+		canonical_href,article_section,article_author,article_modified,article_publisher,article_tag,
+		article_published_time};
+		yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar});
 }catch(err){this.status=404;
  this.flash={fucker:err.toString()};
  this.redirect('/error-view');}
  this.session.dorthin=this.path;
- var page_title=post.title;
-		var page_type="Article";
-		var page_image="/images/kuku.png";
-		var page_description=post.teaser;
-		var locvar={page_title,page_type,page_image,page_description};
-yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar});	
+ 
+//yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar});	
 });
 
 

@@ -17,9 +17,10 @@ var moment=require('moment');
 var secured=new Router();
 
 secured.get('/app',authed,function *(){
-var body= this.req.user.username;
-console.log('this.req.user.username in app: '+body);
-yield this.render('app',{user:this.req.user});});
+var user= this.req.user;
+var locvar={};
+yield this.render('app',{user:user,locvar,schema_plugin:false,og_plugin:false});});
+
 var iceConfig=[];
 secured.post('/gamma',bodyParser({multipart:true,formidable:{}}),
 function *(next){
@@ -103,10 +104,13 @@ yield next;})***/
 
 secured.get('/app/adduser',authed,function *(){
 	var db=this.fuck;
+	var berr;
+	try{
 	var allusers=wrap(db.get('users'));
 	var users=yield allusers.find({});
-	console.log('users :',users);
-	yield this.render('adduser',{user:this.req.user,users:users});
+	}catch(err){berr=err;}
+	yield this.render('adduser',{berr:berr,user:this.req.user,users:users,
+	locvar:{},schema_plugin:false,og_plugin:false});
 });
 
 secured.post('/addinguser',bodyParser({multipart:true,formidable:{}}),
@@ -170,7 +174,8 @@ http://localhost:3000/app/files
 secured.get('/app/files',function *(){
 	var paths=yield fs.readdir('view');
 console.log('paths : '+paths[0]);
-	yield this.render('files',{user:this.req.user,paths:paths});
+	yield this.render('files',{user:this.req.user,paths:paths,
+	locvar:{},schema_plugin:false,og_plugin:false});
 	
 })
 secured.get('/alfafile/:name',authed,function *(name){
@@ -207,7 +212,8 @@ secured.get('/alfafile/:name',authed,function *(name){
 	//console.log('data',data);
 	//console.log(job[4].data);
     console.log('modules : ',mods);
-	yield this.render('modules',{user:this.req.user,mods:mods,jobs:job,data:data});
+	yield this.render('modules',{user:this.req.user,mods:mods,jobs:job,data:data,
+	locvar:{},schema_plugin:false,og_plugin:false});
 	});
 	secured.post('/insertmodule',bodyParser({multipart:true,formidable:{}}),function *(next){
 		var modulname=this.request.body.fields.modulname;
@@ -270,9 +276,9 @@ agenda *************************************************************************
   //'localhost:27017/todo'}});
   //var agenda=require('../index');
   
-secured.get('/app/agenda',function *(){
+secured.get('/app/agenda',authed,function *(){
 	//var db=this.fuck;
-	yield this.render('agenda',{user:this.req.user});
+	yield this.render('agenda',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false});
 });
 secured.get('/agendall',authed,function *(){
 	var db=this.fuck;
@@ -385,12 +391,13 @@ var db=this.fuck;
 var posts=wrap(db.get('posts'));
 var doc=yield posts.find({});
 //var fotos=yield fs.readdir('public/images/uploads');
-yield this.render('articles-manager',{user:this.req.user,posts:doc});
+yield this.render('articles-manager',{user:this.req.user,posts:doc,
+locvar:{},schema_plugin:false,og_plugin:false});
 });
 //file-upload.html
 
 secured.get('/app/filesuploader',authed,function *(){
-	yield this.render('files-upload',{user:this.req.user});
+	yield this.render('files-upload',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false});
 });
 
 var sluger=require('limax');
@@ -785,7 +792,7 @@ secured.post('/open_this_fold',authed,function *(){
 /* config.html */
 
 secured.get('/app/config',authed,function *(){
-yield this.render('configur',{user:this.req.user})	
+yield this.render('configur',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false})	
 })
 secured.post('/lowaddtitle',authed,bodyParser({multipart:true,formidable:{}}),function *(next){
 var lowdb=this.lowdb;
@@ -855,7 +862,7 @@ answerfiles=d;}).catch(function(err){console.log(err);});
 /*** end of recursive ************************************************** ***/
 	
 yield this.render('files-manager',{user:this.req.user,foldsdir:folds_dir,mata:mata,
-answerfiles:answerfiles});
+answerfiles:answerfiles,locvar:{},schema_plugin:false,og_plugin:false});
 }catch(err){this.flash={fucker:err.toString()};this.redirect('/error-view');}
 });
 
@@ -899,7 +906,7 @@ console.log('this.params :',this.params)
 		this.redirect('/error-view');}
 		yield this.render('fileedition',{user:this.req.user,file_content:file_content,
 		file_path:path.join(ds,this.params[0]),
-		error_message:this.flash.fucker})
+		error_message:this.flash.fucker,locvar:{},schema_plugin:false,og_plugin:false})
 	});
 	
 	secured.post('/save_file_content',authed,function *(next){
@@ -972,7 +979,7 @@ yield this.body={info:"ok - the folder created!"}
 /******************************************************************************************/
 /*** codeblog.html ***/
 secured.get('/app/codeblog',authed,function *(){
-	yield this.render('codeblog',{user:this.req.user})
+	yield this.render('codeblog',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false})
 	})
 	
 secured.post("/code_bl_send_to_insert",authed,bodyParser({multipart:true,formidable:{}}),function *(next){

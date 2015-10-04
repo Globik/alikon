@@ -3,13 +3,15 @@
 <%if(schema_plugin==true){%>
 <title itemprop="name"><%if(locvar.page_title){%><%=locvar.page_title%><%}else{%><%=site_name%><%}%></title><%}else{%>
 <title><%if(locvar.page_title){%><%=locvar.page_title%><%}else{%><%=site_name%><%}%></title><%}%>
-<%if(schema_plugin==true){%>
-<link rel="canonical" href="<%=shema_canonical_href%>" itemprop="url"><%}%>
-<!-- disable iPhone inital scale -->
+<%if(schema_plugin==true && locvar){%>
+<%if( locvar && locvar.canonical_href){%>
+<link rel="canonical" href="<%=locvar.canonical_href%>" itemprop="url"><%}%><%}%>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="apple-mobile-web-app-capable" content="yes">
 <!--<meta name="description" content="Simple blog on koa.js">
 <meta name="author" content="Globik">
 -->
+
 <%if(schema_plugin==true){%>
 <meta itemprop="name" content="<%=site_name%>"/>
 <meta itemprop="url" content="<%=site_url%>"/>
@@ -18,17 +20,38 @@
 <meta itemprop="description" content="<%if(locvar.page_description){%><%=locvar.page_description%><%}else{%><%=main_site_description%><%}%>"/>
 <%}%>
 <%if(og_plugin==true){%>
-<meta property="og:title" content="<%if(locvar.page_title){%><%=locvar.page_title%><%}else{%><%=site_name%><%}%>"/>
-
-<meta property="og:type" content="<%if(locvar.page_type){%><%=locvar.page_type%><%}else{%>Article<%}%>"/>
-<meta property="og:image" content="<%if(locvar.page_image){%><%=locvar.page_image%><%}else{%>/images/kuku.png<%}%>"/>
+<meta property="og:locale" content="en_US"/>
+<!-- <meta property="og:locale:alternate" content="fr_FR"/> -->
+<%if(fb_app_id){%>
+<meta property="fb:app_id" content="<%=fb_app_id%>"/><%}%>
+<%if(fb_admins){%>
+<meta property="fb:admins" content="<%=fb_admins%>"/><%}%>
+<%if(locvar.page_title){%>
+<meta property="og:title" content="<%=locvar.page_title%>"/><%}else{%>
+<meta property="og:title" content="<%=site_name%>"/><%}%>
+<%if(locvar.canonical_href){%>
+<meta property="og:url" content="<%=locvar.canonical_href%>"/><%}%>
+<meta property="og:site_name" content="<%if(site_name){%><%=site_name%><%}%>"/> 
+<meta property="og:type" content="<%if(locvar.page_type){%><%=locvar.page_type%><%}else{%>website<%}%>"/>
+<meta property="og:image" content="<%if(locvar.page_image){%><%=locvar.page_image%><%}else{%>/images/w4.png<%}%>"/>
 <meta property="og:description" content="<%if(locvar.page_description){%><%=locvar.page_description%><%}else{%><%=main_site_description%><%}%>"/>
- <%}%>
- <link rel="shortcut icon" type="image/ico" href="/images/w4.png">
+<%if(locvar.article_section){%>
+<meta property="article:section" content="<%=locvar.article_section%>"/><%}%>
+<%if(locvar.article_author){%>
+<meta property="article:author" content="<%=locvar.article_author%>"/><%}%>
+<%if(locvar.article_modified){%>
+<meta property="article:modified" content="<%-: locvar.article_modified | subtime %>"/><%}%>
+<%if(locvar.article_publisher){%>
+<meta property="article:publisher" content="<%=locvar.article_publisher%>"/><%}%>
+<%if(locvar.article_tag){%>
+<meta property="article:tag" content="<%=locvar.article_tag%>"/><%}%>
+<%if(locvar.article_published_time){%>
+<meta property="article:published_time" content="<%-:locvar.article_published_time | subtime %>"/><%}%>
+<%}%>
+<link rel="shortcut icon" type="image/ico" href="/images/w4.png">
 <!--
 <link rel="shortcut icon" type="image/ico" href="/images/sprite-sheets-14.png">
 -->
-
 <link href="/css/main2.css" rel="stylesheet" type="text/css">
 <style>
 
