@@ -3,9 +3,7 @@
 <%if(schema_plugin==true){%>
 <title itemprop="name"><%if(locvar.page_title){%><%=locvar.page_title%><%}else{%><%=site_name%><%}%></title><%}else{%>
 <title><%if(locvar.page_title){%><%=locvar.page_title%><%}else{%><%=site_name%><%}%></title><%}%>
-<%if(schema_plugin==true){%>
-<%if(locvar.canonical_href){%>
-<link rel="canonical" href="<%=locvar.canonical_href%>" itemprop="url"><%}%><%}%>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <meta name="apple-mobile-web-app-capable" content="yes">
 <!--<meta name="description" content="Simple blog on koa.js">
@@ -40,13 +38,13 @@
 <%if(locvar.article_author){%>
 <meta property="article:author" content="<%=locvar.article_author%>"/><%}%>
 <%if(locvar.article_modified){%>
-<meta property="article:modified" content="<%-: locvar.article_modified | subtime %>"/><%}%>
+<meta property="article:modified" content="<%=locvar.article_modified%>"/><%}%>
 <%if(locvar.article_publisher){%>
 <meta property="article:publisher" content="<%=locvar.article_publisher%>"/><%}%>
 <%if(locvar.article_tag){%>
 <meta property="article:tag" content="<%=locvar.article_tag%>"/><%}%>
 <%if(locvar.article_published_time){%>
-<meta property="article:published_time" content="<%-:locvar.article_published_time | subtime %>"/><%}%>
+<meta property="article:published_time" content="<%=locvar.article_published_time%>"/><%}%>
 <%}%>
 <link rel="shortcut icon" type="image/ico" href="/images/w4.png">
 <!--

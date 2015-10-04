@@ -305,7 +305,7 @@ var page_title=post.title;
 		var page_image="http://alikon.herokuapp.com/images/kuku.png";
 		var page_description=post.teaser;
 		
-		var canonical_href=`http://${this.host}${this.path}/`;
+		var canonical_href=`http://${this.host}${this.path}`;
 		console.log("URL :",this.host)
 		var article_section=post.rubrika;
 		var article_author=post.autor;
