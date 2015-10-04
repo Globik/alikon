@@ -16,7 +16,7 @@
 <meta itemprop="name" content="<%=site_name%>"/>
 <meta itemprop="url" content="<%if(locvar.canonical_href){%><%=locvar.canonical_href%><%}else{%><%=site_url%><%}%>"/>
 <meta itemprop="creator" content="<%=site_creator%>"/>
-<meta itemprop="image" content="<%if(locvar.page_image){%><%=locvar.page_image%><%}else{%>images/kuku.png"<%}%>/>
+<meta itemprop="image" content="<%if(locvar.page_image){%><%=locvar.page_image%>"<%}else{%>"/images/kuku.png"<%}%>/>
 <meta itemprop="description" content="<%if(locvar.page_description){%><%=locvar.page_description%><%}else{%><%=main_site_description%><%}%>"/>
 <%}%>
 <%if(og_plugin==true){%>
