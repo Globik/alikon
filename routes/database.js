@@ -105,10 +105,10 @@ var user=this.req.user;
 this.session.dorthin=this.path;
 var b=yield fs.readFile('view/config.json','utf-8');
 		console.log('file content: '+b);
-		var page_title="Main page";
+		var page_title="Atariku";
 		var page_type="website";
 		var page_image="";
-		var page_description="";
+		var page_description="info page reklama";
 		
 		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
@@ -137,10 +137,10 @@ console.log('count',posts.length);
 
 var bube=posts.map(function(ob){return moment(ob.created).format('MMM D');});
 var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[-]MM[-]DD[-]');});
-var page_title="Atariku blog";
+        var page_title="Atariku";
 		var page_type="website";
 		var page_image="";
-		var page_description="all Articles description";
+		var page_description="ein kleiner photoblog";
 		
 		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
@@ -193,10 +193,10 @@ this.current_page=page;
 	this.redirect('/error-view')}
 }).get('/articles/:skip',function *(){
 	this.session.dorthin=this.path;
-	var page_title="Atariku Blog";
+	var page_title="Atariku";
 		var page_type="website";
 		var page_image="";
-		var page_description="Some articles in blog description";
+		var page_description="Skip articles in  a blog";
 		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
 		var article_author="";
@@ -236,7 +236,7 @@ var redformat=redact.format('MMM D YYYY');
 console.log('Dataformat :',post.dataformat);
 this.session.dorthin=this.path;
 var page_title=post.postname;
-		var page_type="article";
+		var page_type="website";
 		var page_image;
 		if(!post.hasOwnProperty("images")){page_image="/images/kuku.png"}else{
 		if (post.images && post.images[0].hasOwnProperty("src1")){page_image=post.images[0].src;}
@@ -275,10 +275,10 @@ fuckall.get('/labo',function *(){
 	var posts=wrap(db.get("codeblogs"));
 	var post=yield posts.find({});
 	this.session.dorthin=this.path;
-	var page_title="Labo page";
+	var page_title="Labo";
 		var page_type="website";
 		var page_image="";
-		var page_description="";
+		var page_description="creative javascript code";
 		
 		var canonical_href=`http://${this.host}${this.path}`;
 		var article_section="";
@@ -300,8 +300,8 @@ try{
 var posts=wrap(db.get('codeblogs'));
 var post=yield posts.findById(this.params.id);
 //console.log('post :',post)
-var page_title=post.title;
-		var page_type="article";
+        var page_title=post.title;
+		var page_type="website";
 		var page_image="http://alikon.herokuapp.com/images/kuku.png";
 		var page_description=post.teaser;
 		

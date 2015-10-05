@@ -1,58 +1,23 @@
 <!-- includes/head.html -->
 <meta charset="utf-8">
-<%if(schema_plugin==true){%>
-<title itemprop="name"><%if(locvar.page_title){%><%=locvar.page_title%><%}else{%><%=site_name%><%}%></title><%}else{%>
-<title><%if(locvar.page_title){%><%=locvar.page_title%><%}else{%><%=site_name%><%}%></title><%}%>
-
+<title><%=locvar.page_title%></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <meta name="apple-mobile-web-app-capable" content="yes">
-<!--<meta name="description" content="Simple blog on koa.js">
-<meta name="author" content="Globik">
--->
-
-<%if(schema_plugin==true){%>
-<meta itemprop="name" content="<%=site_name%>"/>
-<meta itemprop="url" content="<%if(locvar.canonical_href){%><%=locvar.canonical_href%><%}else{%><%=site_url%><%}%>"/>
-<meta itemprop="creator" content="<%=site_creator%>"/>
-<meta itemprop="image" content="<%if(locvar.page_image){%><%=locvar.page_image%>"<%}else{%>"/images/kuku.png"<%}%>/>
-<meta itemprop="description" content="<%if(locvar.page_description){%><%=locvar.page_description%><%}else{%><%=main_site_description%><%}%>"/>
-<%}%>
+<meta name="apple-mobile-web-app-capable" content="yes">
 <%if(og_plugin==true){%>
-<meta property="og:locale" content="en_US"/>
-<!-- <meta property="og:locale:alternate" content="fr_FR"/> -->
 <%if(fb_app_id){%>
-<meta property="fb:app_id" content="<%=fb_app_id%>"/><%}%>
+<meta property="fb:app_id" content="<%=fb_app_id%>" /><%}%>
 <%if(fb_admins){%>
-<meta property="fb:admins" content="<%=fb_admins%>"/><%}%>
-<%if(locvar.page_title){%>
-<meta property="og:title" content="<%=locvar.page_title%>"/><%}else{%>
-<meta property="og:title" content="<%=site_name%>"/><%}%>
-<%if(locvar.canonical_href){%>
-<meta property="og:url" content="<%=locvar.canonical_href%>"/><%}%>
-<meta property="og:site_name" content="<%if(site_name){%><%=site_name%><%}%>"/> 
-<meta property="og:type" content="<%if(locvar.page_type){%><%=locvar.page_type%><%}else{%>website<%}%>"/>
-<meta property="og:image" content="<%if(locvar.page_image){%><%=locvar.page_image%><%}else{%>/images/w4.png<%}%>"/>
-<meta property="og:description" content="<%if(locvar.page_description){%><%=locvar.page_description%><%}else{%><%=main_site_description%><%}%>"/>
-<%if(locvar.article_section){%>
-<meta property="article:section" content="<%=locvar.article_section%>"/><%}%>
-<%if(locvar.article_author){%>
-<meta property="article:author" content="<%=locvar.article_author%>"/><%}%>
-<%if(locvar.article_modified){%>
-<meta property="article:modified" content="<%=locvar.article_modified%>"/><%}%>
-<%if(locvar.article_publisher){%>
-<meta property="article:publisher" content="<%=locvar.article_publisher%>"/><%}%>
-<%if(locvar.article_tag){%>
-<meta property="article:tag" content="<%=locvar.article_tag%>"/><%}%>
-<%if(locvar.article_published_time){%>
-<meta property="article:published_time" content="<%=locvar.article_published_time%>"/><%}%>
+<meta property="fb:admins" content="<%=fb_admins%>" /><%}%>
+<meta property="og:site_name" content="<%=site_name%>" /> 
+<meta property="og:type" content="<%=locvar.page_type%>" />
+<meta property="og:url" content="<%=locvar.canonical_href%>" />
+<meta property="og:title" content="<%=locvar.page_title%>" />
+<meta property="og:description" content="<%=locvar.page_description%>" />
+<meta property="og:image" content="http://alikon.herokuapp.com/images/kuku.png" />
 <%}%>
 <link rel="shortcut icon" type="image/ico" href="/images/w4.png">
-<!--
-<link rel="shortcut icon" type="image/ico" href="/images/sprite-sheets-14.png">
--->
 <link href="/css/main2.css" rel="stylesheet" type="text/css">
 <style>
-
 .fluiditems:nth-child(even) > .art-info{
 background:rgb(186,135,89);
 background: linear-gradient(rgb(186,135,89),rgb(205,149,117) );
