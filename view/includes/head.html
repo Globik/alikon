@@ -1,20 +1,36 @@
 <!-- includes/head.html -->
 <meta charset="utf-8">
-<title><%=locvar.page_title%></title>
+<% function dotitle(){
+var s=``;
+if(typeof locvar != 'undefined'){s+=`${locvar.title}`}else{s+=`${site_name}`}
+return s;
+}%>
+<title><%- dotitle()%></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<%if(og_plugin==true){%>
-<%if(fb_app_id){%>
-<meta property="fb:app_id" content="<%=fb_app_id%>" /><%}%>
-<%if(fb_admins){%>
-<meta property="fb:admins" content="<%=fb_admins%>" /><%}%>
-<meta property="og:site_name" content="<%=site_name%>" /> 
-<meta property="og:type" content="<%=locvar.page_type%>" />
-<meta property="og:url" content="<%=locvar.canonical_href%>" />
-<meta property="og:title" content="<%=locvar.page_title%>" />
-<meta property="og:description" content="<%=locvar.page_description%>" />
-<meta property="og:image" content="http://alikon.herokuapp.com/images/kuku.png" />
-<%}%>
+<%
+function bak(){
+var str=``;
+if(fb_app_id) str+=`<meta  property="fb:app_id" content="${fb_app_id}" />`;
+if(fb_admins) str+=`<meta property="fb:admins" content="${fb_admins}" />`;
+return str;
+}
+%>
+<%- bak()%>
+<% var str="";
+if(typeof locvar != "undefined" && og_plugin==true){
+for(var i in locvar){
+str+=`<meta property="og:${i}" content="${locvar[i]}" />\n`;
+}
+}
+var brstr="";
+if(typeof work_article !="undefined" && og_plugin==true){
+for(var i in work_article){
+str+=`<meta property="article:${i}" content="${work_article[i]}" />\n`
+}
+}
+%>
+<%-str%>
 <link rel="shortcut icon" type="image/ico" href="/images/w4.png">
 <link href="/css/main2.css" rel="stylesheet" type="text/css">
 <style>

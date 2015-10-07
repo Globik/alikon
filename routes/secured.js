@@ -18,8 +18,7 @@ var secured=new Router();
 
 secured.get('/app',authed,function *(){
 var user= this.req.user;
-var locvar={};
-yield this.render('app',{user:user,locvar,schema_plugin:false,og_plugin:false});});
+yield this.render('app',{user});});
 
 var iceConfig=[];
 secured.post('/gamma',bodyParser({multipart:true,formidable:{}}),
@@ -109,8 +108,7 @@ secured.get('/app/adduser',authed,function *(){
 	var allusers=wrap(db.get('users'));
 	var users=yield allusers.find({});
 	}catch(err){berr=err;}
-	yield this.render('adduser',{berr:berr,user:this.req.user,users:users,
-	locvar:{},schema_plugin:false,og_plugin:false});
+	yield this.render('adduser',{berr:berr,user:this.req.user,users:users});
 });
 
 secured.post('/addinguser',bodyParser({multipart:true,formidable:{}}),
@@ -174,8 +172,7 @@ http://localhost:3000/app/files
 secured.get('/app/files',function *(){
 	var paths=yield fs.readdir('view');
 console.log('paths : '+paths[0]);
-	yield this.render('files',{user:this.req.user,paths:paths,
-	locvar:{},schema_plugin:false,og_plugin:false});
+	yield this.render('files',{user:this.req.user,paths:paths});
 	
 })
 secured.get('/alfafile/:name',authed,function *(name){
@@ -212,8 +209,7 @@ secured.get('/alfafile/:name',authed,function *(name){
 	//console.log('data',data);
 	//console.log(job[4].data);
     console.log('modules : ',mods);
-	yield this.render('modules',{user:this.req.user,mods:mods,jobs:job,data:data,
-	locvar:{},schema_plugin:false,og_plugin:false});
+	yield this.render('modules',{user:this.req.user,mods:mods,jobs:job,data:data});
 	});
 	secured.post('/insertmodule',bodyParser({multipart:true,formidable:{}}),function *(next){
 		var modulname=this.request.body.fields.modulname;
@@ -278,7 +274,7 @@ agenda *************************************************************************
   
 secured.get('/app/agenda',authed,function *(){
 	//var db=this.fuck;
-	yield this.render('agenda',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false});
+	yield this.render('agenda',{user:this.req.user});
 });
 secured.get('/agendall',authed,function *(){
 	var db=this.fuck;
@@ -391,13 +387,12 @@ var db=this.fuck;
 var posts=wrap(db.get('posts'));
 var doc=yield posts.find({});
 //var fotos=yield fs.readdir('public/images/uploads');
-yield this.render('articles-manager',{user:this.req.user,posts:doc,
-locvar:{},schema_plugin:false,og_plugin:false});
+yield this.render('articles-manager',{user:this.req.user,posts:doc});
 });
 //file-upload.html
 
 secured.get('/app/filesuploader',authed,function *(){
-	yield this.render('files-upload',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false});
+	yield this.render('files-upload',{user:this.req.user});
 });
 
 var sluger=require('limax');
@@ -792,7 +787,7 @@ secured.post('/open_this_fold',authed,function *(){
 /* config.html */
 
 secured.get('/app/config',authed,function *(){
-yield this.render('configur',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false})	
+yield this.render('configur',{user:this.req.user})	
 })
 secured.post('/lowaddtitle',authed,bodyParser({multipart:true,formidable:{}}),function *(next){
 var lowdb=this.lowdb;
@@ -862,7 +857,7 @@ answerfiles=d;}).catch(function(err){console.log(err);});
 /*** end of recursive ************************************************** ***/
 	
 yield this.render('files-manager',{user:this.req.user,foldsdir:folds_dir,mata:mata,
-answerfiles:answerfiles,locvar:{},schema_plugin:false,og_plugin:false});
+answerfiles:answerfiles});
 }catch(err){this.flash={fucker:err.toString()};this.redirect('/error-view');}
 });
 
@@ -979,7 +974,7 @@ yield this.body={info:"ok - the folder created!"}
 /******************************************************************************************/
 /*** codeblog.html ***/
 secured.get('/app/codeblog',authed,function *(){
-	yield this.render('codeblog',{user:this.req.user,locvar:{},schema_plugin:false,og_plugin:false})
+	yield this.render('codeblog',{user:this.req.user})
 	})
 	
 secured.post("/code_bl_send_to_insert",authed,bodyParser({multipart:true,formidable:{}}),function *(next){

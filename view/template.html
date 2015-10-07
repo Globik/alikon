@@ -6,51 +6,35 @@
 <!--[if gt IE 8]><html class="no-js"><![endif]-->
 <html lang="en">
 <head>
-
 <%- include includes/head.html %>
-
 </head>
 <body>
 <div id="pagewrap">
 <header id="header" class=""><%- include includes/header.html %>
 </header>
  <div id="flex-content"> 
-
 <%- body %>
-
-
 </div>
 <% include includes/login_form.html %>
 <script>
-
-     var form=document.forms.namedItem("fileinfo");
-  //alert(document.forms.namedItem("fileinfo").username.value);
-  //alert(form.username.value);
-  
-  
+var form=document.forms.namedItem("fileinfo");
 form.addEventListener('submit',function(ev){
-//odata=new FormData(document.forms.namedItem("fileinfo"));
-//odata.append("custom field","this is some extra data");
-//alert(documents.form.fileinfo);
 var suserpassw=form.password.value;
 var suser=form.username.value;
 var oreq=new XMLHttpRequest();
 var params='username='+encodeURIComponent(suser)+'&password='+encodeURIComponent(suserpassw);
      oreq.open("post","/custom2",true);
-	 //oreq.setRequestHeader('Content-Type','multipart/form-data');
 	 oreq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	 
 	 oreq.onload=function(oevent){
 	 if(this.status==200){
 	 var data=JSON.parse(this.responseText);
-	 //out4.innerHTML=this.response;
 	 out4.innerHTML=data.success+" : "+data.redirect;
 	 window.location.href=data.redirect;
 	 }
 	 else{out4.innerHTML=this.responseText + this.status;//oreq.status;
 	 //window.location.href="#";
 	 }}
-	 //oreq.send(odata);
 	 oreq.send(params);
 	 ev.preventDefault();},false);
 	 </script>
