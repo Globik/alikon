@@ -304,10 +304,10 @@ var post=yield posts.findById(this.params.id);
 		var section=post.rubrika;
 		var author=post.autor;
 		var date=moment(post.created_on);
-		var modified=date.format('MMM D YYYY');//post.created_on;
+		var modified=date.format('YYYY-MM-DD');//post.created_on;
 		var publisher="https://www.facebook.com/globigoose";
 		//var article_tag=post.tags;
-		var published_time=date.format('MMM D YYYY');//  post.created_on;
+		var published_time=date.format('YYYY-MM-DD');//  post.created_on;
 		var locvar={site_name,title,type,image,description,url}
 		var work_article={section,author,modified,publisher,/*article_tag,*/published_time};
 		yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar,work_article});
