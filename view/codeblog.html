@@ -7,15 +7,15 @@ textarea{width:500px;min-height:100px;}
 <%if(user){%><b>Hallo,<%=user.username%></b><%}%><br>
 <form name="codingform" method="post">
 <!-- <button onclick="send_das()">send</button><br> -->
-<label>title:</label><input type="text" name="title" value="recursion function"><br>
-<label>teaser:</label><input type="text" name="teaser" value="teaser"><br>
+<label>title:</label><input type="text" name="title" value="Recursion in Javascript"><br>
+<label>teaser:</label><input type="text" name="teaser" value="We provide an example how to build file's tree on browser."><br>
 <label>code_blog_textarea: </label><br>
 <textarea name="code_blog_textarea" placeholder="for html text">
-<h4>How to recursive</h4>
-<p>Bla bla bla here is lesson how to build a tree from file system.</p>
-'suka',
-<p>Bla bla bla here is lesson how to build a tree from file system.</p>
-<p>Advertisment: $REKLAMA </p>
+<h4>Ready for a headache? Let's go!</h4>
+<p>Bla bla bla here is a lesson of how to build a tree from file system.</p>
+
+<p>Noch ein paragraph.</p>
+<p>AdvertBlock: $REKLAMA </p>
 <p><pre class="pre-code-js">
 var b=function(x){return x}
 var a=23;
@@ -48,9 +48,9 @@ summary{color: pink;}
 
 <p><b>Pupkin pre code html</b></p>
 <p><pre class="pre-code-html"><b>Misha</b></pre></p>
-<p>Apropos, html tag &lt;summary&gt; works only on web-kit browsers. For a cross-browser solution you
-may need a &lt;input type="checkbox"&gt;.</p>
-<p><output id="output-lid"></output></p>
+<p>Apropos, a html tag &lt;summary&gt; works only in web-kit browsers at the moment.
+ For a cross-browser solution you may want to come up with an a &lt;input type="checkbox"&gt;.</p>
+ 
 </textarea>
 <button onclick="addField()">add folder</button><br>
 <label>css_textarea:</label><br>
@@ -117,7 +117,7 @@ if(node.children.length > 0) str+= '</ul></details>';
 return str;
 }
 buildTree(tree);
-document.getElementById("output-lid").innerHTML = displayTree(tree.root);
+
 document.getElementById("output-erst").innerHTML = displayTree(tree.root);
 </textarea><br>
 <label>html_textarea:</label><br>

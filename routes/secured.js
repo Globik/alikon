@@ -11,6 +11,7 @@ var fs=require('co-fs');
 var fso=require('fs');
 var path=require('path');
 var moment=require('moment');
+var sluger=require('limax');
 //var parse=require('co-body');
 
 //var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
@@ -395,7 +396,7 @@ secured.get('/app/filesuploader',authed,function *(){
 	yield this.render('files-upload',{user:this.req.user});
 });
 
-var sluger=require('limax');
+
 secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
 function *(next){
 	var postname=this.request.body.fields.postname;
@@ -992,29 +993,18 @@ secured.post("/code_bl_send_to_insert",authed,bodyParser({multipart:true,formida
 	var rubrika=this.request.body.fields.rubrika;
 	var tags=this.request.body.fields.tags;
 	var created_on=new Date();
-	var slugged_title="blalblabla";
+	var last_modified_on=created_on;
+	var slugged_title=sluger(title);//"blalblabla";
 	try{
 	var docs=wrap(db.get('codeblogs'));	
-	docs.insert({
-	title:title,
-teaser:teaser,
-code_blog_textarea:code_blog_textarea,
-css_textarea:css_textarea,
-js_textarea:js_textarea,
-html_textarea:html_textarea,
-autor:autor,
-visa:visa,
-type:type,
-rubrika:rubrika,
-tags:tags,
-created_on:created_on,
-slugged_title:slugged_title	
-	});
+	docs.insert({title,teaser,code_blog_textarea,css_textarea,js_textarea,html_textarea,autor,
+visa,type,rubrika,tags,created_on,last_modified_on,slugged_title});
 	}catch(err){
 	this.throw(404,err);	
 	}
 	yield this.body={resultat:this.request.body};
 });	
+
 secured.get("/take_an_blog_code_article/:id",function *(id){
 	var id=this.params.id;
 	console.log('this.params: ',this.params);
@@ -1038,18 +1028,29 @@ secured.post("/save_an_edited_blog_code_article/",bodyParser({multipart:true,for
 	var type=this.request.body.fields.type;
 	var rubrika=this.request.body.fields.rubrika;
 	var tags=this.request.body.fields.tags;
-	//var created_on=this.request.body.fields.created_on;
-	var slugged_title="blalblabla";
+	var created_on=this.request.body.fields.created_on;
+	var last_modified_on=this.request.body.fields.last_modified_on;
+	var slugged_title=sluger(title);//"blalblabla";
 	
 	var db=this.fuck;
 	try{
 		var posts=wrap(db.get("codeblogs"));
-	var post=yield posts.updateById(id,{$set:{title:title,
-teaser:teaser,css_textarea:css_textarea,
-js_textarea:js_textarea,html_textarea:html_textarea,code_blog_textarea:code_blog_textarea,
-tags:tags,visa:visa}}/*,{$currentDate:{redaktiert:true}}*/);
+	var post=yield posts.updateById(id,{$set:{title,slugged_title,teaser,css_textarea,js_textarea,
+	html_textarea,code_blog_textarea,tags,visa}},{$currentDate:{last_modified_on:true}});
 	}catch(err){this.throw(404,err)}
 	yield this.body={info:"ok - saved!"}
+});
+
+secured.get("/remove_code_blog_article/:id",authed,function *(id){
+	var id=this.params.id;
+	console.log('this.params: ',this.params);
+	var db=this.fuck;
+	try{
+		var posts=wrap(db.get("codeblogs"));
+		//var post=yield posts.findById(id);
+		var post= yield posts.remove({_id:id});
+	}catch(err){this.throw(404,err)}
+	yield this.body={info:"ok - deleted"};
 });
 	/*** end of codeblog ***/
 //iojs index

@@ -13,8 +13,9 @@
 <li><b>Rubrika:</b><%=m.rubrika%>
 <li><b>Tags:</b><%=m.tags%>
 <li><b>Slugged_title:</b><%=m.slugged_title%>
-<li><b>Created_on:</b><%=m.created_on%>
-<li><b>Read more:</b><a href="/labo/<%=m._id%>">Read more...</a>
+<li><b>Created_on:</b><%-: m.created_on | subtime %>
+<li><b>last_modified_on:</b><%-: m.last_modified_on | subtime %>
+<li><b>Read more:</b><a href="/labo/<%=m._id%>/<%=m.slugged_title%>">Read more...</a>
 </ul>
 <%})%>
 <%}%>

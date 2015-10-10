@@ -113,7 +113,12 @@ var b=yield fs.readFile('view/config.json','utf-8');
 		
 		var url=`http://${this.host}${this.path}`;
 		var locvar={site_name,title,type,image,description,url};
-yield this.render('content',{user,file:b,locvar});});
+		
+		var card="summary";
+	    var creator="@GlobiGoos";
+		var site="@GlobiGoos";
+		var twitter_locvar={card,site,creator,url,title,description,image}
+yield this.render('content',{user,file:b,locvar,twitter_locvar});});
 
 fuckall.get('/articles',function *(){
 var db=this.fuck;
@@ -145,9 +150,12 @@ var formated=posts.map(function(ob){return moment(ob.created).format('YYYY[-]MM[
 		var locvar={site_name,title,type,image,description,
 		url/*,article_section,article_author,article_modified,article_publisher,article_tag,
 		article_published_time*/};
-	
+	var card="summary";
+	    var creator="@GlobiGoos";
+		var site="@GlobiGoos";
+		var twitter_locvar={card,site,creator,url,title,description,image}
 yield this.render('insert2',{user:this.req.user,posts,formated:formated,bube:bube,
-pages_count:Math.floor(totalposts/perPage),current_page:0,locvar});
+pages_count:Math.floor(totalposts/perPage),current_page:0,locvar,twitter_locvar});
 }catch(err){yield this.redirect('error-view',{user:this.req.user,err:err});}
 
 });
@@ -201,9 +209,12 @@ this.current_page=page;
 		var locvar={site_name,title,type,image,description,
 		url/*,article_section,article_author,article_modified,article_publisher,article_tag,
 		article_published_time*/};
-	
+	var card="summary";
+	    var creator="@GlobiGoos";
+		var site="@GlobiGoos";
+		var twitter_locvar={card,site,creator,url,title,description,image}
 	yield this.render('skip',{user:this.req.user,posts:this.posts,formated:this.formated,bube:this.bube,
-pages_count:this.pages_count,current_page:this.current_page,locvar});
+pages_count:this.pages_count,current_page:this.current_page,locvar,twitter_locvar});
 });
 
 fuckall.get('/articles/:id/:title',function *(next){
@@ -248,9 +259,12 @@ var title=post.postname;
 		var locvar={site_name,title,type,image,description,
 		url/*,article_section,article_author,article_modified,article_publisher,article_tag,
 		article_published_time*/};
-	
+	var card="summary";
+	    var creator="@GlobiGoos";
+		var site="@GlobiGoos";
+		var twitter_locvar={card,site,creator,url,title,description,image}
 yield this.render('formated-article-view',{user:this.req.user,post:post,
-formated:formated,redformat:redformat,locvar});
+formated:formated,redformat:redformat,locvar,twitter_locvar});
  }
 catch(err){
  this.status=404;
@@ -281,10 +295,13 @@ fuckall.get('/labo',function *(){
 		var article_published_time="";
 		*/
 		var locvar={site_name,title,type,image,description,url};
-		
-yield this.render('labo',{user:this.req.user,post,locvar});
+		var card="summary";
+	    var creator="@GlobiGoos";
+		var site="@GlobiGoos";
+		var twitter_locvar={card,site,creator,url,title,description,image}
+yield this.render('labo',{user:this.req.user,post,locvar,twitter_locvar});
 });
-fuckall.get("/labo/:id",function *(id){
+fuckall.get("/labo/:id/:title",function *(id){
 var db=this.fuck;
 console.log('PARAMS :',this.params.id)
 
@@ -304,13 +321,20 @@ var post=yield posts.findById(this.params.id);
 		var section=post.rubrika;
 		var author=post.autor;
 		var date=moment(post.created_on);
-		var modified=date.format('YYYY-MM-DD');//post.created_on;
+		//var modified=date.format('YYYY-MM-DD');
+		//post.created_on;
 		var publisher="https://www.facebook.com/globigoose";
 		//var article_tag=post.tags;
 		var published_time=date.format('YYYY-MM-DD');//  post.created_on;
 		var locvar={site_name,title,type,image,description,url,rich_attachment}
 		var work_article={section,author/*,modified*/,publisher,/*article_tag,*/published_time};
-		yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar,work_article});
+		
+		var card="summary";
+	    var creator="@GlobiGoos";
+		var site="@GlobiGoos";
+		var twitter_locvar={card,site,creator,url,title,description,image}
+		yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar,work_article,
+		twitter_locvar});
 }catch(err){this.status=404;
  this.flash={fucker:err.toString()};
  this.redirect('/error-view');}

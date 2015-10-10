@@ -123,7 +123,7 @@ font-size:0.9em;
 <%
 var das=post._id.toString().substring(0,8)
 var da=new Date(parseInt(das,16)*1000);
-%><li><b>data:</b><%= das %>|<%=: da | format %>
+%><!-- <li><b>data:</b><%= das %>|<%=: da | format %> -->
 
 <div><img itemprop="image" src="/images/kuku.png" alt="labcoding"/></div>
 <h3 itemprop="alternativeHeadline">Codes in container. Bla bla</h3>
@@ -188,9 +188,13 @@ return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<s
 <li><b>Tags:</b><%=post.tags%>
 <li><b>Slugged_title:</b><%=post.slugged_title%>
 <li><b>Created_on:</b><%=post.created_on%>
+<li><b>last_modified_on:</b><%-: post.last_modified_on | subtime%>
 <li><b>Read more:</b><a href="/labo/<%=post._id%>"><%=post._id%></a>
 <li><b>Created_on2:</b><%-: post.created_on | format %>
 </ul>
+<% if(user && user.role == "admin"){%>
+<button onclick="remove_code_blog_article(this)" value="<%=post._id%>">remove</button>
+<%}%>
 <%}%>
 <a href="#x" class="overlay" id="popredaktor_code_blog"></a>
 <div class="popup" id="poredactor_code_blog">
@@ -222,6 +226,7 @@ return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<s
 <label>rubrika:</label><input type="text" name="rubrika" value=""><br>
 <label>tags:</label><input type="text" name="tags" value=""><br>
 <label>Created_on</label><input type="text" name="created_on" value=""><br>
+<label>last_modified_on</label><input type="text" name="last_modified_on" value=""><br>
 <label>Slugged_title</label><input type="text" name="slugged_title"><br>
 <b>id: </b></br>
 <input type="text" name="id" value="" required placeholder="id"></br>
@@ -270,6 +275,7 @@ var xhr=new XMLHttpRequest();
   d.rubrika.value=data.rubrika;
   d.tags.value=data.tags;
   d.created_on.value=data.created_on;
+  d.last_modified_on=data.last_modified_on;
  d.slugged_title.value=data.slugged_title;
   d.id.value=x;
   }
@@ -315,6 +321,16 @@ el.onclick=null;
 kasha.onmousewheel=null;
 kasha.title="";
 }
+}
+function remove_code_blog_article(el){
+if(confirm("Remove this code blog article?")){
+var xhr=new XMLHttpRequest();
+    xhr.open("get","/remove_code_blog_article/"+el.value);
+	xhr.onload=function(e){
+  if(this.status == 200){alert(this.response);}else{alert(this.response)}}
+  xhr.onerror=function(e){alert(e);}
+  xhr.send();
+  }
 }
 	 </script>
 </main>

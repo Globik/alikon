@@ -29,8 +29,14 @@ for(var i in work_article){
 str+=`<meta property="article:${i}" content="${work_article[i]}" />\n`
 }
 }
+var twit_str="";
+if(typeof twitter_locvar !="undefined" && og_plugin==true){
+for(var i in twitter_locvar){
+twit_str+=`<meta name="twitter:${i}" content="${twitter_locvar[i]}" />\n`
+}
+}
 %>
-<%-str%>
+<%-str%><%-twit_str%>
 <link rel="shortcut icon" type="image/ico" href="/images/w4.png">
 <link href="/css/main2.css" rel="stylesheet" type="text/css">
 <style>
