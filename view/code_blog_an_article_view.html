@@ -192,9 +192,10 @@ return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<s
 <li><b>Slugged_title:</b><%=post.slugged_title%>
 <li><b>Created_on:</b><%=post.created_on%>
 <li><b>last_modified_on:</b><%-: post.last_modified_on | subtime%>
-<li><b>Read more:</b><a href="/labo/<%=post._id%>"><%=post._id%></a>
+<li><b>Read more:</b><a href="/labo/<%=post._id%>/<%=post.slugged_title%>"><%=post._id%></a>
 <li><b>Created_on2:</b><%-: post.created_on | format %>
 </ul>
+<button onclick="fetchPuzo(this)" value="/labo/<%=post._id%>/<%=post.slugged_title%>">fetch count via http</button>
 <% if(user && user.role == "admin"){%>
 <button onclick="remove_code_blog_article(this)" value="<%=post._id%>">remove</button>
 <%}%>
@@ -335,5 +336,14 @@ var xhr=new XMLHttpRequest();
   xhr.send();
   }
 }
+function fetchPuzo(el){
+var xhr=new XMLHttpRequest();
+xhr.open('get','http://api.facebook.com/restserver.php?method=links.getStats&urls=http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript');
+xhr.onload=function(e){
+if(this.status==200){alert(this.response)}else{alert(this.response)}
+}
+xhr.onerror=function(e){alert('error ocured')}
+xhr.send();}
+
 	 </script>
 </main>

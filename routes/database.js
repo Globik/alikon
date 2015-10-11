@@ -26,7 +26,9 @@ else {
     }
   }).call(this, next)
 });
-
+fuckall.get('/login',function *(){
+	yield this.render('login',{user:this.req.user,info:"OK"});
+})
 fuckall.post('/login',
   passport.authenticate('local', {
     successRedirect: '/app',
@@ -43,6 +45,12 @@ fuckall.get('/logout', function*(next) {
 this.logout();
   this.redirect('/');
 });
+
+fuckall.get('/auth/facebook',passport.authenticate('facebook'));
+//{ scope: ['user_status', 'user_checkins'] }
+fuckall.get('/auth/facebook/callback',passport.authenticate('facebook',{successRedirect:'/app',
+failureRedirect:'/'}))
+
 
 fuckall.post('/addingfuckinguser2',bodyParser({multipart:true,formidable:{}}),
 function *(next){

@@ -72,5 +72,30 @@ return done(null,user,{message:'ОК - вносим в базу данных'});
 
 })
 }))
-
+//fb
+/*
+passport.use(new FacebookStrategy({
+    // clientID, clientSecret and callbackURL
+    profileFields: ['id', 'displayName', 'photos']
+  },
+  // verify callback
+));
+*/
+//console.log('process.env.FB_SECRET_KEY :',process.env.FB_SECRET_KEY);
+var FacebookStrategy=require('passport-facebook').Strategy;
+passport.use(new FacebookStrategy({
+	clientID:"833998660009097",
+	clientSecret:process.env.FB_SECRET_KEY,
+	callbackURL:"http://alikon.herokuapp.com/auth/facebook/callback"
+},function(accessToken,refreshToken,profile,done){
+	process.nextTick(function(){
+	var user=profile;
+	return done(null,user)
+	});
+	}
+	))
+//end fb
+//User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      //return done(err, user);
+    //});
 }
