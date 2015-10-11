@@ -48,7 +48,7 @@ this.logout();
 
 fuckall.get('/auth/facebook',passport.authenticate('facebook'));
 //{ scope: ['user_status', 'user_checkins'] }
-fuckall.get('/auth/facebook/callback',passport.authenticate('facebook',{successRedirect:'/app',
+fuckall.get('/auth/facebook/callback',passport.authenticate('facebook',{successRedirect:'/labo',
 failureRedirect:'/'}))
 
 
