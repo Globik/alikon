@@ -2,13 +2,29 @@
 <!-- public -->
 <div class="codrops-header" style="z-index:1;">
 <!-- <script><%- somefunc %></script> -->
+<style>
+table{border-collapse:collapse;}
+table,td,th{border:1px solid black;}
+th{background:green;color:white;width:50px;}
+th:after{width:200px;background:red;}
+
+caption{caption-side:bottom;}
+</style>
 <% if(post){%>
 <h1><%= post.title %><span><%= post.teaser %></span></h1><%}%>
 
 <nav class="codrops-demos">
-<a class="current-demo" href="">fb</a>
-<a href="">vk</a>
-<a href="">g+</a>
+
+<table id="puzo">
+<caption>c</caption>
+<tr>
+<th class="">fb</th>
+<th><small id="fb-shares">0</small></th>
+<th>vk</th>
+<th><small><%if(post){%><%=(post.fb_data ? post.fb_data.count : "")%><%}%></small></th>
+<th>g+</th>
+<th><small>0</small></th></tr>
+</table>
 </nav>	
 </div>
 <main class="daper" itemscope itemtype="http://schema.org/Blog" >
@@ -183,19 +199,23 @@ return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<s
 <% if(post){%>
 <ul>
 <li><b>Title:</b><%=post.title%>
-<li><b>Teaser:</b><%=post.teaser%>
-<li><b>Autor:</b><%=post.autor%>
-<li><b>Visa:</b><%=post.visa%>
-<li><b>Type:</b><%=post.type%>
-<li><b>Rubrika:</b><%=post.rubrika%>
-<li><b>Tags:</b><%=post.tags%>
-<li><b>Slugged_title:</b><%=post.slugged_title%>
-<li><b>Created_on:</b><%=post.created_on%>
-<li><b>last_modified_on:</b><%-: post.last_modified_on | subtime%>
-<li><b>Read more:</b><a href="/labo/<%=post._id%>/<%=post.slugged_title%>"><%=post._id%></a>
-<li><b>Created_on2:</b><%-: post.created_on | format %>
+<li><b>Teaser: </b><%=post.teaser%>
+<li><b>Autor: </b><%=post.autor%>
+<li><b>Visa: </b><%=post.visa%>
+<li><b>Type: </b><%=post.type%>
+<li><b>Rubrika: </b><%=post.rubrika%>
+<li><b>Tags: </b><%=post.tags%>
+<li><b>Slugged_title: </b><%=post.slugged_title%>
+<li><b>Created_on: </b><%=post.created_on%>
+<li><b>last_modified_on: </b><%-: post.last_modified_on | subtime%>
+<li><b>Read more: </b><a href="/labo/<%=post._id%>/<%=post.slugged_title%>"><%=post._id%></a>
+<li><b>Created_on2: </b><%-: post.created_on | format %>
+<li><b>Кол-во общих просмотров: </b><%=(post.gesamt_seen ? post.gesamt_seen : "0")%>
+<li><b>Кол-во "уникальных" просмотров: </b><%=post.unic_seen%>
+<% if(user && user.role=="admin"){%><li><b>Referers: </b><%=post.referer%><%}%>
 </ul>
 <button onclick="fetchPuzo(this)" value="/labo/<%=post._id%>/<%=post.slugged_title%>">fetch count via http</button>
+<button onclick="fetchPuzo1(this)">share's count</button>
 <% if(user && user.role == "admin"){%>
 <button onclick="remove_code_blog_article(this)" value="<%=post._id%>">remove</button>
 <%}%>
@@ -344,6 +364,30 @@ if(this.status==200){alert(this.response)}else{alert(this.response)}
 }
 xhr.onerror=function(e){alert('error ocured')}
 xhr.send();}
+var gugfb="http://graph.facebook.com/fql?q=SELECT%20like_count%20FROM%20link_stat%20WHERE%20url%20=%20%22http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript%22";
+var gugfb1='http://graph.facebook.com/?id=http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript';
+function fetchPuzo1(el){
+var xhr=new XMLHttpRequest();
+xhr.open('get',gugfb/*'http://graph.facebook.com/?id=http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript'*/);
+xhr.onload=function(e){
+if(this.status==200){alert(this.response)}else{alert(this.response)}
+}
+xhr.onerror=function(e){alert('error ocured')}
+xhr.send();}
 
-	 </script>
+function get2(){
+var xhr=new XMLHttpRequest();
+xhr.open('GET','/fake-fb-data.json');
+xhr.onload=function(){
+if(this.status==200){
+document.getElementById('fb-shares').textContent=JSON.parse(this.response).count;
+//alert(this.response)
+}else{
+alert(this.response)}
+}
+xhr.onerror=function(){alert("no")}
+xhr.send();
+}
+window.onload=get2;
+</script>
 </main>

@@ -492,8 +492,9 @@ var visa=this.request.body.fields.visa;
 console.log('visa :'+visa);
 var id=this.request.body.fields.id;
 var db=this.fuck;
-try{
 var doc=wrap(db.get('posts'));
+try{
+
 /***
 yield doc.updateById(id,{
 postname:postname,
@@ -511,9 +512,8 @@ redaktiert:redaktiert,
 //created:created,
 visa:visa
 });***/
-yield doc.updateById(id,{$set:{postname:postname,title:title,
-caption:caption,
-maincontent:maincontent,shorti:shorti,meta:meta,visa:visa}},{$currentDate:{redaktiert:true}});
+yield doc.updateById(id,{$set:{postname,title,caption,maincontent,shorti,meta,visa}},
+{$currentDate:{redaktiert:true}});
 this.body=JSON.stringify(this.request.body,null,2);
 this.body={"result":"OK - saved an edited post "+title}
 }catch(err){this.body={err:err}}

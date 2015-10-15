@@ -71,8 +71,9 @@ Category : <%= post.category %>
 Rubrik: <%= post.rubrik %>
 </br>
 Visibility: <%= post.visa %>
-</br>Serial: <%= post.serial %>
-</br><b>Fotos: </b>
+<br>Serial: <%= post.serial %>
+<br><b>Кол-во просмотров:</b><%=(post.gesamt_seen ? post.gesamt_seen : "0")%>
+<br><b>Fotos: </b>
 <ul>
 
 </br><% if(user && user.role == "admin"){ %>

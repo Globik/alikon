@@ -5,7 +5,7 @@ var wrap=require('co-monk');
 var moment=require('moment');//2.10.0
 var fs=require('co-fs');
 // var sendgrid=require('sendgrid')('sendgrid44248@modulus.io','u1vin9v9');
-
+var reqw=require('koa-request');
 var fuckall=new Router();
 
 fuckall.post('/custom2', function*(next) {
@@ -45,7 +45,7 @@ fuckall.get('/logout', function*(next) {
 this.logout();
   this.redirect('/');
 });
-
+//function ab(x = 2,y){console.log(x,y)} ab(2)
 fuckall.get('/auth/facebook',passport.authenticate('facebook'));
 //{ scope: ['user_status', 'user_checkins'] }
 fuckall.get('/auth/facebook/callback',passport.authenticate('facebook',{successRedirect:'/labo',
@@ -176,9 +176,10 @@ fuckall.param('skip',function *(skip,next){
 		var numstr=/^\d+$/;
 		return numstr.test(str);
 	}
+	var doc=wrap(db.get('posts'));
 	try{
 var db=this.fuck;
-	var doc=wrap(db.get('posts'));	
+		
 	var perPage=4;
 	var page=Math.max(0,parseInt(this.params.skip));
 	//var page=parseInt(this.params.skip);
@@ -223,6 +224,7 @@ this.current_page=page;
 		var twitter_locvar={card,site,creator,url,title,description,image}
 	yield this.render('skip',{user:this.req.user,posts:this.posts,formated:this.formated,bube:this.bube,
 pages_count:this.pages_count,current_page:this.current_page,locvar,twitter_locvar});
+
 });
 
 fuckall.get('/articles/:id/:title',function *(next){
@@ -273,6 +275,11 @@ var title=post.postname;
 		var twitter_locvar={card,site,creator,url,title,description,image}
 yield this.render('formated-article-view',{user:this.req.user,post:post,
 formated:formated,redformat:redformat,locvar,twitter_locvar});
+
+try{
+yield doc.updateById(this.params.id,{/*$set:{fb_data:fb_data},*/$inc:{gesamt_seen:1}});
+}catch(er){console.log('Er in fotoblog article',er)}
+
  }
 catch(err){
  this.status=404;
@@ -309,12 +316,16 @@ fuckall.get('/labo',function *(){
 		var twitter_locvar={card,site,creator,url,title,description,image}
 yield this.render('labo',{user:this.req.user,post,locvar,twitter_locvar});
 });
+var bip=0;
 fuckall.get("/labo/:id/:title",function *(id){
 var db=this.fuck;
-console.log('PARAMS :',this.params.id)
+var fb_data;
+
+var burl;
+
+var posts=wrap(db.get('codeblogs'));
 
 try{
-var posts=wrap(db.get('codeblogs'));
 var post=yield posts.findById(this.params.id);
 //console.log('post :',post)
 
@@ -327,7 +338,7 @@ var post=yield posts.findById(this.params.id);
 		var url=`http://${this.host}${this.path}`;
 		console.log("URL :",this.host)
 		var section=post.rubrika;
-		var author=post.autor;
+		var author="https://www.facebook.com/alik.ivanov1";//post.autor;
 		var date=moment(post.created_on);
 		//var modified=date.format('YYYY-MM-DD');
 		//post.created_on;
@@ -341,14 +352,57 @@ var post=yield posts.findById(this.params.id);
 	    var creator="@GlobiGoos";
 		var site="@GlobiGoos";
 		var twitter_locvar={card,site,creator,url,title,description,image}
+		//this.flash.views=bip
+		console.log('Here flash views :',this.flash.views);
+		//bip++;
 		yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar,work_article,
-		twitter_locvar});
+		twitter_locvar,fb_data});
+//console.log('HEADER :',this.header)//referer,cookie
+if(this.host=="localhost:3000"){
+burl="http://127.0.0.1:3000/fake-fb-data.json";
+}else{
+burl=`http://graph.facebook.com/?id=${this.protocol}://${this.host}${this.path}`;
+/*
+var gugfb=`http://graph.facebook.com/fql?q=SELECT%20like_count%20FROM%20link_stat%20WHERE%20url%20=%20%22${this.protocol}://${this.host}${this.path}%22`;
+*/
+}
+
+
+	try{
+		
+var options = {url:burl, headers: { 'User-Agent': 'request' }};	
+var tinfo=yield reqw(options);
+
+fb_data=JSON.parse(tinfo.body);
+var unic_per_ses;
+//,$push:{referer:this.headers.referer}
+
+if(typeof this.header.cookie !="undefined"){
+	var sess=(this.header.cookie).split(';');
+	console.log('SPliter cook: ',sess)
+	console.log('2 :',sess[1].trim());
+	console.log('3 :',sess[1].trim().substr(8))
+	var that_sess=sess[1].trim().substr(8);
+	var bu_ses=`koa:sess:${that_sess}`;
+	var dbses=wrap(db.get('sessions'));
+	try{
+		var dfses=yield dbses.findOne({sid:bu_ses});
+	//console.log('dfses :',dfses);
+	//console.log(`I'v Found this session sid ${dfses.sid}`);
+	//console.log('ab:',dfses)
+	if(dfses['koa-flash'].views == 0 ){unic_per_ses=1;}else{unic_per_ses=0;}
+	}catch(err){console.log("Session sid not found: ",err);unic_per_ses=0;}
+
+}		
+try{
+yield posts.updateById(this.params.id,{$set:{fb_data:fb_data},$inc:{gesamt_seen:1,unic_seen:unic_per_ses}});
+}catch(er){console.log(er)}
+}catch(er){console.log('ERROR in rekwest :',er)}
+
 }catch(err){this.status=404;
  this.flash={fucker:err.toString()};
  this.redirect('/error-view');}
- this.session.dorthin=this.path;
- 
-//yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar});	
+ this.session.dorthin=this.path;	
 });
 
 

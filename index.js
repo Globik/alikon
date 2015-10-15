@@ -279,18 +279,22 @@ function remove() {
   this.body = 0;
 }
 
-
+var gu=0;
 app.use(function *(next) {
+
   if (this.method === 'POST') {
     this.flash = { error: 'This is a flash error message.' };
 	console.log('sess dorth in apuse :'+this.session.dorthin);
   } else
   if (this.method === 'GET') {
+	  
 	  //console.log(this.flash.error); 
 	  console.log("This path in ap use",this.path);
 	  console.log('this.session.err :',this.message);
 	  //console.log("THIS FLASH FUCKER : ",this.flash.fucker);
-	  this.flash={woane:this.path};
+	  this.flash={woane:this.path,views:gu};gu++;
+	 
+	  //console.log('Flash in Index :',this.flash.views)
   } 
   yield next;
 });
