@@ -21,7 +21,7 @@ caption{caption-side:bottom;}
 <th class="">fb</th>
 <th><small id="fb-shares">0</small></th>
 <th>vk</th>
-<th><small><%if(post){%><%=(post.fb_data ? post.fb_data.count : "")%><%}%></small></th>
+<th><small><%if(post){%><%=(post.fb_data ? post.fb_data.shares : "")%><%}%></small></th>
 <th>g+</th>
 <th><small>0</small></th></tr>
 </table>
@@ -366,9 +366,10 @@ xhr.onerror=function(e){alert('error ocured')}
 xhr.send();}
 var gugfb="http://graph.facebook.com/fql?q=SELECT%20like_count%20FROM%20link_stat%20WHERE%20url%20=%20%22http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript%22";
 var gugfb1='http://graph.facebook.com/?id=http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript';
+
 function fetchPuzo1(el){
 var xhr=new XMLHttpRequest();
-xhr.open('get',gugfb/*'http://graph.facebook.com/?id=http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript'*/);
+xhr.open('get',gugfb1/*'http://graph.facebook.com/?id=http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript'*/);
 xhr.onload=function(e){
 if(this.status==200){alert(this.response)}else{alert(this.response)}
 }
