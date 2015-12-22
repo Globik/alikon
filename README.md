@@ -1,5 +1,5 @@
-* Number one
-* number two
+* Number one: 'title'
+* number two: 'slug'
 
 by me. This is a blog example, it is now on koajs. http:// or https://alikon.herokuapp.com
 
