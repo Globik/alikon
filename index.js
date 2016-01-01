@@ -138,7 +138,7 @@ filters:filters});
 render(app,{root:path.join(__dirname,'view'),layout:'template',viewExt:'html',cache:false,
 debug:true,_with:true,rmWhitespace:true});*/
 
-//render(app,{})
+render(app,{})
 app.use(serve(__dirname+'/public'));
 
 /*app.use(function *(next){
@@ -156,17 +156,15 @@ app.keys=['fg'];
  //app.use(session({store:new MongoStore({url:configDB.url || configDB.localurl})}));
  //app.use(session({store:new MongoStore({url:configDB.url})}))
  
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 //app.use(Router(app));
 //app.use(bodyParser());
 
 //app.use(flash());
  //node index
  //app.use(function *(next){this.state=locals;yield next;})
- app.use(function *(next){
-	 this.state.subadmin="Hallo Subadmin!";
- yield next;})
+ app.use(function *(next){this.state.subadmin="Hallo Subadmin!";yield next;})
  app.use(function *(next){this.lowdb=lowdb;yield next;});
  /*app.use(function *(){
 	 var sz=this.page;
