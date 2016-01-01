@@ -36,9 +36,9 @@ var mod=wrap('fuckers');
 mod.find().then(function(d){console.log('data :',d)},function(e){console.log('er :',e)})*/
 //var fid=module.exports=hex=>mongojs.ObjectId(hex);
 var dob;
-console.log(process.env.MONGOHQ_URL_TEST)
-var srl="mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database";
-MongoClient.connect(srl/* || configDB.localurl*/,function(e,db){
+//console.log(process.env.MONGOHQ_URL_TEST);
+var burl=configDB.url || configDB.localurl;
+MongoClient.connect(burl,function(e,db){
 if(e){console.log(e)}else{ 
 console.log('est kontakt');
 dob=db;
@@ -153,7 +153,7 @@ app.keys=['fg'];
 
  //remote db test:
  //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST+"/alikon-fantastic-database"})}));
- app.use(session({store:new MongoStore({url:configDB.url || configDB.localurl})}));
+ app.use(session({store:new MongoStore({url:burl})}));
  //app.use(session({store:new MongoStore({url:configDB.url})}))
  
 app.use(passport.initialize());
