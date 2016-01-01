@@ -59,15 +59,14 @@ console.log('fa :',fa);*/
 //--harmony_proxies index
 var app=koa();
 /***app.use(function *(next){var mdl=yield mods.findOne({modulname:"aside"});console.log('mdl.status :',mdl.status);yield next;});***/
-var options={
+/*var options={
 serveClientFile:true,
 clientFilePath:'/koaws.js',
 heartbeat:true,
 heartbeatInterval:5000};
 app.use(koaws(app,options));
-app.ws.register('hello',function *(){
-this.result('world!');
-});
+app.ws.register('hello',function *(){this.result('world!');});
+*/
 //npm start
 var low = require('lowdb')
 var lowdb = low('db.json')
@@ -158,9 +157,9 @@ app.keys=['fg'];
 app.use(passport.initialize());
 app.use(passport.session());
 //app.use(Router(app));
-app.use(bodyParser());
+//app.use(bodyParser());
 
-app.use(flash());
+//app.use(flash());
  //node index
  //app.use(function *(next){this.state=locals;yield next;})
  app.use(function *(next){
