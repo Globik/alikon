@@ -36,7 +36,9 @@ var mod=wrap('fuckers');
 mod.find().then(function(d){console.log('data :',d)},function(e){console.log('er :',e)})*/
 //var fid=module.exports=hex=>mongojs.ObjectId(hex);
 var dob;
-MongoClient.connect((configDB.url || configDB.localurl),function(e,db){
+console.log(process.env.MONGOHQ_URL_TEST)
+var srl="mongodb://alik:123456@dogen.mongohq.com:10004/alikon-fantastic-database";
+MongoClient.connect(srl/* || configDB.localurl*/,function(e,db){
 if(e){console.log(e)}else{ 
 console.log('est kontakt');
 dob=db;
@@ -139,20 +141,20 @@ debug:true,_with:true,rmWhitespace:true});*/
 render(app,{})
 app.use(serve(__dirname+'/public'));
 
-app.use(function *(next){
+/*app.use(function *(next){
   const start = new Date;
   yield next;
   const ms = new Date - start;
   console.log(`${this.method} ${this.url} - ${ms}ms`);
 });
-
+*/
 //app.use(logger());
 app.keys=['fg'];
 
  //remote db test:
  //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST+"/alikon-fantastic-database"})}));
- app.use(session({store:new MongoStore({url:configDB.url || configDB.localurl})}));
- //app.use(session({store:new MongoStore({url:configDB.newUrl})}))
+ //app.use(session({store:new MongoStore({url:configDB.url || configDB.localurl})}));
+ //app.use(session({store:new MongoStore({url:configDB.url})}))
  
 app.use(passport.initialize());
 app.use(passport.session());
