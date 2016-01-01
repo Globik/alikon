@@ -1,7 +1,7 @@
 ﻿<!-- code_blog_an_article_view.html -->
 <!-- public -->
 <div class="codrops-header" style="z-index:1;">
-<!-- <script><%- somefunc %></script> -->
+<!-- <script><%- l.somefunc %></script> -->
 <style>
 table{border-collapse:collapse;}
 table,td,th{border:1px solid black;}
@@ -10,8 +10,8 @@ th:after{width:200px;background:red;}
 
 caption{caption-side:bottom;}
 </style>
-<% if(post){%>
-<h1><%= post.title %><span><%= post.teaser %></span></h1><%}%>
+<% if(l.post){%>
+<h1><%= l.post.title %><span><%= l.post.teaser %></span></h1><%}%>
 
 <nav class="codrops-demos">
 
@@ -21,7 +21,7 @@ caption{caption-side:bottom;}
 <th class="">fb</th>
 <th><small id="fb-shares">0</small></th>
 <th>vk</th>
-<th><small><%if(post){%><%=(post.fb_data ? post.fb_data.shares : "")%><%}%></small></th>
+<th><small><%if(l.post){%><%=(l.post.fb_data ? l.post.fb_data.shares : "")%><%}%></small></th>
 <th>g+</th>
 <th><small>0</small></th></tr>
 </table>
@@ -123,14 +123,30 @@ font-size:0.9em;
 }
 .precoded-container{width:100%;}
 }
-<% if(post){ if(post.css_textarea){%> <%=post.css_textarea%> <%}}%>
+@media screen and (max-width:300px){
+.precoded-container{background:inherit;height:auto;}
+pre[data-type='precoded_container']{display:block;}
+}
+/*
+ var bels=document.querySelectorAll("pre[data-type='precoded_container']");
+var kasha=document.getElementsByClassName('precoded-container')[0];
+function machdas(el){
+if(confirm("Display this code as a block element? Press a button!")==true){
+
+for(var i=0;i<bels.length;i++){
+bels[i].style.display="block";
+}
+kasha.style.height="auto";
+kasha.style.background="inherit";
+*/
+<% if(l.post){ if(l.post.css_textarea){%> <%=l.post.css_textarea%> <%}}%>
 </style>
 <article class="code-blog-article" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting" >
-<% if(post){ %>
-<h1 class="post-title" itemprop="headline"><%= post.title %></h1>
+<% if(l.post){ %>
+<h1 class="post-title" itemprop="headline"><%= l.post.title %></h1>
 
-<p><small>Posted in <span style="color:blue;"><%=post.rubrika%></span> on <time datetime="<%-: post.created_on %>" itemprop="datePublished"><%-: post.created_on | subtime %></time> by <span itemprop="author"><%= post.autor %></span></small></p>
-<p><i itemprop="description"><%= post.teaser %></i></p>
+<p><small>Posted in <span style="color:blue;"><%=l.post.rubrika%></span> on <time datetime="-: post.created_on %>" itemprop="datePublished">%-: post.created_on | subtime %></time> by <span itemprop="author"><%= l.post.autor %></span></small></p>
+<p><i itemprop="description"><%= l.post.teaser %></i></p>
 <!-- <data itemprop="interactionCount" value="UserCheckins:4">1 shares</data>
 <meta itemprop="interactionCount" content="UserTweets:0"/>
 <meta itemprop="interactionCount" content="UserLikes:0"/>
@@ -139,85 +155,182 @@ font-size:0.9em;
 <%
 var das=post._id.toString().substring(0,8)
 var da=new Date(parseInt(das,16)*1000);
-%><!-- <li><b>data:</b><%= das %>|<%=: da | format %> -->
+%><!-- <li><b>data:</b><%= das %>: da | format %> -->
 
 <div><img itemprop="image" src="/images/kuku.png" alt="labcoding"/></div>
 <h3 itemprop="alternativeHeadline">Codes in container. Bla bla</h3>
-<section itemprop="articleBody"><%-: post.code_blog_textarea | aprecoded %></section>
+<section itemprop="articleBody">post.code_blog_textarea | aprecoded %></section>
 <hr>
 <p><h4>Codes in container.</h4>
 <hr>
-<input type="radio"  name="precoderadio" id="pre-css" selected="false">
-<label class="puc" for="pre-css">css</label>
+<input type="radio"  name="precoderadio" id="pre-css" selected="false" >
+<label class="puc" for="pre-css" onclick="fuckCSS()">css</label>
 
 <input type="radio"  name="precoderadio" id="pre-js" selected="false">
-<label class="puc" for="pre-js"><span></span>js</label>
+<label class="puc" for="pre-js" onclick="figJS()">js</label>
 
 <input type="radio"  name="precoderadio" id="pre-html" selected="false">
-<label class="puc" for="pre-html">html</label>
+<label class="puc" for="pre-html" onclick="figHTML()">html</label>
 
 <input type="radio"  name="precoderadio" id="pre-sample" checked="false" selected="false">
 <label class="puc" for="pre-sample"><span></span>result</label>
 
 <label class="puc" style="" onclick="machdas(this)">?</label>
 <section class="precoded-container" itemscope itemtype="http://schema.org/SoftwareSourceCode"
-title="To scroll the page up and down move yor mouse out from here">
-<% if(post.css_textarea){%>
+title="">
+<% if(l.post.css_textarea){%>
 <meta itemprop="name" content="rec func to show file's tree to - article title"/>
 <meta itemprop="codeSampleType" content="inline"/>
 
-<pre class="precoded-css" data-type="precoded_container" itemprop="programmingLanguage" content="css"><%-: post.css_textarea | css_pretty %></pre>
+<pre class="precoded-css" data-type="precoded_container" itemprop="programmingLanguage" 
+content="css"><%= l.post.css_textarea%></pre>
 <%}%>
-<% if(post.js_textarea){%>
-<pre class="precoded-js"  data-type="precoded_container" itemprop="programmingLanguage" content="javascript"><%-: post.js_textarea | esc_html| js_pretty%></pre>
-<%}%><% if(post.html_textarea){%>
+<% if(l.post.js_textarea){%>
+<pre class="precoded-js"  data-type="precoded_container" itemprop="programmingLanguage" 
+content="javascript"><%= l.post.js_textarea%></pre>
+<%}%><% if(l.post.html_textarea){%>
 <%
-function esc1(sr){return sr.replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-function esc2(s){
-return s.replace(/(\w+)="(.*?)"/g,`<span class=brown>$1</span>=<span class=green>"$2"</span>`);}
-var html_pretty = ns => {
-	return ns.replace(/&lt;(\w+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^(&gt;)\s]+))?)*)\s*(\/?)&gt;/g,
-function(s,p1,p2,p3,ofs){
-return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<span class=violet>${p3}</span><span class=orange>></span>`;}).replace(/((&lt;)\/(\w+)(&gt;))/g,`<span class="orange">$2</span><span class=violet>/</span><span class=blue>$3</span><span class=orange>$4</span>`).replace(/\b(disabled)\b/g,`<span class=red>$1</span>`);
-}
 %>
-<pre class="precoded-html" data-type="precoded_container" itemprop="programmingLanguage" content="html"><%-: post.html_textarea | esc2_html |html_pretty %></pre>
-<div class="precoded-sample" data-type="precoded_container"><%- post.html_textarea%> </div>
+<pre class="precoded-html" data-type="precoded_container" itemprop="programmingLanguage"
+ content="html"><%=l.post.html_textarea %></pre>
+<div class="precoded-sample" data-type="precoded_container"><%- l.post.html_textarea%> </div>
 <%}%>
 </section>
 </p>
 
-<%-(post.js_textarea ? `<script>${post.js_textarea}</script>` :"fuck_no_script" )%>
-<li><a onclick="edit_an_blog_code_article(this)" data-id="<%= post._id %>" href="#popredaktor_code_blog">edit</a></li>
+<%-(l.post.js_textarea ? `<script>${l.post.js_textarea}</script>` :"fuck_no_script" )%>
+<li><a onclick="edit_an_blog_code_article(this)" data-id="<%= l.post._id %>" href="#popredaktor_code_blog">edit</a></li>
 <%}%>
 
+<script>
+var mql=window.matchMedia("(max-width:300px)");
+mql.addListener(gugudas);
+gugudas(mql);
+function gugudas(mql){
+if(mql.matches){
+fuckCSS();figJS();figHTML();}}
+if(window.innerWidth < 300){fuckCSS();figJS();figHTML();}
+var bels=document.querySelectorAll("pre[data-type='precoded_container']");
+var kasha=document.getElementsByClassName('precoded-container')[0];
+
+var isOperaMini = (navigator.userAgent.indexOf('Opera Mini')>-1);
+if(isOperaMini){machdas(this);}
+function machdas(el){
+for(var i=0;i<bels.length;i++){
+bels[i].style.display="block";
+}
+kasha.style.height="auto";
+kasha.style.background="inherit";
+el.textContent="X";
+el.style.color="red";
+el.style.border="1px solid red";
+el.onclick=null;
+fuckCSS();figJS();figHTML();
+}
+//machdas();
+function fuckCSS(){
+var prcss=document.getElementsByClassName("precoded-css")[0];
+var eda=prcss.textContent;
+prcss.innerHTML=css_pretty(eda);
+}
+function figJS(){
+var prjs=document.getElementsByClassName("precoded-js")[0];
+var eda=prjs.textContent;
+prjs.innerHTML=js_pretty(esc_html(eda))
+}
+function figHTML(){
+var prhtml=document.getElementsByClassName("precoded-html")[0];
+var eda=prhtml.textContent;
+prhtml.innerHTML=html_pretty(esc2_html(eda))
+}
+var elJs=document.getElementsByClassName('pre-code-js');
+for(var i=0;i<elJs.length;i++){
+var sr=elJs[i].textContent;
+elJs[i].innerHTML=js_pretty(esc_html(sr));
+}
+var elCss=document.getElementsByClassName('pre-code-css');
+for(var i=0;i<elCss.length;i++){
+var sr1=elCss[i].textContent;
+elCss[i].innerHTML=css_pretty(sr1);
+}
+var elHtml=document.getElementsByClassName('pre-code-html');
+for(var i=0;i<elHtml.length;i++){
+var sr2=elHtml[i].textContent;
+elHtml[i].innerHTML=html_pretty(esc2_html(sr2));
+}
+function css_pretty(n){
+ return n.replace(/(\/\*[\s\S]*?\*\/)/gm,'<span class="orange">$1</span>')
+.replace(/(\.[\w\-_]+)/g,'<span class="yellow">$1</span>')
+.replace(/(\#[\w\-_]+)/g,'<span class="blue">$1</span>')
+.replace(/\b(summary|textarea)\b/g,'<span class="green">$1</span>')
+.replace(/(\{|\}|\]|\[|\|)/g,'<span class="figskobki">$1</span>')
+.replace(/(:[\w\-_]+)/g,'<span class="brown">$1</span>')
+.replace(/(\d+|\.\d+|\d+\.\d*)/g,'<span class="blue">$1</span>');
+}
+function esc_html(n){return n.replace(/([\'])/g,'&apos;')
+.replace(/([\"])/g,'&quot;')
+.replace(/(<(.*?)>)/g,function(str,p1,p2,ofs,s){return '&lt;'+p2+'&gt';});
+}
+function js_pretty(tex){
+return tex.replace(/\b(function|var|if|in|of|return)\b/g,'<span class=blue>$1</span>')
+.replace(/\b(i|k|l|m)\b/g,'<span class=one-fit>$1</span>')
+.replace(/("[^"]*")/g,'<span class=dbqw>$1</span>')
+.replace(/(\d+|\.\d+|\d+\.\d*)/g,'<span class=zifra>$1</span>')
+.replace(/(\/\/.*|\/\*[^]*?\*\/)/g,'<span class=comments>$1</span>')
+.replace(/(\{|\}|\]|\[|\|)/g,'<span class=figskobki>$1</span>')
+.replace(/(new)\s+(.*)(?=\()/g,'<span class=constructor><b>$1</b> $2</span>')
+.replace(/\.(push|length|getElementById|getElementsByClassName|innerHTML|textContent|querySelector)/g,'<span class=attribute>.$1</span>')
+.replace(/(&apos;[\s\S]*?&apos;)/g,'<span class="kavichki">$1</span>')
+.replace(/(&quot;[^"]*?&quot;)/g,'<span class="dbquot">$1</span>')
+}
+function esc2_html(n){
+return n.replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function html_pretty(ns){
+return ns.replace(/&lt;(\w+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^(&gt;)\s]+))?)*)\s*(\/?)&gt;/g,
+function(s,p1,p2,p3,ofs){
+return '<span class=orange>&lt;</span>'+
+'<span class=blue>'+p1+'</span>'+esc_atrs(p2)+'<span class=violet>'+p3+
+'</span><span class=orange>></span>';})
+.replace(/((&lt;)\/(\w+)(&gt;))/g,'<span class="orange">$2</span>'+
+'<span class=violet>/</span><span class=blue>$3</span>'+
+'<span class=orange>$4</span>').replace(/\b(disabled)\b/g,'<span class=red>'+
+'$1</span>').replace(/(&lt;\!--[\S\s]*?--&gt;)/g,'<span class=green>'+
+'$1</span>').replace(/\n/g,'');
+}
+function esc_atrs(s){return s.replace(/(\w+)="(.*?)"/g,'<span class=brown>$1</span>='+
+'<span class=green>"$2"</span>');}
+</script> 
 </article>
-<% if(typeof locvar != "undefined" && og_plugin==true){%>
-<div class="fb-like" data-href="<%=locvar.url%>" data-layout="standard" data-action="like" data-show-faces="false" data-share="true">
+<% if(typeof l.locvar != "undefined" && l.og_plugin==true){%>
+<div class="fb-like" data-href="<%=l.locvar.url%>" data-layout="standard" data-action="like" data-show-faces="false" data-share="true">
 </div>
 <%}%>
-<% if(post){%>
+<% if(l.post){%>
 <ul>
-<li><b>Title:</b><%=post.title%>
-<li><b>Teaser: </b><%=post.teaser%>
-<li><b>Autor: </b><%=post.autor%>
-<li><b>Visa: </b><%=post.visa%>
-<li><b>Type: </b><%=post.type%>
-<li><b>Rubrika: </b><%=post.rubrika%>
-<li><b>Tags: </b><%=post.tags%>
-<li><b>Slugged_title: </b><%=post.slugged_title%>
-<li><b>Created_on: </b><%=post.created_on%>
-<li><b>last_modified_on: </b><%-: post.last_modified_on | subtime%>
-<li><b>Read more: </b><a href="/labo/<%=post._id%>/<%=post.slugged_title%>"><%=post._id%></a>
-<li><b>Created_on2: </b><%-: post.created_on | format %>
-<li><b>Кол-во общих просмотров: </b><%=(post.gesamt_seen ? post.gesamt_seen : "0")%>
-<li><b>Кол-во "уникальных" просмотров: </b><%=post.unic_seen%>
-<% if(user && user.role=="admin"){%><li><b>Referers: </b><%=post.referer%><%}%>
+<li><b>Title:</b><%=l.post.title%>
+<li><b>Teaser: </b><%=l.post.teaser%>
+<li><b>Autor: </b><%=l.post.autor%>
+<li><b>Visa: </b><%=l.post.visa%>
+<li><b>Type: </b><%=l.post.type%>
+<li><b>Rubrika: </b><%=l.post.rubrika%>
+<li><b>Tags: </b><%=l.post.tags%>
+<li><b>Slugged_title: </b><%=l.post.slugged_title%>
+<li><b>Created_on: </b><%=l.post.created_on%>
+<li><b>last_modified_on: </b> post.last_modified_on | subtime%>
+<li><b>Read more: </b><a href="/labo/<%=l.post._id%>/<%=l.post.slugged_title%>"><%=l.post._id%></a>
+<li><b>Created_on2: </b> post.created_on | format %>
+<li><b>Кол-во общих просмотров: </b><%=(l.post.gesamt_seen ? l.post.gesamt_seen : "0")%>
+<li><b>Кол-во "уникальных" просмотров: </b><span id="unicSeen"><%=l.post.unic_seen%></span>
+<li><b>superunic_per_ses: </b><%if(l.post.superunic_per_ses){%><%=l.post.superunic_per_ses.length%><%}%>
+<% if(l.user && l.user.role=="admin"){%><li><b>Referers: </b><%=l.post.referer%><%}%>
 </ul>
-<button onclick="fetchPuzo(this)" value="/labo/<%=post._id%>/<%=post.slugged_title%>">fetch count via http</button>
-<button onclick="fetchPuzo1(this)">share's count</button>
-<% if(user && user.role == "admin"){%>
-<button onclick="remove_code_blog_article(this)" value="<%=post._id%>">remove</button>
+<button onclick="fetchPuzo(this)" value="/labo/<%=l.post._id%>/<%=l.post.slugged_title%>">fetch count via http</button>
+<button onclick="fetchPuzo1(this)">share's count</button><br>
+<button onclick="syncSocialData(this)" value="<%=l.post._id%>">syncSocialData</button><br>
+<br><button onclick="obnuliUnicCodeBlog(this)" value="<%=l.post._id%>">obnuliUnicCodeBlog</button>
+<br><button onclick="obnuliUnic()">obnuliUnic in sessDB</button><br>
+<% if(l.user && l.user.role == "admin"){%>
+<button onclick="remove_code_blog_article(this)" value="<%=l.post._id%>">remove</button>
 <%}%>
 <%}%>
 <a href="#x" class="overlay" id="popredaktor_code_blog"></a>
@@ -226,7 +339,7 @@ return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<s
 <progress id="progressbar2" min="0" max="100" value="0">0% complete</progress><br>
 <output id="output22" style="color:white;"></output>
 <form name="edit-code-blog" method="post" enctype="multipart/form-data">
-<% if(user && user.role == "admin"){ %><input type="submit" value="save"></br><%}%>
+<% if(l.user && l.user.role == "admin"){ %><input type="submit" value="save"></br><%}%>
 <span><b>Title: </b></span></br>
 <input type="text" name="title" required placeholder="title" value="" style="width:80%;"></br>
 <b>Teaser: </b></br>
@@ -254,7 +367,7 @@ return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<s
 <label>Slugged_title</label><input type="text" name="slugged_title"><br>
 <b>id: </b></br>
 <input type="text" name="id" value="" required placeholder="id"></br>
-<% if(user && user.role == "admin"){ %>
+<% if(l.user && l.user.role == "admin"){ %>
 <input type="submit" value="save"></br><%}else{%><b>You ar not admin)</b></br><%}%>
 </form>
 </div>
@@ -264,13 +377,14 @@ return `<span class=orange>&lt;</span><span class=blue>${p1}</span>${esc2(p2)}<s
 var e=e.wheelDeltaY;
 document.body.onmousemove=function(ev){ev.preventDefault()}},false);
 */
-
+/*
 document.getElementsByClassName('precoded-container')[0].onmousewheel=function(e){
 //var e=e.originalEvent;
 var delta=e.wheelDelta || -e.detail;
 document.getElementsByClassName('precoded-container')[0].scrollTop +=(delta < 0 ? 1 : -1)*30;
 e.preventDefault();
 }
+*/
 var y;
 var progressbar=document.getElementById('progressbar2');
 function edit_an_blog_code_article(el){
@@ -330,7 +444,7 @@ var xhr=new XMLHttpRequest();
 	 ev.preventDefault();},false);
 	 var bels=document.querySelectorAll("pre[data-type='precoded_container']");
 var kasha=document.getElementsByClassName('precoded-container')[0];
-function machdas(el){
+/*function machdas(el){
 if(confirm("Display this code as a block element? Press a button!")==true){
 
 for(var i=0;i<bels.length;i++){
@@ -345,7 +459,7 @@ el.onclick=null;
 kasha.onmousewheel=null;
 kasha.title="";
 }
-}
+}*/
 function remove_code_blog_article(el){
 if(confirm("Remove this code blog article?")){
 var xhr=new XMLHttpRequest();
@@ -371,7 +485,9 @@ function fetchPuzo1(el){
 var xhr=new XMLHttpRequest();
 xhr.open('get',gugfb1/*'http://graph.facebook.com/?id=http://alikon.herokuapp.com/labo/5619283058b201580e98c15a/recursion-in-javascript'*/);
 xhr.onload=function(e){
-if(this.status==200){alert(this.response)}else{alert(this.response)}
+if(this.status==200){alert(this.response);
+
+}else{alert(this.response)}
 }
 xhr.onerror=function(e){alert('error ocured')}
 xhr.send();}
@@ -390,5 +506,40 @@ xhr.onerror=function(){alert("no")}
 xhr.send();
 }
 window.onload=get2;
+function obnuliUnic(){
+var xhr=new XMLHttpRequest();
+xhr.open('GET','/obuli_unic');
+xhr.onload=function(){
+if(this.status==200){
+alert(this.response)
+}else{alert(this.response)}
+}
+xhr.onerror=function(){alert('network error')}
+xhr.send();
+}
+function obnuliUnicCodeBlog(el){
+var xhr=new XMLHttpRequest();
+xhr.open('get','/obuli_unic-codeblog/'+el.value+'/'+new Date().getTime());
+xhr.setRequestHeader('Cache-Control','no-cache,no-store');
+xhr.onload=function(){
+if(this.status==200){
+alert(this.response)
+unicSeen.textContent=0;
+}else{alert(this.response)}
+}
+xhr.onerror=function(){alert('network error')}
+xhr.send();
+}
+function syncSocialData(el){
+alert(el.value)
+var xhr=new XMLHttpRequest();
+xhr.open('get','/synch_social_data');
+xhr.onload=function(e){
+if(this.status==200){
+alert(this.response);
+}else{alert(this.response)}
+}
+xhr.onerror=function(e){alert('network error');}
+xhr.send();}
 </script>
 </main>

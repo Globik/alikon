@@ -3,13 +3,13 @@
 #texFileContent{width:80%;height:800px;}
 </style>
 <div class="daper" style="padding:30px;">
-<% if(user){%>hallo <%=user.username %><br><%}%>
-<% if(error_message){%><b class="error-message"><%= error_message %></b><br><%}%>
+<% if(l.user){%>hallo <%=l.user.username %><br><%}%>
+<% if(l.error_message){%><b class="error-message"><%= l.error_message %></b><br><%}%>
 
 A File For Edit:<br>
-Path: <span id="file_path"><% if(file_path){%><%= file_path %><%}%></span><br>
-<% if(file_content){%><div class="div_file_content">
-<textarea id="texFileContent" placeholder="file_content"><%= file_content %></textarea></div>
+Path: <span id="file_path"><% if(l.file_path){%><%= l.file_path %><%}%></span><br>
+<% if(l.file_content){%><div class="div_file_content">
+<textarea id="texFileContent" placeholder="file_content"><%= l.file_content %></textarea></div>
 <%}%>
 <br><button onclick="save_file_content(this)">save</button><br>
 <span id="out"></span><br>

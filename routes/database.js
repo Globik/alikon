@@ -291,10 +291,11 @@ fuckall.get('/error-view',function *(){
 	yield this.render('error-view',{err:this.message,status:this.status,
 	user:this.req.user,fly:this.flash.fucker,og_plugin:false,schema_plugin:false})
 })
+
 fuckall.get('/labo',function *(){
-	var db=this.fuck;
-	var posts=wrap(db.get("codeblogs"));
-	var post=yield posts.find({});
+	var wrap=this.wrap;
+	var posts=wrap("codeblogs");
+	var post=yield posts.find();
 	this.session.dorthin=this.path;
 	var site_name="Atariku"
 	var title="Labo";
@@ -313,10 +314,10 @@ fuckall.get('/labo',function *(){
 		var card="summary";
 	    var creator="@GlobiGoos";
 		var site="@GlobiGoos";
-		var twitter_locvar={card,site,creator,url,title,description,image}
-yield this.render('labo',{user:this.req.user,post,locvar,twitter_locvar});
+		var twitter_locvar={card,site,creator,url,title,description,image};
+	yield this.render('labo',{user:this.req.user,post,locvar,twitter_locvar})	
 });
-var bip=0;
+var tr=0;
 fuckall.get("/labo/:id/:title",function *(id){
 var db=this.fuck;
 var fb_data;
@@ -324,7 +325,12 @@ var fb_data;
 var burl;
 
 var posts=wrap(db.get('codeblogs'));
-
+ var session = this.session;
+  session.count = session.count || 0;
+  session.count++;
+  //console.log(this.header)
+ //session.mount=session.mount || [];
+ //session.mount.push({artpath:this.path,views:session.count})
 try{
 var post=yield posts.findById(this.params.id);
 //console.log('post :',post)
@@ -352,62 +358,103 @@ var post=yield posts.findById(this.params.id);
 	    var creator="@GlobiGoos";
 		var site="@GlobiGoos";
 		var twitter_locvar={card,site,creator,url,title,description,image}
-		//this.flash.views=bip
-		console.log('Here flash views :',this.flash.views);
-		//bip++;
+
 		yield this.render('code_blog_an_article_view',{user:this.req.user,post:post,locvar,work_article,
 		twitter_locvar,fb_data});
 //console.log('HEADER :',this.header)//referer,cookie
+/*
 if(this.host=="localhost:3000"){
 burl="http://127.0.0.1:3000/fake-fb-data.json";
 }else{
 burl=`http://graph.facebook.com/?id=${this.protocol}://${this.host}${this.path}`;
-/*
+*//*
 var gugfb=`http://graph.facebook.com/fql?q=SELECT%20like_count%20FROM%20link_stat%20WHERE%20url%20=%20%22${this.protocol}://${this.host}${this.path}%22`;
 */
-}
+//}
 
 
-	try{
+	/*try{
 		
 var options = {url:burl, headers: { 'User-Agent': 'request' }};	
 var tinfo=yield reqw(options);
 
 fb_data=JSON.parse(tinfo.body);
+*/
 var unic_per_ses;
-//,$push:{referer:this.headers.referer}
-
-if(typeof this.header.cookie !="undefined"){
-	var sess=(this.header.cookie).split(';');
-	console.log('SPliter cook: ',sess)
-	console.log('2 :',sess[1].trim());
-	console.log('3 :',sess[1].trim().substr(8))
-	var that_sess=sess[1].trim().substr(8);
-	var bu_ses=`koa:sess:${that_sess}`;
+//superunic_per_ses;
+var getSid= s =>{'use strict';let si=s.includes('koa.sid='), b;
+if(si){s.replace(/(koa.sid)=([\w-_]+);/g,(s,of1,of2,sd) => b=of2);}return b;}
+var we=this.get('cookie');
+if(we){
+    var sidd=getSid(we);
+	var bu_ses=`koa:sess:${sidd}`;
 	var dbses=wrap(db.get('sessions'));
+	var metrics={};
+	//metrics.page=this.path;
+	//metric.views=
 	try{
 		var dfses=yield dbses.findOne({sid:bu_ses});
 	//console.log('dfses :',dfses);
-	//console.log(`I'v Found this session sid ${dfses.sid}`);
-	//console.log('ab:',dfses)
-	if(dfses['koa-flash'].views == 0 ){unic_per_ses=1;}else{unic_per_ses=0;}
+	console.log(`I'v Found this session sid ${dfses.sid}`);
+	//node index
+	//yield dbses.updateById(dfses._id,{$inc:{ges_seen:1,un_seen:0}})
+	if(dfses.count == 0){unic_per_ses=1;superunic_per_ses=1;}else if(dfses.dorthin==this.path){
+    console.log("PATH AND DORTCHIN EQAL!");
+	console.log("SESS COUNT :", session.count)
+	unic_per_ses=0;
+	//superunic_per_ses=0;
+	}
+	else if(dfses.dorthin!==this.path){console.log('PATH and DORTHIN NOT EQAL!!!');
+	console.log("SESS COUNT :", session.count);
+	//session.count=0;
+	unic_per_ses=1;
+	//superunic_per_ses=0;
+	}
+	else{unic_per_ses=0;
+	//superunic_per_ses=0;
+	}
 	}catch(err){console.log("Session sid not found: ",err);unic_per_ses=0;}
-
-}		
+}else{unic_per_ses=0;
+//superunic_per_ses=0;
+}	
 try{
-yield posts.updateById(this.params.id,{$set:{fb_data:fb_data},$inc:{gesamt_seen:1,unic_seen:unic_per_ses}});
+yield posts.updateById(this.params.id,{$inc:{gesamt_seen:1,unic_seen:unic_per_ses}/*,$set:{superunic_per_ses:[]}*/,$addToSet:{superunic_per_ses:sidd}});
 }catch(er){console.log(er)}
-}catch(er){console.log('ERROR in rekwest :',er)}
 
+//}catch(er){console.log('ERROR in rekwest :',er)}
 }catch(err){this.status=404;
  this.flash={fucker:err.toString()};
  this.redirect('/error-view');}
  this.session.dorthin=this.path;	
 });
 
+fuckall.get('/obuli_unic',function *(){
+	var db=this.fuck;
+var db_ses=wrap(db.get('sessions'));
+var num='561f7086bb672c804e7810d5';
+this.session.count=0;
+/*
+try{
+var a=yield db_ses.updateById(num,{$set:{count:"0"}});}catch(er){this.throw(404,er);}*/
+/*try{
+	var a=yield db_ses.findAndModify({query:{count:{$exists:true}},update:{$set:{count:0}}},{new:true})
+}catch(e){this.throw(404,e)}*/
+yield this.body={info:'anuliert sessioon!',body:'a'}	
+//node index
+})
 
-
-
+fuckall.get('/obuli_unic-codeblog/:id/:a',function *(id){
+	var db=this.fuck;
+	console.log(this.params.id);
+	
+	var posts=wrap(db.get('codeblogs'));
+	try{
+		var post=yield posts.updateById(this.params.id,{$set:{unic_seen:0/*,gesamt_seen:0*/}})
+		console.log('obnulilo?',post)
+		}catch(er){this.throw(404,er)}
+		//this.set("Cache-Contol","no-cache,no-strore")
+	yield this.body={stat:"OK"}
+})
 fuckall.get('/alfa',function *(){
 	
  /***

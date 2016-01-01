@@ -9,9 +9,9 @@ input[type=text]{width:400px;}
 </style>
 <div class="daper">
 
-<% if(posts){%><b>Total articles : </b><%= posts.length %><%}%>
+<% if(l.posts){%><b>Total articles : </b><%= l.posts.length %><%}%>
 <h3>Articles Manager</h3>
-<% if(posts){posts.forEach(function(p){%>
+<% if(l.posts){l.posts.forEach(function(p){%>
 
 <span data-id="<%= p._id %>" onclick="insertDataIda(this);" ><%= p.postname %></span></br>
 <%})}%>
@@ -27,7 +27,7 @@ style="width:400px;"></br>
 <label><b>Short info for cover:</b></label></br>
 <input type="text" name="shorti" required placeholder="shorti" value="Ein kurzer Anonce in drei-vier Worte"></br>
 <label><b>Autor:</b></label></br>
-<input type="text" name="autor" required placeholder="autor" value="<%= user.username %>"></br>
+<input type="text" name="autor" required placeholder="autor" value="<%= l.user.username %>"></br>
 <label><b>Long info at begining of article:</b></label></br>
 <textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;">captions</textarea></br>
 <label><b>Main content:</b></label></br>
@@ -59,7 +59,7 @@ span{font-size:0.8em;line-height:0.01em;}
 img{width:100%;}
 
 </style>
-<% if(user){%><b>User._id :</b><span id="who"><%= user._id %></span></br><%}%>
+<% if(l.user){%><b>User._id :</b><span id="who"><%= l.user._id %></span></br><%}%>
 <span id="out"></span>
 <h2>Fotos</h2>
 </br><div id="albumlistout"></div></br>
@@ -438,8 +438,8 @@ return elar;
 </br><b>Album-out-info :</b><span id="albumoutinfo"/></span></br>
 
 <form action="/addingfotos" method="post"  name="fotki" enctype="multipart/form-data">
-<input type="text" name="username" value="<% if(user){%><%= user.username %><%}%>"></br>
-<input type="text" name="who" value="<% if(user){%><%= user._id %><%}%>"></br>
+<input type="text" name="username" value="<% if(l.user){%><%= l.user.username %><%}%>"></br>
+<input type="text" name="who" value="<% if(l.user){%><%= l.user._id %><%}%>"></br>
 <input id="texFolder" type="text" name="albId" value="album-1" required></br>  
 <input type="file" name="file" multiple="multiple" accept="*/*">
 <input type="submit" value="upload">

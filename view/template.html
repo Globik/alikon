@@ -6,9 +6,10 @@
 <!--[if gt IE 8]><html class="no-js"><![endif]-->
 <html lang="en">
 <head>
-<%- include includes/head.html %>
+ <%- include('includes/head.html') %> 
 </head>
 <body>
+<%- include('includes/footer.html',{data:"suka"}) %>
 <script>
 /*
 (function(d,s,id){
@@ -21,12 +22,12 @@ fjs.parentNode.insertBefore(js,fjs);
 */
 </script>
 <div id="pagewrap">
-<header id="header" class=""><%- include includes/header.html %>
+<header id="header" class=""> <%- include includes/header.html %>
 </header>
  <div id="flex-content"> 
 <%- body %>
 </div>
-<% include includes/login_form.html %>
+<%- include includes/login_form.html %>
 <script>
 var form=document.forms.namedItem("fileinfo");
 form.addEventListener('submit',function(ev){
@@ -83,7 +84,7 @@ encodeURIComponent(email);
 aside id="sidebar"><- include/includes/aside.html ></aside>
 } -->
 
-<footer id="footer"><%- include includes/footer.html %></footer>
+<footer id="footer"> <%- include includes/footer.html %></footer>
 </div>
 
 <script>

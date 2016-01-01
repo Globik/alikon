@@ -2,10 +2,10 @@
 <div id="flex-content">
 <div class="fluiditems">
 <h4>Add new user to DB</h4>
-<p>Your name is <%= user.username %> and You are here as <%= user.role %></p>
+<p>Your name is <%= l.user.username %> and You are here as <%= l.user.role %></p>
 </div>
 <div class="fluiditems">
-<% if(user.role == 'admin'){%>
+<% if(l.user.role == 'admin'){%>
 <form id="aduser" name="aduser" method="post" enctype="multipart/form-data">
 <input type="text" name="username" placeholder="name" required/>
 </br><input type="text" name="email" placeholder="email" required/>
@@ -41,7 +41,7 @@ var xhr=new XMLHttpRequest();
 <caption>All users</caption>
 <thead><tr><th>Users</th><th>email</th><th>password</th><th>role</th><th>edit</th><th>delete</th></tr></thead>
 <tbody id=rs3>
-<% users.forEach(function(us){%>
+<% l.users.forEach(function(us){%>
 
 <tr>
 <td class="f"><%= us.username %></td>
@@ -57,7 +57,7 @@ var xhr=new XMLHttpRequest();
 </table>
 
 <ul>
-<% users.forEach(function(us){%>
+<% l.users.forEach(function(us){%>
 <li><%=us.username %></li>
 <%})%>
 </ul>

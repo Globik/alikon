@@ -397,44 +397,17 @@ secured.get('/app/filesuploader',authed,function *(){
 });
 
 
-secured.post('/createpost',bodyParser({multipart:true,formidable:{}}),
-function *(next){
-	var postname=this.request.body.fields.postname;
-	var slug=sluger(postname);//slugify(postname);
-	
-	var autor=this.request.body.fields.autor;
-	var shorti=this.request.body.fields.shorti;
-	var caption=this.request.body.fields.caption;
-	var maincontent=this.request.body.fields.maincontent;
-	var meta=this.request.body.fields.meta;
-	var category=this.request.body.fields.category;
-	var rubrik=this.request.body.fields.rubrik;
-	var serial=this.request.body.fields.serial;
-	
-	var date=moment();
-	var forma=date.format('YYYY[/]MM[/]DD');
-	//format('YYYY[/]MM[/]DD[/]')
+secured.post('/createpost',authed,bodyParser({multipart:true,formidable:{}}),function *(){
 	var db=this.fuck;
 	var posts=wrap(db.get('posts'));
-yield posts.insert({
-	postname:postname,
-	title:slug,
-	autor:autor,
-	shorti:shorti,
-	caption:caption,
-	maincontent:maincontent,
-	meta:meta,
-	category:category,
-	rubrik:rubrik,
-	serial:serial,
-	created:new Date(),
-	dataformat:forma,
-	redaktiert:new Date(),
-	visa:2
-	});
-this.body=JSON.stringify(this.request.body,null,2);
-this.body={"result":this.request.body,"slugified":slug,"time":forma};
-yield next;});
+	var locs=this.request.body.fields;
+	locs.slug=slug(locs.postname);
+	locs.created=new Date();
+	locs.redaktiert=locs.created;
+	locs.visa=2;
+	try{yield posts.insert(locs);}catch(e){throw(404,e)}
+this.body=JSON.stringify(locs,null,2);
+});
 
 function slugify(text){
 	return text.toString().toLowerCase().replace(/\s+/g,'-')
@@ -444,91 +417,34 @@ function slugify(text){
 secured.get('/takePost/:dataid',function *(dataid){
 var db=this.fuck;
 var doc=wrap(db.get('posts'));
+var post;
 try{
- var post= yield doc.findById(this.params.dataid);
-//console.log('post.maincontent',post.maincontent);
-yield this.body={
-	postname:post.postname,
-	autor:post.autor,
-	created:post.created, 
-	shorti:post.shorti,
-	caption:post.caption,
-	maincontent:post.maincontent,
-	dataformat:post.dataformat,
-	category:post.category,
-	rubrik:post.rubrik,
-	meta:post.meta,
-	redaktiert:post.redaktiert,
-	visa:post.visa,
-	title:post.title,
-	serial:post.serial,
-	};
-	}
-catch(err){
-yield this.body={data:err};}
-});
+ post= yield doc.findById(this.params.dataid);
+//{postname,autor,created,shorti,caption,maincontent,category,rubrik,meta,redaktiert,visa,
+//title,serial,};
+	}catch(err){ this.trow(404,err)}yield this.body={post};});
 
-secured.post('/saveaneditedpost', bodyParser({multipart:true,formidable:{}}),
-function *(next){
-var postname=this.request.body.fields.postname;
-	var slug=sluger(postname);
+secured.post('/saveaneditedpost',authed, bodyParser({multipart:true,formidable:{}}),function *(){
+	var locs=this.request.body.fields;
+	locs.title=sluger(locs.postname);
+
 	//slugify(postname);
 // autor shorti caption maincontent dataformat meta category rubrik serial * 
 //created redaktiert visa(1 2 3)
-var title=slug;
-console.log(title);
-	var autor=this.request.body.fields.autor;
-	var shorti=this.request.body.fields.shorti;
-	var caption=this.request.body.fields.caption;
-	var maincontent=this.request.body.fields.maincontent;
-	var dataformat=this.request.body.fields.dataformat;
-	var meta=this.request.body.fields.meta;
-	var category=this.request.body.fields.category;
-	var rubrik=this.request.body.fields.rubrik;
-	var serial=this.request.body.fields.serial;
-	var redaktiert=new Date();
-	var created=this.request.body.fields.created;
-var visa=this.request.body.fields.visa;
-console.log('visa :'+visa);
-var id=this.request.body.fields.id;
 var db=this.fuck;
 var doc=wrap(db.get('posts'));
 try{
-
-/***
-yield doc.updateById(id,{
-postname:postname,
-title:title,
-//autor:autor,
-shorti:shorti,
-caption:caption,
-maincontent:maincontent,
-meta:meta,
-//dataformat:dataformat,
-//category:category,
-//rubrik:rubrik,
-//serial:serial,
-redaktiert:redaktiert,
-//created:created,
-visa:visa
-});***/
-yield doc.updateById(id,{$set:{postname,title,caption,maincontent,shorti,meta,visa}},
-{$currentDate:{redaktiert:true}});
-this.body=JSON.stringify(this.request.body,null,2);
-this.body={"result":"OK - saved an edited post "+title}
-}catch(err){this.body={err:err}}
+/*yield doc.updateById(id,{$set:{postname,title,caption,maincontent,shorti,meta,visa}},{$currentDate:{redaktiert:true}});*/
+yield doc.updateById(locs.id,{$set:locs},{$currentDate:{redaktiert:true}})
+}catch(err){this.throw(404,err)}
+this.body=JSON.stringify(locs,null,2);
 });
 
 secured.get('/deletePost/:dataid',authed,function *(dataid){
-var db=this.fuck;
-var doc=wrap(db.get('posts'));
-
-try{
- var post= yield doc.remove({_id:this.params.dataid});
+var db=this.fuck,doc=wrap(db.get('posts'));
+//var doc=this.fuck.collection('posts');var {doc:db.collection('posts')}=this.fuck;
+try{var post= yield doc.remove({_id:this.params.dataid});}catch(err){this.throw(404,err)}
 yield this.body={"info":"ok - deleted!"}
-}
-catch(err){
-yield this.body={data:err};}
 });
 
 secured.post('/adding_fotos',authed,bodyParser({multipart:true,formidable:{uploadDir:'./public/images/upload/tmp',
@@ -981,28 +897,19 @@ secured.get('/app/codeblog',authed,function *(){
 secured.post("/code_bl_send_to_insert",authed,bodyParser({multipart:true,formidable:{}}),function *(next){
 	if('POST' !==this.method) return yield next;
 	var db=this.fuck;
-	var title=this.request.body.fields.title;
-	var teaser=this.request.body.fields.teaser;
-	var code_blog_textarea=this.request.body.fields.code_blog_textarea;
-	var css_textarea=this.request.body.fields.css_textarea;
-	var js_textarea=this.request.body.fields.js_textarea;
-	var html_textarea=this.request.body.fields.html_textarea;
-	var autor=this.request.body.fields.autor;
-	var visa=this.request.body.fields.visa;
-	var type=this.request.body.fields.type;
-	var rubrika=this.request.body.fields.rubrika;
-	var tags=this.request.body.fields.tags;
-	var created_on=new Date();
-	var last_modified_on=created_on;
-	var slugged_title=sluger(title);//"blalblabla";
-	try{
+	var locs=this.request.body.fields;
+	locs.created_on=new Date();
+	locs.last_modified=locs.created_on;
+	locs.slugged_title=sluger(locs.title);
 	var docs=wrap(db.get('codeblogs'));	
-	docs.insert({title,teaser,code_blog_textarea,css_textarea,js_textarea,html_textarea,autor,
-visa,type,rubrika,tags,created_on,last_modified_on,slugged_title});
+	try{
+	/*docs.insert({title,teaser,code_blog_textarea,css_textarea,js_textarea,html_textarea,autor,
+visa,type,rubrika,tags,created_on,last_modified_on,slugged_title});*/
+docs.insert(locs);
 	}catch(err){
 	this.throw(404,err);	
 	}
-	yield this.body={resultat:this.request.body};
+	yield this.body={resultat:locs};
 });	
 
 secured.get("/take_an_blog_code_article/:id",function *(id){
@@ -1015,28 +922,14 @@ secured.get("/take_an_blog_code_article/:id",function *(id){
 	}catch(err){this.throw(404,err)}
 	yield this.body={info:"ok",data:post};
 });
-secured.post("/save_an_edited_blog_code_article/",bodyParser({multipart:true,formidable:{}}),function *(){
-	var id=this.request.body.fields.id;
-	var title=this.request.body.fields.title;
-	var teaser=this.request.body.fields.teaser;
-	var code_blog_textarea=this.request.body.fields.code_blog_textarea;
-	var css_textarea=this.request.body.fields.css_textarea;
-	var js_textarea=this.request.body.fields.js_textarea;
-	var html_textarea=this.request.body.fields.html_textarea;
-	var autor=this.request.body.fields.autor;
-	var visa=this.request.body.fields.visa;
-	var type=this.request.body.fields.type;
-	var rubrika=this.request.body.fields.rubrika;
-	var tags=this.request.body.fields.tags;
-	var created_on=this.request.body.fields.created_on;
-	var last_modified_on=this.request.body.fields.last_modified_on;
-	var slugged_title=sluger(title);//"blalblabla";
-	
-	var db=this.fuck;
+secured.post("/save_an_edited_blog_code_article/",authed,bodyParser({multipart:true,formidable:{}}),function *(){
+	var locs=this.request.body.fields;
+	locs.slugged_title=sluger(locs.title);
+	var db=this.fuck;var posts=wrap(db.get("codeblogs"));
 	try{
-		var posts=wrap(db.get("codeblogs"));
-	var post=yield posts.updateById(id,{$set:{title,slugged_title,teaser,css_textarea,js_textarea,
-	html_textarea,code_blog_textarea,tags,visa}},{$currentDate:{last_modified_on:true}});
+	/*var post=yield posts.updateById(id,{$set:{title,slugged_title,teaser,css_textarea,js_textarea,
+	html_textarea,code_blog_textarea,tags,visa}},{$currentDate:{last_modified_on:true}});*/
+	yield posts.updateById(locs.id,{${set:locs},{$currentDate:{last_modified_on:true}}})
 	}catch(err){this.throw(404,err)}
 	yield this.body={info:"ok - saved!"}
 });
@@ -1045,12 +938,21 @@ secured.get("/remove_code_blog_article/:id",authed,function *(id){
 	var id=this.params.id;
 	console.log('this.params: ',this.params);
 	var db=this.fuck;
+	var posts=wrap(db.get("codeblogs"));
 	try{
-		var posts=wrap(db.get("codeblogs"));
 		//var post=yield posts.findById(id);
 		var post= yield posts.remove({_id:id});
 	}catch(err){this.throw(404,err)}
 	yield this.body={info:"ok - deleted"};
+});
+secured.get('/synch_social_data',authed,function *(link){
+	//console.log("link :",this.params.link);
+	/*var burl=`http://graph.facebook.com/?id=${this.protocol}://${this.host}${this.path}`;
+	try{
+var options = {url:burl, headers: { 'User-Agent': 'request' }};	
+var tinfo=yield reqw(options);
+	var fb_data=JSON.parse(tinfo.body);}catch(er){this.throw(404,er)}*/
+	yield this.body={info:"Synchronised with FB! OK!"}
 });
 	/*** end of codeblog ***/
 //iojs index

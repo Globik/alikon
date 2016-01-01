@@ -1,14 +1,14 @@
 <!-- files.html -->
 <a href="/">home</a>
 </br>
-<b><%= user.username %>
+<b><%= l.user.username %>
 </br>
 <ul>
-<li><%=: paths | first | capitalize %></li>
-<%= paths[1] %>
+<li> paths | first | capitalize %></li>
+<%= l.paths[1] %>
 <ul>
-<% paths.forEach(function(it,k){%>
-<li onclick="callFile(this)"><%= paths[k] %></li><%})%>
+<% l.paths.forEach(function(it,k){%>
+<li onclick="callFile(this)"><%= l.paths[k] %></li><%})%>
 </ul>
 </br>
 <textarea id="textarea" style="width:400px;height:400px;" value=""></textarea>

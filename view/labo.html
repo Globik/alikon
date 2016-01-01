@@ -3,21 +3,24 @@
 <h4>Labo lists</h4>
 <% if(post){%>
 
-<%post.forEach(function(m){%>
+<% post.forEach(function(m){%>
 <ul>
-<li><b>Title:</b><%=post[0].title%>
-<li><b>Teaser:</b><%=m.teaser%>
-<li><b>Autor:</b><%=m.autor%>
-<li><b>Visa:</b><%=m.visa%>
-<li><b>Type:</b><%=m.type%>
-<li><b>Rubrika:</b><%=m.rubrika%>
-<li><b>Tags:</b><%=m.tags%>
-<li><b>Slugged_title:</b><%=m.slugged_title%>
-<li><b>Created_on:</b><%-: m.created_on | subtime %>
-<li><b>last_modified_on:</b><%-: m.last_modified_on | subtime %>
-<li><b>Read more:</b><a href="/labo/<%=m._id%>/<%=m.slugged_title%>">Read more...</a>
+<li><b>Title: </b><%=m.title%>
+<li><b>Teaser: </b><%=m.teaser%>
+<li><b>Autor: </b><%=m.autor%>
+<li><b>Visa: </b><%=m.visa%>
+<li><b>Type: </b><%=m.type%>
+<li><b>Rubrika: </b><%=m.rubrika%>
+<li><b>Tags: </b><%=m.tags%>
+<li><b>Slugged_title: </b><%=m.slugged_title%>
+<li><b>Created_on: </b><%= m.created_on %> | subtime 
+<li><b>last_modified_on: </b><%= m.last_modified_on %> | subtime 
+<li><b>Read more: </b><a href="/labo/<%=m._id%>/<%=m.slugged_title%>"><%=m.title%><br>Read more...</a>
+<li><b>gesamt_seen: </b><% if(m.gesamt_seen){%><%=m.gesamt_seen%><%}%>
+<li><b>unic_seen: </b><% if(m.unic_seen){%><%=m.unic_seen%><%}%>
+<li><b>superunic_per_ses :</b><% if(m.superunic_per_ses){%><%=m.superunic_per_ses.length%><%}%>
 </ul>
 <%})%>
 <%}%>
-<%if(user){%>Hallo <%=user.username%>!<%}%>
+<% if(user){%>Hallo <%=user.username%>!<%}%>
 </main>

@@ -1,40 +1,42 @@
-//config/passport.js
-//var passport=require('koa-passport');
-var monk=require('monk');
+﻿var crypto=require('crypto');
+var  scmp=require('scmp');
+var ObjectID=require('mongodb').ObjectID;
 var configDB=require('./database.js');
- //var db= monk(configDB.url);
- //var db=monk(configDB.localurl);
-//var db=monk("mongodb://localhost:27017/todo");
-var db=require('../index');
-//var db=monk(process.env.MONGOHQ_URL,{w:1});
+var LocalStrategy = require('passport-local').Strategy;
 
-
-module.exports=function(passport){
-var busers = db.get('users');
+module.exports=function(db,passport){
+var busers=db.collection('users');
 
 passport.serializeUser(function(user, done) {
 	console.log('user._id :',user._id)
   done(null, user._id);});
 
 passport.deserializeUser(function(_id, done) {
-busers.findById(_id,function(err,user){
+busers.findOne({_id:ObjectID(_id)},function(err,user){
 if(err){return done(err);}
 done(null,user);
 });
 });
-//iojs index
-var LocalStrategy = require('passport-local').Strategy;
+//node --harmony index
 
-passport.use(new LocalStrategy(
-function(username, password, done) {
-process.nextTick(function () {
+
+passport.use(new LocalStrategy({},(username, password, done) =>{
+process.nextTick( ()=> {
 busers.findOne({'username':username}, function(err, user) {
 if (err) { return done(err); }
 if (!user) { 
 return done(null, false, { message: 'Unknown user ' + username }); }
-if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
-return done(null,user);
-});});}));
+/*if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }*/
+crypto.pbkdf2(password,/*user.salt*/'salt',10000,64,(er,bi)=>{
+if(er){return done(er);}
+if(scmp(bi.toString('base64'),user.password)){
+return done(null,user);}
+else{
+return done(null,false,{message :'Invalid Password!'});
+}
+//return done(null,user);
+});});}) }
+));
 
 
 //node index
