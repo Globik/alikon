@@ -138,7 +138,7 @@ filters:filters});
 render(app,{root:path.join(__dirname,'view'),layout:'template',viewExt:'html',cache:false,
 debug:true,_with:true,rmWhitespace:true});*/
 
-render(app,{})
+//render(app,{})
 app.use(serve(__dirname+'/public'));
 
 /*app.use(function *(next){
