@@ -153,11 +153,11 @@ app.keys=['fg'];
 
  //remote db test:
  //app.use(session({store:new MongoStore({url:process.env.MONGOHQ_URL_TEST+"/alikon-fantastic-database"})}));
- //app.use(session({store:new MongoStore({url:configDB.url || configDB.localurl})}));
+ app.use(session({store:new MongoStore({url:configDB.url || configDB.localurl})}));
  //app.use(session({store:new MongoStore({url:configDB.url})}))
  
-//app.use(passport.initialize());
-//app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 //app.use(Router(app));
 //app.use(bodyParser());
 
@@ -166,12 +166,7 @@ app.keys=['fg'];
  //app.use(function *(next){this.state=locals;yield next;})
  app.use(function *(next){this.state.subadmin="Hallo Subadmin!";yield next;})
  app.use(function *(next){this.lowdb=lowdb;yield next;});
- /*app.use(function *(){
-	 var sz=this.page;
-	 console.log(this);
-	 console.log('SZ :',sz({user:"us",fi:"fi",good:"good"}));
- })
- */
+ 
 app.use(function *(next){
 this.dob=dob;
 this.bid=ObjectID;
