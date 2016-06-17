@@ -1,9 +1,7 @@
 ﻿//admin_dashboard_articles.js
 'use strict';
-
 var admin_main_menu=require('./admin_main_menu.js');
-
-let admin_dashboard_articles=n=>{return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Articles Manager</title>
+var admin_dashboard_articles=n=>{return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Articles Manager</title>
 </head><body>
 ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <br><h3>Welcome to the Articles Manager</h3>
@@ -27,8 +25,7 @@ ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <label><b>leader:</b></label><br>
 <textarea name="leader" required placeholder="leader" value="" style="width:400px;height:60px;">Lead Absatz how to bla bla bla</textarea><br>
 <label><b>Main content(body):</b></label><br>
-<textarea name="body" style="width:400px;height:200px;" required placeholder="body" 
->Main content here. Bla bla bla.<b>body1</b> &lt;b&gt;body-2&lt;/b&gt;</textarea><br>
+<textarea name="body" style="width:400px;height:200px;" required placeholder="body">Main content here. Bla bla bla.<b>body1</b> &lt;b&gt;body-2&lt;/b&gt;</textarea><br>
 <label><b>tags:</b></label><br>
 <input type="text" name="tags" value="js,css"><br>
 <label><b>category:</b></label><br>
@@ -42,26 +39,36 @@ ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <input type="text" name="type" value="article"/><br>
 <input type="text" name="status" value="active"/><br>
 <input type="submit" value="save"><br>
-</form><output id="out"></output></div>${getjs()}
+</form><output id="out"></output></div>
+<dialog id="dialog"><output id="dialog_output"></output></dialog>
+${getjs()}
 </body></html>`;
 }
-
 module.exports={admin_dashboard_articles};
+
 function getjs(){
 return `<script>
 var formface=document.forms.namedItem("article_create");
 formface.addEventListener('submit',function(ev){
 var data=new FormData(document.forms.namedItem("article_create"));
 var xhr=new XMLHttpRequest();
-    xhr.open("post","/dashboard/article_create",true);
+    xhr.open("post","/dashboard/article_create");
 	xhr.onload=function(e){
-	 if(xhr.status==200){
-	 //var data=JSON.parse(this.response);
-	 out.innerHTML=this.response;
+	 if(xhr.status==200){showDialog(this,true);} else{showDialog(this,false);}
 	 }
-	 else{out.innerHTML=this.response;
-	 }}
-xhr.onerror=function(e){out.textConent="Some error occured";}
-	 xhr.send(data);
-	 ev.preventDefault();},false);</script>`;
+xhr.onerror=function(e){alert('Status: '+this.status+' . Internet connection fails.');}
+xhr.send(data);
+ev.preventDefault();},false);
+
+function showDialog(el,bool){
+	if("HTMLDialogElement" in window){
+	dialog.showModal();
+	if(bool){dialog.style.background="lightgreen";} else{dialog.style.background="pink"}
+	dialog_output.textContent=el.response;
+	setTimeout(function(){dialog.close();},1500);
+	}
+	(bool ? out.style.background="lightgreen" : out.style.background="pink");
+	out.textContent=el.response;
+}
+</script>`;
 }

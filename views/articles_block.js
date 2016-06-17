@@ -11,7 +11,7 @@ function getArt(n){
 	if(posts){
 	for(var {_id,title,sub_title,date_url,slug,images:images=[""],status,created_on,tags:tags} of posts ){    
      s+=`<article class="fluiditems"><div id="redaktor"><ul class="red-nav"><li>X</li>
-	<li><a onclick="redaktorHref(this)" data-id="${_id}" href="#popredaktor">redact</a></li>
+	<li><a onclick="redaktorHref(this)"  data-id="${_id}" href="#popredaktor">redact</a></li>
 <li data-id="${_id}" onclick="removePost(this)">remove</li><li>visibility ${status}</li></ul></div>
 <div class="foto-cont">                 
 <img src="${images[0].src || '/images/kuku.png'}"/></div>	
@@ -21,7 +21,7 @@ function getArt(n){
 <div class="time-service"><b>23 Shares</b></div>
 <h5><a href="/articles/${date_url}/${slug}">${title}</a></h5> 
 <p>${sub_title}</p>  
-	${metatagsector ? `<div class="tags">${tags? su(tags) : ""}</div>`:""}
+	${metatagsector ? `<div class="tags">${tags? tags : ""}</div>`:""}
 </section>
 <div class='art-pop'><p>Photos: ${images.length}</p>
 <p>Noch bla bla bla.</p></div>
@@ -37,8 +37,8 @@ let s=``;s+=`<article class="fluiditems">
 <li data-id="1" onclick="removePost(this)">remove</li><li>visibility 1</li></ul></div>
 <div class="foto-cont"><img src="/images/kuku.png"/></div>
 <section class="article-info">
-<div class="time-service"><b>16 25, 2016</b></div><div class="time-service"><b>comments 1</b></div>
-<div class="time-service"><b>23 Shares</b></div><h5><a href="">Hallo World!..</a></h5><p>Sub head</p>
+<div class="time-service"><b>16 25, 2016</b></div><div class="time-service"><b>comments 4</b></div>
+<div class="time-service"><b>23 Shares</b></div><h5><a href="">Hallo World! Fuck</a></h5><p>Sub head</p>
 <div class="tags"><b>js</b><b>css3</b></div></section>
 <div class='art-pop'><p>Photos: 0</p><p>Noch bla bla bla.</p></div></article>`;
 return s;}

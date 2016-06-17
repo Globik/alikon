@@ -9,6 +9,7 @@ return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 hallo {n.buser.username}<br>
 <li><a href="/dashboard/articles">Articles Manager</a>
+<li><a href="/dashboard/mongodb">Mongodb</a>
 </body></html>`;
 }
 

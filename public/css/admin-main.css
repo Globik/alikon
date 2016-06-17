@@ -1,0 +1,17 @@
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+select{
+width:25%;
+height:40px;
+background:green;
+font-size:16px;
+line-height:1.8;
+}
+option{
+font-size:1.9em;
+border:2px solid red;
+}
+main{display:block;
+position:relative;
+padding:4vw;
+}

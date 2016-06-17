@@ -1,7 +1,6 @@
 //article_view.js
 'use strict';
-//var {head,header_menu,admin_main_menu,footer}=require('./includes.js');
-//let rel=require('../libs/hotreload.js');
+
 var head=require('./head.js');   
 var header_menu=require('./header_menu.js');
 var admin_main_menu=require('./admin_main_menu.js');
@@ -9,15 +8,19 @@ var admin_main_menu=require('./admin_main_menu.js');
 //var paginator=rel('./paginator.js');
 var footer=require('./footer.js');
 const moment=require('moment');
+var linki="/css/main2.css";
 
-let article_view=(n)=>{
+let article_view= n=>{
+let {buser,showmodule:{mainmenu,profiler}}=n;
 let str='';
 str+= `<!DOCTYPE html>
-<html lang="en"><head>${head.head({title:"Article_view"})}</head>
+<html lang="en">
+<!-- article_view.js -->
+<head>${head.head({title:"Article_view",csslink:linki})}</head>
 <body>
 <!-- warnig must be -->
-<nav class="back">${header_menu.header_menu({buser:n.buser})}</nav>
-${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
+<nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
+${(buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <!-- banner -->
 <div class="codops-header" style="z-index:0;">${getHeadLine(n)}
 <div class="codrops-demos">
@@ -35,7 +38,7 @@ ${getArticleBody(n)}
 </section>
 </aside>
 <div style="clear:both;"></div>
-</main><footer>${footer.footer({})}</footer></body></html>`;
+</main><footer id="footer">${footer.footer({})}</footer></body></html>`;
 return str;}
 module.exports={article_view};
  
@@ -57,7 +60,7 @@ return `<article class="post">
 ${n.post && n.post.images ? sumatorFoto(n):''} 
 <section>
 <li>Last time edited: ${moment(last_modified).format('MMM D, YYYY')}</li>
-<li>Tags: ${tags.join(',')}</li>
+<li>Tags: ${tags}</li>
 <li>Category : ${category}</li>
 <li>Rubrik: ${rubrik}</li>
 <li>Visibility: ${status}</li>   

@@ -1,0 +1,55 @@
+﻿<html>
+<head>
+<title>admin css filter</title>
+</head>
+<body>
+admin css filter
+<h5>output:</h5>
+<output id="out"></output>
+<br><br>
+<button onclick="dot(this)" value="main-admin">admin dashboard</button>
+<button onclick="dot(this)" value="admin-mongodb">admin mongodb</button>
+<button onclick="dot(this)" value="admin-file-system">admin-file-system</button>
+<button onclick="dot(this)" value="admin-user-managment">admin-user-managment</button>
+<script>
+var link={supermainadmin:"super-admin-main.css",link:[{
+name:"admin-main.css",type:"main-admin"},
+{name:"helper-admin-mongo.css",type:"admin-mongodb"},
+{name:"file-system.css",type:"admin-file-system"},
+{name:"file-system-helper.css",type:"admin-file-system"},
+
+{name:"user-interface.css",type:"admin-user-managment"}
+]};
+
+
+function dot(n){
+var a=filt(link.link,n.value);
+var ca=pipka(a);
+console.log('ca : ',ca);
+return ca;
+}
+function filt(ar,typ){
+var b=ar.filter(function(x){
+return x.type==typ;
+});
+return b;
+}
+
+function pipka(ar){
+var ga=[];
+
+out.innerHTML=' link: '+link.supermainadmin+ ' type: '+0+'<br>';
+ga.push(link.supermainadmin);
+ar.forEach(function(el,i){
+
+out.innerHTML+=' link: '+el.name+' type: '+el.type+'<br>';
+ga.push(el.name);
+
+});
+
+return ga;
+}
+
+</script>
+</body>
+</html>

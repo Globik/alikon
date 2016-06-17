@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>meter</title>
+<style>
+html{background:rgba(25,55,25,0.1);}
+
+div{background: cadetblue;}
+div:nth-of-type(2){background:lightsteelblue;}
+meter{margin:5%;position:relative;width:50%;}
+meter::before{
+content:'Macintosh HD';
+position:absolute;
+top:-150%;
+}
+meter::after{
+content:'365 GB free out of 465 GB';
+color:red;
+position:absolute;
+top:150%;
+} 
+div:nth-of-type(2) meter::-webkit-meter-optimum-value{
+/*background:red;*/
+box-shadow:0 8px 5px -5px green inset;
+background-image: linear-gradient(
+90deg,red calc(400/71680*100%), pink calc(400/71680*100%));
+background-size:100% 100%;
+}
+div:nth-of-type(3) meter::-webkit-meter-optimum-value{
+/*background:violet;*/
+background-image: linear-gradient(
+90deg,
+red 16.67%,
+green 16.67%,
+green 50%,
+yellow 50% 
+);
+background-size:100% 100%;
+}
+div:nth-of-type(4) meter::-webkit-meter-optimum-value{
+background-image: linear-gradient(
+90deg,
+red calc(8192/57344*100%),
+green calc(8192/57344*100%),
+green calc((8192 + 8192)/57344*100%),
+yellow calc((8192+8192)/57344*100%) 
+);
+background-size:100% 100%;
+}
+div:nth-of-type(5) meter::-webkit-meter-optimum-value{
+background-image: linear-gradient(
+90deg,
+red 14.29%,
+green 14.29%,
+green 28.58%,
+yellow 28.58% 
+);
+background-size:100% 100%;
+}
+div:nth-of-type(6) meter::-webkit-meter-optimum-value{
+background-image: linear-gradient(
+45deg,
+yellow 71.43%,
+green 71.43%,
+green calc(71.43% + 14.29%),
+red calc(71.43% + 14.29%) 
+);
+background-size:100% 100%;
+}
+</style>
+</head>
+<body>
+<input type="meter"/>
+<div>
+<meter max="465.66" value="70" high="465" lw="71" title="GiB"></meter>
+</div>
+<div>
+<meter max="476835.84" value="71680"  title="GiB"></meter>
+</div>
+<output id="out"></output>
+<div>
+<meter max="1" value="1" title="MiB">koko</meter>
+</div>
+<div>
+<meter max="1" value="1" title="MiB">koko</meter>
+</div>
+<div>
+<meter max="1" value="1" title="MiB">koko</meter>
+</div>
+<div>
+<meter max="1" value="1" title="MiB">koko</meter>
+</div>
+<div>
+<div class="met" max="1" value="1" title="MiB">koko</div>
+</div>
+<output id="bout"></output>
+<script>
+var mb=1024*1024;
+var gb=1024*1024*1024;
+var mibtogib=(400*(mb/gb));
+var gibtomib=465.66*(gb/mb);
+var de=70*(gb/mb);
+out.textContent=mibtogib+' : '+gibtomib+' >> used: '+de+' mB';
+//total fs 476835.84 mib used 71680 mib
+//alert(40960/57344)//0.71
+//alert(8192/57344)//0.14
+//alert(16384/57344)//0.29
+//alert(0.71+0.14+0.29)//1.14
+
+var saka=document.querySelector('div.met');
+var bas='';
+var ab=[20,30,25,25];
+var colors=["green","red","pink","blue"];
+ab.reduce(function(prev,elem,i,ar){
+var mn=prev+elem;
+bas+=`, ${colors[i]} ${mn-ab[i]}%, ${colors[i]} ${mn}%`;
+bout.textContent+=mn+' : ';
+return mn;
+},0);
+saka.style.backgroundSize="100% 100%";
+saka.style.backgroundImage='linear-gradient(90deg'+bas+')';
+bout.textContent+=bas;
+/*
+90deg,
+red 14.29%,
+green 14.29%,
+green 28.58%,
+yellow 28.58%
+*/
+</script>
+<style>
+.me{background: red;
+background-size: 100% 100%;
+background-image:-ms-linear-gradient(left,blue 0%, blue 20%,yellow 20%, yellow 30%, red 30%, red 60%, brown 60%,brown 100%);
+}
+</style><br><br>
+<div class="me">kuku</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

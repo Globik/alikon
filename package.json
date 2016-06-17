@@ -4,8 +4,8 @@
   "description": "A sample Node.js app using koa",
   "main": "index.js",
   "scripts": {
-    "start2": "supervisor --harmony --harmony_destructuring --harmony_rest_parameters  --harmony_default_parameters --harmony_proxies --harmony_object -w views index","start"
- :"node --harmony --harmony_destructuring --harmony_rest_parameters --harmony_default_parameters --harmony_proxies --harmony_object index" },
+    "start2": "supervisor --harmony -w views index","start"
+ :"node index" },
   
 
 "dependencies": {
@@ -40,7 +40,7 @@
     
 "koa-request": "^1.0.0",
     
-"koa-router": "5.1.2",
+"koa-router": "5.2.3",
     
 "koa-static": "1.4.9",
     
@@ -61,15 +61,16 @@
  "reloadjs":"0.0.2",
 "scmp":"1.0.0",  
  "sendgrid": "1.6.0"
-  },
+ ,
+"diskspace":"1.0.3" },
   
 "engines": {
-    "node": "5.0.0"
+    "node": "6.1.0"
   },
   
 "repository": {
     "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
+    "url": "https://github.com/globi/alikon"
   },
   "keywords": [
     "node",
