@@ -1,0 +1,81 @@
+{
+  "name": "koa-js-getting-started",
+  "version": "0.1.2",
+  "description": "A sample Node.js app using koa",
+  "main": "index.js",
+  "scripts": {
+    "start2": "supervisor --harmony -w views index","start"
+ :"node index" },
+  
+
+"dependencies": {
+   
+ "agenda": "0.7.2",
+    
+"co": "4.6.0",
+    
+"co-body": "1.1.0",
+    
+"co-busboy": "1.3.0",
+    
+"co-fs": "1.2.0",
+    
+"co-fs-plus": "0.3.1",
+    
+"co-wait": "0.0.0",
+    
+"koa": "^1.0.0",
+   
+ "koa-body": "1.3.0",
+      
+ "koa-flash": "0.1.0",
+    
+"koa-generic-session": "1.10.0",
+    
+"koa-generic-session-mongo": "0.2.3",
+    
+"koa-logger": "1.2.2",
+    
+"koa-passport": "^1.2.0",
+    
+"koa-request": "^1.0.0",
+    
+"koa-router": "5.2.3",
+    
+"koa-static": "1.4.9",
+    
+"koa-ws": "1.0.1",
+    
+"limax": "1.1.3",
+   
+ "lowdb": "^0.10.2",
+   
+ "moment": "2.10.2",
+ 
+
+"mongodb":"2.0.42",    
+"passport-facebook": "^2.0.0",
+    
+"passport-local": "1.0.0",
+
+ "reloadjs":"0.0.2",
+"scmp":"1.0.0",  
+ "sendgrid": "1.6.0"
+ ,
+"diskspace":"1.0.3" },
+  
+"engines": {
+    "node": "6.1.0"
+  },
+  
+"repository": {
+    "type": "git",
+    "url": "https://github.com/globi/alikon"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "koa"
+  ],
+  "license": "MIT"
+}
