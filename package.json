@@ -3,12 +3,12 @@
   "version": "0.1.2",
   "description": "A sample Node.js app using koa",
   "main": "index.js",
-  "scripts": {
-    "start2": "supervisor --harmony -w views index","start"
- :"node index2" },
+  "scripts": {"start":"node index3" },
   
 
-"dependencies": {},
+"dependencies": {
+"koa":"1.2.4"
+},
   
 "engines": {
     "node": "7.2.1"
