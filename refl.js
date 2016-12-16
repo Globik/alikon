@@ -1,3 +1,4 @@
+// hello from linux os!
 'use strict';
 //System.import  from './views/page.js';
 var path=require('path');
