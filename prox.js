@@ -1,3 +1,4 @@
+//he
 'use strict';
 var Proxy=require('harmony-proxy');
 var Reflect=require('harmony-reflect');
