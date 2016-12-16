@@ -6,6 +6,6 @@ res.statusCode=200;
 res.setHeader('Content-Type','text/plain');
 res.end('Hello World\n');
 });
-server.listen(port,hostname,()=>{
-console.log('Server running at ',hostname,port);
+server.listen(port/*,hostname*/,()=>{
+console.log('Server running at ',process.env.PORT || port);
 });
