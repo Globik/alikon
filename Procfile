@@ -1,1 +1,1 @@
-web: node index3.js
+web: node ind3.js

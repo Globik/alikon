@@ -2,16 +2,17 @@
   "name": "koa-js-getting-started",
   "version": "0.1.2",
   "description": "A sample Node.js app using koa",
-  "main": "index.js",
-  "scripts": {"start":"node index3" },
+  "main": "ind3.js",
+  "scripts": {"start":"node ind3" },
   
 
 "dependencies": {
-"koa":"1.2.4"
+"koa":"1.2.4",
+"pg":"6.1.2"
 },
   
 "engines": {
-    "node": "7.2.1"
+    "node": "7.2.1","npm":"3.10.10"
   },
   
 "repository": {

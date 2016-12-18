@@ -3,5 +3,5 @@ node_modules
 !.gitkeep
 
 npm-debug
-
+.env
 GET
