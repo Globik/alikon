@@ -1,6 +1,6 @@
 //articles_block.js
 'use strict';
-var moment=require('moment');  
+//var moment=require('moment');  
 var zagl=true;
 var metatagsector=true;  
 var articles_block=n=>`${n.posts ? getArt(n) : ``}${zagl ? getZaglushkaPost(n) : ``}`;

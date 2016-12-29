@@ -7,8 +7,10 @@ var reload=require('reloadjs');
 var mama;
 fs.readdirSync('./views').forEach(filename=> {
 if(config.deva){	
+//console.log('MAMA IS DA');
  mama=reload(path.resolve(`views/${filename}`));}
 else{
+//console.log('NOT HOT RELOAD>JS');
 	mama=require(path.resolve(`views/${filename}`))}
 	//console.log('filename: ',filename);
 	//console.log('mama: ',mama.head);

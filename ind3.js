@@ -2,14 +2,6 @@
 var Pool=require('pg-pool');
 var url=require('url');
 var koa=require('koa');
-var app=koa();
-var port=process.env.PORT || 5000;
-
-//var database_url='postgres://qqrmvxoiwrogtz:827e8b@ec2-54.compute-1.amazonaws.com:5432/ddhjhroi69bm6i';
-var database_url=process.env.DATABASE_URL;
-//var database_url='postgres://qqrmvxoiwrogtz:827ac1c006e9dee0dcd6c172a9c8277e8bf0cc8756b19f079ff56ef873c903c9@ec2-54-163-233-89.compute-1.amazonaws.com:5432/ddhjhroi69bm6i'
-//host "217.118.83.202", user "host "217.118.83.202", user "qqrmvxoiwrogtz", database "ddhjhroi69bm6i", SSL off", database "ddhjhroi69bm6i", SSL off
-//console.log('DATABASE_URL: ', process.env.DATABASE_URL);
 //var database_url='postgres://globik:null@localhost:5432/postgres';
 
 var pars=url.parse(database_url);
@@ -26,7 +18,15 @@ host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
 ssl:true
-};
+};var app=koa();
+var port=process.env.PORT || 5000;
+
+//var database_url='postgres://qqrmvxoiwrogtz:827e8b@ec2-54.compute-1.amazonaws.com:5432/ddhjhroi69bm6i';
+var database_url=process.env.DATABASE_URL;
+//var database_url='postgres://qqrmvxoiwrogtz:827ac1c006e9dee0dcd6c172a9c8277e8bf0cc8756b19f079ff56ef873c903c9@ec2-54-163-233-89.compute-1.amazonaws.com:5432/ddhjhroi69bm6i'
+//host "217.118.83.202", user "host "217.118.83.202", user "qqrmvxoiwrogtz", database "ddhjhroi69bm6i", SSL off", database "ddhjhroi69bm6i", SSL off
+//console.log('DATABASE_URL: ', process.env.DATABASE_URL);
+
 var pconfig3={
 user: "qqrmvxoiwrogtz",
 host: "217.118.83.202",

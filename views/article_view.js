@@ -7,7 +7,7 @@ var admin_main_menu=require('./admin_main_menu.js');
 //var articles_block=require('./articles_block.js');
 //var paginator=rel('./paginator.js');
 var footer=require('./footer.js');
-const moment=require('moment');
+//const moment=require('moment');
 var linki="/css/main2.css";
 
 let article_view= n=>{
@@ -54,7 +54,7 @@ category="category",_id,rubrik="rubrik",status="1",part="1",gesamt_seen,fucker='
 //var gab=moment(as).format('YYYY-MM-DD');  
 return `<article class="post">     
 <h1 class="post-title">${title}</h1>
-<p><small>${moment(last_modified).format('MMM D, YYYY')}  by ${author}</small></p>
+<p><small>{moment(last_modified).format('MMM D, YYYY')}  by ${author}</small></p>
 <p><i>${leader}</i></p>
 <p>${body}</p>
 ${n.post && n.post.images ? sumatorFoto(n):''} 
