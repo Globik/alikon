@@ -31,15 +31,15 @@ done(null,luser.rows[0]);
 });
 
 
-passport.use(new LocalStrategy({},(username, password, done) =>{
+passport.use(new LocalStrategy({usernameField:'email',passwordField:'password'},(email, password, done) =>{
 	console.log('PASSWORD: ', password);
 process.nextTick( ()=> {
-	console.log('USERNAME: ',username);
-db.query(`select*from busers where name='${username}' and pwd=crypt('${password}',pwd)`, function(err, user) {
+	console.log('USERNAME: ', email);
+db.query(`select*from busers where email='${email}' and pwd=crypt('${password}',pwd)`,(err, user)=>{
 if (err) { console.log('ERROR: ',err);
 		  return done(err); }
 if (!user.rows[0]) { 
-return done(null, false, { message: 'wrong user or pwd ' + username }); 
+return done(null, false, { message: 'wrong user or pwd ' + email}); 
 }
 /*	
 if (user.rows[0] && user.rows[0].pwd != password) { 

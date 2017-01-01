@@ -17,8 +17,6 @@ var pubrouter=require('./routes/pubrouter2.js');
 //var adminrouter=require('./routes/admin2.js');
 var configDB=require('./config/database.js');
 
-
-//var database_url=process.env.DATABASE_URL || configDB.pg_local_url;
 var {script}=require('./libs/filter_script');
 var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
@@ -28,7 +26,6 @@ var locals={
 var database_url=configDB.pg_url;//'postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
-console.log('SSL :',configDB.ssl);
 var pars=url.parse(database_url);
 var cauth=pars.auth.split(':');
 console.log('user auth[0] ', cauth[0]);
@@ -42,7 +39,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl:true};
+ssl:false};
 var app=koa();
 var pool=module.exports=new Pool(pconfig);
 
@@ -91,8 +88,8 @@ app.use(pubrouter.routes());
 app.use(function*(){
 //this.message=this.session.err;
 	//console.log('this session.err: ',this.session.err);
-//this.status=404;//??
-this.redirect('/');
+this.status=404;//??
+//this.redirect('/');
 
 });
 

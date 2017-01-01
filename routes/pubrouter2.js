@@ -10,8 +10,6 @@ var pub=new Router();
 const limit=10;
 pub.get('/',function *(){
 this.session.dorthin=this.path;
-//var buser=(this.req.user ? this.req.user.rows[0] : '');
-	console.log('this.req.user-2: ', this.req.user);
 this.body=this.render('haupt_page',{buser:this.req.user});
 });
 
@@ -22,28 +20,15 @@ this.session.messaga=null;
 });
 
 pub.post('/login', function*(next) {
-var ctx = this;
-yield* passport.authenticate('local',function*(err, user,info) {
-if (err) throw err;
-if (!user) {
-	//console.log("THIS: ",ctx);
+var ctx = this;yield* passport.authenticate('local',function*(err, user,info) {if (err) throw err;
+if (!user) {ctx.session.messaga=[info.message];
+	ctx.redirect('/login');} else {yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)});
 
-	ctx.session.messaga=[info.message];
-	//"AAAAAAAAA";
- ctx.status =401;
-ctx.redirect('/login');
- } 
-else {
-  yield ctx.login(user); 
-  console.log('you are from: ', ctx.session.dorthin);
-ctx.redirect(ctx.session.dorthin || '/');
-    }
-  }).call(this, next)
-});
 
+//pub.post('/login',passport.authenticate('local',{successRedirect:'/',failureRedirect:'/'}));
 pub.get('/logout', function*() {this.logout();this.redirect('/');});
 
-//var articles_page=rel('../views/articles_page');
+
 pub.get('/articles', pagination, function *(){
 let {dob,locals}=this, docs=dob.collection('posts');
 try{
@@ -108,27 +93,7 @@ try{
 	this.body={post};});
 	
 pub.get('/labs',function *(){
-	this.type="html";
-	var str=`<a href="/labs/2001-02-29">2001-02-29</a><br>
-	<a href="/labs/2004-12-34">2004-12-34</a><br>
-	<a href="/labs/2016-09-25">2016-09-25</a><br>
-	<a href="/labs/2016-18-03">2016-10-10</a><br>
-	<a href="/labs/1999+01-01">1999+01-01</a><br>`;
-	this.body=str;
-	});
-	pub.get('/labs/:b',function *(){
-		var g=/^(19|20)\d\d[-/.](0[1-9]|1[012])[-/.](0[1-9]|[12][0-9]|3[01])$/.test(this.params.b);
-		console.log('g :',g);
-		//this.body={param:this.params.b,test:g}
-		var w=new Date(parseInt('2015-07-11'.substring(0,8),16)*1000).toString(16);
-		var d=Math.floor((new Date('2015-07-11'))/1000).toString(16)+"0000000000000000";
-		//var d3=Math.floor((new Date('2015-07-11')-1000*60*60*24).getTime()/1000).toString(16)+"0000000000000000";
-		var db=this.dob,bid=this.bid;var docs=db.collection('posts');
-		//try{var p=yield post.findOne({_id:{$lte:bid(d2)/*,$lt:bid(d2)*/}});}catch(e){console.log(e)}
-var cursor=docs.find({},{body:0}).limit(5);
-	try{var abba=yield readStr2(cursor);}
-	catch(e){console.log('e in db stream :',e);var err=e;}
-		this.body={post:abba,d:d,error:err};
+	this.body='str';
 	});
 	
 	function readStr(n){

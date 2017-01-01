@@ -1,14 +1,14 @@
 //header_menu.js
 var sign_up=false;
 var header_menu=n=>{
-	
 	return `<!-- header_menu.js -->
 	<!-- <ul id="menu"> 
 	<li><a href="/">home</a>
     <li><a href="/articles">articles</a>
     <li><a href="/labs">labs</a>
     </ul> -->
-${getMenu(n)}
+${getMenu(n)} 
+<label style="position:absolute;right:3.2em;top:0.1em;background:yellow;">log in or sign up</label>
 <label id="lb-menu-all" class="lb-menu-all" onclick="dowas1();">
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>
@@ -82,3 +82,18 @@ su+=`${(buser ? `<li><div class="znak-svg">pic</div><a href="${profilerpath}">${
 ${(buser ? `<li><div class="znak-svg">pic</div><a href="${logoutpath}" id="login_pop">${logoutname}</a>`:`<li><div class="znak-svg">pic</div><a href="${loginpath}">${loginname}</a></li>`)}
 ${(signupshow ? `<li><div class="znak-svg">pic</div><a href="#join_form" id="join_pop">${signupname}</a>` :`` )}`;
 	su+="</ul>";return su;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

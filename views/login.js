@@ -15,7 +15,7 @@ ${(n.message && n.message.length > 0 ? `<span id="red-warnig">${n.message}</span
 <h2>ki</h2>
 <form action="/login" method="post">
 <div class="group">
-<input type="text" name="username"  placeholder="Username" value="${dev_user ? dev_user : 'fuck'}" required />
+<input type="email" name="email"  placeholder="E-mail" value="${dev_email ? dev_email : ''}" required />
 <input type="password" name="password"  placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required />
 </div>
 <button>Sign In</button>
@@ -23,6 +23,7 @@ ${(n.message && n.message.length > 0 ? `<span id="red-warnig">${n.message}</span
 <!-- Already a member? Login -->
 </form>
 </div>
+
 </main></body></html>`;}
 module.exports={login};
 function getCssLink(){return `/css/login.css`;}

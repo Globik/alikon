@@ -7,6 +7,7 @@ font-size:18px;font-size:1.6rem;
 line-height: 1.625;
 /*-webkit-font-smoothing:antialised;*/
 margin:0;padding:0;font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;}
+.orange{background:orange;} .green{background:green;}
 a {color: #026acb;text-decoration: none;outline: none;}
 a:hover {text-decoration: underline;}
 p {margin: 0 0 1.2rem;padding: 0;}
@@ -108,9 +109,9 @@ background: rgba(174,198,207,0);cursor: pointer;position: absolute;z-index: 5;
 top:0.3em;right:0.9em;
 	padding-right:0.2em;padding-left:0.25em;margin:0;transition:all 0.1s;
 	border-radius:4px;}
-nav .lb-menu-all:hover,nav .lb-menu-all.active{border:1px solid black;border-radius:4px;
-box-shadow:0 0.02em 1px 1px rgba(0,0,0,0.9);}
-nav .lb-menu-all.active{box-shadow:0 1px 1px 1px rgba(100,0,0,0.7) inset;}
+/*nav .lb-menu-all:hover,nav .lb-menu-all.active{border:1px solid black;border-radius:4px;
+box-shadow:0 10.02em 1px 1px rgba(0,0,0,0.9);}*/
+/*nav .lb-menu-all.active{box-shadow:0 1px 1px 1px rgba(100,0,0,0.7) inset;} */
 /*nav .lb-menu-all.active{background:gray;}*/
 
 label *{transition:all 0.3s;-webkit-transition:all 0.3s;}
