@@ -13,8 +13,8 @@
 "logoutname":"log out",
 "logoutpath":"/logout",
 "signupname":"sign up",
-"signuppath":"/sign up",
-"signupshow":false},
+"signuppath":"/signup",
+"signupshow":true},
 "showmodule":true,
 "css_admin":{"was":"css","href":"/css/admin-main.css","type":"main","extra":
 [{"href":"/css/admin-dashboard-mongo.css","type":"admin_dashboard_mongodb"},

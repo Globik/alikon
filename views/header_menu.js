@@ -79,9 +79,19 @@ function getProfileMenu(n){
 	su+=`<ul id="miniMenu" class="">`;
 for(var {name,path} of mainmenu){su+=`<li><div class="znak-svg">pic</div><a href="${path}">${name}</a>`;}
 su+=`${(buser ? `<li><div class="znak-svg">pic</div><a href="${profilerpath}">${profilername}</a>`:``)}
-${(buser ? `<li><div class="znak-svg">pic</div><a href="${logoutpath}" id="login_pop">${logoutname}</a>`:`<li><div class="znak-svg">pic</div><a href="${loginpath}">${loginname}</a></li>`)}
-${(signupshow ? `<li><div class="znak-svg">pic</div><a href="#join_form" id="join_pop">${signupname}</a>` :`` )}`;
+${buser ? `<li><div class="znak-svg">pic</div><a href="${logoutpath}" id="login_pop">${logoutname}</a>`:`<li><div class="znak-svg">pic</div><a href="${loginpath}">${loginname}</a></li>`}
+${signupshow ? `${fuckme(n)}`:''}`;
 	su+="</ul>";return su;}
+
+function fuckme(n){
+	let s=``;
+	console.log('BUSERRRRRR: ',n.buser);
+	if(n.buser){s+=``;}else{
+s+=`<li><div class="znak-svg">pic</div>
+<a href="/signup">sign up</a>`;
+	}
+	return s;
+}
 
 
 
