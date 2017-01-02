@@ -19,12 +19,32 @@ var m=this.session.messaga;
 this.session.messaga=null;
 });
 
+pub.get('/signup',function *(){
+	if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
+var m=this.session.messaga;
+	console.log('isRequest is Authenticated?: => ',this.req.isAuthenticated());
+	this.body=this.render('signup',{message:'signing up: '+m});
+this.session.messaga=null;
+});
 pub.post('/login', function*(next) {
 var ctx = this;yield* passport.authenticate('local',function*(err, user,info) {if (err) throw err;
 if (!user) {ctx.session.messaga=[info.message];
-	ctx.redirect('/login');} else {yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)});
+	ctx.redirect('/login');} else {yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)}
+		);
 
-
+pub.post('/signup', function*(next){
+var ctx = this;yield* passport.authenticate('local-signup',function*(err, user,info) {
+	if (err) throw err;
+if (!user) {ctx.session.messaga=[info.message];
+	//ctx.redirect('/signup');
+			ctx.body={"message":ctx.session.messaga};
+		   } 
+	else {yield ctx.login(user);
+//ctx.redirect(ctx.session.dorthin || '/');
+	ctx.body={"message":"success. Email verification needed"};	 
+		 }}).call(this, next)}
+		
+		)
 //pub.post('/login',passport.authenticate('local',{successRedirect:'/',failureRedirect:'/'}));
 pub.get('/logout', function*() {this.logout();this.redirect('/');});
 

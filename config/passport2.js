@@ -1,6 +1,4 @@
-﻿//var crypto=require('crypto');
-//var  scmp=require('scmp');
-//var configDB=require('./database.js');
+﻿
 var LocalStrategy = require('passport-local').Strategy;
 
 module.exports=function(db,passport){
@@ -55,36 +53,33 @@ if (user.rows[0] && user.rows[0].pwd != password) {
 
 //node index
 passport.use('local-signup',new LocalStrategy({
-	/***usernameField:'email',***/
-	
-passReqToCallback:true},
-function(req,username,password,done){
+usernameField:'email',passReqToCallback:true},
+function(req,email,password,done){
+	console.log('!!! SIGN UP !!!! : ', email,password);
 process.nextTick(function(){
 	
-db.query(`select ${req.body.email} from users`,function(err,user){
-	console.log('UUUSERNAME: ',user);
+db.query(`select email from busers where email='${req.body.email}'`,function(err,user){
+	console.log('UUUSERNAME: ',user.rows[0]);
 if (err) return done(err);
-if(user){
+if(user.rows[0]){
 	//if(user.email == req.body.email){return done(null,false,{message:'fuck'})}
 	console.log('is taken');
-	console.log('user',user.email);//null
+	console.log('user',user.rows[0].email);//null
 	console.log('req in db section', req.body.email);//email
-	console.log('username :',username);//email
-
+	console.log('username :',email);//email
 return done(null,false,{message:"Уже есть пользователь с таким имэйлом"});
 }
  
  
 else{
-console.log('password in passport',password);
-//console.log('email',email);
-console.log('user in passp',username)//by email
-console.log('req : '+req.body.email)
-db.query(`insert into users(username,email,pwd) values(${req.body.username},${req.body.email},${password}`,
+console.log('pwd in pwd: ',password);
+console.log('user in passp',email)//by email
+console.log('req : '+req.body)
+db.query(`insert into busers(email,pwd,name) values('${req.body.email}',crypt('${req.body.password}',gen_salt('bf',8)),'${req.body.username}')`,
 		 function(err,user){
 	if(err) return done(err);
 	console.log('new user',user);
-return done(null,user,{message:'ОК - вносим в базу данных'});
+return done(null,user.rows[0],{message:'ОК - вносим в базу данных'});
 }) 
 }
 })

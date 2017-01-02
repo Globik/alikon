@@ -18,7 +18,7 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 <main id="pagewrap"> 
 
 	${(buser ? buser.name : "Guest<br>")}
-	${(buser ? `<a href="/logout">logout</a>` :`<a href="/login">login</a>`)}
+	${(buser ? `<a href="/logout">logout</a>` :`<a href="/login">login</a>`)} | <a href="/signup">sign up</a>
 
 <div>Some div with user's personals fades ${douser(buser)}</div>
 <output id="out4"></output>
