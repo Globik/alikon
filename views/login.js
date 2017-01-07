@@ -19,8 +19,8 @@ ${(n.message && n.message.length > 0 ? `<span id="red-warnig">${n.message}</span
 <input type="password" name="password"  placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required />
 </div>
 <button>Sign In</button>
-<p>No account yet? <a href="">Create one</a></p>
-<!-- Already a member? Login -->
+<p>No account yet? <a href="/signup">Create one</a></p>
+<p>Forgot a password? <a href="/forgot">reset password</a></p>
 </form>
 </div>
 

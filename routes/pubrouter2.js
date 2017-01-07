@@ -47,7 +47,40 @@ if (!user) {ctx.session.messaga=[info.message];
 		)
 //pub.post('/login',passport.authenticate('local',{successRedirect:'/',failureRedirect:'/'}));
 pub.get('/logout', function*() {this.logout();this.redirect('/');});
+pub.get('/forgot', function*(){
 
+this.body=this.render('forgot',{});	
+
+});
+pub.post('/forgot',function*(){
+	let db=this.db;
+	//cosnole.log('db: ',db);
+	//fordert LISTEN reset
+	//notif-antwort:{email,token,toke_type='reset'}
+	var error=null;
+	try{
+var mid=yield db.query(`select request_password_reset('${this.request.body.email}')`);
+console.log('this.request.body: ',this.request.body);
+	}catch(er){console.log('err: ',er);error=er;}
+this.body={"message":"","body":this.request.body,
+"info":"An e-mail has been sent to a@y.ru with further instructions","error":error};
+});
+
+pub.get('/reset/:token',function*(){
+	console.log('this.params.token: ',this.params.token);
+this.body=this.render('reset',{"reset-token":this.params.token});
+});
+
+pub.post('/reset/:token',function*(token){
+	let db=this.db;
+	let error=null;
+	try{
+//select reset_password(email,token,pwd)
+yield db.query(`select reset_password('${this.request.body.email}','${this.request.body.token}','${this.request.body.password}')`);
+	}catch(e){console.log('err: ', e);error=e;}
+		 console.log('token: ',token);
+		 this.body={"message":"Your password has been changed!","body":this.request.body,"error":error};
+		 });
 
 pub.get('/articles', pagination, function *(){
 let {dob,locals}=this, docs=dob.collection('posts');

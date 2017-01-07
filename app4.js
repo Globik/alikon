@@ -6,7 +6,8 @@ var url=require('url');
 var Pool=require('pg-pool');
 var serve=require('koa-static');
 //var flash=require('koa-flash');
-
+//r PS=require('pg-pubsub');
+var PS=require('./libs/pg-subpub.js');
 var bodyParser=require('koa-body');
 var session=require('koa-generic-session');
 //var PgStore=require('koa-pg-session');
@@ -69,6 +70,7 @@ yield next;});
 var mobject={};
 app.use(function*(next){
 this.state.filter_script=script;
+	this.db=pool;
 var sa;
 if(lasha){sa=yield locals.showmodule();
 sa=JSON.parse(sa);
@@ -107,3 +109,9 @@ console.log('soll on 5000');
 pool.on('connect',client=>console.log('pool connected'));
 pool.on('error',(err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
+pool.on('reset',function(msg){console.log('msg: ',msg);});
+pool.on('notification',n=>{console.log('notification in pooling mechanism: ',n);});
+var ps=new PS(database_url);
+ps.addChannel('reset',function(msg2){console.log('msg2: ',msg2);});
+
+pool.query('LISTEN reset');
