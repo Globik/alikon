@@ -3,7 +3,6 @@
 'use strict';
 
 var pgFormat = require('pg-format');
-
 var EventEmitter = require('events').EventEmitter;
 var Retry = require('promised-retry');
 var util = require('util');
