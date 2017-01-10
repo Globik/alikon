@@ -23,8 +23,8 @@ var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
 	return mn;}catch(e){console.log(e);}}
 };
-//var database_url=configDB.pg_local_heroku_url;
-var database_url=configDB.pg_url;//'postgres://globik:null@localhost:5432/postgres';
+ var database_url=configDB.pg_local_heroku_url;
+//var database_url=configDB.pg_url;//'postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
 var pars=url.parse(database_url);
@@ -40,7 +40,17 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl:false};
+ssl:true};
+var api_key, domain=null;
+if(process.env.DEVELOPMENT=="yes"){
+api_key=process.env.TMAILGUNAPIKEY;
+console.log('mailgun api key: ', api_key);
+
+domain=process.env.TMAILGUN_DOMAIN;
+console.log('mailgun domain: ', domain);
+}
+var mailgun=require('mailgun-js')({apiKey: api_key, domain:domain});
+
 var app=koa();
 var pool=module.exports=new Pool(pconfig);
 
@@ -109,9 +119,29 @@ console.log('soll on 5000');
 pool.on('connect',client=>console.log('pool connected'));
 pool.on('error',(err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
-pool.on('reset',function(msg){console.log('msg: ',msg);});
-pool.on('notification',n=>{console.log('notification in pooling mechanism: ',n);});
-var ps=new PS(database_url);
-ps.addChannel('reset',function(msg2){console.log('msg2: ',msg2);});
+
+
+var ps=new PS(database_url+'?ssl=true');
+ps.addChannel('reset',function(msg){
+	console.log('msg2: ',msg);
+var mgdata={
+from: 'Excited users <me@samples.mailgun.org>',
+to:msg.email,
+subject:'Password '+msg.token_type,
+text:`You are receiving this because you (or someone else) have requested the reset of 
+the password for your account. 
+Please click on the following link, or paste this into your browser to complete the process:
+http://localhost:5000/reset/${msg.token}
+<a href="alikon.herokuapp.com/reset/${msg.token}">https://alikon.herokuapp.com/reset/${msg.token}
+If you did not request this, please ignore this email and your password will remain unchanged.`
+};
+
+mailgun.messages().send(mgdata, function(error, body){
+if(error) console.log('error: ',error);
+console.log('Body: ', body);
+});
+
+
+});
 
 pool.query('LISTEN reset');

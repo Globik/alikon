@@ -12,6 +12,7 @@ return `<!DOCTYPE html><html lang="en">
 <a href="/">home</a>
 <span id="span-result"></span>
 <span id="prBar"></span>
+<span id="count"></span>
 <h1>forgot password</h1>
 <h3>Enter Your Email</h3>
 <form id="forgot-form" action="/forgot" method="post">
@@ -22,6 +23,8 @@ return `<!DOCTYPE html><html lang="en">
 <script>
 var spResult=document.getElementById("span-result");
 var prBar=document.getElementById("prBar");
+var count=document.getElementById("count");
+var fcount=0;
 
 var signup_form=document.getElementById('forgot-form');
 signup_form.onsubmit=function(eva){
@@ -40,6 +43,8 @@ xhr.open("post","/forgot");
 xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 xhr.onload=function(evi){
 if(xhr.status==200){
+fcount+=1;
+count.textContent=fcount;
 //alert('from onsubmit: '+this.response+' : '+spResult);
 prBar.innerHTML='';
 spResult.textContent=this.response;
@@ -59,7 +64,7 @@ xhr.onerror=function(e){alert(e);}
 xhr.send(pars);
 eva.preventDefault();
 }
-
+if(fcount > 5) signup_form.onsubmit=null;
 </script>
 </body></html>`;
 }

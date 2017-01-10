@@ -1,0 +1,24 @@
+curl -s --user 'api:key-ccc5240f6321d65a0851accd7b2f4d98'  -G https://api.mailgun.net/v3/sandboxad7b6f5bd4044d34a8c0df473092b78c.mailgun.org
+curl -s --user 'api:key-ccc5240f6321d65a0851accd7b2f4d98'  -G https://api.mailgun.net/v3/sandboxad7b6f5bd4044d34a8c0df473092b78c.mailgun.org/stats/total  -d event='delivered'
+
+curl -s --user api:key-ccc5240f6321d65a0851accd7b2f4d98  -G https://api.mailgun.net/v3/sandboxad7b6f5bd4044d34a8c0df473092b78c.mailgun.org/messages  \
+-F from='delivered <ag2@rambler.ru>' -F to='gru5@yandex.ru' -F subject='hello' -F text='testing mode'
+
+curl -s --user api:$TMAILGUNAPIKEY  -G https://api.mailgun.net/v3/$TMAILGUN_DOMAIN/messages  \
+-F from='delivered <ag2@rambler.ru>' -F to='gru5@yandex.ru' -F subject='hello helihelo' -F text='testing mode'
+
+
+curl -s --user api:$TMAILGUNAPIKEY  -G https://api.mailgun.net/v3/$TMAILGUN_DOMAIN/stats/total -d event='delivered' 
+
+****************
+
+
+curl -s --user 'api:key-4a36b59263e3b48b86d3979bf0d2a12f'  -G https://api.mailgun.net/v3/appb17d1ae4924645aab6a69471af346072.mailgun.org/stats/total  -d event='delivered'
+
+curl -s --user 'api:key-4a36b59263e3b48b86d3979bf0d2a12f'  -G https://api.mailgun.net/v3/appb17d1ae4924645aab6a69471af346072.mailgun.org/messages \
+-F from='delivered <petrov.ag412@yandex.ru>' -F to='gru5@yandex.ru' -F subject='hello' -F text='testing mode'
+
+
+
+
+
