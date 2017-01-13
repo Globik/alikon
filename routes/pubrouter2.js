@@ -71,15 +71,17 @@ pub.get('/reset/:token',function*(){
 this.body=this.render('reset',{"reset-token":this.params.token});
 });
 
-pub.post('/reset/:token',function*(token){
+pub.post('/reset/:token', function*(token){
 	let db=this.db;
-	let error=null;
+
 	try{
 //select reset_password(email,token,pwd)
 yield db.query(`select reset_password('${this.request.body.email}','${this.request.body.token}','${this.request.body.password}')`);
-	}catch(e){console.log('err: ', e);error=e;}
-		 console.log('token: ',token);
-		 this.body={"message":"Your password has been changed!","body":this.request.body,"error":error};
+	}catch(e){console.log('ERRRORRR IN RESETING!!!!!!!!!!!!!!!!!!!: ', e.message);
+			 this.throw(404, e.message);
+			 }
+		 console.log('token: ', token);
+		 this.body={"message":"Your password has been changed! Now may go <a href='/'>home</a>"};
 		 });
 
 pub.get('/articles', pagination, function *(){

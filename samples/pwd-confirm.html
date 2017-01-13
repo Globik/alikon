@@ -1,0 +1,163 @@
+<!DOCTYPE html><html>
+<head><title>Confirm password</title>
+	
+	<style>
+		html{font-size:100%;font-family: "Arial Black", sans-serif;}
+		html,body{margin:0;padding:0;line-height:1.8;}
+		p{line-height:2.8;}
+		h2{margin:1rem;}
+		.green{background:green;} .red{background:red;} 
+		.lightgreen{background:lightgreen;}
+		.blue{color: blue} 
+		form{width:30%;
+			
+			margin:2rem auto;border:0.3rem solid silver;}
+		input[type=password],input[type=email]{
+			width:100%;
+		padding:1rem 0.2rem;
+			margin: 0.1rem 0;
+			display:inline-block;
+			border: 0.1rem solid #ccc;
+			box-sizing:border-box;
+		}
+		#outresult{display:none;text-align: center;background: lightblue;width:30%;margin:1rem auto;min-height:300px;}
+		
+		#loader{
+			position: absolute;
+			display: none;
+			left: 50%;
+			top: 50%;
+			z-index: 1;
+			width: 150px;
+			height:150px;
+			margin:-75px 0 0 -75px;
+			border:16px solid #f3f3f3;
+			border-radius:50%;
+			border-top:16px solid #3498db;
+			animation: spin 2s linear infinite;
+		}
+		@keyframes spin{
+			0% {transform: rotate(0deg);}
+			100%{transform: rotate(360deg);}
+		}
+		.animate-bottom{
+			position: relative;
+			animation-name: animatebottom;
+			animation-duration: 1s;
+		}
+		@keyframes animatebottom{
+			from{bottom:-10rem;opacity:0;}
+			to{bottom:0;opacity:1}
+		}
+		.container{padding-left:0.8rem;padding-right:0.8rem;background:yellow;}
+		.imgcontainer{text-align:center;margin:1rem 0 1rem 0;}
+		button{
+			background-color: #4caf50;
+			color:white;
+			padding:1rem 0;
+			margin: 0.2rem 0;
+			border:none;
+			cursor:pointer;
+			width:100%;
+			font-size:1.1rem;
+			letter-spacing:0.1rem;
+		}
+			
+	</style>
+</head><body>
+	<h2>Reset Password</h2>
+	<div id="loader"></div>
+	
+<form id="mform" method="post" action="/">
+	<div class="imgcontainer">img</div>
+	<div class="container">
+		<label>Email</label>
+	<input type="email" name="email" value="a@ya.ru" placeholder="email@example.com" requirerd>
+		<label><b>Password</b></label>
+<input type="password" name="password" placeholder="password" value="123456" required autofocus pattern=".{6,}" maxlength="20">
+		<input type="hidden" name="token" value="345dffggtt4566">
+	<u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
+	<button>save password</button>
+	</div>
+	<div class="imgcontainer">crc</div>
+</form>
+<div id="outresult" class="animate-bottom"><p>jijijijij</p></div>
+
+<script>
+	var smally=gid("smally"),
+	outresult=gid("outresult"),
+	bod=document.getElementsByTagName('body')[0],
+    form=gid("mform"),
+	show_pwd=gid('show_pwd'),
+    pwd=form.password,
+		email=form.email,
+		token=form.token,
+	str_show="show password",
+	str_hide="hide password";
+	
+	smally.onclick = if_show_pwd;
+	smally.ontouchstart = if_show_pwd;
+	pwd.oninput = go_show_pwd;
+	
+    form.onsubmit=function(ev){
+	ev.preventDefault();
+    form.style.opacity="0.2";
+	bod.style.background="rgba(0,0,0,0.3)";
+		loader.style.display="block";
+	//setTimeout(notif,3000);
+		to_ajx();
+	}			 
+function notif(){
+    outresult.style.visibility = "visible";	
+	loader.style.display="none";
+	outresult.style.display="block";
+    tohtml(outresult, '<p class="lightgreen">OK. Password changed! Now go home <a href="/">home</a></p>');
+	//tohtml(prbar, '');
+	removeForm();
+}
+function to_ajx(){
+	alert(pwd.value+' '+email.value+' '+token.value);
+var xhr=new XMLHttpRequest();
+	var pars='password='+encodeURIComponent(pwd.value)+'&token='+encodeURIComponent(token.value)+'&email='+encodeURIComponent(email.value);
+xhr.open("post","/reset/"+token.value);
+xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+xhr.onload=function(evi){
+if(xhr.status==200){
+notify();
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){alert(e);}
+xhr.send(pars);
+}
+	
+function removeForm(){
+    //form.style.visibility="hidden";
+	form.style.display="none";
+	bod.style.background="initial";
+	form.onsubmit=null;
+}
+	function if_show_pwd(e){
+		if(is_equal(smally, str_show)){
+			totext(smally, str_hide);
+			tohtml(show_pwd, ' '+ pwd.value);
+		}else{
+			totext(smally, str_show);
+			totext(show_pwd, "");
+		}
+	}
+	
+	function go_show_pwd(e){
+		if(is_equal(smally, str_hide))
+		show_pwd.textContent=' '+ e.target.value;
+	}
+	
+	function gid(id){return document.getElementById(id);}
+	function tohtml(s, v){return s.innerHTML=v;}
+	function totext(s, v){return s.textContent=v;}
+	function is_equal(d,s){
+	if(d.textContent===s) {return true;}else{return false;}
+	}
+</script>
+
+</body></html>

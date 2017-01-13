@@ -1,6 +1,5 @@
 //login.js
-var head=require('./head'),
-    header_menu=require('./header_menu');
+var head=require('./head');
     var dev_user=process.env.DEV_USER;
 var dev_pwd=process.env.DEV_PWD;
 var dev_email=process.env.DEV_EMAIL;
@@ -8,8 +7,9 @@ var login= n =>{
 	let {buser,showmodule:{mainmenu,profiler}}=n;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",csslink:`${getCssLink()}`,
 csslink2:"/css/main2.css"})}</head>
-<body><nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
+<body>
 <main id="pagewrap" style="backround:pink;">
+<a href="/">home</a>
 ${(n.message && n.message.length > 0 ? `<span id="red-warnig">${n.message}</span>` : ``)}
 <div class="form-box">
 <h2>ki</h2>

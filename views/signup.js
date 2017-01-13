@@ -2,18 +2,20 @@
     var dev_user=process.env.DEV_USER;
 var dev_pwd=process.env.DEV_PWD;
 var dev_email=process.env.DEV_EMAIL;
+var head=require('./head.js');
 var signup = n =>{
-return `<!DOCTYPE html><html lang="en"><head><title>sign up</title></head>
+return `<!DOCTYPE html><html lang="en"><head>
+${head.head({title:"sign up", csslink:`${get_local_style()}`, csslink2:"/css/main2.css"})}
+</head>
 <body>
 <main id="pagewrap" style="backround:pink;">
 ${(n.message && n.message.length > 0 ? `<span id="red-warnig">${n.message}</span>` : ``)}
-<div class="form-box">
-<h2>ki</h2>
+<div class="form-box">k
 <a href="/">home</a>
 <span id="span-result"></span><br>
 <span id="prBar"></span><br>
 
-<form id="signup-form" action="/signup" method="post">
+<form id="form" action="/signup" method="post">
 <div class="group">
 <input type="text" name="username" placeholder="Username" value="" required/> <br>
 <input type="email" name="email"  placeholder="E-mail" value="" required /><br>
@@ -69,5 +71,8 @@ eva.preventDefault();
 
 </script>
 </main></body></html>`;}
+function get_local_style(){
+return `/css/login2.css`;
+}
 module.exports={signup};
 function getCssLink(){return `/css/login.css`;}

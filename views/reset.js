@@ -1,69 +1,118 @@
+var head=require('./head');
 var reset= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Forgot password</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="shortcut icon" type="image/ico" href="/w4.png"> 
-<!-- [if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-<!-- [if lt IE 9]><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
+${head.head({title:"Reset Password", csslink:`${get_local_style()}`, csslink2:"/css/main2.css"})}
+
 </head><body>
-<a href="/">home</a>
-<span id="span-result"></span>
-<span id="prBar"></span>
-<h1>Reset Password</h1><hr>
-<b>Reset token: </b> <span id="reset-token">${n["reset-token"]}</span>
-<form id="reset-form" method="post">
-<h4>Your E-mail</h4>
-<input type="email" name="email" placeholder="E-mail" required>
-<h4>New Password</h4>
-<input type="password" placeholder="New password" required>
-<h4>Confirm Password</h4>
-<input type="password" name="password" placeholder="Confirm password" required><br>
-<input type="text" name="token" value="${n['reset-token']}" placeholder="${n['reset-token']}"><br>
-<button>Update Password</button>
+on <a href="/">home</a> page
+<h2>Reset Password</h2>
+	<div id="loader"></div>
+	
+<form id="mform" method="post" action="/">
+	<div class="imgcontainer">img</div>
+	<div class="container">
+		<label>Email</label>
+	<input type="email" name="email" value="gru5@yandex.ru" placeholder="email@example.com" required>
+		<label>Password</label>
+<input type="password" name="password" placeholder="password" value="bischt" required autofocus pattern=".{6,}" maxlength="20">
+		<input type="hidden" name="token" value="${n['reset-token']}">
+	<u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
+	<button>save password</button>
+	</div>
+	<div class="imgcontainer">crc</div>
 </form>
+<div id="outresult" class="animate-bottom"></div>
+
 <script>
-var spResult=document.getElementById("span-result");
-var prBar=document.getElementById("prBar");
+	var smally=gid("smally"),
+	outresult=gid("outresult"),
+	bod=document.getElementsByTagName('body')[0],
+    form=gid("mform"),
+	show_pwd=gid('show_pwd'),
+    pwd=form.password,
+		email=form.email,
+		token=form.token,
+	str_show="show password",
+	str_hide="hide password";
+	
+	smally.onclick = if_show_pwd;
+	smally.ontouchstart = if_show_pwd;
+	pwd.oninput = go_show_pwd;
+	
+    form.onsubmit=function(ev){
+	ev.preventDefault();
+    form.style.opacity="0.2";
+	bod.style.background="rgba(0,0,0,0.3)";
+		loader.style.display="block";
+	//setTimeout(notif,3000);
+to_ajx();
+	}			 
+function notif(e){	
+	loader.style.display="none";
+	outresult.style.display="block";
+    tohtml(outresult, '<p class="lightgreen">'+JSON.parse(e.response).message+'</p>');
+	removeForm();
+}
 
-var signup_form=document.getElementById('reset-form');
-signup_form.onsubmit=function(eva){
-//alert('submit!!! '+eva + ' : '+ajx_login_form.email.value);
-prBar.innerHTML='<span class="green">connecting...</span>';
-var email= signup_form.email.value;
-var pwd=signup_form.password.value;
-var token=signup_form.token.value;
-alert('pwd :'+pwd+ 'token : '+token);
-var pars='password='+encodeURIComponent(pwd)+'&token='+encodeURIComponent(token)+'&email='+encodeURIComponent(email);
+function notif_er(e){
+loader.style.display="none";
+bod.style.background="initial";
+form.style.opacity="1";
+outresult.style.display="block";
+tohtml(outresult, '<p class="red">Status: '+e.status+' : '+e.response+'</p>');
+}
 
+function to_ajx(){
+	//alert(pwd.value+' '+email.value+' '+token.value);
 var xhr=new XMLHttpRequest();
-xhr.open("post","/reset/"+token);
+var pars='password='+encodeURIComponent(pwd.value)+'&token='+encodeURIComponent(token.value)+'&email='+encodeURIComponent(email.value);
+xhr.open("post","/reset/"+token.value);
 xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 xhr.onload=function(evi){
 if(xhr.status==200){
-//alert('from onsubmit: '+this.response+' : '+spResult);
-prBar.innerHTML='';
-spResult.textContent=this.response;
-
-//var spi=JSON.parse(this.response).redirection;
-//window.location.href=spi;
-
+notif(this);
 }else{
-alert(this.response+' : '+this.status);
-var lata=JSON.parse(this.response);
-spResult=this.response;
-prBar.innerHTML='<span class="orange"><b>'+lata.message+'</b></span>';
-}
-}
-xhr.onerror=function(e){alert(e);}
-
+notif_er(this);
+}}
+xhr.onerror=function(e){alert('HERE ERROR-2 '+e);}
 xhr.send(pars);
-eva.preventDefault();
 }
+	
+function removeForm(){
+    //form.style.visibility="hidden";
+	form.style.display="none";
+
+	bod.style.background="initial";
+	form.onsubmit=null;
+}
+	function if_show_pwd(e){
+		if(is_equal(smally, str_show)){
+			totext(smally, str_hide);
+			tohtml(show_pwd, ' '+ pwd.value);
+		}else{
+			totext(smally, str_show);
+			totext(show_pwd, "");
+		}
+	}
+	
+	function go_show_pwd(e){
+		if(is_equal(smally, str_hide))
+		show_pwd.textContent=' '+ e.target.value;
+	}
+	
+	function gid(id){return document.getElementById(id);}
+	function tohtml(s, v){return s.innerHTML=v;}
+	function totext(s, v){return s.textContent=v;}
+	function is_equal(d,s){
+	if(d.textContent===s) {return true;}else{return false;}
+	}
 </script>
 </body></html>
 `;
 };
+
+function get_local_style(){
+return `/css/login2.css`;
+}
 module.exports={reset};

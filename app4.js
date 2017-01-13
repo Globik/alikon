@@ -23,8 +23,8 @@ var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
 	return mn;}catch(e){console.log(e);}}
 };
- var database_url=configDB.pg_local_heroku_url;
-//var database_url=configDB.pg_url;//'postgres://globik:null@localhost:5432/postgres';
+ //var database_url=configDB.pg_local_heroku_url;
+var database_url=configDB.pg_url;//'postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
 var pars=url.parse(database_url);
@@ -40,7 +40,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl:true};
+ssl:false};
 var api_key, domain=null;
 if(process.env.DEVELOPMENT=="yes"){
 api_key=process.env.TMAILGUNAPIKEY;
@@ -124,27 +124,25 @@ pool.on('error',(err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
 
 
-var ps=new PS(database_url+'?ssl=true');
+var ps=new PS(database_url/*+'?ssl=true'*/);
 ps.addChannel('reset',function(msg){
-	console.log('msg2: ',msg);
+	console.log('msg2: ', msg);
 var mgdata={
-from: 'Excited users <me@samples.mailgun.org>',
+from: 'gru5@yandex.ru',
 to:msg.email,
 subject:'Password '+msg.token_type,
 text:`You are receiving this because you (or someone else) have requested the reset of 
 the password for your account. 
 Please click on the following link, or paste this into your browser to complete the process:
-http://localhost:5000/reset/${msg.token}
 <a href="alikon.herokuapp.com/reset/${msg.token}">https://alikon.herokuapp.com/reset/${msg.token}
 If you did not request this, please ignore this email and your password will remain unchanged.`
 };
-
+/*
 mailgun.messages().send(mgdata, function(error, body){
 if(error) console.log('error: ',error);
 console.log('Body: ', body);
 });
-
-
+*/
 });
 
 pool.query('LISTEN reset');

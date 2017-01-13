@@ -1,0 +1,62 @@
+/*
+html{font-size:100%;font-family: "Arial Black", sans-serif;}
+		html,body{margin:0;padding:0;line-height:1.8;}
+		p{line-height:2.8;}
+*/
+		/*h2{margin:1rem;} */
+		.green{background:green;} .red{background:red;} 
+		.lightgreen{background:lightgreen;}
+		.blue{color: blue} 
+		form{width:30%;
+		margin:2rem auto;border:0.3rem solid silver;}
+		input[type=password], input[type=email], input[type=text]{
+			width:100%;
+		padding:1rem 0.2rem;
+			margin: 0.1rem 0;
+			display:inline-block;
+			border: 0.1rem solid #ccc;
+			box-sizing:border-box;
+		}
+		#outresult{display:none;background: lightblue;width:90%;margin:1rem auto;min-height:300px;}
+		
+		#loader{
+			position: absolute;
+			display: none;
+			left: 50%;
+			top: 50%;
+			z-index: 1;
+			width: 150px;
+			height:150px;
+			margin:-75px 0 0 -75px;
+			border:16px solid #f3f3f3;
+			border-radius:50%;
+			border-top:16px solid #3498db;
+			animation: spin 2s linear infinite;
+		}
+		@keyframes spin{
+			0% {transform: rotate(0deg);}
+			100%{transform: rotate(360deg);}
+		}
+		.animate-bottom{
+			position: relative;
+			animation-name: animatebottom;
+			animation-duration: 1s;
+		}
+		@keyframes animatebottom{
+			from{bottom:-10rem;opacity:0;}
+			to{bottom:0;opacity:1}
+		}
+		.container{padding-left:0.8rem;padding-right:0.8rem;background:yellow;}
+		.imgcontainer{text-align:center;margin:1rem 0 1rem 0;}
+		button{
+			background-color: #4caf50;
+			color:white;
+			padding:1rem 0;
+			margin: 0.2rem 0;
+			border:none;
+			cursor:pointer;
+			width:100%;
+			font-size:1.9rem;
+			letter-spacing:0.1rem;
+		}
+			
