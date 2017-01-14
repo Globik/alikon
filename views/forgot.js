@@ -1,71 +1,80 @@
+var head=require('./head.js');
 var forgot= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Forgot password</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="shortcut icon" type="image/ico" href="/w4.png"> 
-<!-- [if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-<!-- [if lt IE 9]><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
+${head.head({title:"Reset Password", csslink:`${get_local_style()}`, csslink2:"/css/main2.css"})}
+
 </head><body>
 <a href="/">home</a>
-<span id="span-result"></span>
-<span id="prBar"></span>
-<span id="count"></span>
-<h1>forgot password</h1>
-<h3>Enter Your Email</h3>
-<form id="forgot-form" action="/forgot" method="post">
+<div id="loader"></div>
+
+<form id="mform" action="/forgot" method="post">
+<div class="imgcontainer">img</div>
+	<div class="container">
+		<label>Email</label>
 <input type="email" name="email"  placeholder="E-mail" value="" required /><br>
 
 <button>Reset Password</button>
+</div>
+<div class="imgcontainer">crc</div>
 </form>
+<div id="outresult" class="animate-bottom"></div>
 <script>
-var spResult=document.getElementById("span-result");
-var prBar=document.getElementById("prBar");
-var count=document.getElementById("count");
-var fcount=0;
+outresult=gid("outresult"),
+bod=document.getElementsByTagName('body')[0],
+mform=document.getElementById('mform'),
+email=mform.email;
 
-var signup_form=document.getElementById('forgot-form');
-signup_form.onsubmit=function(eva){
-//alert('submit!!! '+eva + ' : '+ajx_login_form.email.value);
-prBar.innerHTML='<span class="green">connecting...</span>';
-var email= signup_form.email.value;
-//var pwd=signup_form.password.value;
-//var username=signup_form.username.value;
-alert(email+ ' : ');
-var pars='email='+encodeURIComponent(email);
-
-
-
+mform.onsubmit=function(ev){
+ev.preventDefault();
+mform.style.opacity="0.2";
+bod.style.background="rgba(0,0,0,0.3)";
+loader.style.display="block";
+to_ajx();
+}
+function to_ajx(){
+var pars='email='+encodeURIComponent(email.value);
 var xhr=new XMLHttpRequest();
 xhr.open("post","/forgot");
 xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 xhr.onload=function(evi){
-if(xhr.status==200){
-fcount+=1;
-count.textContent=fcount;
-//alert('from onsubmit: '+this.response+' : '+spResult);
-prBar.innerHTML='';
-spResult.textContent=this.response;
-
-//var spi=JSON.parse(this.response).redirection;
-//window.location.href=spi;
-
+if(xhr.status==200){ notif(this);
 }else{
-alert(this.response+' : '+this.status);
-var lata=JSON.parse(this.response);
-spResult=this.response;
-prBar.innerHTML='<span class="orange"><b>'+lata.message+'</b></span>';
+notif_er(this);
 }
 }
 xhr.onerror=function(e){alert(e);}
-
 xhr.send(pars);
-eva.preventDefault();
 }
-if(fcount > 5) signup_form.onsubmit=null;
+
+function notif(e){	
+	loader.style.display="none";
+	outresult.style.display="block";
+    tohtml(outresult, '<p class="lightgreen">'+JSON.parse(e.response).message+'</p>');
+	removeForm();
+}
+
+function notif_er(e){
+loader.style.display="none";
+bod.style.background="initial";
+mform.style.opacity="1";
+outresult.style.display="block";
+tohtml(outresult, '<p class="red">Status: '+e.status+' : '+e.response+'</p>');
+}
+
+function removeForm(){
+	mform.style.display="none";
+bod.style.background="initial";
+	mform.onsubmit=null;
+}
+
+function tohtml(s, v){return s.innerHTML=v;}
+function totext(s, v){return s.textContent=v;}
+function gid(id){return document.getElementById(id);}
 </script>
 </body></html>`;
+}
+function get_local_style(){
+return `/css/login2.css`;
 }
 module.exports={forgot};

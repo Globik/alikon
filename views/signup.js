@@ -9,70 +9,108 @@ ${head.head({title:"sign up", csslink:`${get_local_style()}`, csslink2:"/css/mai
 </head>
 <body>
 <main id="pagewrap" style="backround:pink;">
-${(n.message && n.message.length > 0 ? `<span id="red-warnig">${n.message}</span>` : ``)}
-<div class="form-box">k
 <a href="/">home</a>
-<span id="span-result"></span><br>
-<span id="prBar"></span><br>
+<div id="loader"></div>
 
-<form id="form" action="/signup" method="post">
-<div class="group">
-<input type="text" name="username" placeholder="Username" value="" required/> <br>
-<input type="email" name="email"  placeholder="E-mail" value="" required /><br>
+<form id="mform" action="/signup" method="post">
+<div class="imgcontainer">img</div>
+	<div class="container">
+		<label>Username</label>
+<input type="text" name="username" placeholder="Username" value="" required/> 
+<label>Email</label>
+<input type="email" name="email"  placeholder="E-mail" value="" required />
+<label>Password</label>
 <input type="password" name="password"  placeholder="Password" value="" required /><br>
-<!-- <input type="password" name="password"  placeholder="Password" value="" required /> -->
-
-</div>
+<u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
 <button>Sign Up</button>
-<p>Or <a href="">sign up via fb, vk</a></p>
- Already a member? Login 
-</form>
 </div>
+<div class="imgcontainer">
+<p>Or <a href="">sign up via fb, vk</a></p>
+ Already a member? Login </div>
+</form>
+<div id="outresult" class="animate-bottom"></div>
 <script>
-var spResult=document.getElementById("span-result");
-var prBar=document.getElementById("prBar");
+var smally=gid("smally"),
+	outresult=gid("outresult"),
+	bod=document.getElementsByTagName('body')[0],
+    form=gid("mform"),
+	show_pwd=gid('show_pwd'),
+    pwd=form.password,
+		email=form.email,
+		username=form.username,
+	str_show="show password",
+	str_hide="hide password";
+	
+	smally.onclick = if_show_pwd;
+	smally.ontouchstart = if_show_pwd;
+	pwd.oninput = go_show_pwd;
+	
+mform.onsubmit=function(ev){
+ev.preventDefault();
+form.style.opacity="0.2";
+bod.style.background="rgba(0,0,0,0.3)";
+loader.style.display="block";
+to_ajx();
+}
 
-var signup_form=document.getElementById('signup-form');
-signup_form.onsubmit=function(eva){
-//alert('submit!!! '+eva + ' : '+ajx_login_form.email.value);
-prBar.innerHTML='<span class="green">connecting...</span>';
-var email= signup_form.email.value;
-var pwd=signup_form.password.value;
-var username=signup_form.username.value;
-alert(email+ ' : '+pwd+'  : '+username);
-var pars='email='+encodeURIComponent(email)+'&password='+encodeURIComponent(pwd)+'&username='+encodeURIComponent(username);
-
-
-
+function to_ajx(){
+var pars='email='+encodeURIComponent(email.value)+'&password='+encodeURIComponent(pwd.value)+'&username='+encodeURIComponent(username.value);
 var xhr=new XMLHttpRequest();
 xhr.open("post","/signup");
 xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 xhr.onload=function(evi){
-if(xhr.status==200){
-alert('from onsubmit: '+this.response+' : '+spResult);
-prBar.innerHTML='';
-spResult.textContent=this.response;
-
-//var spi=JSON.parse(this.response).redirection;
-//window.location.href=spi;
-
+if(xhr.status==200){notif(this);
 }else{
-alert(this.response+' : '+this.status);
-var lata=JSON.parse(this.response);
-spResult=this.response;
-prBar.innerHTML='<span class="orange"><b>'+lata.message+'</b></span>';
+notif_er(this);
 }
 }
 xhr.onerror=function(e){alert(e);}
-
 xhr.send(pars);
-eva.preventDefault();
+}
+function notif(e){	
+	loader.style.display="none";
+	outresult.style.display="block";
+    tohtml(outresult, '<p class="lightgreen">'+JSON.parse(e.response).message+'</p>');
+	removeForm();
 }
 
+function notif_er(e){
+loader.style.display="none";
+bod.style.background="initial";
+form.style.opacity="1";
+outresult.style.display="block";
+tohtml(outresult, '<p class="red">Status: '+e.status+' : '+e.response+'</p>');
+}
+
+function removeForm(){
+	form.style.display="none";
+bod.style.background="initial";
+	form.onsubmit=null;
+}
+	function if_show_pwd(e){
+		if(is_equal(smally, str_show)){
+			totext(smally, str_hide);
+			tohtml(show_pwd, ' '+ pwd.value);
+		}else{
+			totext(smally, str_show);
+			totext(show_pwd, "");
+		}
+	}
+	
+	function go_show_pwd(e){
+		if(is_equal(smally, str_hide))
+		show_pwd.textContent=' '+ e.target.value;
+	}
+	
+	function gid(id){return document.getElementById(id);}
+	function tohtml(s, v){return s.innerHTML=v;}
+	function totext(s, v){return s.textContent=v;}
+	function is_equal(d,s){
+	if(d.textContent===s) {return true;}else{return false;}
+	}
 </script>
 </main></body></html>`;}
 function get_local_style(){
 return `/css/login2.css`;
 }
 module.exports={signup};
-function getCssLink(){return `/css/login.css`;}

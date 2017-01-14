@@ -80,10 +80,8 @@ xhr.send(pars);
 }
 	
 function removeForm(){
-    //form.style.visibility="hidden";
 	form.style.display="none";
-
-	bod.style.background="initial";
+bod.style.background="initial";
 	form.onsubmit=null;
 }
 	function if_show_pwd(e){

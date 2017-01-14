@@ -54,16 +54,13 @@ this.body=this.render('forgot',{});
 });
 pub.post('/forgot',function*(){
 	let db=this.db;
-	//cosnole.log('db: ',db);
 	//fordert LISTEN reset
 	//notif-antwort:{email,token,toke_type='reset'}
-	var error=null;
 	try{
 var mid=yield db.query(`select request_password_reset('${this.request.body.email}')`);
-console.log('this.request.body: ',this.request.body);
-	}catch(er){console.log('err: ',er);error=er;}
-this.body={"message":"","body":this.request.body,
-"info":"An e-mail has been sent to a@y.ru with further instructions","error":error};
+	}catch(e){console.log('err in post forgot!!!: ',e.message);
+			  this.throw(404, e.message);}
+this.body={"message": `An e-mail has been sent to ${this.request.body.email} with further instructions`};
 });
 
 pub.get('/reset/:token',function*(){
