@@ -119,8 +119,8 @@ app.listen(process.env.PORT || 5000)
 });
 console.log('soll on 5000');
 
-pool.on('connect',client=>console.log('pool connected'));
-pool.on('error',(err, client)=>console.log('error in pool: ', err.message));
+pool.on('connect', client=>console.log('pool connected'));
+pool.on('error', (err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
 
 
@@ -145,4 +145,11 @@ console.log('Body: ', body);
 */
 });
 
-pool.query('LISTEN reset');
+ps.addChannel('validate', validator=>{
+console.log('Validator: ', validator);
+
+});
+//--trace-warnings
+process.on('unhundledRejection',(reason, p)=>{
+	console.log('Unhandled Rejection at: Promise', p, 'reason: ', reason);
+});

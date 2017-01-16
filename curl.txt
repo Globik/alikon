@@ -18,7 +18,13 @@ curl -s --user 'api:key-4a36b59263e3b48b86d3979bf0d2a12f'  -G https://api.mailgu
 curl -s --user 'api:key-4a36b59263e3b48b86d3979bf0d2a12f'  -G https://api.mailgun.net/v3/appb17d1ae4924645aab6a69471af346072.mailgun.org/messages \
 -F from='delivered <petrov.ag412@yandex.ru>' -F to='gru5@yandex.ru' -F subject='hello' -F text='testing mode'
 
+*************************
 
+select*from tokens where token='2d70b88d-2770-4d5e-a68d-2825c4f80bc3' and created_at >  now() - interval  '2 days';
+
+select*from tokens where token='9e52b2ff-2d56-4a00-92e7-fca0a439c7e6' and created_at > now() - interval '2 days';
+
+select*from tokens where created_at >  now() - interval  '2 days';
 
 
 

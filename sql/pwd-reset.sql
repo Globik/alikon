@@ -1,3 +1,4 @@
+-- \i /home/globik/alikon/sql/pwd-reset.sql
 create extension if not exists "uuid-ossp";
 drop table basic_auth.tokens;
 drop table tokens;
@@ -56,6 +57,6 @@ insert into tokens(token, token_type, email) values(tok, 'reset', reset_password
 perform pg_notify('reset',
 json_build_object(
 'email', reset_password.email,
-'token', tok)::text);
+'token', tok, 'token_type','reseted')::text);
 end;
 $$;

@@ -1,4 +1,5 @@
 'use strict';
+var valuid=require('uuid-validate');
 var passport=require('koa-passport');
 var bodyParser=require('koa-body');
 var Router=require('koa-router');
@@ -48,7 +49,7 @@ if (!user) {ctx.session.messaga=[info.message];
 //pub.post('/login',passport.authenticate('local',{successRedirect:'/',failureRedirect:'/'}));
 pub.get('/logout', function*() {this.logout();this.redirect('/');});
 pub.get('/forgot', function*(){
-
+//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
 this.body=this.render('forgot',{});	
 
 });
@@ -64,8 +65,20 @@ this.body={"message": `An e-mail has been sent to ${this.request.body.email} wit
 });
 
 pub.get('/reset/:token',function*(){
-	console.log('this.params.token: ',this.params.token);
+	if(!valuid(this.params.token)) {
+		return; 
+	//this.redirect('/');
+	}
+	//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
+	console.log('this.params.token: ', this.params.token);
+	let db=this.db;var error=null;
+	try{
+		var resu=yield db.query(`select*from tokens where token='${this.params.token}' and created_at > now() - interval '2 days'`);
+	}catch(e){this.body={"error":e};}
+	if(resu && resu.rows[0]){
 this.body=this.render('reset',{"reset-token":this.params.token});
+	}else{this.body={"message":"expired"};}
+	
 });
 
 pub.post('/reset/:token', function*(token){
@@ -80,6 +93,33 @@ yield db.query(`select reset_password('${this.request.body.email}','${this.reque
 		 console.log('token: ', token);
 		 this.body={"message":"Your password has been changed! Now may go <a href='/'>home</a>"};
 		 });
+
+pub.get('/email_validation/:token',function*(){
+	if(!valuid(this.params.token)) {
+		return; 
+	//this.redirect('/');
+	}
+	//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
+	console.log('this.params.token: ', this.params.token);
+	let db=this.db;var pmail;var error=null;
+	
+	try{yield db.query(`select say_yes_email('${this.params.token}')`);}catch(e){
+	error=e.message;
+	};
+	this.body={"message":"email verified","error":error};
+	
+});
+
+
+
+
+pub.get('/fucker',function*(){
+let db=this.db;var error=null; var email="drug@yandex";
+	try{var bu=yield db.query(`insert into lab(email) values('${email}')`);
+	   }catch(er){console.log(er);error=er;}
+	this.body={"error":error,"result":bu}
+});
+
 
 pub.get('/articles', pagination, function *(){
 let {dob,locals}=this, docs=dob.collection('posts');
