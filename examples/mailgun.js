@@ -1,5 +1,6 @@
 var koa=require('koa');
 var app=koa();
+var co=require('co');
 var port=process.env.PORT || 5000;
 
 
@@ -19,17 +20,42 @@ app.use(function*(){
 this.body="Hello World(koa.js)!";
 });
 
-var data={
+var mdata={
 from: 'Excited users <me@samples.mailgun.org>',
 to:'gru5@yandex.ru',
 subject:'Hello world!',
 text:'Testing some mailgunomness!'
 };
 
-mailgun.messages().send(data, function(error, body){
+/*mailgun.messages().send(mdata, function(error, body){
 if(error) console.log('error: ',error);
 console.log('Body: ', body);
 });
+*/
+/*
+mailgun.messages().send(mdata).then(function(data){
+console.log(data);},function(err){console.log(err);});
+*/
+
+function doit(rdata){
+co(function*(){
+try{
+var sda=yield mailgun.messages().send(rdata);
+console.log('sda: ',sda);
+}catch(er){console.log(er);}
+}).catch(function(e){console.log('e: ',e);});
+}
+doit(mdata);
+/*
+async function m(){
+try{
+var sda=await mailgun.messages().send(mdata);
+console.log('sda: ',sda);
+}catch(e){console.log('e: ',e);}
+}
+m();
+*/
+mailgun.lists('my_list@'+domain).info().then(data=>{console.log(data);}, err=>{console.log(err);});
 app.listen(port);
 console.log('Server is running on port ',port);
 /*

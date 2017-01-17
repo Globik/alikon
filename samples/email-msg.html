@@ -1,0 +1,25 @@
+<html>
+<body>
+Email text append
+Output:
+<output id="out"></output>
+<script>
+	function doo(whom, sub, btext){
+var em={to: whom, from: "b@gmail.com", subject: sub, btext: btext};
+		return em;
+	}
+	
+	var data={to:"me@gmail.com",type:"validate"};
+	var data2={to:"me_222@gmail.com",type:"validated"};
+	function send(el){
+		if(el.type=="validate")
+		return doo(el.to,"sub1","text1");
+		else return doo(el.to,"sub2","text2");
+	}
+	
+		//send(data);
+	console.log(send(data2));
+
+</script>
+</body>
+</html>
