@@ -57,6 +57,6 @@ insert into tokens(token, token_type, email) values(tok, 'reset', reset_password
 perform pg_notify('reset',
 json_build_object(
 'email', reset_password.email,
-'token', tok, 'token_type','reseted')::text);
+'token', tok, 'token_type', 'reseted')::text);
 end;
 $$;

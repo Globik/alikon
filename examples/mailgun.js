@@ -21,10 +21,11 @@ this.body="Hello World(koa.js)!";
 });
 
 var mdata={
-from: 'Excited users <me@samples.mailgun.org>',
+from: 'gru5@yandex.ru',
 to:'gru5@yandex.ru',
 subject:'Hello world!',
-text:'Testing some mailgunomness!'
+text:'simple text',
+html: '<html><body><a href="https://heroku.com">https://heroku.com hura</body></html>'
 };
 
 /*mailgun.messages().send(mdata, function(error, body){

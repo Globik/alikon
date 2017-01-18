@@ -16,11 +16,11 @@ ${head.head({title:"sign up", csslink:`${get_local_style()}`, csslink2:"/css/mai
 <div class="imgcontainer">img</div>
 	<div class="container">
 		<label>Username</label>
-<input type="text" name="username" placeholder="Username" value="" required/> 
+<input type="text" name="username" placeholder="Username" value="markus" required/> 
 <label>Email</label>
-<input type="email" name="email"  placeholder="E-mail" value="" required />
+<input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required />
 <label>Password</label>
-<input type="password" name="password"  placeholder="Password" value="" required /><br>
+<input type="password" name="password"  placeholder="Password" value="dev_pwd" required /><br>
 <u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
 <button>Sign Up</button>
 </div>

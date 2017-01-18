@@ -3,9 +3,9 @@ const koa=require('koa');
 const co=require('co');
 const render=require('./libs/render.js');
 const path=require('path');
-var url=require('url');
-var Pool=require('pg-pool');
-var serve=require('koa-static');
+const url=require('url');
+const Pool=require('pg-pool');
+const serve=require('koa-static');
 //var flash=require('koa-flash');
 //r PS=require('pg-pubsub');
 var PS=require('./libs/pg-subpub.js');
@@ -18,14 +18,15 @@ var fs=require('co-fs');
 var pubrouter=require('./routes/pubrouter2.js');
 //var adminrouter=require('./routes/admin2.js');
 var configDB=require('./config/database.js');
-
+const {msg_handler} = require('./libs/mailer.js');
 var {script}=require('./libs/filter_script');
 var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
 	return mn;}catch(e){console.log(e);}}
 };
- //var database_url=configDB.pg_local_heroku_url;
-var database_url=configDB.pg_url;//'postgres://globik:null@localhost:5432/postgres';
+ var database_url=configDB.pg_local_heroku_url; //for "production" deploy to heroku.com
+//var database_url=configDB.pg_url;// for home development
+//'postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
 var pars=url.parse(database_url);
@@ -41,19 +42,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl:false};
-var api_key, domain=null;
-if(process.env.DEVELOPMENT=="yes"){
-api_key=process.env.TMAILGUNAPIKEY;
-console.log('mailgun api key: ', api_key);
-
-domain=process.env.TMAILGUN_DOMAIN;
-console.log('mailgun domain: ', domain);
-}else{
-	api_key=process.env.MAILGUN_API_KEY;
-	domain=process.env.MAILGUN_DOMAIN;
-}
-var mailgun=require('mailgun-js')({apiKey: api_key, domain:domain});
+ssl:true};
 
 var app=koa();
 var pool=module.exports=new Pool(pconfig);
@@ -124,74 +113,13 @@ pool.on('connect', client=>console.log('pool connected'));
 pool.on('error', (err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
 
+var ps=new PS(database_url+'?ssl=true');
 
-var ps=new PS(database_url/*+'?ssl=true'*/);
-/*
-ps.addChannel('reset',function(msg){
-	console.log('msg2: ', msg);
-var mgdata={
-from: 'gru5@yandex.ru',
-to:msg.email,
-subject:'Password '+msg.token_type,
-text:`You are receiving this because you (or someone else) have requested the reset of 
-the password for your account. 
-Please click on the following link, or paste this into your browser to complete the process:
-<a href="alikon.herokuapp.com/reset/${msg.token}">https://alikon.herokuapp.com/reset/${msg.token}
-If you did not request this, please ignore this email and your password will remain unchanged.`
-};*/
-/*
-mailgun.messages().send(mgdata, function(error, body){
-if(error) console.log('error: ',error);
-console.log('Body: ', body);
-});
-*/
-//});
-//ps.addChannel('reset');
-//ps.once('reset',msg=>{console.log('msg: ', msg);});
-ps.addChannel('validate', validator=>{
-console.log('Validator: ', validator);
-
-});
-function dread(n, nam){
-	return new Promise((res, rej)=>{
-	n.addChannel(nam);
-		n.once(nam, msg=>{res(msg)});
-		n.once('error',e=>{rej(e)});
-})
-}
-let txt_sub = n =>{ return n;};
-var rext= n=>{
-const TEXT1=`You are receiving this couz u(or someone else) have requested the reset of the password for your account.
-Please click on the following link, or paste this into your browser to complete the process:
-<a href="https://alikon.herokuapp.com/reset/${n.token}">https://alikon.herokuapp.com/reset/${n.token}</a>
-If u did not request this, please ignore this email and yr pwd will remain unchanged.`;
-	return TEXT1;
-};
-var rext_validated=()=>{return `bla bla bla yr pwd is changed sucessfully`;};
-function email_requisit(to, sub, btext){
-	return {to:to, subject:sub, from:"gru5@yandex.ru", text:btext};
-}
-function send_email(el){
-if(el.token_type=="reset"){return	email_requisit(el.email, "Password "+el.token_type, txt_sub(rext({token:el.token})));}else{
-	return email_requisit(el.email, "Password "+el.token_type, txt_sub(rext_validated()));}
-}
-co(function*(){
-	try{
-	var msg3=yield dread(ps,'reset');
-		console.log('MSG3: ',msg3);
-        console.log('DATA_3: ', send_email(msg3));
-		var sde=yield mailgun.messages().send(send_email(msg3));
-	console.log('SDE data: ', sde);	
-	}catch(e2){console.log('e2: ', e2);}
-	}).catch(e=>{console.log('e2: ',e)});
-
-
+ps.addChannel('validate', msg_handler);
+ps.addChannel('reset', msg_handler);
 //--trace-warnings
-/*
+
 process.on('unhundledRejection',(reason, p)=>{
 	console.log('Unhandled Rejection at: Promise', p, 'reason: ', reason);
-});*/
-		/*
-var sde=yield mailgun.messages().send(mgdata);
-	console.log('SDE data: ', sde);	
-	}catch(e){console.log('e1: ',e)}*/
+});
+		

@@ -12,7 +12,7 @@ ${head.head({title:"Reset Password", csslink:`${get_local_style()}`, csslink2:"/
 <div class="imgcontainer">img</div>
 	<div class="container">
 		<label>Email</label>
-<input type="email" name="email"  placeholder="E-mail" value="" required /><br>
+<input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required /><br>
 
 <button>Reset Password</button>
 </div>
