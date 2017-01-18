@@ -20,7 +20,7 @@ ${head.head({title:"sign up", csslink:`${get_local_style()}`, csslink2:"/css/mai
 <label>Email</label>
 <input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required />
 <label>Password</label>
-<input type="password" name="password"  placeholder="Password" value="dev_pwd" required /><br>
+<input type="password" name="password"  placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required /><br>
 <u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
 <button>Sign Up</button>
 </div>
@@ -70,7 +70,7 @@ xhr.send(pars);
 function notif(e){	
 	loader.style.display="none";
 	outresult.style.display="block";
-    tohtml(outresult, '<p class="lightgreen">'+JSON.parse(e.response).message+'</p>');
+    tohtml(outresult, '<p class="lightgreen"><h3>Thanks for creating an account with Alikon!</h3>'+JSON.parse(e.response).message+'</p>');
 	removeForm();
 }
 

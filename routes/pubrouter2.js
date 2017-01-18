@@ -42,7 +42,9 @@ if (!user) {ctx.session.messaga=[info.message];
 		   } 
 	else {yield ctx.login(user);
 //ctx.redirect(ctx.session.dorthin || '/');
-	ctx.body={"message":"success. Email verification needed"};	 
+	ctx.body={"message": `You're almost finished.<br><br>
+We've sent an account activation email to you at <strong>${ctx.request.body.email}</strong>.
+Head over to your inbox and click on the "Activate My Account" button to validate your email address.`};	 
 		 }}).call(this, next)}
 		
 		)
@@ -61,7 +63,7 @@ pub.post('/forgot',function*(){
 var mid=yield db.query(`select request_password_reset('${this.request.body.email}')`);
 	}catch(e){console.log('err in post forgot!!!: ',e.message);
 			  this.throw(404, e.message);}
-this.body={"message": `An e-mail has been sent to ${this.request.body.email} with further instructions`};
+this.body={"message": `We have sent a password reset email to your email address: ${this.request.body.email}.<br> Please check your inbox to continue.`};
 });
 
 pub.get('/reset/:token',function*(){
@@ -91,7 +93,7 @@ yield db.query(`select reset_password('${this.request.body.email}','${this.reque
 			 this.throw(404, e.message);
 			 }
 		 console.log('token: ', token);
-		 this.body={"message":"Your password has been changed! Now may go <a href='/'>home</a>"};
+		 this.body={"message":"Your password has been changed! You may log into your account <a href='/login'>log in</a> or go direct to <a href='/'>home</a>"};
 		 });
 
 pub.get('/email_validation/:token',function*(){
@@ -106,7 +108,8 @@ pub.get('/email_validation/:token',function*(){
 	try{yield db.query(`select say_yes_email('${this.params.token}')`);}catch(e){
 	error=e.message;
 	};
-	this.body={"message":"email verified","error":error};
+	this.type="html";
+	this.body={"message":"email verified"};
 	
 });
 

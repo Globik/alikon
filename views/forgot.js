@@ -9,14 +9,19 @@ ${head.head({title:"Reset Password", csslink:`${get_local_style()}`, csslink2:"/
 <div id="loader"></div>
 
 <form id="mform" action="/forgot" method="post">
-<div class="imgcontainer">img</div>
+<div class="imgcontainer">img
+<p>
+<h3>Forgot your password?</h3>
+Enter your email address below to reset your password. You will be sent an email  which you will need to open to continue. You may need to check your spam folder.
+</p>
+</div>
 	<div class="container">
 		<label>Email</label>
 <input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required /><br>
 
 <button>Reset Password</button>
 </div>
-<div class="imgcontainer">crc</div>
+<div class="imgcontainer"><small><a href="/login">Back to log in</a></small></div>
 </form>
 <div id="outresult" class="animate-bottom"></div>
 <script>
@@ -50,7 +55,7 @@ xhr.send(pars);
 function notif(e){	
 	loader.style.display="none";
 	outresult.style.display="block";
-    tohtml(outresult, '<p class="lightgreen">'+JSON.parse(e.response).message+'</p>');
+    tohtml(outresult, '<p class="lightgreen"><h3>Your password reset email has been sent!</h3>'+JSON.parse(e.response).message+'</p>');
 	removeForm();
 }
 

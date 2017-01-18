@@ -1,4 +1,5 @@
 var head=require('./head');
+var dev_pwd=process.env.DEV_PWD;
 var reset= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
@@ -10,12 +11,15 @@ on <a href="/">home</a> page
 	<div id="loader"></div>
 	
 <form id="mform" method="post" action="/">
-	<div class="imgcontainer">img</div>
+	<div class="imgcontainer"><p>
+Enter your new account password below. Once confirmed, you'll be logged into your account and your new password will be active.
+</p></div>
+
 	<div class="container">
 		<label>Email</label>
 	<input type="email" name="email" value="gru5@yandex.ru" placeholder="email@example.com" required>
 		<label>Password</label>
-<input type="password" name="password" placeholder="password" value="bischt" required autofocus pattern=".{6,}" maxlength="20">
+<input type="password" name="password" placeholder="password" value="${dev_pwd ? dev_pwd : ''}" required autofocus pattern=".{6,}" maxlength="20">
 		<input type="hidden" name="token" value="${n['reset-token']}">
 	<u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
 	<button>save password</button>
@@ -51,7 +55,7 @@ to_ajx();
 function notif(e){	
 	loader.style.display="none";
 	outresult.style.display="block";
-    tohtml(outresult, '<p class="lightgreen">'+JSON.parse(e.response).message+'</p>');
+    tohtml(outresult, '<p class="lightgreen"><h3>Password Change Complete!</h3>'+JSON.parse(e.response).message+'</p>');
 	removeForm();
 }
 
