@@ -10,8 +10,9 @@ ${head.head({title:"Reset Password", csslink:`${get_local_style()}`, csslink2:"/
 
 <form id="mform" action="/forgot" method="post">
 <div class="imgcontainer">img
-<p>
+
 <h3>Forgot your password?</h3>
+<p
 Enter your email address below to reset your password. You will be sent an email  which you will need to open to continue. You may need to check your spam folder.
 </p>
 </div>

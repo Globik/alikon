@@ -5,12 +5,11 @@ var dev_pwd=process.env.DEV_PWD;
 var dev_email=process.env.DEV_EMAIL;
 var login= n =>{
 	let {buser,showmodule:{mainmenu,profiler}}=n;
-return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",csslink:`${getCssLink()}`,
-csslink2:"/css/main2.css"})}</head>
+return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",csslink:`${getCssLink()}`})}</head>
 <body>
 <main id="pagewrap" style="backround:pink;">
 <a href="/">home</a>
-${n.message && n.message.length > 0 ? `<span id="red-warnig">${n.message}</span>` : ``}
+${n.message && n.message !== null ? `<span id="red-warnig">${n.message}</span>` : ``}
 <div class="form-box">
 
 <form action="/login" method="post">

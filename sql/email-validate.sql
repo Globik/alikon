@@ -26,7 +26,7 @@ perform pg_notify('validate', json_build_object('email',
 														  'token_type','validated')::text);
 		  delete from tokens where tokens.token=say_yes_email.token and token_type='validation';
 		  else
-		  raise invalid_password using message='invalid email verification';
+		  raise invalid_password using message='Invalid email validation';
 		  end if;
 		  
 		  end;

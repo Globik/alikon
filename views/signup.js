@@ -1,14 +1,15 @@
 //signup.js
-    var dev_user=process.env.DEV_USER;
+var dev_user=process.env.DEV_USER;
 var dev_pwd=process.env.DEV_PWD;
 var dev_email=process.env.DEV_EMAIL;
 var head=require('./head.js');
+var dupl_str=`duplicate key value violates unique constraint "busers_pkey"`;
 var signup = n =>{
 return `<!DOCTYPE html><html lang="en"><head>
-${head.head({title:"sign up", csslink:`${get_local_style()}`, csslink2:"/css/main2.css"})}
+${head.head({title:"sign up", csslink:`${get_local_style()}`})}
 </head>
 <body>
-<main id="pagewrap" style="backround:pink;">
+<main id="pagewrap" style="background:pink;">
 <a href="/">home</a>
 <div id="loader"></div>
 
@@ -20,7 +21,7 @@ ${head.head({title:"sign up", csslink:`${get_local_style()}`, csslink2:"/css/mai
 <label>Email</label>
 <input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required />
 <label>Password</label>
-<input type="password" name="password"  placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required /><br>
+<input type="password" name="password"  placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required pattern=".{6,}" maxlength="20"/><br>
 <u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
 <button>Sign Up</button>
 </div>
@@ -79,7 +80,9 @@ loader.style.display="none";
 bod.style.background="initial";
 form.style.opacity="1";
 outresult.style.display="block";
-tohtml(outresult, '<p class="red">Status: '+e.status+' : '+e.response+'</p>');
+var er_msg=(e.status==409 ? 'This email is already occupied!' : 'Failed. Unknown reason');
+console.log(e.response);
+tohtml(outresult, '<p class="red">Status: '+er_msg+'</p>');
 }
 
 function removeForm(){

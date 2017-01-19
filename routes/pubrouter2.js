@@ -1,22 +1,23 @@
 'use strict';
-var valuid=require('uuid-validate');
-var passport=require('koa-passport');
-var bodyParser=require('koa-body');
-var Router=require('koa-router');
+const valuid=require('uuid-validate');
+const passport=require('koa-passport');
+const bodyParser=require('koa-body');
+const Router=require('koa-router');
 //var moment=require('moment');
-var cofs=require('co-fs');
-var pub=new Router();
+const cofs=require('co-fs');
+const pub=new Router();
 //var debug=require('debug');
 
 const limit=10;
 pub.get('/',function *(){
 this.session.dorthin=this.path;
+	console.log('THIS>REQ: ', this.req.email);
 this.body=this.render('haupt_page',{buser:this.req.user});
 });
 
 pub.get('/login',function *(){
 var m=this.session.messaga;
-	this.body=this.render('login',{message:'test_mess: '+m});
+	this.body=this.render('login',{message:m});
 this.session.messaga=null;
 });
 
@@ -28,23 +29,30 @@ var m=this.session.messaga;
 this.session.messaga=null;
 });
 pub.post('/login', function*(next) {
-var ctx = this;yield* passport.authenticate('local',function*(err, user,info) {if (err) throw err;
+var ctx = this;yield* passport.authenticate('local',function*(err, user,info) {
+	if (err) throw err;
+console.log('USER IN POST LOGIN : ', user);
 if (!user) {ctx.session.messaga=[info.message];
-	ctx.redirect('/login');} else {yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)}
+	ctx.redirect('/login');} else {
+		ctx.session.messaga=null;
+		yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)}
 		);
 
 pub.post('/signup', function*(next){
 var ctx = this;yield* passport.authenticate('local-signup',function*(err, user,info) {
-	if (err) throw err;
+	//console.log('ERR, USER, INFO: ',err.message,user,info);
+	if (err) ctx.throw (409,err);
 if (!user) {ctx.session.messaga=[info.message];
-	//ctx.redirect('/signup');
+			console.log('USER IN POST SIGN_UP: ', user);
 			ctx.body={"message":ctx.session.messaga};
 		   } 
 	else {yield ctx.login(user);
+		  console.log('USER IN POST SIGN_UP ELSE: ', user);
+		  ctx.session.messaga=null;
 //ctx.redirect(ctx.session.dorthin || '/');
 	ctx.body={"message": `You're almost finished.<br><br>
 We've sent an account activation email to you at <strong>${ctx.request.body.email}</strong>.
-Head over to your inbox and click on the "Activate My Account" button to validate your email address.`};	 
+Head over to your inbox and click on the "Activate My Account" button to validate your email address.`, redirect:"/"};	 
 		 }}).call(this, next)}
 		
 		)
@@ -56,6 +64,7 @@ this.body=this.render('forgot',{});
 
 });
 pub.post('/forgot',function*(){
+	if(!this.request.body.email) this.throw(400,"please, provide your email!");
 	let db=this.db;
 	//fordert LISTEN reset
 	//notif-antwort:{email,token,toke_type='reset'}
@@ -79,17 +88,21 @@ pub.get('/reset/:token',function*(){
 	}catch(e){this.body={"error":e};}
 	if(resu && resu.rows[0]){
 this.body=this.render('reset',{"reset-token":this.params.token});
-	}else{this.body={"message":"expired"};}
+	}else{this.type="html";
+this.body="<html><head><title>link expired</title></head><body><b>the link is expired</b><br>Go <a href='/'>home</a> or try again to <a href='/forgot'>reset</a> your password </body></html>"
+		 }
 	
 });
 
 pub.post('/reset/:token', function*(token){
+	if(!this.request.body.email && !this.request.body.token && !this.request.body.password) this.throw(400,"Please fill in folders");
 	let db=this.db;
 
 	try{
 //select reset_password(email,token,pwd)
 yield db.query(`select reset_password('${this.request.body.email}','${this.request.body.token}','${this.request.body.password}')`);
-	}catch(e){console.log('ERRRORRR IN RESETING!!!!!!!!!!!!!!!!!!!: ', e.message);
+	}catch(e){
+		//console.log('ERRRORRR IN RESETING!!!!!!!!!!!!!!!!!!!: ', e.message);
 			 this.throw(404, e.message);
 			 }
 		 console.log('token: ', token);
@@ -98,18 +111,18 @@ yield db.query(`select reset_password('${this.request.body.email}','${this.reque
 
 pub.get('/email_validation/:token',function*(){
 	if(!valuid(this.params.token)) {
-		return; 
-	//this.redirect('/');
+		return; //this.redirect('/');
 	}
 	//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
 	console.log('this.params.token: ', this.params.token);
 	let db=this.db;var pmail;var error=null;
 	
 	try{yield db.query(`select say_yes_email('${this.params.token}')`);}catch(e){
+		//console.log('ERROR!!!:', e);
 	error=e.message;
 	};
-	this.type="html";
-	this.body={"message":"email verified"};
+	
+	this.body=this.render('email_validation',{"message":"<h1>Your email address validated!</h1>", "redirect":"/", error:error});
 	
 });
 
