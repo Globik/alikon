@@ -90,11 +90,20 @@ yield next;
 app.use(pubrouter.routes());
 //app.use(adminrouter.routes());
 
-app.use(function*(){
-//this.message=this.session.err;
-	//console.log('this session.err: ',this.session.err);
-this.status=404;//??
-//this.redirect('/');
+app.use(function*(next){
+	try{
+		
+		yield next;
+	console.log('THIS.STATUS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ', this.status);
+		if(this.status === 404) this.throw(404,"fuck not found",{user:"fuck userss"});
+	}catch(err){
+	this.status=err.status || 500;
+		console.log('THIS>STATUS: ',this.status);
+		if(this.status=== 404){
+			this.session.error='';
+			this.redirect('/error');}
+			//this.body=this.render('error',{message:err.message, error:err.status});
+	}
 
 });
 

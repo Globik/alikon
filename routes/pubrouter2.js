@@ -76,24 +76,29 @@ this.body={"message": `We have sent a password reset email to your email address
 });
 
 pub.get('/reset/:token',function*(){
-	if(!valuid(this.params.token)) {
-		return; 
-	//this.redirect('/');
-	}
+if(!valuid(this.params.token)) {
+//return; 
+	return this.redirect('/error');
+}
 	//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
-	console.log('this.params.token: ', this.params.token);
-	let db=this.db;var error=null;
-	try{
-		var resu=yield db.query(`select*from tokens where token='${this.params.token}' and created_at > now() - interval '2 days'`);
-	}catch(e){this.body={"error":e};}
-	if(resu && resu.rows[0]){
+console.log('this.params.token: ', this.params.token);
+let db=this.db;var error=null;
+try{
+var resu=yield db.query(`select*from tokens where token='${this.params.token}' and created_at > now() - interval '2 days'`);
+	}catch(e){this.body={"error":e};error=e;}
+if(resu && resu.rows[0]){
 this.body=this.render('reset',{"reset-token":this.params.token});
-	}else{this.type="html";
-this.body="<html><head><title>link expired</title></head><body><b>the link is expired</b><br>Go <a href='/'>home</a> or try again to <a href='/forgot'>reset</a> your password </body></html>"
-		 }
-	
-});
+	}else{
+		
+		this.session.error="Link expired.";
+		this.redirect('/error');
 
+	
+	}
+	});
+pub.get('/error', function(){
+this.body=this.render('error',{message:this.message, error:this.session.error});
+})
 pub.post('/reset/:token', function*(token){
 	if(!this.request.body.email && !this.request.body.token && !this.request.body.password) this.throw(400,"Please fill in folders");
 	let db=this.db;

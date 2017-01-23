@@ -3,7 +3,7 @@ var dev_pwd=process.env.DEV_PWD;
 var reset= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
-${head.head({title:"Reset Password", csslink:`${get_local_style()}`, csslink2:"/css/main2.css"})}
+${head.head({title:"Reset Password", csslink:`${get_local_style()}`})}
 
 </head><body>
 on <a href="/">home</a> page

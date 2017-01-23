@@ -1,22 +1,44 @@
-/*
-html{font-size:100%;font-family: "Arial Black", sans-serif;}
-		html,body{margin:0;padding:0;line-height:1.8;}
-		p{line-height:2.8;}
-*/
-		/*h2{margin:1rem;} */
+*{box-sizing: border-box;}
+html{font-size:1vw;font-family: "Arial Black",Arial, sans-serif;}
+		html,body{background:pink;margin:0;padding:0;height:100%;}
+		
+#pagewrap{padding:0.9em;}
+	
 		.green{background:green;} .red{background:red;} 
 		.lightgreen{background:lightgreen;}
 		.blue{color: blue} 
-		form{width:30%;
-		margin:2rem auto;border:0.3rem solid silver;}
+
+		#mform{
+		display:block;
+		width:30%;
+		margin:2rem auto;
+		border:1px solid silver;
+}
+#mform div{margin-bottom:2px;padding-top:20px;}
+#mffakeorm :nth-child(even){background:blue;}
 		input[type=password], input[type=email], input[type=text]{
-			width:100%;
-		padding:1rem 0.2rem;
-			margin: 0.1rem 0;
-			display:inline-block;
-			border: 0.1rem solid #ccc;
-			box-sizing:border-box;
+		width:100%;
+		padding:1em 0.2em;
+		margin: 0.1rem 0;
+		display:block;
+		border: 0.1rem solid #ccc;
 		}
+input[type=submit]{
+width: 30%;
+	cursor: pointer;	
+	background: rgb(61, 157, 179);
+	padding: 8px 5px;
+	font-family: 'BebasNeueRegular','Arial Narrow',Arial,sans-serif;
+	color: #fff;
+	font-size: 24px;	
+	border: 1px solid rgb(28, 108, 122);	
+	margin-bottom: 10px;	
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+	
+	        border-radius: 3px;	
+
+
+}
 		#outresult{display:none;background: lightblue;width:90%;margin:1rem auto;min-height:300px;}
 		
 		#loader{
@@ -47,7 +69,7 @@ html{font-size:100%;font-family: "Arial Black", sans-serif;}
 			to{bottom:0;opacity:1}
 		}
 		.container{padding-left:0.8rem;padding-right:0.8rem;background:yellow;}
-		.imgcontainer{text-align:center;margin:1rem 0 1rem 0;}
+		#bottom, .imgcontainer{text-align:center;margin:1rem 0 1rem 0;}
 		button{
 			background-color: #4caf50;
 			color:white;
@@ -56,7 +78,14 @@ html{font-size:100%;font-family: "Arial Black", sans-serif;}
 			border:none;
 			cursor:pointer;
 			width:100%;
-			font-size:1.9rem;
+			font-size:1em;
 			letter-spacing:0.1rem;
 		}
-			
+@media screen and (max-width: 1020px) {
+html,body{font-size:1.8vw;background:brown;}
+	#mform{width:50%;}
+}
+@media screen and (max-width: 320px) {
+	html,body{background:green;font-size:5vw;}
+	#mform{width:100%;margin:0;padding:0;border:none;}
+}

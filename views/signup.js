@@ -9,8 +9,7 @@ return `<!DOCTYPE html><html lang="en"><head>
 ${head.head({title:"sign up", csslink:`${get_local_style()}`})}
 </head>
 <body>
-<main id="pagewrap" style="background:pink;">
-<a href="/">home</a>
+<a class="nav" href="/">home</a>
 <div id="loader"></div>
 
 <form id="mform" action="/signup" method="post">
@@ -26,7 +25,7 @@ ${head.head({title:"sign up", csslink:`${get_local_style()}`})}
 <button>Sign Up</button>
 </div>
 <div class="imgcontainer">
-<p>Or <a href="">sign up via fb, vk</a></p>
+<span>Or <a href="">sign up via fb, vk</a></span>
  Already a member? Login </div>
 </form>
 <div id="outresult" class="animate-bottom"></div>
@@ -112,7 +111,7 @@ bod.style.background="initial";
 	if(d.textContent===s) {return true;}else{return false;}
 	}
 </script>
-</main></body></html>`;}
+</body></html>`;}
 function get_local_style(){
 return `/css/login2.css`;
 }

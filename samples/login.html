@@ -1,0 +1,148 @@
+<html>
+<head>
+	<title>login form</title>
+	<style>
+	*{box-sizing: border-box;}
+html{font-size: 100%;}
+body{
+	font-size: 1rem;
+	font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
+	background: rgb(167,85, 2);
+	margin:0;
+	padding:0;
+	height:100%;
+		}
+h2{
+	padding-left:6%;
+    padding-bottom:10px;
+	line-height:2;
+	color: rgb(112,66, 20);
+		}
+		h4{
+		line-height:0.5;
+			font-size:0.9rem;
+		}
+		strong{
+			font-size:0.9rem;
+			color: rgba(0,0,30,0.9);
+			font-family: Courier;
+			
+		}
+#mform{
+		display:block;
+		width: 100%;
+		padding-left:6%;
+	    padding-right:6%;
+		order:1px solid silver;
+}
+#wrap{
+background: rgba(237, 201, 175,0.2);
+width: 30vw;
+margin:0 auto;
+border: 1px solid transparent;
+		}
+.email, .password{
+	padding-top:10px;
+	padding-bottom:20px;
+	position:relative;
+   display:block;
+		}
+a{
+text-decoration:none;
+font-size:0.9rem;padding-right:1%;
+color: white;
+		}
+.submit{
+	display:block;
+	position:relative;
+	padding-top:0px;
+	padding-bottom:0px;
+	width:100%;}
+		
+input[type=password], input[type=email], input[type=text]{
+		width:100%;
+	display:block;
+			padding-top:10px;
+			padding-bottom:10px;
+			margin-top: 4px;
+		border: 1px solid #ccc;
+		}
+input[type=submit]{
+width: 30%;
+display:block;
+margin-left:70%;
+padding-top:10px;
+padding-bottom:10px;
+cursor: pointer;	
+background: /*rgb(61, 157, 179)*/ brown;
+font-family: Courier,sans-serif;
+font-weight:bold;
+font-size: 0.9rem;
+color: #fff;
+border: 1px solid rgb(28, 108, 122);		
+}
+#bott{
+display: block; 
+width:100%; 
+position:relative;
+padding-top:10px;
+padding-left: 6%;
+padding-bottom:20px;
+		}
+ul{
+	list-style:none;
+	padding:0;
+	margin:0;
+		}
+		ul li{display:inline:block;width:50%;padding:30px;}
+		.vk{background: lightblue;}
+		.fb{background: blue;}
+		.fb a, .vk a{background:black;}
+		
+@media screen and (max-width: 1020px) {
+html,body{
+	font-size: 2.4vw;background:brown;}
+	#wrap{width:60%;}
+	#mform{width:80%;}
+}
+@media screen and (max-width: 320px) {
+	
+	body{background:green;
+	font-size:2rem;
+	}
+	a{font-size:2rem;cursor:pointer;}
+	strong{font-size:2rem;}
+	input[type=submit]{font-size:2rem;}
+	h4{font-size:2rem;}
+	#wrap,#mform{width:100%;}
+	#bott{padding-left:1%;}
+	h1{text-align:center;padding-left:0;}
+}
+	</style>
+	</head>
+<body>
+<main>
+	<div id="wrap">
+		<h2>Welcome. Please login.</h2>
+<form id="mform" action="/login" method="post">
+<div class="email" style="backround: green;">
+	<label><strong>Email</strong> </label>
+<input type="email" name="email"  placeholder="E-mail" value="" required >
+	
+</div>
+
+<div class="password" style="bacground:violet;">
+	<label><strong>Password</strong> <a style="float:right;" href="/forgot">Lost your password?</a></label>
+<input type="password" name="password"  placeholder="Password" value="" required />
+</div>
+	
+<div class="submit" style="bacground:lightblue;">
+<input type="submit" value="sign in" >
+</div>
+		</form>
+		<div id="bott" style="backround:yellow;"><strong style="">No account yet?</strong>&nbsp&nbsp<a href="/signup">Create one</a>
+			<h4>Or you can sign in with:</h4><ul><li class="fb"><a href="fb">fb</a><li class="vk"><a href="vk">vk</a></ul></div>
+
+	</div>
+</main>
+</body></html>
