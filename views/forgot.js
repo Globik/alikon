@@ -1,35 +1,49 @@
 var head=require('./head.js');
+var login_css=require('./login_css.js');
+var glocal_style=true;
+
 var forgot= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
-${head.head({title:"Reset Password", csslink:`${get_local_style()}`, csslink2:"/css/main2.css"})}
+${head.head({title:"Reset Password", 
+[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${glocal_style ? `${login_css.login_css({})}` : `${get_local_style()}`}`})}
 
 </head><body>
+<main id="pagewrap">
 <a href="/">home</a>
 <div id="loader"></div>
-
+<div id="wrap">
 <form id="mform" action="/forgot" method="post">
-<div class="imgcontainer">img
-
+<div class="">
 <h3>Forgot your password?</h3>
-<p
-Enter your email address below to reset your password. You will be sent an email  which you will need to open to continue. You may need to check your spam folder.
+<p>
+Enter your email address below to reset your password. 
+You will be sent an email  which you will need to open to continue. 
+You may need to check your spam folder.
 </p>
 </div>
-	<div class="container">
-		<label>Email</label>
-<input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required /><br>
+	<div class="email">
+		<label><strong>Email</strong></label>
+<input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required /></div>
 
-<button>Reset Password</button>
+<div class="submit">
+<input type="submit" value="Reset">
 </div>
-<div class="imgcontainer"><small><a href="/login">Back to log in</a></small></div>
 </form>
+<div id="bott">
+<small><a href="/login">Back to log in</a></small>
+</div>
+</div>
 <div id="outresult" class="animate-bottom"></div>
 <script>
 outresult=gid("outresult"),
-bod=document.getElementsByTagName('body')[0],
-mform=document.getElementById('mform'),
+bod=document.getElementsByTagName('main')[0],
+wrap=gid('wrap'),
+mform=gid('mform'),
 email=mform.email;
+
+var red_label=document.querySelector('.email label strong');
+var red_email=document.querySelector('input[type=email]');
 
 mform.onsubmit=function(ev){
 ev.preventDefault();
@@ -44,7 +58,8 @@ var xhr=new XMLHttpRequest();
 xhr.open("post","/forgot");
 xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 xhr.onload=function(evi){
-if(xhr.status==200){ notif(this);
+if(xhr.status==200){ 
+notif(this);
 }else{
 notif_er(this);
 }
@@ -61,16 +76,26 @@ function notif(e){
 }
 
 function notif_er(e){
+var er_str='insert or update on table "tokens" violates foreign key constraint "tokens_email_fkey"';
 loader.style.display="none";
 bod.style.background="initial";
 mform.style.opacity="1";
 outresult.style.display="block";
-tohtml(outresult, '<p class="red">Status: '+e.status+' : '+e.response+'</p>');
+
+red_label.style.color="red"; 
+red_email.style.border="2px solid red";
+
+var msg_er='';
+if(e.response==er_str){msg_er=er_str}else{
+msg_er=e.response;
+}
+tohtml(outresult, '<p class="red">Status: '+msg_er+'</p>');
 }
 
 function removeForm(){
 	mform.style.display="none";
-bod.style.background="initial";
+    wrap.style.display="none"
+    bod.style.background="initial";
 	mform.onsubmit=null;
 }
 
@@ -78,7 +103,7 @@ function tohtml(s, v){return s.innerHTML=v;}
 function totext(s, v){return s.textContent=v;}
 function gid(id){return document.getElementById(id);}
 </script>
-</body></html>`;
+</main></body></html>`;
 }
 function get_local_style(){
 return `/css/login2.css`;

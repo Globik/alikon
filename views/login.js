@@ -8,8 +8,8 @@ var login= n =>{
 	let {buser,showmodule:{mainmenu,profiler}}=n;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",csshelper:`${login_css.login_css({})}`})}</head>
 <body>
-<main id="pagewrap" style="backround:pink;">
-<a href="/">home</a>
+<main id="pagewrap">
+<a href="/">home</a><br>
 ${n.message && n.message !== null ? `<span id="red-warnig">${n.message}</span>` : ``}
 
 <div id="wrap">
@@ -23,11 +23,22 @@ ${n.message && n.message !== null ? `<span id="red-warnig">${n.message}</span>` 
 <label><strong>Password</strong> <a style="float:right;" href="/forgot">Lost your password?</a></label>
 <input type="password" name="password"  placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required />
 </div>
-<div classs="submit" id="bottom">
+<div class="submit" id="bottom">
 <input type="submit" value="Log in" >
+</div></form>
+
+<div id="bott"><strong style="">No account yet?</strong>&nbsp&nbsp<a href="/signup">Create one</a>
+<br><br><strong>Or you can sign in with:</strong><br><br>
+<ul>
+<li class="fb">
+<div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc">facebook</div>
+	</a></li>
+<li class="vk">
+<div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc">vkontakte
+	</div>
+	</a>
+	</li></ul>
 </div>
-<div id="bott" style="backround:yellow;"><strong style="">No account yet?</strong>&nbsp&nbsp<a href="/signup">Create one</a>
-<h4>Or you can sign in with:</h4><ul><li class="fb"><a href="fb"><img src="/images/facebook-icon.png"/></a><li class="vk"><a href="vk"><img src="/images/vk.png"/></a></ul></div>
 </div>
 </main></body></html>`;}
 module.exports={login};

@@ -1,38 +1,50 @@
 var head=require('./head');
 var dev_pwd=process.env.DEV_PWD;
+var login_css=require('./login_css.js');
+var glocal_style=true;
+
 var reset= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
-${head.head({title:"Reset Password", csslink:`${get_local_style()}`})}
+${head.head({title:"Reset Password", 
+[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${glocal_style ? `${login_css.login_css({})}` : `${get_local_style()}`}`})}
 
-</head><body>
-on <a href="/">home</a> page
+</head><body><main id="pagewrap">
+<a href="/">home</a>
 <h2>Reset Password</h2>
 	<div id="loader"></div>
-	
+	<div id="wrap">
 <form id="mform" method="post" action="/">
-	<div class="imgcontainer"><p>
+	<div class=""><p>
 Enter your new account password below. Once confirmed, you'll be logged into your account and your new password will be active.
 </p></div>
 
-	<div class="container">
-		<label>Email</label>
+	<div class="email">
+	<label><strong>Email</strong></label>
 	<input type="email" name="email" value="gru5@yandex.ru" placeholder="email@example.com" required>
-		<label>Password</label>
+    </div>
+<div class="password">
+<label><strong>Password</strong></label>
 <input type="password" name="password" placeholder="password" value="${dev_pwd ? dev_pwd : ''}" required autofocus pattern=".{6,}" maxlength="20">
-		<input type="hidden" name="token" value="${n['reset-token']}">
-	<u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
-	<button>save password</button>
-	</div>
-	<div class="imgcontainer">crc</div>
+</div>
+<div class="hidden">
+<input type="hidden" name="token" value="${n['reset-token']}">
+<u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
+</div>
+<div class="submit">
+	<input type="submit" value="Save">
+</div>	
+
 </form>
+</div>
 <div id="outresult" class="animate-bottom"></div>
 
 <script>
 	var smally=gid("smally"),
 	outresult=gid("outresult"),
-	bod=document.getElementsByTagName('body')[0],
+	bod=document.getElementsByTagName('main')[0],
     form=gid("mform"),
+    wrap=gif("wrap"),
 	show_pwd=gid('show_pwd'),
     pwd=form.password,
 		email=form.email,
@@ -85,6 +97,7 @@ xhr.send(pars);
 	
 function removeForm(){
 	form.style.display="none";
+wrap.style.display="none";
 bod.style.background="initial";
 	form.onsubmit=null;
 }
@@ -110,7 +123,7 @@ bod.style.background="initial";
 	if(d.textContent===s) {return true;}else{return false;}
 	}
 </script>
-</body></html>
+</main></body></html>
 `;
 };
 

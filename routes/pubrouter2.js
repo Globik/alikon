@@ -6,7 +6,7 @@ const Router=require('koa-router');
 //var moment=require('moment');
 const cofs=require('co-fs');
 const pub=new Router();
-//var debug=require('debug');
+//var debug=require('debug');^.+@.+\..+$^.+@.+\..+$
 
 const limit=10;
 pub.get('/',function *(){
@@ -41,7 +41,15 @@ if (!user) {ctx.session.messaga=[info.message];
 pub.post('/signup', function*(next){
 var ctx = this;yield* passport.authenticate('local-signup',function*(err, user,info) {
 	//console.log('ERR, USER, INFO: ',err.message,user,info);
-	if (err) ctx.throw (409,err);
+	
+	if (err) {
+		// 23514: new row for relation "busers" violates check constraint "busers_email_check"
+		// 23505: email is already in use
+		/*if(err.code==23505){ctx.throw(420,"Another user with this email already exists.");}
+		else if(err.code==23514){ctx.throw(421,"The email address you entered is not valid. Please try again.");}
+		else{ctx.throw(409,err.message);}*/
+		ctx.throw(409,err);
+	}
 if (!user) {ctx.session.messaga=[info.message];
 			console.log('USER IN POST SIGN_UP: ', user);
 			ctx.body={"message":ctx.session.messaga};
@@ -64,14 +72,15 @@ this.body=this.render('forgot',{});
 
 });
 pub.post('/forgot',function*(){
-	if(!this.request.body.email) this.throw(400,"please, provide your email!");
+	if(!this.request.body.email) this.throw(400,"Please, provide your email!");
 	let db=this.db;
 	//fordert LISTEN reset
 	//notif-antwort:{email,token,toke_type='reset'}
 	try{
 var mid=yield db.query(`select request_password_reset('${this.request.body.email}')`);
-	}catch(e){console.log('err in post forgot!!!: ',e.message);
-			  this.throw(404, e.message);}
+	}catch(e){
+		//console.log('err in post forgot!!!: ',e.message);
+			  this.throw(409, e.message);}
 this.body={"message": `We have sent a password reset email to your email address: ${this.request.body.email}.<br> Please check your inbox to continue.`};
 });
 
@@ -99,11 +108,11 @@ this.body=this.render('reset',{"reset-token":this.params.token});
 pub.get('/error', function(){
 this.body=this.render('error',{message:this.message, error:this.session.error});
 })
+
 pub.post('/reset/:token', function*(token){
 	if(!this.request.body.email && !this.request.body.token && !this.request.body.password) this.throw(400,"Please fill in folders");
 	let db=this.db;
-
-	try{
+try{
 //select reset_password(email,token,pwd)
 yield db.query(`select reset_password('${this.request.body.email}','${this.request.body.token}','${this.request.body.password}')`);
 	}catch(e){
@@ -111,7 +120,8 @@ yield db.query(`select reset_password('${this.request.body.email}','${this.reque
 			 this.throw(404, e.message);
 			 }
 		 console.log('token: ', token);
-		 this.body={"message":"Your password has been changed! You may log into your account <a href='/login'>log in</a> or go direct to <a href='/'>home</a>"};
+		 this.body={"message":`Your password has been changed! You may log into your account <a href='/login'>log in</a> 
+					or go direct to <a href='/'>home</a>`};
 		 });
 
 pub.get('/email_validation/:token',function*(){

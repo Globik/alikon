@@ -29,7 +29,9 @@ font-size:0.9rem;
 color: ${strong_color};
 font-family: Courier;
 }
-
+#red-warnig{background:red;}
+.red{background:red;line-height:2;padding:4%;}
+.lightgreen{background: lightgreen;}
 #mform{
 display:block;
 width: 100%;
@@ -43,17 +45,21 @@ width: 30vw;
 margin:0 auto;
 border: 1px solid transparent;
 		}
-.email, .password{
+.email, .password, .username{
 	padding-top:10px;
 	padding-bottom:20px;
 	position:relative;
    display:block;
 		}
+
 a{
 text-decoration:none;
-font-size:0.9rem;padding-right:1%;
+font-size:0.8rem;
+padding-right:1%;
 cursor:pointer;
+font-weight:normal;
 color: ${a_color};
+letter-spacing: 0.1vw;
 		}
 a:hover{color: blue;}
 .submit{
@@ -90,29 +96,49 @@ display: block;
 width:100%; 
 position:relative;
 padding-top:10px;
-padding-left: 3%;
+padding-left: 6%;
 padding-bottom:20px;
 		}
-ul{
-	list-style:none;
-	padding:0;
-	margin:0;
-		}
+
+/* social icons */
+ul{list-style:none;margin:0;padding:0;}
 ul li{
-display:inline-block;
+
+display:block;
+position:relative;
+margin-top:5px;
 width:50%;
-padding:30px;
+height:64px;
 }
+.soc-desc1, .soc-desc{
+display:inline-block;
+height:64px;}
+.soc-desc1{bacground:red;width:64px;}
+.soc-desc1 img{
+}
+.soc-desc{
+width:calc(100% - 64px);
+bacground:lightgreen;
+vertical-align: top;
+text-align:center;
+padding-top:1.5rem;
+
+}
+				
 .vk{background: #45668e;}
-.fb{background: blue;}
-/*.fb a, .vk a{background:black;}*/
+.fb{background: #4c74c4;}
+
+/* end social icons */
 
 #outresult{
 display:none;
-background: lightblue;
+background: lightgreen;
 width:90%;
 margin:1rem auto;
+padding:6%;
+line-height:2;
 }
+
 		
 		#loader{
 			position: absolute;
@@ -149,10 +175,12 @@ margin:1rem auto;
 }
 @media screen and (max-width: 320px) {
 	
-	#pagewrap{padding:0.1rem;}
+	#pagewrap{padding:0.1rem;background:red;}
 	
 	#wrap,#mform{width:100%;}
-	#bott{padding-left: 0;}
+	ul li{width: 94%;
+}
+
 	h1{padding-left:0;}
 }
 

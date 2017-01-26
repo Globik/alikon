@@ -1,0 +1,14 @@
+<html>
+	<body>
+		<canvas id="cnv" width="64" height="64" style="border: 1px solid green;"></canvas>
+		<script>
+			var cnv=document.getElementById("cnv");
+			var c=cnv.getContext('2d');
+			var img=new Image();
+			img.src="../public/images/facebook-icon.png";
+			img.onload=function(e){
+			c.drawImage(img,0,0,64,64);	
+			}
+		</script>
+	</body>
+</html>

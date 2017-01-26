@@ -24,8 +24,8 @@ var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
 	return mn;}catch(e){console.log(e);}}
 };
- //var database_url=configDB.pg_local_heroku_url; //for "production" deploy to heroku.com
-var database_url=configDB.pg_url;// for home development
+ var database_url=configDB.pg_local_heroku_url; //for "production" deploy to heroku.com
+//var database_url=configDB.pg_url;// for home development
 //'postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
@@ -42,7 +42,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl:false};
+ssl:true};
 
 var app=koa();
 var pool=module.exports=new Pool(pconfig);
@@ -122,7 +122,7 @@ pool.on('connect', client=>console.log('pool connected'));
 pool.on('error', (err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
 
-var ps=new PS(database_url/*+'?ssl=true'*/);
+var ps=new PS(database_url+'?ssl=true');
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);

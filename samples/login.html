@@ -6,12 +6,14 @@
 html{font-size: 100%;}
 body{
 	font-size: 1rem;
+	font-weight: 700;
 	font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
 	background: rgb(167,85, 2);
 	margin:0;
 	padding:0;
 	height:100%;
 		}
+		main{padding:2rem;}
 h2{
 	padding-left:6%;
     padding-bottom:10px;
@@ -49,8 +51,13 @@ border: 1px solid transparent;
 		}
 a{
 text-decoration:none;
-font-size:0.9rem;padding-right:1%;
+font-size:0.8em;
+	font-weight:normal;
+font-family: Courier;	
+padding-right:1%;
+cursor:pointer;
 color: white;
+letter-spacing:0.1vw;
 		}
 .submit{
 	display:block;
@@ -86,37 +93,28 @@ display: block;
 width:100%; 
 position:relative;
 padding-top:10px;
-padding-left: 6%;
+padding-left: 3%;
 padding-bottom:20px;
 		}
-ul{
-	list-style:none;
-	padding:0;
-	margin:0;
-		}
-		ul li{display:inline:block;width:50%;padding:30px;}
-		.vk{background: lightblue;}
-		.fb{background: blue;}
-		.fb a, .vk a{background:black;}
 		
 @media screen and (max-width: 1020px) {
 html,body{
-	font-size: 2.4vw;background:brown;}
+
+	background:brown;}
 	#wrap{width:60%;}
 	#mform{width:80%;}
 }
 @media screen and (max-width: 320px) {
 	
 	body{background:green;
-	font-size:2rem;
+	
 	}
-	a{font-size:2rem;cursor:pointer;}
-	strong{font-size:2rem;}
-	input[type=submit]{font-size:2rem;}
-	h4{font-size:2rem;}
+		a{letter-spacing:0.4vw;
+	main{padding:0.1rem;}
 	#wrap,#mform{width:100%;}
-	#bott{padding-left:1%;}
+	#bott{padding-left:6%;padding-right:6%;}
 	h1{text-align:center;padding-left:0;}
+	
 }
 	</style>
 	</head>
@@ -141,7 +139,39 @@ html,body{
 </div>
 		</form>
 		<div id="bott" style="backround:yellow;"><strong style="">No account yet?</strong>&nbsp&nbsp<a href="/signup">Create one</a>
-			<h4>Or you can sign in with:</h4><ul><li class="fb"><a href="fb">fb</a><li class="vk"><a href="vk">vk</a></ul></div>
+			<h4>Or you can sign in with:</h4>
+			<style>
+			ul{
+	list-style:none;
+	padding:0;
+	margin:0;
+		}
+		ul li{display:block;position:relative;
+			margin-top:5px;
+			width:50%;height:64px;}
+				.soc-desc1, .soc-desc{display:inline-block;height:64px;}
+				.soc-desc1{background:red;width:64px;}
+				.soc-desc1 img{with:100%;heiht:100%;}
+				.soc-desc{width:calc(100% - 64px);background:lightgreen;
+					vertical-align: top;text-align:center;padding-top:1.5rem;}
+				
+		.vk{background: #45668e;}
+		.fb{background: #4c74c4;}	
+				@media screen and (max-width: 320px) {
+					ul li{width:100%;}
+					#wrap,#mform{width:100%;}
+				}
+			</style>
+			<ul>
+<li class="fb">
+	<div class="soc-desc1"><img src="../public/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc">facebook
+	</div>
+	</a></li>
+<li class="vk">
+<div class="soc-desc1"><img src="../public/images/vk.png"/></div><a href=""><div class="soc-desc">vkontakte
+	</div>
+	</a>
+	</li></ul></div>
 
 	</div>
 </main>
