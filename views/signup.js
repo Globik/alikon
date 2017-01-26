@@ -41,10 +41,10 @@ ${head.head({title:"sign up",[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${gl
 
 
 <div class="fb">
-<div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc">facebook</div>
+<div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc"><span>facebook</span></div>
 	</a></div>
 <div class="vk">
-<div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc">vkontakte
+<div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc"><span>vkontakte</span>
 	</div>
 	</a>
 	
