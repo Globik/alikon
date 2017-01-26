@@ -5,7 +5,7 @@
 	*{box-sizing: border-box;}
 html{font-size: 100%;}
 body{
-	font-size: 1rem;
+	font-size: 1em;
 	font-weight: 700;
 	font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
 	background: rgb(167,85, 2);
@@ -39,9 +39,10 @@ h2{
 }
 #wrap{
 background: rgba(237, 201, 175,0.2);
-width: 30vw;
+width: 50vw;
 margin:0 auto;
 border: 1px solid transparent;
+	max-width: 31.250em;
 		}
 .email, .password{
 	padding-top:10px;
@@ -88,32 +89,54 @@ font-size: 0.9rem;
 color: #fff;
 border: 1px solid rgb(28, 108, 122);		
 }
+		a:hover{color:blue;}
 #bott{
 display: block; 
 width:100%; 
 position:relative;
 padding-top:10px;
-padding-left: 3%;
+padding-left: 6%;
+	padding-right:6%;
 padding-bottom:20px;
 		}
+		.soc-desc1, .soc-desc{display:block;position:absolute;height:100%;}
+		.soc-desc1{background:red;width:4em;top:0;left:0;}
+		.soc-desc{
+					top:0;
+					left:5em;
+					width:calc(100% - 5em);
+					background:lightgreen;
+				    text-align:center;
+					}
+				
+		.vk, .fb{display:block; position:relative;height:4em;margin-top:0.2em;margin-bottom:1em;width:60%;}
 		
-@media screen and (max-width: 1020px) {
-html,body{
-
-	background:brown;}
-	#wrap{width:60%;}
-	#mform{width:80%;}
-}
-@media screen and (max-width: 320px) {
-	
-	body{background:green;
-	
+		.vk{background:#45668e;}
+		.fb{background:#4c74c4;}
+		span{line-height:5;}
+		
+		@media screen and(max-width: 1024px){
+			#wrap{background:green;}
+			
+		
+		}		
+		
+@media screen and (max-width: 650px) {
+html,body{}
+	#wrap{background:red;
+	width:100%;
 	}
-		a{letter-spacing:0.4vw;
+	#mform{width:100%;}
+}
+@media screen and (max-width: 480px) {
+	
+	body{background:green;}
+	a{letter-spacing:0.2vw;}
 	main{padding:0.1rem;}
-	#wrap,#mform{width:100%;}
-	#bott{padding-left:6%;padding-right:6%;}
+	#wrap,#mform{}
+	#bott{}
 	h1{text-align:center;padding-left:0;}
+	.fb, .vk{width:100%;}
 	
 }
 	</style>
@@ -140,38 +163,16 @@ html,body{
 		</form>
 		<div id="bott" style="backround:yellow;"><strong style="">No account yet?</strong>&nbsp&nbsp<a href="/signup">Create one</a>
 			<h4>Or you can sign in with:</h4>
-			<style>
-			ul{
-	list-style:none;
-	padding:0;
-	margin:0;
-		}
-		ul li{display:block;position:relative;
-			margin-top:5px;
-			width:50%;height:64px;}
-				.soc-desc1, .soc-desc{display:inline-block;height:64px;}
-				.soc-desc1{background:red;width:64px;}
-				.soc-desc1 img{with:100%;heiht:100%;}
-				.soc-desc{width:calc(100% - 64px);background:lightgreen;
-					vertical-align: top;text-align:center;padding-top:1.5rem;}
-				
-		.vk{background: #45668e;}
-		.fb{background: #4c74c4;}	
-				@media screen and (max-width: 320px) {
-					ul li{width:100%;}
-					#wrap,#mform{width:100%;}
-				}
-			</style>
-			<ul>
-<li class="fb">
-	<div class="soc-desc1"><img src="../public/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc">facebook
-	</div>
-	</a></li>
-<li class="vk">
-<div class="soc-desc1"><img src="../public/images/vk.png"/></div><a href=""><div class="soc-desc">vkontakte
+		
+ <div class="fb">
+	<div class="soc-desc1"><img src="../public/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc"><span>facebook</span>
+	</div> 
+				</a></div>
+<div class="vk">
+<div class="soc-desc1"><img src="../public/images/vk.png"/></div><a href=""><div class="soc-desc"><span>vkontakte</span>
 	</div>
 	</a>
-	</li></ul></div>
+	</div></div>
 
 	</div>
 </main>

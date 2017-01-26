@@ -29,15 +29,14 @@ ${n.message && n.message !== null ? `<span id="red-warnig">${n.message}</span>` 
 
 <div id="bott"><strong style="">No account yet?</strong>&nbsp&nbsp<a href="/signup">Create one</a>
 <br><br><strong>Or you can sign in with:</strong><br><br>
-<ul>
-<li class="fb">
-<div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc">facebook</div>
-	</a></li>
-<li class="vk">
-<div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc">vkontakte
+<div class="fb">
+<div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc"><span>facebook</span></div>
+	</a></div>
+<div class="vk">
+<div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc"><span>vkontakte</span>
 	</div>
-	</a>
-	</li></ul>
+	</a></div>
+	
 </div>
 </div>
 </main></body></html>`;}

@@ -39,15 +39,15 @@ ${head.head({title:"sign up",[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${gl
  <strong>Already a member?</strong> <a href="/login">Login</a><br><br>
 <strong>Or you can sign in with:</strong><br><br>
 
-<ul>
-<li class="fb">
+
+<div class="fb">
 <div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc">facebook</div>
-	</a></li>
-<li class="vk">
+	</a></div>
+<div class="vk">
 <div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc">vkontakte
 	</div>
 	</a>
-	</li></ul>
+	
 
 </div>
 </div>
