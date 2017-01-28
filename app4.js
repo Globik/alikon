@@ -125,7 +125,7 @@ var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	dop_ssl='';
 }else{dop_ssl="?ssl=true"}
-var ps=new PS(database_url+'dop_ssl'*/);
+var ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);
