@@ -24,7 +24,7 @@ var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
 	return mn;}catch(e){console.log(e);}}
 };
- var database_url=configDB.pg_local_heroku_url; //for "production" deploy to heroku.com
+var database_url=configDB.pg_local_heroku_url; //for "production" deploy to heroku.com
 //var database_url=configDB.pg_url;// for home development
 //'postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
@@ -121,8 +121,11 @@ console.log('soll on 5000');
 pool.on('connect', client=>console.log('pool connected'));
 pool.on('error', (err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
-
-var ps=new PS(database_url+'?ssl=true');
+var dop_ssl='';
+if(process.env.DEVELOPMENT ==="yes"){
+	dop_ssl='';
+}else{dop_ssl="?ssl=true"}
+var ps=new PS(database_url+'dop_ssl'*/);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);

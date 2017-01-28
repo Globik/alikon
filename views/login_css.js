@@ -111,6 +111,7 @@ width:4em;top:0;left:0;}
 					top:0;
 					left:5em;
 					width:calc(100% - 5em);
+width: -webkit-calc(100% - 5 em); 
 					/*background:lightgreen;*/
 				    text-align:center;
 					}
@@ -126,12 +127,13 @@ width:4em;top:0;left:0;}
 /* end social icons */
 
 #outresult{
-display:none;
+display: none;
 background: lightgreen;
 width:90%;
 margin:1rem auto;
 padding:6%;
 line-height:2;
+/*color:red;*/
 }
 
 		

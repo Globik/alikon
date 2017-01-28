@@ -47,11 +47,10 @@ ${head.head({title:"sign up",[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${gl
 <div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc"><span>vkontakte</span>
 	</div>
 	</a>
-	
-
+	</div>
 </div>
 </div>
-<div id="outresult" class="animate-bottom"></div>
+<div id="outresult" class="animate-bottom">i am a div</div>
 <script>
 var smally=gid("smally"),
 	outresult=gid("outresult"),
@@ -74,8 +73,8 @@ var red_email=document.querySelector('input[type=email]');
 mform.onsubmit=function(ev){
 ev.preventDefault();
 //form.style.opacity="0.2";
-wrap.style.opacity="0.2";
-bod.style.background="rgba(0,0,0,0.3)";
+wrap.style.opacity="0.9";
+bod.style.background="rgba(0,0,0,0.9)";
 loader.style.display="block";
 to_ajx();
 }

@@ -19,6 +19,7 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 
 	${(buser ? buser.name : "Guest<br>")}
 	${(buser ? `<a href="/logout">logout</a>` :`<a href="/login">login</a>`)} | <a href="/signup">sign up</a>
+<br>Or you can login with <a href="/auth/facebook">facebook</a>
 
 <div>Some div with user's personals fades ${douser(buser)}</div>
 <output id="out4"></output>
