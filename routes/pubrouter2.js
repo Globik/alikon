@@ -141,7 +141,7 @@ pub.get('/email_validation/:token',function*(){
 	
 });
 
-pub.get('/auth/facebook', passport.authenticate('facebook',{scope:'email',fields:'name,email',returns_scopes:true}));
+pub.get('/auth/facebook', passport.authenticate('facebook',{scope:['email'],fields:'name,email',returns_scopes:true}));
 pub.get('/auth/facebook/callback',passport.authenticate('facebook',{successRedirect:'/',failureRedirect:'/login'}));
 
 pub.get('/fucker',function*(){

@@ -2,7 +2,9 @@ var koa=require('koa');
 var app=koa();
 var co=require('co');
 var port=process.env.PORT || 5000;
-
+var sis="2345968483@fb.com";
+var nasis=sis.endsWith("@f0b.com");
+console.log('string ends with @fb.com? :',nasis);
 
 var api_key=process.env.TMAILGUNAPIKEY;
 console.log('mailgun api key: ', api_key);
@@ -21,8 +23,8 @@ this.body="Hello World(koa.js)!";
 });
 
 var mdata={
-from: 'gru5@yandex.ru',
-to:'gru5@yandex.ru',
+from: 'my_list@sandboxad7b6f5bd4044d34a8c0df473092b78c.mailgun.org',
+to:'globalikslivov@gmail.com',
 subject:'Hello world!',
 text:'simple text',
 html: '<html><body><a href="https://heroku.com">https://heroku.com hura</body></html>'

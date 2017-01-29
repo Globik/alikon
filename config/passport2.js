@@ -55,17 +55,20 @@ var FacebookStrategy=require('passport-facebook').Strategy;
 passport.use(new FacebookStrategy({
 	clientID:process.env.FB_CLIENT_ID,
 	clientSecret:process.env.FB_SECRET_KEY,
-	callbackURL:loc_cb
+	callbackURL:loc_cb,
+	profileFields:['id','emails','name'],
+	returns_scops:true
 },function(accessToken,refreshToken, profile,done){
 	process.nextTick(function(){
+		var sata=profile._json;
 		var femail='';
 		console.log('profile: ', profile);
 		//return done(null,{email:"fb@.me.ru"});
-		if(!profile.email){
+		if(!sata.email){
 		femail=`${profile.id}@fb.com`;
-		}else{femail=profile.email;}
+		}else{femail=sata.email;}
 		var fpassword=profile.id;
-		var fname=profile.displayName;
+		var fname=sata.first_name+' '+sata.last_name;
 		console.log(femail);
 		db.query(`select * from busers where email='${femail}'`,(err,user)=>{
 			if(err){return done(err);}

@@ -92,8 +92,10 @@ if(el.token_type=="reset"){return	email_requisit(el.email, "Password "+el.token_
 	return email_requisit(el.email, "Password "+el.token_type, txt_sub(rtxt_valis_good({})),
 						 txt_sub(rhtml_valis_good({})));
 }else if(el.token_type=="validation"){
+
 return email_requisit(el.email, "Your Email "+el.token_type, txt_sub(email_ver({token:el.token})),
 					  txt_sub(email_ver_html({token:el.token})));
+	
 }
 	else if(el.token_type=="validated"){
 	return email_requisit(el.email, "Your Email is "+el.token_type, txt_sub(email_ok({})), txt_sub(email_ok_html({})));
@@ -103,6 +105,7 @@ return email_requisit(el.email, "Your Email "+el.token_type, txt_sub(email_ver({
 function msg_handler(msg){
 		console.log('msg: ', msg);
 		console.log('send_email: ', send_email(msg));
+	if(!msg.email.endsWith("@fb.com"))
 		mailgun.messages().send(send_email(msg), mail_guner);
 		}
 
