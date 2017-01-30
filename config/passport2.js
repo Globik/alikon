@@ -1,6 +1,7 @@
 ﻿
 const LocalStrategy = require('passport-local').Strategy;
 
+
 module.exports=(db,passport)=>{
 
 passport.serializeUser((user, done)=> {
@@ -46,16 +47,18 @@ return  done(null,useri.rows[0],{message:"OK saved a new user"});
 		
 
 var FacebookStrategy=require('passport-facebook').Strategy;
-	var loc_cb='';
+	var loc_fb='';var loc_vk='';
 	if(process.env.DEVELOPMENT==='yes'){
-	loc_cb="http://localhost:5000/auth/facebook/callback";
+	loc_fb="http://localhost:5000/auth/facebook/callback";
+	loc_vk="http://localhost:5000/auth/vkontakte/cb";
 	}else{
-	loc_cb="https://alikon.herokuapp.com/auth/facebook/callback";
+	loc_fb="https://alikon.herokuapp.com/auth/facebook/callback";
+	loc_vk="https://alikon.herokuapp.com/auth/vkontakte/cb";
 	}
 passport.use(new FacebookStrategy({
 	clientID:process.env.FB_CLIENT_ID,
 	clientSecret:process.env.FB_SECRET_KEY,
-	callbackURL:loc_cb,
+	callbackURL:loc_fb,
 	profileFields:['id','emails','name'],
 	returns_scops:true
 },function(accessToken,refreshToken, profile,done){
@@ -84,8 +87,42 @@ console.log('fb user.rows[0] :' ,user.rows[0]);
  
 		})
 }))
+	const VkontakteStrategy = require('passport-vkontakte').Strategy;
+passport.use(new VkontakteStrategy({
+clientID: process.env.VK_ID,
+clientSecret: process.env.VK_SECRET,
+callbackURL:loc_vk,
+scope:['email'],
+profileFields:['email']}, (accessToken,refreshToken, params, profile, done)=>{
+	process.nextTick(()=>{
+	console.log('vk Profile: ', profile);
+	console.log('params!: ', params);
+	console.log('accessToken: ', accessToken);
+	console.log('refreshToken: ', refreshToken);
+var sata=profile._json;
+var vmail='';
+if(!params.email){
+vmail=`${profile.id}@vk.com`;
+}else{vmail=params.email;}
+var vpassword=profile.id;
+var vname=sata.first_name+' '+sata.last_name;
+db.query(`select * from busers where email='${vmail}'`, (err,user)=>{
+if(err){return done(err);}
+if(user.rows[0]){return done(null,user.rows[0]);}else{
 	
-
+db.query(get_str({email:vmail, password:vpassword, username:vname}), (err, user) =>{
+if (err) { console.log('err within fb insert user: ',err.message);
+return done(err); }
+console.log('VK user.rows[0] :' ,user.rows[0]);
+return done(null,user.rows[0]);
+		})  } })
+		
+	
+	}
+					
+	)}
+								  
+	))
 
 
 

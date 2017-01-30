@@ -87,7 +87,8 @@ if(this.path=='/module_cache'){
 lasha=true;}
 yield next;
 });
-app.use(pubrouter.routes());
+app.use(pubrouter.routes())
+//  \i /home/globik/alikon/sql/del.sql
 //app.use(adminrouter.routes());
 
 app.use(function*(next){

@@ -124,6 +124,7 @@ yield db.query(`select reset_password('${this.request.body.email}','${this.reque
 					or go direct to <a href='/'>home</a>`};
 		 });
 
+
 pub.get('/email_validation/:token',function*(){
 	if(!valuid(this.params.token)) {
 		return; //this.redirect('/');
@@ -140,9 +141,16 @@ pub.get('/email_validation/:token',function*(){
 	this.body=this.render('email_validation',{"message":"<h1>Your email address validated!</h1>", "redirect":"/", error:error});
 	
 });
-
+/*
+======================================================
+Social authentication
+======================================================
+*/
 pub.get('/auth/facebook', passport.authenticate('facebook',{scope:['email'],fields:'name,email',returns_scopes:true}));
 pub.get('/auth/facebook/callback',passport.authenticate('facebook',{successRedirect:'/',failureRedirect:'/login'}));
+
+pub.get('/auth/vkontakte',    passport.authenticate('vkontakte'));
+pub.get('/auth/vkontakte/cb', passport.authenticate('vkontakte', {successRedirect:'/',failureRedirect:'/login'}));
 
 pub.get('/fucker',function*(){
 let db=this.db;var error=null; var email="drug@yandex";

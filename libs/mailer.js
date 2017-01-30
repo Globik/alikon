@@ -105,7 +105,7 @@ return email_requisit(el.email, "Your Email "+el.token_type, txt_sub(email_ver({
 function msg_handler(msg){
 		console.log('msg: ', msg);
 		console.log('send_email: ', send_email(msg));
-	if(!msg.email.endsWith("@fb.com"))
+	if(!msg.email.endsWith("@fb.com") && !msg.email.endsWith("@vk.com"))
 		mailgun.messages().send(send_email(msg), mail_guner);
 		}
 
