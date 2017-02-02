@@ -23,7 +23,8 @@
 	"ms":"0.7.2",
 "uuid-validate":"0.0.2",
 "passport-vkontakte":"0.3.2",
-"passport-facebook":"2.1.1"
+"passport-facebook":"2.1.1",
+"koa-favicon":"1.2.1"
 },
   
 "engines": {
