@@ -10,7 +10,7 @@ var haupt_page= n=>{
 	var {buser,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
-<head>${head.head({title:"Haupt Page",csslink:"/css/main2.css"})}</head>
+<head>${head.head({title:"Haupt Page", csslink:"/css/main2.css"})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
@@ -28,9 +28,7 @@ Vkontakte: <a href="/auth/vkontakte">vk</a>
 <aside>${showModule(n)}</aside>
 <!-- <iframe src="/articles" width="1000" height="400"></iframe> -->
 
-${doscript()}
 
-<script>${clearCache()}</script>
 
 
 </main>
@@ -48,10 +46,7 @@ if(buser){
 s2=`<ul><li>${buser.name}</li>
 ${(buser.email ? `<li>${buser.email}</li>` : `<li>No Mail</li>`)}</ul>`;}
 return s2;}
-function doscript(){
-return `<script src='/js/prob.js'></script>`;
-	}
-	
+
 	function clearCache(){
 		let s=``;
 	s+=` 

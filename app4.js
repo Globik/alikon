@@ -1,5 +1,7 @@
 'use strict';
 const koa=require('koa');
+
+
 const co=require('co');
 const render=require('./libs/render.js');
 const path=require('path');
@@ -8,6 +10,7 @@ const Pool=require('pg-pool');
 const serve=require('koa-static');
 //var flash=require('koa-flash');
 //r PS=require('pg-pubsub');
+var favicon=require('koa-favicon');
 var PS=require('./libs/pg-subpub.js');
 var bodyParser=require('koa-body');
 var session=require('koa-generic-session');
@@ -53,6 +56,10 @@ var pg_store=new PgStore(pool);
 //var pg_store=new PgStore(database_url);
 render(app,{})
 app.use(serve(__dirname+'/public'));
+app.use(favicon());
+
+
+
 app.keys=['fg'];
 app.use(session({store:pg_store}));
 app.use(passport.initialize());

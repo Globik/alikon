@@ -32,6 +32,7 @@ font-family: Courier;
 #red-warnig{background:red;}
 .red{background:red;line-height:2;padding:4%;}
 .lightgreen{background: lightgreen;}
+
 #mform{
 display:block;
 width: 100%;
@@ -104,25 +105,22 @@ padding-bottom:20px;
 
 /* social icons */
 
-.soc-desc1, .soc-desc{display:block;position:absolute;height:100%;}
-		.soc-desc1{
-width:4em;top:0;left:0;}
-		.soc-desc{
-					top:0;
-					left:5em;
-					width:calc(100% - 5em);
-width: -webkit-calc(100% - 5 em); 
-					/*background:lightgreen;*/
-				    text-align:center;
-					}
-				
-		.vk, .fb{display:block; position:relative;height:4em;margin-top:0.2em;margin-bottom:1em;width:60%;
-
+.soc-desc1{
+display:block;
+position:absolute;
 }
 		
-		.vk{background:#45668e;}
-		.fb{background:#4c74c4;}
-		span{line-height:5;}
+.soc-desc{
+position:relative;
+display:block;
+
+width: 100%;
+background:rgba(255,0,0,0.8);
+text-align:center;
+					}
+				
+
+		span{line-height: 5.01;}
 
 /* end social icons */
 
@@ -166,8 +164,7 @@ line-height:2;
 		}
 		
 @media screen and (max-width: 1024px) {
-#mform{background:pink;}
-#wrap{width:80%;
+#wrap{width:80%;}
 }
 
 @media screen and (max-width: 650px) {

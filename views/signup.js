@@ -40,14 +40,14 @@ ${head.head({title:"sign up",[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${gl
 <strong>Or you can sign in with:</strong><br><br>
 
 
-<div class="fb">
-<div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc"><span>facebook</span></div>
-	</a></div>
-<div class="vk">
-<div class="soc-desc1"><img src="/images/vk.png"/></div><a href=""><div class="soc-desc"><span>vkontakte</span>
+
+<a href=""><div class="soc-desc"><div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><span>facebook</span></div>
+	</a>
+
+<a href=""><div class="soc-desc"><div class="soc-desc1"><img src="/images/vk.png"/></div><span>vkontakte</span>
 	</div>
 	</a>
-	</div>
+	
 </div>
 </div>
 <div id="outresult" class="animate-bottom">i am a div</div>

@@ -11,7 +11,7 @@ const pub=new Router();
 const limit=10;
 pub.get('/',function *(){
 this.session.dorthin=this.path;
-	console.log('THIS>REQ: ', this.req.email);
+	console.log('THIS>REQ: ', this.response);
 this.body=this.render('haupt_page',{buser:this.req.user});
 });
 
