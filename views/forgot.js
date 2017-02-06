@@ -10,7 +10,7 @@ ${head.head({title:"Reset Password",
 
 </head><body>
 <main id="pagewrap">
-<a href="/">home</a>
+<a class="nav" href="/">home</a>
 <div id="loader"></div>
 <div id="wrap">
 <form id="mform" action="/forgot" method="post">

@@ -25,7 +25,7 @@ db.query(`select*from busers where email='${email}' and pwd=crypt('${password}',
 if (err) { console.log('ERROR: ',err);
 		  return done(err); }
 if (!user.rows[0]) { 
-return done(null, false, { message: 'wrong user or pwd'}); 
+return done(null, false, { message: 'Wrong user email or password!'}); 
 }
 	//send to serialize function
 	return done(null,user.rows[0]);

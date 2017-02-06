@@ -159,6 +159,13 @@ let db=this.db;var error=null; var email="drug@yandex";
 	this.body={"error":error,"result":bu}
 });
 
+/* ========================
+xhr_failed_login
+===========================
+*/
+pub.post('/xhr_failed_login', function*(){
+this.body={body:this.request.body};
+})
 
 pub.get('/articles', pagination, function *(){
 let {dob,locals}=this, docs=dob.collection('posts');
