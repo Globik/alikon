@@ -1,29 +1,29 @@
 //articles_block.js
 'use strict';
-//var moment=require('moment');  
+var moment=require('moment');  
 var zagl=true;
-var metatagsector=true;  
+var metatagsector=false;  
 var articles_block=n=>`${n.posts ? getArt(n) : ``}${zagl ? getZaglushkaPost(n) : ``}`;
 module.exports={articles_block};
   
 function getArt(n){ 
 	let s=``;let {posts}=n;
 	if(posts){
-	for(var {_id,title,sub_title,date_url,slug,images:images=[""],status,created_on,tags:tags} of posts ){    
+	for(var {id,title,sub_title,date_url,slug,images,status,created_on,tags:tags} of posts ){    
      s+=`<article class="fluiditems"><div id="redaktor"><ul class="red-nav"><li>X</li>
-	<li><a onclick="redaktorHref(this)"  data-id="${_id}" href="#popredaktor">redact</a></li>
-<li data-id="${_id}" onclick="removePost(this)">remove</li><li>visibility ${status}</li></ul></div>
+	<li><a onclick="redaktorHref(this)"  data-id="${id}" href="#popredaktor">redact</a></li>
+<li data-id="${id}" onclick="removePost(this)">remove</li><li>visibility ${status}</li></ul></div>
 <div class="foto-cont">                 
-<img src="${images[0].src || '/images/kuku.png'}"/></div>	
+<img src="${images.length ? images[0].src1 : '/images/kuku.png'}"/></div>	
 <section class="article-info"> 
 <div class="time-service"><b>${moment(created_on).format('MMM D, YYYY')}</b></div>
 <div class="time-service"><b>comments 1</b></div>
 <div class="time-service"><b>23 Shares</b></div>
-<h5><a href="/articles/${date_url}/${slug}">${title}</a></h5> 
-<p>${sub_title}</p>  
+<h5><a href="/articles/${moment(date_url).format('YYYY-MM-DD')}/${slug}">${title}</a></h5> 
+${sub_title ? `<p>${sub_title}</p>` : ''}  
 	${metatagsector ? `<div class="tags">${tags? tags : ""}</div>`:""}
 </section>
-<div class='art-pop'><p>Photos: ${images.length}</p>
+<div class='art-pop'>${images.length ? `<p>Photos: ${images.length}</p>`:''}
 <p>Noch bla bla bla.</p></div>
 </article>`;
 	} }

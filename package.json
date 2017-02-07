@@ -24,7 +24,9 @@
 "uuid-validate":"0.0.2",
 "passport-vkontakte":"0.3.2",
 "passport-facebook":"2.1.1",
-"koa-favicon":"1.2.1"
+"koa-favicon":"1.2.1",
+"limax":"1.4.1",
+"moment":"2.17.1"
 },
   
 "engines": {

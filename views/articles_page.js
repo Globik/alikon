@@ -11,6 +11,7 @@ var footer=require('./footer.js');
 
 var articles_page=n=>{ 
 let {buser,showmodule:{mainmenu,profiler}}=n;
+
 return `<!DOCTYPE html>
 <!-- articles_page.js -->
 <html lang="en">

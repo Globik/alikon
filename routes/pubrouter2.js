@@ -167,13 +167,16 @@ pub.post('/xhr_failed_login', function*(){
 this.body={body:this.request.body};
 })
 
-pub.get('/articles', pagination, function *(){
-let {dob,locals}=this, docs=dob.collection('posts');
+pub.get('/articles',/* pagination,*/ function *(){
+let db=this.db; var posts;
 try{
-var posts=yield docs.find().limit(limit).skip(0).sort({_id:-1}).toArray();}
+//var posts=yield docs.find().limit(limit).skip(0).sort({_id:-1}).toArray();
+posts=yield db.query(`select*from articles`);
+}
 catch(e){console.log('e :',e);}
 this.type="html";
-this.body=this.render('articles_page',{buser:this.req.user,posts,locals});});
+	console.log('POSTS ARTICLES: ', posts.rows);
+this.body=this.render('articles_page',{buser:this.req.user, posts:posts.rows, locals:{total_pages:1}});});
 
 pub.param('page',function *(page,next){
 	console.log('page :',page);
