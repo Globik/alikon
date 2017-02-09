@@ -5,7 +5,7 @@ var Router=require('koa-router');
 var co=require('co');
 var fs=require('fs');
 var fs=require('co-fs');
-var path=require('path');
+var path=require('path');￼￼
 var diskspace=require('diskspace');
 
 var admin=new Router();

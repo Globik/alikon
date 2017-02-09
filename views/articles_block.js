@@ -9,7 +9,8 @@ module.exports={articles_block};
 function getArt(n){ 
 	let s=``;let {posts}=n;
 	if(posts){
-	for(var {id,title,sub_title,date_url,slug,images,status,created_on,tags:tags} of posts ){    
+	for(var {id,title,sub_title,date_url,slug,images,status,created_on,tags:tags} of posts ){ 
+		//if(status=='active'){
      s+=`<article class="fluiditems"><div id="redaktor"><ul class="red-nav"><li>X</li>
 	<li><a onclick="redaktorHref(this)"  data-id="${id}" href="#popredaktor">redact</a></li>
 <li data-id="${id}" onclick="removePost(this)">remove</li><li>visibility ${status}</li></ul></div>
@@ -26,6 +27,7 @@ ${sub_title ? `<p>${sub_title}</p>` : ''}
 <div class='art-pop'>${images.length ? `<p>Photos: ${images.length}</p>`:''}
 <p>Noch bla bla bla.</p></div>
 </article>`;
+		//}else{}
 	} }
 return s;
 }    

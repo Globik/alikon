@@ -8,7 +8,7 @@ const cofs=require('co-fs');
 const pub=new Router();
 //var debug=require('debug');^.+@.+\..+$^.+@.+\..+$
 
-const limit=10;
+const limit=3;
 pub.get('/',function *(){
 this.session.dorthin=this.path;
 	console.log('THIS>REQ: ', this.response);
@@ -65,7 +65,7 @@ Head over to your inbox and click on the "Activate My Account" button to validat
 		
 		)
 //pub.post('/login',passport.authenticate('local',{successRedirect:'/',failureRedirect:'/'}));
-pub.get('/logout', function*() {this.logout();this.redirect('/');});
+pub.get('/logout', function*() {this.logout();this.redirect(this.session.dorthin || '/');});
 pub.get('/forgot', function*(){
 //if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
 this.body=this.render('forgot',{});	
@@ -106,6 +106,7 @@ this.body=this.render('reset',{"reset-token":this.params.token});
 	}
 	});
 pub.get('/error', function(){
+	this.session.dorthin=this.path;
 this.body=this.render('error',{message:this.message, error:this.session.error});
 })
 
@@ -167,49 +168,76 @@ pub.post('/xhr_failed_login', function*(){
 this.body={body:this.request.body};
 })
 
-pub.get('/articles',/* pagination,*/ function *(){
+pub.get('/articles', pagination, function *(){
+	this.session.dorthin=this.path;
 let db=this.db; var posts;
+	var locals=this.locals;
+	var mamba="where status='active'";
+	if(this.req.isAuthenticated()){
+	console.log('THIS.REQ.USER.ROLE: ', this.req.user.role);
+		if(this.req.user.role==='superadmin'){mamba='';}
+	}
 try{
 //var posts=yield docs.find().limit(limit).skip(0).sort({_id:-1}).toArray();
-posts=yield db.query(`select*from articles`);
+posts=yield db.query(`select*from articles ${mamba} order by id desc offset 0 limit ${limit}`);
 }
 catch(e){console.log('e :',e);}
-this.type="html";
 	console.log('POSTS ARTICLES: ', posts.rows);
-this.body=this.render('articles_page',{buser:this.req.user, posts:posts.rows, locals:{total_pages:1}});});
+this.body=this.render('articles_page',{buser:this.req.user, posts:posts.rows, locals:locals});});
 
 pub.param('page',function *(page,next){
 	console.log('page :',page);
 	console.log('isNumb :',isNumb(page))
 if(isNumb(page)==false){this.status=404;this.redirect('/articles')}
 else if(page==0 || page==1){this.status=404;this.redirect('/articles');}else{yield next;}
-}).get('/articles/:page',pagination,function *(page){
-	//var locals=this.locals;
-	let {dob,locals}=this, docs=dob.collection('posts');var err=null;
+}).get('/articles/:page', pagination, function *(page){
+	this.session.dorthin=this.path;
+	var locals=this.locals;var err;
+	//let {dob,locals}=this, docs=dob.collection('posts');var err=null;
+	let db=this.db;
+	var mamba="where status='active'";
+	if(this.req.isAuthenticated()){
+	console.log('THIS.REQ.USER.ROLE: ', this.req.user.role);
+		if(this.req.user.role==='superadmin'){mamba='';}
+	}
 	if(locals.page <= locals.total_pages){
 		try{
-		var posts=yield docs.find().limit(limit).skip(limit*(locals.page-1)).sort({_id:-1}).toArray();
+			console.log('LOCALS.PAGE: ',locals.page);
+			console.log('locals.total_pages: ',locals.total_pages);
+		//var posts=yield docs.find().limit(limit).skip(limit*(locals.page-1)).sort({_id:-1}).toArray();
+var posts=yield db.query(`select*from articles ${mamba} order by id desc offset ${(locals.page - 1) * limit } limit ${limit}`);
 		}catch(e){console.log('err in db:',e);err=e;}
-		this.type="html";
-	this.body=this.render('articles_page',{locals,buser:this.req.user,posts});
+	this.body=this.render('articles_page',{locals:locals,buser:this.req.user,posts:posts.rows});
 	}
 	else{this.status=404;this.redirect('/articles');}
 });
 
 //var article_view=rel('../views/article_view.js');
 pub.get('/articles/:date_url/:slug',function *(){
-	let {dob,bid}=this, docs=dob.collection('posts'); var post;
-	//console.log(this.params.slug, this.params.date_url)
+	//let {dob,bid}=this, docs=dob.collection('posts'); 
+	this.session.dorthin=this.path;
+	let db=this.db;
+	var vpost;
+	console.log('Slug and date_url: ', this.params.slug, this.params.date_url)
+	/*
 try{
 post=yield docs.findAndModify({slug:this.params.slug,date_url:this.params.date_url},[],{$inc:{gesamt_seen:1}},{new:true});
-//console.log('POST :',post);
-//{value:{},lastErrorObject:{updatedExisting:true,n:1},ok:1}
 if(post.value !==null){post=post.value;}else{console.log("Found Null Matches");this.redirect('/articles')}
 }catch(e){console.log('MMMMMmodify error :',e);this.redirect('/articles');}
-console.log('SUBADMIN :',this.state.subadmin);
-console.log('STATE: ',this.state);
-	this.type="html";
-	this.body=this.render('article_view',{buser:this.req.user,post});
+*/
+	try{
+	var post=yield db.query(`select*from articles where slug='${this.params.slug}' and date_url='${this.params.date_url}'`);
+		if(post.rows.length){
+		console.log('HERE IS POST: ', post.rows[0]);
+			vpost=post.rows[0];
+			this.body=this.render('article_view',{buser:this.req.user,post: vpost});
+		}else{
+			//this.status(404);
+			this.session.dorthin=null;
+			this.session.error="Yopt - not found, guy";
+			  this.redirect('/error');}
+	}catch(e){console.log(e);}
+	//this.body=this.render('article_view',{buser:this.req.user,post: vpost});
 	});
 pub.post('/photo_failure',function *(){
 	console.log("PHOTO FAILURE OCCured");
@@ -254,6 +282,7 @@ function readStr2(n){return new Promise((res,rej)=>{
 //npm start
 //var mob={foo:"bar",["prop"+foo()]:42};
 //console.log('mob :',mob);
+console.log('TOTALS: ',Math.ceil(12/3));
 module.exports=pub;
 
 function *pagination(next){
@@ -263,10 +292,13 @@ var qu=parseInt(this.params.page) || 1;
 	var num=page*limit;
 var w=5,ab=[],deg=2;var map=new Map();
 
-var db=this.dob;
-var docs=db.collection('posts');
-try{var total_articles=yield docs.count();}catch(e){console.log(e);return next(e);}
-var total_pages=Math.ceil(total_articles/limit);
+let db=this.db;
+//var docs=db.collection('posts');
+try{var total_articles=yield db.query('select from articles');
+   console.log('TOTAL_ARTICLES: ',total_articles.rowCount);
+   }catch(e){console.log(e);return next(e);}
+var total_pages=Math.ceil(Number(total_articles.rowCount)/limit);
+	console.log('TOTAL_PAGES: ',total_pages);
 //var pid_tot=Math.trunc(total_articles/limit);
 //console.log(total_pages,pid_tot);
  for(var i=1;i<=total_pages;i++){ab.push(i);}
@@ -279,7 +311,7 @@ if(y>=total_pages-w){map.set(y,ab.slice(total_pages-w,total_pages));}
 map.set(y,ab.slice(0,total_pages))
 }
 });
-this.locals.total_articles=total_articles;
+this.locals.total_articles=total_articles.rowCount;
 	this.locals.total_pages=total_pages;
 	this.locals.page=page;
 	this.locals.rang_page=map;
