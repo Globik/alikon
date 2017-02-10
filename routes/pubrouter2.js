@@ -109,7 +109,7 @@ pub.get('/error', function(){
 	this.session.dorthin=this.path;
 this.body=this.render('error',{message:this.message, error:this.session.error});
 })
-
+// heroku pg:psql --app alikon
 pub.post('/reset/:token', function*(token){
 	if(!this.request.body.email && !this.request.body.token && !this.request.body.password) this.throw(400,"Please fill in folders");
 	let db=this.db;

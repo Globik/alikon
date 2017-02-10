@@ -19,7 +19,7 @@ var PgStore=require('./pg-sess.js');
 const passport=require('koa-passport');
 const fs=require('co-fs');
 const pubrouter=require('./routes/pubrouter2.js');
-//var adminrouter=require('./routes/admin2.js');
+const adminrouter=require('./routes/admin.js');
 const configDB=require('./config/database.js');
 const {msg_handler} = require('./libs/mailer.js');
 var {script}=require('./libs/filter_script');
@@ -95,8 +95,9 @@ lasha=true;}
 yield next;
 });
 app.use(pubrouter.routes())
+
 //  \i /home/globik/alikon/sql/del.sql
-//app.use(adminrouter.routes());
+app.use(adminrouter.routes());
 
 app.use(function*(next){
 	try{

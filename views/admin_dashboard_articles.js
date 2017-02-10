@@ -6,11 +6,12 @@ var admin_dashboard_articles=n=>{return `<!DOCTYPE html><html lang="en"><head><m
 ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <br><h3>Welcome to the Articles Manager</h3>
 <div class="articles-count">
-<% if(l.posts){%><b>Total articles : </b><%= l.posts.length %><%}%>
+${n.posts ? `<b>Total articles : </b>${n.posts.length}` : ``}
 <h3>Articles Manager</h3>
-<% if(l.posts){l.posts.forEach(function(p){%>
-<span data-id="<%= p._id %>" onclick="insertDataIda(this);" ><%= p.postname %></span>
-<%})}%></div>
+
+${n.posts ? `<div>${get_posts(n)}</div>`:''}
+
+
 <div>
 <p><h4>Article</h4></p>
 <form name="article_create" method="post" enctype="multipart/form-data">
@@ -21,7 +22,7 @@ ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <label><b>sub_title:</b></label><br>
 <input style="width:400px;" type="text" name="sub_title" required placeholder="sub_title" value="Get that thing for two minutes"><br>
 <label><b>author:</b></label><br>
-<input type="text" name="author" required placeholder="author" value="${n.buser.username}"><br>
+<input type="text" name="author" required placeholder="author" value="${n.buser.name}"><br>
 <label><b>leader:</b></label><br>
 <textarea name="leader" required placeholder="leader" value="" style="width:400px;height:60px;">Lead Absatz how to bla bla bla</textarea><br>
 <label><b>Main content(body):</b></label><br>
@@ -71,4 +72,11 @@ function showDialog(el,bool){
 	out.textContent=el.response;
 }
 </script>`;
+}
+function get_posts(n){
+let s='';
+	n.posts.forEach(function(el,p){
+	s+=`<li><span data-id="${el.id}" onclick="insertDataIda(this);" >${el.title}</span>`;
+	})
+	return s;
 }

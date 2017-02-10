@@ -5,30 +5,35 @@ var Router=require('koa-router');
 var co=require('co');
 var fs=require('fs');
 var fs=require('co-fs');
-var path=require('path');￼￼
-var diskspace=require('diskspace');
+var path=require('path');
+//var diskspace=require('diskspace');
 
 var admin=new Router();
-admin.get('/dashboard',authed,function*(){
-this.type="html";
+admin.get('/dashboard', authed, function*(){
 this.body=this.render('admin_dashboard',{buser:this.req.user});
 })
 //var admin_dashboard_articles=rel(`${viewpath}//admin_dashboard_articles.js`);
 admin.get('/dashboard/articles',authed,function *(){
-this.type="html";
-this.body=this.render('admin_dashboard_articles',{buser:this.req.user});
+let db=this.db;
+	try{
+	var posts=yield db.query('select*from articles order by id desc limit 10');
+	}catch(e){console.log('err in dashboard articles: ',e)}
+this.body=this.render('admin_dashboard_articles',{buser:this.req.user, posts:posts.rows});
 });
 
-admin.post('/dashboard/article_create',authed,bodyParser({multipart:true,formidable:{}}),function *(){
-let {dob}=this, docs=dob.collection('posts');
+admin.post('/dashboard/article_create', authed, bodyParser({multipart:true,formidable:{}}), function *(){
+//let {dob}=this, docs=dob.collection('posts');
+let db=this.db;
 let locs=this.request.body.fields;
 locs.slug=sluger(locs.title);
 let date=new Date();
-	locs.created_on=date;
-	locs.last_modified=locs.created_on;
-	locs.date_url=date.getTime().toString().slice(0,8);
-	try{
-		var post=yield docs.insert(locs);
+locs.created_on=date;
+locs.last_modified=locs.created_on;
+locs.date_url=date.getTime().toString().slice(0,8);
+try{
+//var post=yield docs.insert(locs);
+//insert into articles(title, slug, author, body) values('Mama-3', 'mama-3', 'Globik', 'Hello, Sister!');
+		var post=yield db.query(`insert into articles(title,slug, author,body) values('${locs.title}','${locs.slug}','${locs.author}','${locs.body}')`);
 		//console.log('post :',post);
 	}catch(e){console.log('error :',e);this.throw(404,e);}
 	
@@ -122,4 +127,4 @@ try{var a=yield shlag(dob);data=a.data;}catch(e){error=e;}
 module.exports=admin;
 
 function *authed(next){
-if(this.req.isAuthenticated() && this.req.user.role == "admin"){yield next;}else{ this.redirect('/');}}
+if(this.req.isAuthenticated() && this.req.user.role == "superadmin"){yield next;}else{ this.redirect('/');}}
