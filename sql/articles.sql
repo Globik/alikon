@@ -18,5 +18,6 @@ create table articles(id serial primary key ,
 					  last_modified timestamp not null default now()::timestamp,
 					  date_url date not null default current_date,
 					  part int not null default 0,
-					  status text not null default 'active');
+					  status text not null default 'active',
+					  type text not null default 'article');
 -- insert into articles(title,slug,author,body)

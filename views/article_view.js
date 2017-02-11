@@ -49,14 +49,14 @@ return `${title} <span>${sub_title}</span>`;
 function getArticleBody(n){  
 let {author="Bob",title="Postname",sub_title="sub_title",created_on="10.3.1999",
 leader="lead absatz",body="maincontent",last_modified="22,2,2005",tags=[""], 
-category="category",_id,rubrik="rubrik",status="1",part="1",gesamt_seen,fucker=''}=n.post || {};
+category="category",id,rubrik="rubrik",status="1",part="1",gesamt_seen,date_url,fucker=''}=n.post || {};
 //var as=new Date(parseInt(_id.toString().substring(0,8),16)*1000);
 //var gab=moment(as).format('YYYY-MM-DD');  
 return `<article class="post">     
-<h1 class="post-title">${title}</h1>
+<h1 class="post-title" data-id=${id} data-mattr="title" ${n.buser ? 'contenteditable="true"' :''}>${title}</h1>
 <p><small>${moment(last_modified).format('MMMM D, YYYY')}  by ${author}</small></p>
 <p><i>${leader}</i></p>
-<p>${body}</p>
+<div data-mattr="body" data-id=${id} ${n.buser ? 'contenteditable="true"':''}>${body}</div>
 ${n.post && n.post.images.length ? sumatorFoto(n):''} 
 <section>
 <li>Last time edited: ${moment(last_modified).format('MMM D, YYYY')}</li>
@@ -66,13 +66,15 @@ ${n.post && n.post.images.length ? sumatorFoto(n):''}
 <li>Visibility: ${status}</li>   
 <li>Serial: ${part}</li>  
 <li>gesamt_seen: ${gesamt_seen}</li>
-
+<li>date_url: <span id="dateurl">${moment(date_url).format('YYYY-MM-DD')}</span></li>
 <li>fucker : ${fucker}</li>
 <li>${created_on}</li>
 ${fucker?"<b>yes</b>":"<b>no</b>"} 
+${n.buser ? '<button onclick="go_edit()">save</button>':''}
 </section>
 </article>
-<script>${getImgErr()}</script>`;
+<script>${getImgErr()}</script>
+${n.buser ? `<script>${redact_editable()}</script>` : ''}`;
 }
 function sumatorFoto(n){let s='';
 for(var {src,src1,src2,src3,title,content} of n.post.images){
@@ -109,3 +111,30 @@ function getImgErr(){
     xhr.send(JSON.stringify(data));
 	}`;
 	return s;}
+function redact_editable(){
+let s='';
+s+=`
+var editis=document.querySelectorAll('[contenteditable="true"]');
+var mata={};
+function go_edit(){
+for(var i=0;i<editis.length;i++){
+//alert(editis[i].innerHTML);
+//alert(editis[i].getAttribute('data-mattr'));
+mata[editis[i].getAttribute('data-mattr')]=editis[i].innerHTML;
+}
+mata.id=editis[0].getAttribute('data-id');
+var matajs=JSON.stringify(mata);
+var xhr=new XMLHttpRequest();
+xhr.open('post','/save_editable_article');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(){
+if(xhr.status==200){alert(this.response);
+var ab=JSON.parse(this.response);
+window.location.href="/articles/"+dateurl.textContent+"/"+ab.moody;
+}else{alert(this.response);}
+}
+xhr.onerror=function(e){console.log(e);}
+xhr.send(matajs);
+}
+`;
+return s;}

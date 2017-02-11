@@ -13,7 +13,7 @@ function getArt(n){
 		//if(status=='active'){
      s+=`<article class="fluiditems"><div id="redaktor"><ul class="red-nav"><li>X</li>
 	<li><a onclick="redaktorHref(this)"  data-id="${id}" href="#popredaktor">redact</a></li>
-<li data-id="${id}" onclick="removePost(this)">remove</li><li>visibility ${status}</li></ul></div>
+<li data-id="${id}" onclick="remove_post(this)">remove</li><li>visibility ${status}</li></ul></div>
 <div class="foto-cont">                 
 <img src="${images.length ? images[0].src1 : '/images/kuku.png'}"/></div>	
 <section class="article-info"> 
@@ -35,7 +35,7 @@ function su(n){let g=``;n.forEach(el=> g+=`<b>${el}</b>`);return g;}
 function getZaglushkaPost(n){
 let s=``;s+=`<article class="fluiditems"> 
 <div id="redaktor"><ul class="red-nav">
-<li>X</li><li><a onclick="redaktorHref(this)" data-id="1" href="#popredaktor">redact</a></li>
+<li><span onclick="remove_post(this)">X</span></li><li><a onclick="redaktorHref(this)" data-id="1" href="#popredaktor">redact</a></li>
 <li data-id="1" onclick="removePost(this)">remove</li><li>visibility 1</li></ul></div>
 <div class="foto-cont"><img src="/images/kuku.png"/></div>
 <section class="article-info">

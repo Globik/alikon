@@ -153,13 +153,6 @@ pub.get('/auth/facebook/callback',passport.authenticate('facebook',{successRedir
 pub.get('/auth/vkontakte',    passport.authenticate('vkontakte'));
 pub.get('/auth/vkontakte/cb', passport.authenticate('vkontakte', {successRedirect:'/',failureRedirect:'/login'}));
 
-pub.get('/fucker',function*(){
-let db=this.db;var error=null; var email="drug@yandex";
-	try{var bu=yield db.query(`insert into lab(email) values('${email}')`);
-	   }catch(er){console.log(er);error=er;}
-	this.body={"error":error,"result":bu}
-});
-
 /* ========================
 xhr_failed_login
 ===========================
@@ -167,110 +160,39 @@ xhr_failed_login
 pub.post('/xhr_failed_login', function*(){
 this.body={body:this.request.body};
 })
-
-pub.get('/articles', pagination, function *(){
-	this.session.dorthin=this.path;
-let db=this.db; var posts;
-	var locals=this.locals;
-	var mamba="where status='active'";
-	if(this.req.isAuthenticated()){
-	console.log('THIS.REQ.USER.ROLE: ', this.req.user.role);
-		if(this.req.user.role==='superadmin'){mamba='';}
-	}
-try{
-//var posts=yield docs.find().limit(limit).skip(0).sort({_id:-1}).toArray();
-posts=yield db.query(`select*from articles ${mamba} order by id desc offset 0 limit ${limit}`);
-}
-catch(e){console.log('e :',e);}
-	console.log('POSTS ARTICLES: ', posts.rows);
-this.body=this.render('articles_page',{buser:this.req.user, posts:posts.rows, locals:locals});});
-
-pub.param('page',function *(page,next){
-	console.log('page :',page);
-	console.log('isNumb :',isNumb(page))
-if(isNumb(page)==false){this.status=404;this.redirect('/articles')}
-else if(page==0 || page==1){this.status=404;this.redirect('/articles');}else{yield next;}
-}).get('/articles/:page', pagination, function *(page){
-	this.session.dorthin=this.path;
-	var locals=this.locals;var err;
-	//let {dob,locals}=this, docs=dob.collection('posts');var err=null;
-	let db=this.db;
-	var mamba="where status='active'";
-	if(this.req.isAuthenticated()){
-	console.log('THIS.REQ.USER.ROLE: ', this.req.user.role);
-		if(this.req.user.role==='superadmin'){mamba='';}
-	}
-	if(locals.page <= locals.total_pages){
-		try{
-			console.log('LOCALS.PAGE: ',locals.page);
-			console.log('locals.total_pages: ',locals.total_pages);
-		//var posts=yield docs.find().limit(limit).skip(limit*(locals.page-1)).sort({_id:-1}).toArray();
-var posts=yield db.query(`select*from articles ${mamba} order by id desc offset ${(locals.page - 1) * limit } limit ${limit}`);
-		}catch(e){console.log('err in db:',e);err=e;}
-	this.body=this.render('articles_page',{locals:locals,buser:this.req.user,posts:posts.rows});
-	}
-	else{this.status=404;this.redirect('/articles');}
-});
-
-//var article_view=rel('../views/article_view.js');
-pub.get('/articles/:date_url/:slug',function *(){
-	//let {dob,bid}=this, docs=dob.collection('posts'); 
-	this.session.dorthin=this.path;
-	let db=this.db;
-	var vpost;
-	console.log('Slug and date_url: ', this.params.slug, this.params.date_url)
-	/*
-try{
-post=yield docs.findAndModify({slug:this.params.slug,date_url:this.params.date_url},[],{$inc:{gesamt_seen:1}},{new:true});
-if(post.value !==null){post=post.value;}else{console.log("Found Null Matches");this.redirect('/articles')}
-}catch(e){console.log('MMMMMmodify error :',e);this.redirect('/articles');}
+/* 
+========
+articles 
+========
 */
-	try{
-	var post=yield db.query(`select*from articles where slug='${this.params.slug}' and date_url='${this.params.date_url}'`);
-		if(post.rows.length){
-		console.log('HERE IS POST: ', post.rows[0]);
-			vpost=post.rows[0];
-			this.body=this.render('article_view',{buser:this.req.user,post: vpost});
-		}else{
-			//this.status(404);
-			this.session.dorthin=null;
-			this.session.error="Yopt - not found, guy";
-			  this.redirect('/error');}
-	}catch(e){console.log(e);}
-	//this.body=this.render('article_view',{buser:this.req.user,post: vpost});
-	});
+const {get_all_articles, get_all_articles_page, article_slug}=require('./pub/article.js');
+
+pub.get('/articles', pagination, get_all_articles);
+pub.param('page', param_page).get('/articles/:page', pagination, get_all_articles_page);
+pub.get('/articles/:date_url/:slug', article_slug);
+
+function* param_page(page,next){
+if(isNumb(page)==false){this.redirect('/articles')}
+else if(page==0 || page==1){this.redirect('/articles');}else{yield next;}
+}
+/* end of articles */
+
 pub.post('/photo_failure',function *(){
-	console.log("PHOTO FAILURE OCCured");
-	let {dob, bid}=this, b=this.request.body, docs=dob.collection('posts');
-	try{let a=yield docs.updateOne({_id:bid(b._id)},{$addToSet:{'meta.fail':b.fail_src}});console.log('a :',a.result);}
-	catch(e){this.throw(404,`not found ${e}`)}
-	this.body={info:this.request.body,somels:"OK - accepted!"}
+console.log("PHOTO FAILURE OCCured");
+let {dob, bid}=this, b=this.request.body, docs=dob.collection('posts');
+try{let a=yield docs.updateOne({_id:bid(b._id)},{$addToSet:{'meta.fail':b.fail_src}});console.log('a :',a.result);}
+catch(e){this.throw(404,`not found ${e}`)}
+this.body={info:this.request.body,somels:"OK - accepted!"}
 });
-pub.post('/module_cache',function *(){
-	this.body={body:this.request.body};
-});
-pub.get('/get_an_article/:dataid',function *(){
-//let db=this.dob,bid=this.bid,docs=db.collection('posts');
-let {dob,bid}=this,docs=dob.collection('posts');
-var post;
-try{
- post= yield docs.findOne({_id:bid(this.params.dataid)});
- //console.log('Post: ',post);
-//{_id,title,slogan,sub_title,author,leader,body,tags,category,rubrik,part,description,type,status,slug,
-//created_on,last_modified,date_url}; todo{checked{by,when},pic}
-	}catch(e){ console.error('error find article: ',e);this.throw(404,e);}
-	this.body={post};});
+pub.post('/module_cache',function *(){this.body={body:this.request.body};});
+pub.get('/labs',function *(){this.body='str';});
 	
-pub.get('/labs',function *(){
-	this.body='str';
-	});
-	
-	function readStr(n){
-	return new Promise((res,rej)=>{
-		let resu=[];let resul='';
-		n.on('data',dat=>{console.log('data :',dat);resu.push(dat);resul+=dat;})
-		.once('end',()=>{console.log('end of f');res(resu)}).once('error',err=>{rej(err)});
-	})
+function readStr(n){
+return new Promise((res,rej)=>{
+let resu=[];let resul='';
+n.on('data',dat=>{console.log('data :',dat);resu.push(dat);resul+=dat;})
+.once('end',()=>{console.log('end of f');res(resu)}).once('error',err=>{rej(err)});
+})
 }
 function readStr2(n){return new Promise((res,rej)=>{
 	let resu=[];
@@ -279,29 +201,21 @@ function readStr2(n){return new Promise((res,rej)=>{
 		}).once('end',()=>{res(resu)}).once('error',err=>{rej(err)})
 	})
 }
-//npm start
-//var mob={foo:"bar",["prop"+foo()]:42};
-//console.log('mob :',mob);
-console.log('TOTALS: ',Math.ceil(12/3));
+
 module.exports=pub;
 
 function *pagination(next){
 this.locals={};
 var qu=parseInt(this.params.page) || 1;
-	var page=qu;
-	var num=page*limit;
+var page=qu;
+var num=page*limit;
 var w=5,ab=[],deg=2;var map=new Map();
 
 let db=this.db;
-//var docs=db.collection('posts');
 try{var total_articles=yield db.query('select from articles');
-   console.log('TOTAL_ARTICLES: ',total_articles.rowCount);
-   }catch(e){console.log(e);return next(e);}
+}catch(e){console.log(e);return next(e);}
 var total_pages=Math.ceil(Number(total_articles.rowCount)/limit);
-	console.log('TOTAL_PAGES: ',total_pages);
-//var pid_tot=Math.trunc(total_articles/limit);
-//console.log(total_pages,pid_tot);
- for(var i=1;i<=total_pages;i++){ab.push(i);}
+for(var i=1;i<=total_pages;i++){ab.push(i);}
 ab.forEach(y=>{
 if(total_pages >=15){
 if(y<=w){map.set(y,ab.slice(0,w));}
@@ -312,12 +226,11 @@ map.set(y,ab.slice(0,total_pages))
 }
 });
 this.locals.total_articles=total_articles.rowCount;
-	this.locals.total_pages=total_pages;
-	this.locals.page=page;
-	this.locals.rang_page=map;
+this.locals.total_pages=total_pages;
+this.locals.page=page;
+this.locals.rang_page=map;
 if(num<total_articles) {this.locals.next=true;}
 if(num>limit) {this.locals.prev=true;}
-//if(this.locals.page <= this.locals.total_pages){this.locals.maxlimit=}
 yield next;
 }
 

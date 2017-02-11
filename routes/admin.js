@@ -31,35 +31,59 @@ locs.created_on=date;
 locs.last_modified=locs.created_on;
 locs.date_url=date.getTime().toString().slice(0,8);
 try{
-//var post=yield docs.insert(locs);
 //insert into articles(title, slug, author, body) values('Mama-3', 'mama-3', 'Globik', 'Hello, Sister!');
-		var post=yield db.query(`insert into articles(title,slug, author,body) values('${locs.title}','${locs.slug}','${locs.author}','${locs.body}')`);
-		//console.log('post :',post);
-	}catch(e){console.log('error :',e);this.throw(404,e);}
+var post=yield db.query(`insert into articles(title, slug, author,body) values('${locs.title}','${locs.slug}','${locs.author}','${locs.body}')`);
+}catch(e){console.log('error :',e);this.throw(404,e);}
 	
 this.body=JSON.stringify(locs,post,null,2);
 });
-admin.post('/save_an_edited_post',authed, bodyParser({multipart:true,formidable:{}}),function *(){
-	let {dob,bid}=this, docs=dob.collection('posts');
-	var locs=this.request.body.fields;
-	locs.slug=sluger(locs.title);
-try{
-yield docs.updateOne({_id:bid(locs.id)},{$set:locs},{$currentDate:{last_modified:true}});
-}catch(e){console.error(e);this.throw(404,e);}
-this.body=JSON.stringify(locs,null,2);
-});
-/*
-admin.get('/get_an_article/:dataid',function *(){
-let {dob,bid}=this,docs=dob.collection('posts');
+admin.get('/get_an_article/:dataid', authed,function *(){
+let db=this.db;
 var post;
 try{
- post= yield docs.findOne({_id:bid(this.params.dataid)});
- console.log('Post: ',post);
+post=yield db.query(`select*from articles where id=${this.params.dataid}`)
+ //console.log('Post: ',post.rows);
 //{_id,title,slogan,sub_title,author,leader,body,tags,category,rubrik,part,description,type,status,slug,
 //created_on,last_modified,date_url}; todo{checked{by,when},pic}
-	}catch(err){ console.log('error find article: ',err);this.throw(404,err);}
-	this.body={post};});
-*/
+	}catch(e){ console.log('error find article: ',e);this.throw(404,e);}
+	this.body={post: post.rows[0]};});
+	
+admin.post('/save_an_edited_post',authed, bodyParser({multipart:true,formidable:{}}), function *(){
+let db=this.db;
+let locs=this.request.body.fields;
+locs.slug=sluger(locs.title);
+
+try{
+//title,slug,author,last_modified,description,body,foto_cover,status,part
+var result=yield db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`);
+}catch(e){console.log(e);this.throw(404,e);}
+this.body={locs,result};
+});
+admin.post('/save_editable_article',authed, function*(){
+let db=this.db;
+let locs=this.request.body;
+	console.log('locs: ',locs);
+locs.slug=sluger(locs.title);
+yield db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`)
+this.body={info:locs,moody:locs.slug}
+})
+function bef_upd(obj){
+let s='';
+let d=Object.entries(obj);
+d.forEach((el,i)=>{
+s+=`${i==0 ? '': ', '}${el[0]}='${el[1]}'`;
+})
+return s;
+}
+admin.get('/remove_an_article/:dataid',authed,function*(){
+let db=this.db;
+console.log('dataid: ', this.params.dataid);
+try{
+yield db.query(`delete from articles where id=${this.params.dataid}`);
+}catch(e){console.log('error find article: ',e);this.throw(404,e);}
+this.body={info:'OK. '+this.params.dataid+' is deleted'};
+})
+
 /*
 ==============================================================
 MONGODB MANAGER
