@@ -1,16 +1,26 @@
 ﻿//admin_dashboard.js
-'use strict';
-//let rel=require('../libs/hotreload.js');
-var admin_main_menu=require('./admin_main_menu.js');
+const head=require('./head.js');
+const header_menu=require('./header_menu');
+const admin_main_menu=require('./admin_main_menu');
+const footer=require('./footer');
+var warnig=false;	  
+var haupt_ban=false;
+
 
 let admin_dashboard=n=>{
-return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<title>Dashboard</title></head><body>
-${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
-hallo {n.buser.username}<br>
+var {buser,showmodule:{mainmenu,profiler}}=n;
+return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Dashboard", csslink:"/css/main2.css"})}</head><body>
+${(warnig ? `<div id="warnig">Warnig</div>`:``)}
+<nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
+${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+<main id="pagewrap">
+hallo ${buser.name}<br>
 <li><a href="/dashboard/articles">Articles Manager</a>
+<li><a href="/dashboard/image_uploader">Image Uploader</a>
+<li><a href="/dashboard/articles_manager">Articles Image Manager</a>
 <li><a href="/dashboard/mongodb">Mongodb</a>
-</body></html>`;
+</main><footer id="footer">${footer.footer({})}</footer></body></html>`;
 }
 
 module.exports={admin_dashboard};

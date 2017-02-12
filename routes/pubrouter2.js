@@ -11,7 +11,6 @@ const pub=new Router();
 const limit=3;
 pub.get('/',function *(){
 this.session.dorthin=this.path;
-	console.log('THIS>REQ: ', this.response);
 this.body=this.render('haupt_page',{buser:this.req.user});
 });
 

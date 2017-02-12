@@ -54,7 +54,7 @@ category="category",id,rubrik="rubrik",status="1",part="1",gesamt_seen,date_url,
 //var gab=moment(as).format('YYYY-MM-DD');  
 return `<article class="post">     
 <h1 class="post-title" data-id=${id} data-mattr="title" ${n.buser ? 'contenteditable="true"' :''}>${title}</h1>
-<p><small>${moment(last_modified).format('MMMM D, YYYY')}  by ${author}</small></p>
+<p><small>${moment(created_on).format('MMMM D, YYYY')}  by ${author}</small></p>
 <p><i>${leader}</i></p>
 <div data-mattr="body" data-id=${id} ${n.buser ? 'contenteditable="true"':''}>${body}</div>
 ${n.post && n.post.images.length ? sumatorFoto(n):''} 

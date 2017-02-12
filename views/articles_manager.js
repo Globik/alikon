@@ -1,0 +1,600 @@
+﻿//articles_manager.js
+const head=require('./head.js');
+const dev_user=process.env.DEV_USER;
+const dev_pwd=process.env.DEV_PWD;
+const dev_email=process.env.DEV_EMAIL;
+const header_menu=require('./header_menu');
+const admin_main_menu=require('./admin_main_menu');
+const footer=require('./footer');
+var warnig=false;	  
+var haupt_ban=false;
+var articles_manager= n =>{
+let {buser,showmodule:{mainmenu,profiler}}=n;
+return `<!DOCTYPE html><html lang="en">
+<head>${head.head({title:"Aricles Image Manager",csslink:"/css/main2.css",/*csshelper:`${login_css.login_css({})}`*/})}</head>
+<body>
+${(warnig ? `<div id="warnig">Warnig</div>`:``)}
+<nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
+${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+<main id="pagewrap">
+<style>
+textarea[name=caption] {height:200px,width:400px;}
+input[type=text]{width:400px;}
+.img-li{background:lightblue;}
+.img-li > li:nth-child(4n+3){background:#F26663;}
+.img-li > li:nth-child(4n+1){background:lightgreen;}
+.zapret{color:red;}
+</style>
+<div class="daper">
+
+<% if(l.posts){%><b>Total articles : </b><%= l.posts.length %><%}%>
+<h3>Articles Manager</h3>
+<% if(l.posts){l.posts.forEach(function(p){%>
+
+<span data-id="<%= p._id %>" onclick="insertDataIda(this);" ><%= p.postname %></span></br>
+<%})}%>
+
+</br>
+<p> Create one:</p>
+<form name="postCreating" method="post" enctype="multipart/form-data">
+<label><b>Name of post:</b></label></br>
+<input type="text" name="postname" required placeholder="postname" value="How to install Linux on Windows7" 
+style="width:400px;"></br>
+<!--
+<input type="text" name="title" required placeholder="title" value="" style="width:400px;"> -->
+<label><b>Short info for cover:</b></label></br>
+<input type="text" name="shorti" required placeholder="shorti" value="Ein kurzer Anonce in drei-vier Worte"></br>
+<label><b>Autor:</b></label></br>
+<input type="text" name="autor" required placeholder="autor" value="<%= l.user.username %>"></br>
+<label><b>Long info at begining of article:</b></label></br>
+<textarea name="caption" required placeholder="caption" value="Some caption" required style="width:400px;height:60px;">captions</textarea></br>
+<label><b>Main content:</b></label></br>
+<textarea name="maincontent" style="width:400px;height:200px;" required placeholder="maincontent" 
+>maincontent</textarea></br>
+<label><b>Tags:</b></label></br>
+<input type="text" name="meta" value="js,css"></br>
+<label><b>Category:</b></label></br>
+<input type="text" name="category" value="webdesign" required placeholder="category"></br>
+<label><b>Rubrik:</b></label></br>
+<input type="text" name="rubrik" value="css3" required placeholder="rubrik"></br>
+<label><b>Serial:</b></label></br>
+<input type="text" name="serial" value="1" placeholder="serial"></br>
+<input type="submit" value="save"></br>
+</form>
+<br>
+<style>
+.redChecked{background:red;}
+#fotkis{
+display:flex;
+flex-flow: row wrap;
+justify-content: space-around;
+width:100%;
+background:lightblue;
+}
+figure{border:1px solid green;width:15em;}
+span{font-size:0.8em;line-height:0.01em;}
+.img-cont{width:100%;height:10em;overflow:hidden;}
+img{width:100%;}
+
+</style>
+<% if(l.user){%><b>User._id :</b><span id="who"><%= l.user._id %></span></br><%}%>
+<span id="out"></span>
+<h2>Fotos</h2>
+</br><div id="albumlistout"></div></br>
+<button onclick="getFolders()">Get Folders</button>|<button onclick="getAlbumList()">Get Folders via DB</button>
+<div>
+<ul id="direction" style="list-style:none;display:inline;">
+</ul>
+</br><button id="btnPicstar" onclick="addpicsar()" style="display:none;">send pics to db</button></hr>
+ | <button id="btnOrder" onclick="inOrdnung()">Упорядочить!</button>
+ </br><b>Mult-info :</b><span id="multInfo"></span>
+ <div style="display:inline-blobk;">
+ <select id="level" >onchange="change_was(this.value)"
+ <option value="menu">menu</option>
+<option value="remove_checked">remove_checked</option>
+
+</select>
+<input type="text" list="fuck">
+<datalist id="fuck">
+<option value="1">1<option>
+<option value="2">2</option>
+<option value="3">
+</datalist>
+<details><li style="list-style:none;">
+<button onclick="remove_checked()">remove_checked</button></li></details>
+</div>
+ <hr/>
+<div id="fotkis">
+</div>
+</div>
+
+<script>
+//blalbala
+var adidas;
+var datId;
+var direction=document.getElementById('direction');
+var fotkis=document.getElementById('fotkis');
+btnOrder.style.display="none";
+function getFoldersViaDB(){
+
+}
+function getFolders(){
+var data={};
+data.directory="getsomefotos";
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/getdirectory');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var docs=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 
+	 for(var i=0;i<docs.folders.length;i++){
+	 if(!direction.childNodes[i+1]){
+
+	 var li=document.createElement('li');
+	 var doc=docs.folders[i];
+	 li.innerHTML='<button class='+(doc !== "tmp" ? "z" : "zapret")+' onclick='+(doc !== "tmp" ? "showFots(this)" : null)+' value='+doc+'>'+doc+'</button>';
+	
+	 direction.appendChild(li);}}
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(JSON.stringify(data));
+}
+function getAlbumList(){
+var xhr=new XMLHttpRequest();
+xhr.open('get','/getalbumlist');
+var docfr=document.createDocumentFragment();
+xhr.onload=function(e){
+if(xhr.status == 200){
+var data=JSON.parse(this.response);
+albumlistout.innerHTML=this.response;
+if(direction.hasChildNodes()){
+while(direction.hasChildNodes()){
+direction.removeChild(direction.firstChild);}}
+for(var i=0;i<data.album.length;i++){
+var li=document.createElement('li');
+var title=data.album[i].title;
+var multik=data.album[i].multi;
+var albumFold=data.folders[i];
+var str1='<button class='+(title !== "tmp" ? "z" : "zapret")+' onclick='+(title !== "tmp" ? "showFots2(this)" : null)+' data-multi='+multik+' value='+albumFold+'>'+title+'</button>';
+	
+//(user*aka user._id*,multi,createdat,_id,[fotkis])
+li.innerHTML=str1;
+docfr.appendChild(li);
+}
+direction.appendChild(docfr);
+}else{alert(this.status)}
+}
+xhr.onerror=function(e){alert('fu')}
+xhr.send();
+}
+function showFots2(el){
+//alert('now show u some folders in this derictory '+el.value);
+var data={};
+data.foldername=el.value;
+data.who=who.textContent;
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/open_this_fold');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 multInfo.textContent=el.getAttribute('data-multi');
+	 btnPicstar.style.display="inline-block";
+	if(multInfo.textContent == '4'){ btnOrder.style.display="inline-block";}
+	 var data=JSON.parse(this.response);
+	 var fold=el.value;
+	 var who=data.who;
+	 var basedir=data.basedir;
+	 
+	 alert(this.response);
+	 //out.innerHTML=this.response;
+	 
+	 if(fotkis.hasChildNodes()){
+while(fotkis.hasChildNodes()){
+fotkis.removeChild(fotkis.firstChild);
+}}
+var len=data.fotkis.length;
+var docfrag=document.createDocumentFragment();
+	for(var i=0;i < len;i+=1){
+	 
+	 var pics=data.fotkis[i];
+	//(foldername,fotkis,basedir,who)
+	 var div=document.createElement('figure');
+	 //var fold=el.value;
+	 //var who=data.who;
+	 div.className='pig';
+	 div.setAttribute('data-picname',pics);
+	 div.setAttribute("data-src",'/images/upload/'+who+'/'+fold+'/'+pics+'');
+	 //div.onclick=function(){alert(this.getAttribute("data-identif"))}
+var str1='<caption>'+[i+1]+'<p class="capitan"></p><input type="checkbox" data-picname='+pics+' onchange="ckeckboxVal(this)"></caption>';
+var str2='<div class="img-cont"><img src="'+basedir+who+'/'+fold+'/'+pics+'"></div>';
+var str3='<figcaption><span class="p-descr" contenteditable=true>Description</span></br>';
+var str4='<span class="p-title" contenteditable=true>Title</span></br>';
+var str5='<span class="srcset" contenteditable=true>'+basedir+who+'/'+fold+'/'+pics+'</span></details></br></figcaption>';
+	 div.innerHTML=[str1,str2,str3,str4,str5].join('');
+	 docfrag.appendChild(div);
+	 }
+	 fotkis.appendChild(docfrag);
+	 
+	 doit();
+}else{alert(this.status)}
+	 }
+	 xhr.send(JSON.stringify(data));
+	 }
+	 
+function showFots(el){
+//alert('now show u some folders in this derictory '+el.value);
+var fl=0;
+var data={};
+data.foldername=el.value;
+
+var xhr=new XMLHttpRequest();
+	xhr.open('post','/showfolder');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 btnPicstar.style.display="inline-block";
+	 btnOrder.style.display="inline-block";
+	 var docs=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 if(fotkis.hasChildNodes()){
+while(fotkis.hasChildNodes()){
+fotkis.removeChild(fotkis.firstChild);
+}}
+	 for(var i=0;i < docs.fotkis.length;i+=1){
+	 
+	 var doc=docs.fotkis[i];
+	 var boc=docs.fotkis[i];
+	 var div=document.createElement('figure');
+	 var fold=el.value;
+	 div.className='pig';
+	 div.setAttribute("data-src",'/images/upload/'+fold+'/'+doc+'');
+	 //div.onclick=function(){alert(this.getAttribute("data-identif"))}
+	 div.innerHTML='<caption>'+[i+1]+'<p class="capitan"></p></caption>'+
+	 '<div class="img-cont"><img src="/images/upload/'+fold+'/'+doc+'"></div>'+
+	   '<figcaption>'+
+	 '<span class="p-descr" contenteditable=true>Description</span></br>'+
+	 '<span class="p-title" contenteditable=true>Title</span></br>'+
+	 '<span class="srcset" contenteditable=true>/images/upload/'+fold+'/'+doc+'</span></br>'+
+	 '</figcaption>'
+	 fotkis.appendChild(div);}
+	 
+	 doit();
+}
+	 }
+	 xhr.send(JSON.stringify(data));
+	 }
+	 
+	 var kasak=false;
+     var sabat=[];
+	 function inOrdnung(){
+	 
+var figs=getDomArray('.pig');
+figs.forEach(function(el,i){
+var fig=figs[i];
+if(i % 4 === 0){
+//fig.style.background="red";
+fig.setAttribute("data-identif","oldfucker");
+} 
+else{
+sabat.push(fig.getAttribute('data-src'));
+fig.remove();
+}
+});
+kasak=true;
+rabota();
+btnPicstar.style.display="inline-block";
+btnOrder.style.display="none";
+}
+	 
+function rabota(){
+if(kasak == true)
+var step=0;
+var mass=getDomArray('[data-identif="oldfucker"]');
+var infocaption=getDomArray('[data-identif="oldfucker"] figcaption');
+var unititle=getDomArray('.p-title');
+mass.forEach(function(el,k){
+var w=sabat.slice(step,step+=3);
+    focuspocus(infocaption[k],w);
+});
+}
+
+function focuspocus(ob,arr){
+var detail=document.createElement('details');
+var strin='</details>';
+arr.forEach(function(el,k){
+
+var span=document.createElement('span');
+    span.className='srcset'+[k+1];
+	span.setAttribute('contenteditable',true);
+    span.innerHTML=arr[k]+'<br>';
+
+    ob.appendChild(span)
+});
+//ob.insertBefore(detail,ru);
+
+}
+
+function doit(){
+var cols_=document.querySelectorAll('.pig');
+var dragSrcEl_ = null;
+handleDragStart = function(e) {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+	dragSrcEl_ = this;
+};
+handleDragOver = function(e) {
+    if (e.preventDefault) {
+      e.preventDefault(); 
+    }
+e.dataTransfer.dropEffect = 'move';
+return false;
+  };
+handleDrop = function(e) {
+
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    }
+    if (dragSrcEl_ != this) {
+      dragSrcEl_.innerHTML = this.innerHTML;
+      this.innerHTML = e.dataTransfer.getData('text/html');
+    }
+return false;
+  };
+  handleDragEnd = function(e) {
+    [].forEach.call(cols_, function (col) {
+    });
+	out.innerHTML='dragEnd';
+  };
+
+ [].forEach.call(cols_, function (col) {
+    col.setAttribute('draggable', 'true');  // Enable columns to be draggable.
+    col.addEventListener('dragstart', handleDragStart, false);
+    //col.addEventListener('dragenter', this.handleDragEnter, false);
+    col.addEventListener('dragover', handleDragOver, false);
+    //col.addEventListener('dragleave', this.handleDragLeave, false);
+    col.addEventListener('drop', handleDrop, false);
+    col.addEventListener('dragend', handleDragEnd, false);
+  });
+}
+function ckeckboxVal(el){
+//alert(el.checked);
+var buka=el.getAttribute('data-picname');
+var rmvs=getDomArray('[data-picname="'+buka+'"]');
+rmvs.forEach(function(l,i){
+//rmvs[i].remove();
+if(el.checked){
+l.className="redChecked";}
+else{l.className="";}
+});
+}
+function remove_checked(el){
+//alert('ok')
+var rmvs=getDomArray('.redChecked');
+rmvs.forEach(function(el,i){
+rmvs[i].remove();
+})
+}
+level.options.onclick=function(){alert('da')}
+function do_rem(el){
+alert('ok')
+}
+function addpicsar(){
+var pTitle=getDomArray('.p-title');
+var pSrc=getDomArray('.srcset');
+var pSrc1;
+var pSrc2;
+var pSrc3;
+
+var pDescr=getDomArray('.p-descr');
+
+if(kasak == true){
+pSrc1=getDomArray('.srcset1');
+pSrc2=getDomArray('.srcset2');
+pSrc3=getDomArray('.srcset3');
+}
+
+	var data={};
+	data.images=[];
+	data.bi=dataId;//"345";
+	//alert(dataId);
+	if(dataId !==undefined){
+	
+	pTitle.forEach(function(el,k){
+
+	if(kasak==true){
+	data.images.push({title:pTitle[k].innerHTML,content:pDescr[k].innerHTML,src:pSrc[k].textContent,
+	src1:pSrc1[k].textContent,src2:pSrc2[k].textContent,src3:pSrc3[k].textContent});}else{
+	data.images.push({title:pTitle[k].innerHTML,content:pDescr[k].innerHTML,src:pSrc[k].textContent});
+	}
+	//alert(imgText[k].value);
+	});
+	alert(JSON.stringify(data));
+	
+	var xhr=new XMLHttpRequest();
+	xhr.open('post','/picstopost');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 //data._id="123456";
+	 //xhr.send(JSON.stringify(data.images));
+	 xhr.send(JSON.stringify(data));
+	
+	 } 
+	 else{alert('datid not fullfilled');}
+	 }
+	 
+
+
+function insertDataIda(ev){
+	dataId=ev.getAttribute('data-id');
+	alert(ev.getAttribute('data-id'));
+	var infotag=document.querySelectorAll('.capitan')
+	for(var i=0;i<infotag.length;i++){
+	infotag[i].innerHTML='<small>'+ev.innerHTML+'</small>';}
+	}
+	
+	function getDomArray(selector){
+var elcol=document.querySelectorAll(selector);
+var elar=Array.prototype.slice.apply(elcol);
+return elar;
+}
+</script>
+
+
+</br>
+</br><button onclick="createAlbum()">create Album!</button>
+</br><b>Multi: </b><span id="multi">1</span>
+</br><b>Album info _id :</b><span id="albuminfo"></span>
+</br><b>Album-out-info :</b><span id="albumoutinfo"/></span></br>
+
+<form action="/addingfotos" method="post"  name="fotki" enctype="multipart/form-data">
+<input type="text" name="username" value="<% if(l.user){%><%= l.user.username %><%}%>"></br>
+<input type="text" name="who" value="<% if(l.user){%><%= l.user._id %><%}%>"></br>
+<input id="texFolder" type="text" name="albId" value="album-1" required></br>  
+<input type="file" name="file" multiple="multiple" accept="*/*">
+<input type="submit" value="upload">
+</form>
+</br>
+<progress min="0" max="100" value="0">0% complete</progress>
+<span id=out2></span>
+<script>
+var dataId;
+var imgText=document.querySelectorAll('.img-text');
+var imgTitle=document.querySelectorAll('.img-title');
+var imgSrc=document.querySelectorAll('.img-src');
+
+function createAlbum(){
+var data={};
+
+data.userId=who.textContent;
+data.title=texFolder.value;
+data.multi=multi.textContent;
+var xhr=new XMLHttpRequest();
+    xhr.open('post','/create_album');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 albuminfo.textContent=JSON.parse(this.response).album._id;
+	 albumoutinfo.innerHTML=this.response;
+	 }
+	 else{albumoutinfo.innerHTML=this.response+this.status;
+	 }}
+	 xhr.onerror=function(e){alert(this.response + e)}
+//alert(JSON.stringify(data));
+xhr.send(JSON.stringify(data));
+/** servak:
+var title=this.request.body.title;
+	var userId=this.request.body.userId;
+	var multi=this.request.body.multi; **/
+}
+	// alert(cals.innerHTML);
+var formface=document.forms.namedItem("postCreating");
+formface.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("postCreating"));
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/createpost",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(data);
+	 ev.preventDefault();},false);
+	 
+	function addpics(){
+	var data={};
+	data.images=[];
+	data.bi=dataId;//"345";
+	alert(dataId);
+	for(var k=0;k<imgText.length;k++){
+	//data.images=imgText[k].value;
+	var s;
+	data.images.push({title:imgTitle[k].value,content:imgText[k].value,src:imgSrc[k].value});
+	//alert(imgText[k].value);
+	}
+	alert(JSON.stringify(data.images));
+	
+	var xhr=new XMLHttpRequest();
+	xhr.open('post','/picstopost');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 //data._id="123456";
+	 //xhr.send(JSON.stringify(data.images));
+	 xhr.send(JSON.stringify(data));
+	 }
+	 
+	function changeSrc(ev){
+	if(typeof dataId !== 'undefined'){
+	alert(dataId+ 'src id '+ev.previousElementSibling.value+' : '+ev.getAttribute('data-src'));
+	} else{alert('press the span of data src!');}
+	var data={};
+	data.id=dataId;
+	/***
+	var xhr=new XMLHttpRequest();
+	xhr.open('post','/changesrc');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 //var data=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(JSON.stringify(data));
+	 ***/
+	}
+	function insertDataId(ev){
+	dataId=ev.getAttribute('data-id');
+	alert(ev.getAttribute('data-id'));
+	var infotag=document.querySelectorAll('.infotag')
+	for(var i=0;i<infotag.length;i++){
+	infotag[i].innerHTML='<small>'+ev.innerHTML+'</small>';}
+	}
+	
+	var formface=document.forms.namedItem("fotki");
+formface.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("fotki"));
+//data.append("number","two");
+var xhr=new XMLHttpRequest();
+    xhr.open("post","/adding_fotos",true);
+	xhr.onload=function(e){
+	 if(xhr.status==200){
+	 var sata=JSON.parse(this.response);
+	 out.innerHTML=this.response;
+	 }else{alert(this.status+' : '+ this.response)}
+	 }
+	 xhr.onerror=function(e){alert('im onerror event :'+this.status+this.response);}
+	 //formi.append("who",document.getElementById('who').textContent);
+     //formi.append("nochwas",document.getElementById('albuminfo').textContent);
+	 data.append("nochwas",document.getElementById('albuminfo').textContent);
+	 var progressbar=document.querySelector('progress');
+	 
+	 xhr.upload.onprogress=function(e){
+	 if(e.lengthComputable){
+	 progressbar.value=(e.loaded/e.total)*100;}};
+	 xhr.onabort=function(e){alert(e.status)};
+	 xhr.send(data);
+	 ev.preventDefault();},false);
+</script>
+</br>
+</main><footer id="footer">${footer.footer({})}</footer></body></html>`;
+}
+module.exports={articles_manager}

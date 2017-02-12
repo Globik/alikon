@@ -4,7 +4,7 @@ var bodyParser=require('koa-body');
 var Router=require('koa-router');
 var co=require('co');
 var fs=require('fs');
-var fs=require('co-fs');
+var cfs=require('co-fs');
 var path=require('path');
 //var diskspace=require('diskspace');
 
@@ -52,18 +52,19 @@ admin.post('/save_an_edited_post',authed, bodyParser({multipart:true,formidable:
 let db=this.db;
 let locs=this.request.body.fields;
 locs.slug=sluger(locs.title);
-
+locs.last_modified='now()';
 try{
 //title,slug,author,last_modified,description,body,foto_cover,status,part
 var result=yield db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`);
 }catch(e){console.log(e);this.throw(404,e);}
 this.body={locs,result};
 });
-admin.post('/save_editable_article',authed, function*(){
+admin.post('/save_editable_article', authed, function*(){
 let db=this.db;
 let locs=this.request.body;
 	console.log('locs: ',locs);
 locs.slug=sluger(locs.title);
+locs.last_modified='now()';
 yield db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`)
 this.body={info:locs,moody:locs.slug}
 })
@@ -83,7 +84,58 @@ yield db.query(`delete from articles where id=${this.params.dataid}`);
 }catch(e){console.log('error find article: ',e);this.throw(404,e);}
 this.body={info:'OK. '+this.params.dataid+' is deleted'};
 })
-
+/* ************************ */
+admin.get('/dashboard/image_uploader', authed, function *(){
+	
+this.body=this.render('image_uploader',{buser:this.req.user});
+});
+admin.get('/dashboard/articles_manager', authed, function *(){
+	
+this.body=this.render('articles_manager',{buser:this.req.user});
+});
+admin.post('/create_album',authed,function *(){
+	var db=this.db;
+	//var docs=wrap(db.get('fotoalbums'));
+	var title=this.request.body.title;
+	var userId=this.request.body.userId;
+	var multi=this.request.body.multi;
+	console.log('title: ',title,userId,multi);
+	var album;
+	//var multi=4;
+	var created_on=new Date();
+	var flagexist;
+	var folderexist;
+	if(yield cfs.exists('./public/images/upload/'+userId)){
+		console.log('exist!');flagexist="schon";}
+    else{console.log('doesnt exist - moment mal');
+    yield cfs.mkdir('./public/images/upload/'+userId);
+	flagexist=true;
+     }
+	
+	 var ind=yield docs.ensureIndex({title:1},{unique:true});
+	 console.log('ensure index :',ind);
+	 try{
+	 album=yield docs.insert({title:title,user:userId,multi:multi,created_on:created_on});
+	 
+	 }catch(er){
+		 console.log('er in catch insert',er);
+		 console.log('er code :',er.code+' '+er.name);
+		 if(er && (11000 === er.code || 11001 === er.code)){console.log('er ocured');
+		 this.throw(400,"имя альбома уже существует. Дай другое имя.")
+		 }
+	 }
+	
+	if(album){
+		if(yield cfs.exists('./public/images/upload/'+userId+'/'+album._id)){
+		console.log('exist!');folderexist="schon";}
+        else{console.log('doesnt exist - moment mal');
+        yield cfs.mkdir('./public/images/upload/'+userId+'/'+album._id);
+	    folderexist=true;
+     }
+	}
+	yield this.body={info:"OK",flagexist:flagexist,folderexist:folderexist,album:album};
+	 
+});
 /*
 ==============================================================
 MONGODB MANAGER
