@@ -114,11 +114,7 @@ position:relative;
 <!-- <div style="clear:both;">.</div> -->
 <div class="daper">
 <b>Files uploader via html 5 Canvas</b>
-<!--[if IE 9]><b>F</b>FFFFFFFFFFFFFFFFFFFFFFFF No IE
-<![endif]-->
-<% var a=["a","b","c","c"];
-var a3=a.map(s => s);%>
-<%= a3 %>
+
 </br><button onclick="createAlbum()">create Album!</button>
 </br><b>Multi: </b><span id="multi">4</span>
 </br><b>Album info _id :</b><span id="albuminfo"></span>
@@ -132,7 +128,7 @@ var a3=a.map(s => s);%>
 <input id='texCompress' type='text' style='width:40px' value='0.1'/>0.0 - 1.0<hr/>
 
 <hr>
-<span id="who">${buser ? `${buser.email}`:''}</span>
+<span id="who">${buser ? `${buser.id}`:''}</span>
 </br><span id="signal"></span></br>
 <label>Select File to create thumb:</label>
 <input type='file' id='input' multiple onchange='thumb(this.files)' accept='image/png,image/jpeg' autofocus><hr/>

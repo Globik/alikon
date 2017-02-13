@@ -105,35 +105,41 @@ admin.post('/create_album',authed,function *(){
 	var created_on=new Date();
 	var flagexist;
 	var folderexist;
+	/*try{
 	if(yield cfs.exists('./public/images/upload/'+userId)){
 		console.log('exist!');flagexist="schon";}
     else{console.log('doesnt exist - moment mal');
     yield cfs.mkdir('./public/images/upload/'+userId);
 	flagexist=true;
      }
-	
-	 var ind=yield docs.ensureIndex({title:1},{unique:true});
-	 console.log('ensure index :',ind);
+	}catch(e){this.throw(400,e.message);}
+	*/
+	 //var ind=yield docs.ensureIndex({title:1},{unique:true});
+	 //console.log('ensure index :',ind);
 	 try{
-	 album=yield docs.insert({title:title,user:userId,multi:multi,created_on:created_on});
+	 //album=yield docs.insert({title:title,user:userId,multi:multi,created_on:created_on});
+album=yield db.query(`insert into albums(title,us_data) values('${title}', '{"multi":"${multi}","us_id":"${userId}"}') returning *`);
 	 
-	 }catch(er){
+	/*
+	catch(er){
 		 console.log('er in catch insert',er);
 		 console.log('er code :',er.code+' '+er.name);
-		 if(er && (11000 === er.code || 11001 === er.code)){console.log('er ocured');
+		 //try{yield cfs.rmdir(`./public/images/upload/${userId}`);}catch(e){this.throw(400,e.message);}
 		 this.throw(400,"имя альбома уже существует. Дай другое имя.")
 		 }
-	 }
-	
-	if(album){
-		if(yield cfs.exists('./public/images/upload/'+userId+'/'+album._id)){
+		 */
+	 if(album.rows && album.rows.length){
+		try{
+		if(yield cfs.exists('./public/images/upload/'+album.rows[0].id)){
 		console.log('exist!');folderexist="schon";}
         else{console.log('doesnt exist - moment mal');
-        yield cfs.mkdir('./public/images/upload/'+userId+'/'+album._id);
+        yield cfs.mkdir('./public/images/upload/'+album.rows[0].id);
 	    folderexist=true;
      }
+	}catch(e){this.throw(400,e.message)}
 	}
-	yield this.body={info:"OK",flagexist:flagexist,folderexist:folderexist,album:album};
+	 }catch(e){console.log(e);this.throw(400,e.message);}
+	yield this.body={info:"OK",flagexist:folderexist,folderexist:folderexist,album:album.rows[0]};
 	 
 });
 /*
