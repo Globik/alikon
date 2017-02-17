@@ -105,7 +105,8 @@ admin.post('/create_album',authed,function *(){
 	var created_on=new Date();
 	var flagexist;
 	var folderexist;
-	/*try{
+	/*
+	try{
 	if(yield cfs.exists('./public/images/upload/'+userId)){
 		console.log('exist!');flagexist="schon";}
     else{console.log('doesnt exist - moment mal');
@@ -130,10 +131,10 @@ album=yield db.query(`insert into albums(title,us_data) values('${title}', '{"mu
 		 */
 	 if(album.rows && album.rows.length){
 		try{
-		if(yield cfs.exists('./public/images/upload/'+album.rows[0].id)){
+		if(yield cfs.exists('./public/uploads/'+userId)){
 		console.log('exist!');folderexist="schon";}
         else{console.log('doesnt exist - moment mal');
-        yield cfs.mkdir('./public/images/upload/'+album.rows[0].id);
+        yield cfs.mkdir('./public/uploads/'+userId);
 	    folderexist=true;
      }
 	}catch(e){this.throw(400,e.message)}
@@ -142,6 +143,128 @@ album=yield db.query(`insert into albums(title,us_data) values('${title}', '{"mu
 	yield this.body={info:"OK",flagexist:folderexist,folderexist:folderexist,album:album.rows[0]};
 	 
 });
+
+var parse=require('co-busboy');
+var shortid=require('shortid');
+admin.post('/multipics', authed,function *(next){
+	if ('POST' != this.method) return yield next;
+var parts=parse(this,{autoFields:true});
+//console.log('parts :',parts)
+var part;
+var picsSammler={};
+	let db=this.db;
+var i=0;
+ picsSammler.pics=[];
+console.log('WHO :',parts.field.who);
+	var fu={};
+while(part=yield parts){
+	i+=1;
+	var who='58a1a78a406da007a696e917';//parts.field.who;
+	console.log('USER ',who)
+	var p=parts.field.nochwas;
+	console.log('parts.field.nochwas: ', parts.field.nochwas);
+	/*
+if(yield cfs.exists('./public/uploads/'+who)){
+		console.log('exist!');}
+else{console.log('doesnt exist - moment mal');
+yield cfs.mkdir('./public/uploads/'+who);
+}
+*/
+	/*
+if(yield cfs.exists('./public/images/upload/'+who+'/'+p)){
+		console.log('exist!');
+}
+else{console.log('doesnt exist - moment mal');
+yield cfs.mkdir('./public/images/upload/'+who+'/'+p);
+}
+*/
+	if(part.length){console.log(part)}
+	else{
+		console.log('name :',part.filename+' k '+parts.field.nochwas);
+		//picsSammler.folder=who;//parts.field.nochwas;
+		//picsSammler.autor=who;
+		//picsSammler.title='';
+		//picsSammler.createdat=new Date();
+		//picsSammler.multi=4;
+	var stream= fs.createWriteStream(path.join('./public/uploads/'+who+'/', part.filename));
+         part.pipe(stream);
+}
+console.log('DONE ',parts.field.nochwas);
+picsSammler.pics.push({['src'+i]:'/uploads/'+who+'/'+part.filename});
+	
+	if(i==4){i=0;}
+part.on('error',function(er){console.log('error in part ',er)})
+stream.on('error',function(er){console.log('err in stream',er)})
+//part.on('end',function(){console.log('end part')});//true
+ stream.on('close',function(){console.log('it looks like a close event in stream')})
+}
+//var db=this.fuck;
+//var doc=wrap(db.get('fotoalbums'));
+//var album=yield doc.insert(picsSammler);
+	console.log('picsSamler: ',picsSammler);
+	var chy=chunk(picsSammler.pics,4);
+	console.log('chy: ',chy);
+	console.log('chy length: ',chy.length);
+	var alb_id='58a6dd5da18de009ae858ec2';
+var alb_title='mama';
+var us_id='gru5@yandex.ru';
+	var dama=[];
+for(var i=0;i<chy.length;i++)
+{
+	var rama={};
+	for(var k=0;k<4;k+=1){
+Object.assign(rama,chy[i][k]);
+
+	}
+	rama.id=shortid.generate();
+	rama.title="Some title";
+	rama.alb_id=alb_id;
+	rama.alb_title=alb_title;
+	rama.us_id=us_id;
+	rama.created='now()';
+dama.push(rama);
+}
+	var jsdama=JSON.stringify(dama);
+	console.log('rama: ',JSON.stringify(dama));
+	try{
+//var alb_id='58a6dd5da18de009ae858ec2';
+//var alb_title='mama';
+//var us_id='gru5@yandex.ru';
+//insert into images(alb_id,alb_title,us_id,src1,src2,src3,src4) values('fed0','mama','gru5@yandex.ru',
+//'mir_1.png','mir_2.png','mir_3.png','mir_4.png');
+	yield db.query(`insert into images select * from json_populate_recordset(null::images,'${jsdama}')`)
+	}catch(e){console.log('err in db picssammler: ',e);}
+yield this.body={inf:'ok',picssammler:picsSammler,dama:dama}
+});
+function chunk(arr, size){
+var R=[];
+	for (var i=0,len=arr.length;i<len;i+=size){
+R.push(arr.slice(i,i+size));}
+	return R;
+}
+admin.get('/getalbumlist',authed,function *(){
+	var db=this.fuck;
+	try{
+	var albums=wrap(db.get('fotoalbums'));
+	var folders;
+	var falschf
+	var album=yield albums.find({});
+	
+	 try{folders=yield fs.readdir('public/images/upload/'+album[0].user);
+	 console.log('folders :',folders);}catch(err){console.log(err);}
+	for(var i=0;i<album.length;i++){
+	try{falschf=yield fs.readdir('public/images/upload/'+album[0].user+'/'+album[i]._id)}
+	catch(err){console.log(err);
+	console.log('falsch file :',falschf);
+	try{var sa=yield albums.remove({_id:album[i]._id});console.log('sa :',sa);
+	//yield doc.remove({_id:this.params.dataid});
+	}catch(err){console.log('err in try of remove  :',err)}
+	}}
+	album=yield albums.find({});
+	yield this.body={album:album,folders:folders}  
+	}
+	catch(err){yield this.body={err:err}}
+})
 /*
 ==============================================================
 MONGODB MANAGER

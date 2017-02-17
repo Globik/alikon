@@ -162,7 +162,7 @@ var xhr=new XMLHttpRequest();
 	xhr.onload=function(e){
 	 if(xhr.status==200){
 	 //var data=JSON.parse(this.response);
-	 albuminfo.textContent=JSON.parse(this.response).album._id;
+	 albuminfo.textContent=JSON.parse(this.response).album.id;
 	 albumoutinfo.innerHTML=this.response;
 	 }
 	 else{output.innerHTML=this.response+this.status;

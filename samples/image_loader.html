@@ -1,0 +1,27 @@
+<html>
+	<head><title>Image_Loader</title>
+		<style>
+			canvas{border:1px solid green;}
+		</style>
+	</head>
+	<body>
+		<canvas id="cnv"></canvas>
+		<br><button onclick="todataurl()">todataurl</button>
+		<script>
+			var cnv=document.getElementById("cnv");
+			var c=cnv.getContext('2d');
+			c.fillRect(0,0,20,20);
+			function todataurl(){
+			var b64=cnv.toDataURL().replace('data:image/png;base64,','');;
+				alert('b64: '+b64);
+				var bin=atob(b64);
+				//alert('bin: '+bin);
+				var crc=bin2hex(bin.slice(-16,-12));
+				alert('crc: '+crc);
+				
+			}
+			function bin2hex(n){alert(ch(n));return parseInt(n,2).toString(16);}
+			function ch(n){return /^[0,1]{1,64}$/.test();}
+		</script>
+	</body>
+</html>

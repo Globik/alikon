@@ -2,7 +2,7 @@
 create extension if not exists pgcrypto;
 create table busers(
 id varchar(24) not null default generate_object_id(),
-email text primary key check(email ~* '^.+@.+\..+$'),
+email text primary check(email ~* '^.+@.+\..+$'),
 pwd text not null check(length(pwd)<512),
 role text not null default 'not_member',
 verif boolean not null default false,
