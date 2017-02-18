@@ -22,6 +22,7 @@ var pi={"pics":[
 					   {"src4":"/uploads/58a1a78a406da007a696e917/ping-m4-k4.jpg"}]
 						]
 			  }
+/*
 var str='';
 var step=0;
 var fu={};
@@ -30,6 +31,8 @@ var moo={};
 var va=[];
 var map=new Map();
 var bep=4;
+*/
+/*
 picssammler.pics.forEach(function(el,i){
 Object.assign(fu, el);
 	
@@ -45,26 +48,20 @@ console.log('li: ', JSON.stringify(li));
 //var w=picssammler.pics.slice(step,step+=4);
 //var w=picssammler.pics.slice(4,8);
 //console.log('w: ',w);
+*/
 // node examples/pic
 var ew=chunk(picssammler.pics,4);
 console.log('EW: ',ew);
 
-ew.forEach((el,i)=>{
-console.log(el);
-	map.set(i,el)
-})
-console.log('map: ',map);
-map.forEach(function(el,i){
 
-})
-console.log('moo: ',moo);
+//console.log('moo: ',moo);
 function chunk(arr, size){
 var R=[];
 	for (var i=0,len=arr.length;i<len;i+=size){
 R.push(arr.slice(i,i+size));}
 	return R;
 }
-
+/*
 var fucker=[];var lira={};
 var sisi='';
 pi.pics.forEach(function(el,k){
@@ -82,18 +79,16 @@ console.log('sisi: ',sisi);
 				
 console.log('lira: ',lira);
 console.log('fucker: ',fucker);
+*/
 var dama=[];
 for(var i=0;i<2;i++)
 {
-	var rama={};
-	for(var k=0;k<4;k+=1){
+var rama={};
+for(var k=0;k<4;k+=1){
 Object.assign(rama,pi.pics[i][k]);
-
-	}
-	rama.title="Some title";
+}
+rama.title="Some title";
 dama.push(rama);
 }
 
 console.log('dama: ',dama);
-//console.log('sisi: ',sisi);
-//console.log('ducker: ',ducker);

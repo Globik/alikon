@@ -190,7 +190,7 @@ yield cfs.mkdir('./public/images/upload/'+who+'/'+p);
          part.pipe(stream);
 }
 console.log('DONE ',parts.field.nochwas);
-picsSammler.pics.push({['src'+i]:'/uploads/'+who+'/'+part.filename});
+picsSammler.pics.push({['src'+i]: who+'/'+part.filename});
 	
 	if(i==4){i=0;}
 part.on('error',function(er){console.log('error in part ',er)})
@@ -209,18 +209,33 @@ stream.on('error',function(er){console.log('err in stream',er)})
 var alb_title='mama';
 var us_id='gru5@yandex.ru';
 	var dama=[];
+	//var huirama={}
 for(var i=0;i<chy.length;i++)
 {
 	var rama={};
+	var huirama={};
 	for(var k=0;k<4;k+=1){
 Object.assign(rama,chy[i][k]);
 
 	}
+	console.log('rama src1: ',rama.src1);
+	var inod1=yield cfs.stat('./public/uploads/'+rama.src1);
+	console.log('inod: ',inod1.ino);
+	var inod2=yield cfs.stat('./public/uploads/'+rama.src2);
+	var inod3=yield cfs.stat('./public/uploads/'+rama.src3);
+	var inod4=yield cfs.stat('./public/uploads/'+rama.src4);
+	
 	rama.id=shortid.generate();
 	rama.title="Some title";
 	rama.alb_id=alb_id;
-	rama.alb_title=alb_title;
+	//rama.alb_title=alb_title;
 	rama.us_id=us_id;
+	huirama.ino1=inod1.ino;
+	huirama.ino2=inod2.ino;
+	huirama.ino3=inod3.ino;
+	huirama.ino4=inod4.ino;
+	console.log('huirama: ',huirama);
+	rama.srama=huirama;
 	rama.created='now()';
 dama.push(rama);
 }
@@ -232,7 +247,7 @@ dama.push(rama);
 //var us_id='gru5@yandex.ru';
 //insert into images(alb_id,alb_title,us_id,src1,src2,src3,src4) values('fed0','mama','gru5@yandex.ru',
 //'mir_1.png','mir_2.png','mir_3.png','mir_4.png');
-	yield db.query(`insert into images select * from json_populate_recordset(null::images,'${jsdama}')`)
+	yield db.query(`insert into images select * from json_populate_recordset(null::images,'${jsdama}') on conflict(src1) do update set src1=excluded.src1`)
 	}catch(e){console.log('err in db picssammler: ',e);}
 yield this.body={inf:'ok',picssammler:picsSammler,dama:dama}
 });

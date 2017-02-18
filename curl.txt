@@ -26,5 +26,11 @@ select*from tokens where token='9e52b2ff-2d56-4a00-92e7-fca0a439c7e6' and create
 
 select*from tokens where created_at >  now() - interval  '2 days';
 
+globik@globik-laptop:~/alikon/public/uploads/58a1a78a406da007a696e917$ ls -i
+28442690 blum-m4-k1.jpg  28442693 blum-m4-k4.jpg  28442696 hosp-m4-k3.jpg
+28442691 blum-m4-k2.jpg  28442694 hosp-m4-k1.jpg  28442697 hosp-m4-k4.jpg
+28442692 blum-m4-k3.jpg  28442695 hosp-m4-k2.jpg
+
+
 
 
