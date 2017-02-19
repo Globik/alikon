@@ -85,10 +85,26 @@ yield db.query(`delete from articles where id=${this.params.dataid}`);
 this.body={info:'OK. '+this.params.dataid+' is deleted'};
 })
 /* ************************ */
-admin.get('/dashboard/image_uploader', authed, function *(){
-	
-this.body=this.render('image_uploader',{buser:this.req.user});
+admin.get('/dashboard/albums', authed, function *(){
+let db=this.db;
+var albums=null;
+try{
+var result=yield db.query(`select*from albums`)
+if(result.rows && result.rows[0]){albums=result.rows;}
+}catch(e){console.log(e)}
+this.body=this.render('albums',{buser:this.req.user,albums});
 });
+
+admin.get('/dashboard/albums/:alb_name',function*(){
+var photos=null;
+let db=this.db;
+try{
+var result=yield db.query(`select*from images where alb_id='${this.params.alb_name}'`);
+if(result.rows && result.rows[0]){photos=result.rows;}
+}catch(e){console.log(e)}
+this.body=this.render('album_view',{buser:this.req.user,photos});
+})
+
 admin.get('/dashboard/articles_manager', authed, function *(){
 	
 this.body=this.render('articles_manager',{buser:this.req.user});
@@ -147,123 +163,93 @@ album=yield db.query(`insert into albums(title,us_data) values('${title}', '{"mu
 var parse=require('co-busboy');
 var shortid=require('shortid');
 admin.post('/multipics', authed,function *(next){
-	if ('POST' != this.method) return yield next;
+if ('POST' != this.method) return yield next;
 var parts=parse(this,{autoFields:true});
-//console.log('parts :',parts)
-var part;
+var part,stream;
 var picsSammler={};
-	let db=this.db;
+let db=this.db;
 var i=0;
- picsSammler.pics=[];
-console.log('WHO :',parts.field.who);
-	var fu={};
+picsSammler.pics=[];
+
+var fu={};
+var user_email=parts.field.user_email;
+var user_id=parts.field.user_id;
+var alb_id=parts.field.album_id;
 while(part=yield parts){
-	i+=1;
-	var who='58a1a78a406da007a696e917';//parts.field.who;
-	console.log('USER ',who)
-	var p=parts.field.nochwas;
-	console.log('parts.field.nochwas: ', parts.field.nochwas);
-	/*
-if(yield cfs.exists('./public/uploads/'+who)){
-		console.log('exist!');}
-else{console.log('doesnt exist - moment mal');
-yield cfs.mkdir('./public/uploads/'+who);
+i+=1;
+//var who='58a1a78a406da007a696e917';
+//var who=parts.field.who;
+if(part.length){console.log(part)}
+else{
+stream= fs.createWriteStream(path.join('./public/uploads/'+user_id+'/', part.filename));
+part.pipe(stream);
 }
-*/
-	/*
-if(yield cfs.exists('./public/images/upload/'+who+'/'+p)){
-		console.log('exist!');
+
+picsSammler.pics.push({['src'+i]: user_id+'/'+part.filename});
+if(i==4){i=0;}
+part.on('error',(er)=>{console.log('error in part ',er)})
+stream.on('error',(er)=>{console.log('err in stream',er)})
+stream.on('close',()=>{console.log('it looks like a close event in stream')})
+stream.on('end',()=>{console.log('end stream')})
+stream.on('finish',()=>{console.log('finish in a stream')})
 }
-else{console.log('doesnt exist - moment mal');
-yield cfs.mkdir('./public/images/upload/'+who+'/'+p);
-}
-*/
-	if(part.length){console.log(part)}
-	else{
-		console.log('name :',part.filename+' k '+parts.field.nochwas);
-		//picsSammler.folder=who;//parts.field.nochwas;
-		//picsSammler.autor=who;
-		//picsSammler.title='';
-		//picsSammler.createdat=new Date();
-		//picsSammler.multi=4;
-	var stream= fs.createWriteStream(path.join('./public/uploads/'+who+'/', part.filename));
-         part.pipe(stream);
-}
-console.log('DONE ',parts.field.nochwas);
-picsSammler.pics.push({['src'+i]: who+'/'+part.filename});
-	
-	if(i==4){i=0;}
-part.on('error',function(er){console.log('error in part ',er)})
-stream.on('error',function(er){console.log('err in stream',er)})
-//part.on('end',function(){console.log('end part')});//true
- stream.on('close',function(){console.log('it looks like a close event in stream')})
-}
-//var db=this.fuck;
-//var doc=wrap(db.get('fotoalbums'));
-//var album=yield doc.insert(picsSammler);
-	console.log('picsSamler: ',picsSammler);
-	var chy=chunk(picsSammler.pics,4);
-	console.log('chy: ',chy);
-	console.log('chy length: ',chy.length);
-	var alb_id='58a6dd5da18de009ae858ec2';
-var alb_title='mama';
-var us_id='gru5@yandex.ru';
-	var dama=[];
-	//var huirama={}
+console.log('picsSamler: ',picsSammler);
+var chy=chunk(picsSammler.pics,4);
+console.log('chy: ',chy);
+console.log('chy length: ',chy.length);
+//var alb_id='58a6dd5da18de009ae858ec2';
+//var us_id='gru5@yandex.ru';
+var dama=[];
 for(var i=0;i<chy.length;i++)
 {
-	var rama={};
-	var huirama={};
-	for(var k=0;k<4;k+=1){
+var rama={};
+var huirama={};
+for(var k=0;k<4;k+=1){
 Object.assign(rama,chy[i][k]);
-
-	}
-	console.log('rama src1: ',rama.src1);
-	var inod1=yield cfs.stat('./public/uploads/'+rama.src1);
-	console.log('inod: ',inod1.ino);
-	var inod2=yield cfs.stat('./public/uploads/'+rama.src2);
-	var inod3=yield cfs.stat('./public/uploads/'+rama.src3);
-	var inod4=yield cfs.stat('./public/uploads/'+rama.src4);
+}
+console.log('rama src1: ',rama.src1);
+var inod1=yield cfs.stat('./public/uploads/'+rama.src1);
+console.log('inod: ',inod1.ino);
+var inod2=yield cfs.stat('./public/uploads/'+rama.src2);
+var inod3=yield cfs.stat('./public/uploads/'+rama.src3);
+var inod4=yield cfs.stat('./public/uploads/'+rama.src4);
 	
-	rama.id=shortid.generate();
-	rama.title="Some title";
-	rama.alb_id=alb_id;
-	//rama.alb_title=alb_title;
-	rama.us_id=us_id;
-	huirama.ino1=inod1.ino;
-	huirama.ino2=inod2.ino;
-	huirama.ino3=inod3.ino;
-	huirama.ino4=inod4.ino;
-	console.log('huirama: ',huirama);
-	rama.srama=huirama;
-	rama.created='now()';
+rama.id=shortid.generate();
+rama.title="Some title";
+rama.alb_id=alb_id;
+rama.us_id=user_email;
+huirama.ino1=inod1.ino;
+huirama.ino2=inod2.ino;
+huirama.ino3=inod3.ino;
+huirama.ino4=inod4.ino;
+console.log('huirama: ',huirama);
+rama.srama=huirama;
+rama.created='now()';
 dama.push(rama);
 }
-	var jsdama=JSON.stringify(dama);
-	console.log('rama: ',JSON.stringify(dama));
-	try{
-//var alb_id='58a6dd5da18de009ae858ec2';
-//var alb_title='mama';
-//var us_id='gru5@yandex.ru';
+var jsdama=JSON.stringify(dama);
+console.log('rama: ',JSON.stringify(dama));
+try{
 //insert into images(alb_id,alb_title,us_id,src1,src2,src3,src4) values('fed0','mama','gru5@yandex.ru',
-//'mir_1.png','mir_2.png','mir_3.png','mir_4.png');
-	yield db.query(`insert into images select * from json_populate_recordset(null::images,'${jsdama}') on conflict(src1) do update set src1=excluded.src1`)
-	}catch(e){console.log('err in db picssammler: ',e);}
+yield db.query(`insert into images select * from json_populate_recordset(null::images,'${jsdama}') on conflict(src1) do update set src1=excluded.src1`)
+}catch(e){console.log('err in db picssammler: ',e);}
 yield this.body={inf:'ok',picssammler:picsSammler,dama:dama}
 });
+
 function chunk(arr, size){
 var R=[];
-	for (var i=0,len=arr.length;i<len;i+=size){
+for (var i=0,len=arr.length;i<len;i+=size){
 R.push(arr.slice(i,i+size));}
-	return R;
+return R;
 }
+
 admin.get('/getalbumlist',authed,function *(){
-	var db=this.fuck;
-	try{
-	var albums=wrap(db.get('fotoalbums'));
-	var folders;
-	var falschf
-	var album=yield albums.find({});
+var db=this.fuck;
+try{
+var albums=wrap(db.get('fotoalbums'));
+var folders;
+var falschf
+var album=yield albums.find({});
 	
 	 try{folders=yield fs.readdir('public/images/upload/'+album[0].user);
 	 console.log('folders :',folders);}catch(err){console.log(err);}

@@ -8,8 +8,8 @@ const admin_main_menu=require('./admin_main_menu');
 const footer=require('./footer');
 var warnig=false;	  
 var haupt_ban=false;
-var image_uploader= n =>{
-let {buser,showmodule:{mainmenu,profiler}}=n;
+var albums= n =>{
+let {buser, albums, showmodule:{mainmenu,profiler}}=n;
 return `<!DOCTYPE html><html lang="en">
 <head>${head.head({title:"Image uploader",csslink:"/css/main2.css",/*csshelper:`${login_css.login_css({})}`*/})}</head>
 <body>
@@ -114,11 +114,15 @@ position:relative;
 <!-- <div style="clear:both;">.</div> -->
 <div class="daper">
 <b>Files uploader via html 5 Canvas</b>
-
-</br><button onclick="createAlbum()">create Album!</button>
-</br><b>Multi: </b><span id="multi">4</span>
-</br><b>Album info _id :</b><span id="albuminfo"></span>
-</br><b>Album-out-info :</b><span id="albumoutinfo"/></span></br>
+<hr>
+<h3>Albums: </h3>
+${albums !==null ? `<ul>${list_albums(albums)}</ul>`:'<b>No albums</b>'}
+<hr>
+<br><button onclick="createAlbum()">create Album!</button>
+<br><b>Multi: </b><span id="multi">4</span>
+<br><b>Album id :</b><span id="album_id"></span>
+<br><b>Album name :</b><span id="album_name"></span>
+<br><b>Result :</b><span id="album_response"/></span><hr>
 1536x2048 |1152 | 768 | 384
 <label>Thumb Size:</label>
 <input id='textsize' type='text' style='width:40px' value='384'/>px<hr/>
@@ -128,8 +132,9 @@ position:relative;
 <input id='texCompress' type='text' style='width:40px' value='0.1'/>0.0 - 1.0<hr/>
 
 <hr>
-<span id="who">${buser ? `${buser.id}`:''}</span>
-</br><span id="signal"></span></br>
+<b>User id: </b><span id="user_id">${buser ? `${buser.id}`:'no id'}</span><br>
+<b>User email: </b><span id="user_email">${buser ? `${buser.email}`:'no email'}</span><br>
+<br><span id="signal"></span><br>
 <label>Select File to create thumb:</label>
 <input type='file' id='input' multiple onchange='thumb(this.files)' accept='image/png,image/jpeg' autofocus><hr/>
 </br><button id="toservak" onclick="toServak()">to server</button></br>
@@ -139,10 +144,10 @@ position:relative;
 <span id="output"></span></br>
 <div id="multcontainer"></div></hr>
 <span id="nev" style="background:green;"></span>
-</br>
+<br>
 <div id="output2">
 <ul id="ulur"></ul>
- </div></br>
+ </div><br>
  <ul id="albumlist"></ul>
  <div id="albumlistout"></div>
 </br> <button onclick="getAlbumList()">Album's list</button>
@@ -154,6 +159,7 @@ position:relative;
 function createAlbum(){
 var data={};
 data.userId=who.textContent;
+data.userEmail=user_email.textContent;
 data.title=texFolder.value;
 data.multi=multi.textContent;
 var xhr=new XMLHttpRequest();
@@ -161,9 +167,10 @@ var xhr=new XMLHttpRequest();
 	xhr.setRequestHeader('Content-Type','application/json','utf-8');
 	xhr.onload=function(e){
 	 if(xhr.status==200){
-	 //var data=JSON.parse(this.response);
-	 albuminfo.textContent=JSON.parse(this.response).album.id;
-	 albumoutinfo.innerHTML=this.response;
+	 var mata=JSON.parse(this.response);
+	 album_id.textContent=mata.album.id;
+     album_name.textContent=mata.album.title;
+	 album_response.innerHTML=this.response;
 	 }
 	 else{output.innerHTML=this.response+this.status;
 	 }}
@@ -300,7 +307,7 @@ function toServak(){
 var formi=new FormData();
 var elcnv=document.getElementsByClassName('uricontent');
 var xhr=new XMLHttpRequest();
-    xhr.open("post","/multipics",true);
+xhr.open("post","/multipics",true);
 xhr.onload=function(e){if(xhr.status==200){resultat.innerHTML=this.response}else{alert(this.status)}}
 xhr.onerror=function(e){alert(this.status+this.response+e.status)}
 var vadik=[];
@@ -310,8 +317,9 @@ var len=elcnv.length;
 //var nickname=elcnv[i].getAttribute('download');
 //var ext=elcnv[i].getAttribute('data-ext');
 
-formi.append("who",document.getElementById('who').textContent);
-formi.append("nochwas",document.getElementById('albuminfo').textContent);
+formi.append("user_id",document.getElementById('user_id').textContent);
+formi.appendCild('user_email', user_email.textContent);
+formi.append("album_id",document.getElementById('album_id').textContent);
 for(var i=len-1;i >= 0;i--){
 var uric=elcnv[i].getAttribute('href');
 var nickname=elcnv[i].getAttribute('download');
@@ -645,4 +653,10 @@ function crel(s){return document.createElement(s);}
 </script>
 </main><footer id="footer">${footer.footer({})}</footer></body></html>`;
 }
-module.exports={image_uploader}
+module.exports={albums};
+function list_albums(n){
+let s='';
+n.forEach((el, i)=>{
+s+=`<li><a href="/dashboard/albums/${el.id}">${el.title}</a></li>`;
+})
+return s;}
