@@ -1,27 +1,340 @@
 <html>
 	<head><title>Image_Loader</title>
 		<style>
-			canvas{border:1px solid green;}
+	canvas{border:1px solid green;}
+	.popup h3{font: .81/150% Arial;color:lightgray;}
+.panel {
+ background-color: /*#444*/red;
+    height: 34px;
+    padding: 10px;
+border-radius:10px;
+border:2px solid #194;
+}
+.panel a#login_pop, .panel a#popup-img-upload {
+    border: 2px solid #aaa;
+    color: lightblue;
+    display: block;
+    float: right;
+    margin-right: 10px;
+    padding: 5px 10px;
+    text-decoration: none;
+    text-shadow: 1px 1px #000;
+border-radius: 10px;
+}
+a#login_pop:hover, a#join_pop:hover {
+    border-color: #eee;
+}
+.overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    bottom: 0;
+    cursor: default;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    visibility: hidden;
+    z-index: 1;
+    transition: opacity .5s;
+}
+.popup::-webkit-scrollbar{width:5px;}
+/*.popup::-webkit-scrollbar:hover{width:5px;background-color:blue;}*/
+.popup::-webkit-scrollbar-track{
+box-shadow: inset 0 0 6px rgba(255,255,240,0.3);
+border-radius:2px;
+}
+
+.popup::-webkit-scrollbar-thumb{
+border-radius:2px;
+
+background:rgba(0,0,0,0.8);
+box-shadow:inset 0 0 6px rgba(255,255,224,0.9);
+}
+.popup::-webkit-srcrollbar-thumb:hover{
+visibility:visible;
+background-color:rgba(20,20,20,0.6);}
+.popup::-webkit-scrollbar-thumb:active{
+background:rgba(255,0,0,0.4);
+}
+
+.overlay:target {
+visibility: visible;
+opacity: 1;
+}
+
+.popup {
+scrollbar-arrow-color:gray;
+color:gray;
+background-color: rgba(0,0,0,.2);
+border: 3px solid rgba(255,255,255,0.4);
+display: inline-block;
+left: 50%;
+top: 50%;
+width:90%;
+opacity: 0;
+padding: 15px;
+position: fixed;
+text-align: justify;
+height:/*300px*/90%;
+overflow-y:scroll;
+min-height:50px;
+visibility: hidden;
+z-index: 30;
+-o-transform: translate(-50%,-50%);
+-ms-transform: translate(-50%,-50%);
+-moz-transform: translate(-50%,-50%);
+-webkit-transform: translate(-50%,-50%);
+transform: translate(-50%, -50%);
+border-radius: 10px;
+	/*box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;*/
+transition: opacity .5s, top .5s;
+}
+.overlay:target+.popup {
+opacity: 1;
+visibility: visible;
+	}
+.close {
+    background-color: rgba(0, 0, 0, 0.8);
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    text-decoration: none;
+    top: -15px;
+    width: 30px;
+ border-radius: 15px;
+}
+.close:before {
+    color: rgba(255, 255, 255, 0.9);
+    content: "X";
+    font-size: 24px;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.9);
+}
+.close:hover {
+    background-color: rgba(64, 128, 128, 0.8);
+}
+.popup p, .popup div {
+    margin-bottom: 10px;
+}
+.popup label {
+    display: inline-block;
+    text-align: left;
+    width: 120px;
+}
+
+.redChecked{background:red;}
+@media screen and (max-width: 650px) {
+.popup{color:red;left:50%;top:50%;width:91%;height:70vmin;}
+overlay:target+.popup{left:0;}
+}
+/*
+@media screen and (max-width: 360px) {
+.popup{width:82%;left:calc(100% - 100%);}
+textarea{width:96%;}
+.popup input[type="text"]{width:90%;}
+.overlay:target+.popup {color:green;top:20%;}
+}*/
+
 		</style>
 	</head>
 	<body>
-		<canvas id="cnv"></canvas>
-		<br><button onclick="todataurl()">todataurl</button>
-		<script>
-			var cnv=document.getElementById("cnv");
-			var c=cnv.getContext('2d');
-			c.fillRect(0,0,20,20);
-			function todataurl(){
-			var b64=cnv.toDataURL().replace('data:image/png;base64,','');;
-				alert('b64: '+b64);
-				var bin=atob(b64);
-				//alert('bin: '+bin);
-				var crc=bin2hex(bin.slice(-16,-12));
-				alert('crc: '+crc);
-				
-			}
-			function bin2hex(n){alert(ch(n));return parseInt(n,2).toString(16);}
-			function ch(n){return /^[0,1]{1,64}$/.test();}
-		</script>
-	</body>
-</html>
+<div class="panel"><a href="#popup-img-upload">uploader</a></div>
+
+<b>User id: </b><span id="user_id">24</span><br>
+<b>User email: </b><span id="user_email">example@ya.ru</span>
+<hr>
+<br><b>Multi: </b><span id="multi">4</span>
+<br><b>Album id :</b><span id="album_id">4</span>
+<br><b>Album name :</b><span id="album_name">mama</span>
+<hr>
+<a href="#x" class="overlay" id="popup-img-upload"></a>
+<div class="popup">
+<h3>Multi image uploader</h3>
+1536 |1152 | 768 | 384
+<label>Thumb Size:</label>
+<input id='textsize' type='text' style='width:40px' value='384'/>px<hr>
+<label>To Folder:</label>
+<input id='texFolder' type='text' style='width:40px' value='kuri'/>folder<hr>
+<label>koeff compression:</label>
+<input id='texCompress' type='text' style='width:40px' value='0.1'/>0.0 - 1.0
+<hr>
+<label>Select File to create thumb:</label>
+<input type='file' id='input' multiple onchange='thumb(this.files)' accept='image/png,image/jpeg' autofocus>
+<button id="toservak" onclick="toServak()">to server</button>
+<button onclick="clearFoto()">clear</button>
+
+
+<div id="multcontainer"></div>
+<br>
+<div id="output2"></div>
+<ul id="ulur"></ul>
+ </div>
+<script>
+//if( Promise){alert('Promise native is ok')}else{alert('No promise native');}
+//if(FileReader){alert('ok')}
+var ab=[1536,1152,768,384];
+var bext;
+var k=4;
+var ui=0;
+var si=0;
+function thumb(files){
+var suk=[]
+Object.keys(files).forEach(function(file,i){suk.push(files[i])});
+var dak=suk.map(readfile);
+Promise.all(dak).then(function(res){
+res.forEach(function(it){
+//alert(it.result);
+nail({data:it.result,name:it.name});
+})}).catch(function(err){alert(err)});
+}
+	
+function readfile(file){
+return new Promise(function(resolv,rej){
+var reader=new FileReader();
+reader.onload=function(e){resolv({result:e.target.result,name:file.name});
+console.log('filename :'+file.name)};
+reader.onerror=function(e){rej(e.target.error.code);
+console.log(new Error(e.target.error.code).stack);
+};
+reader.readAsDataURL(file);
+});
+}
+	
+function nail(e){
+var cnv=crel('canvas');
+var img=new Image();
+img.src=e.data;
+var w=img.width, h=img.height;
+
+img.onload=function(){
+var compression=document.getElementById('texCompress').value;
+
+ab.forEach(function(el,i){
+tsize=ab[i];
+cnv.width=Number(tsize);
+cnv.height=Number(tsize)*(h/w);
+var c=cnv.getContext('2d');
+c.drawImage(img,0,0,cnv.width,cnv.height);
+var bi=e.name.lastIndexOf('.');
+var basename=e.name.substr(0,bi);
+bext=e.name.substr(bi);
+var a=cnv.toDataURL('image/jpeg',0.1);
+//var a=cnv.toBlob()
+//alert(a);
+toDataUri(a,basename,tsize,ab[i],cnv);});
+}
+}
+
+
+function toDataUri(uri,basename,tsize,perW,cnv){
+var docfrag=document.createDocumentFragment();
+var link=crel('a');
+//signal.innerHTML="";
+var figura=crel('figure');
+figura.setAttribute('data-fotoname',basename);
+var caption=crel('caption');
+var sutti=[perW,'x',cnv.height];
+var inchk='<input type="checkbox" class="inchk" data-fotoname="'+basename+'" onchange="testinchk(this)"/>'
+caption.innerHTML+='<span>'+sutti.join('')+'</span>'+inchk;
+var div=crel('div');
+div.className="div-pic";
+var im=crel('img');
+var figCaption=crel('figcaption');
+im.src=uri;
+im.className="fotobag";
+im.width=tsize/6;
+link.className="uricontent";
+link.href=uri;
+link.download=basename+'-k'+k;
+link.setAttribute("data-ext",bext);
+
+link.textContent=basename + '-k'+k;
+div.appendChild(im);
+figura.appendChild(caption);
+figura.appendChild(div);
+figCaption.appendChild(link)
+figura.appendChild(figCaption);
+docfrag.appendChild(figura);
+multcontainer.appendChild(docfrag);
+if(k==1){k=5;
+		 //ui++;
+		 boo()}
+k-=1;
+si++;
+}
+function boo(){
+toservak.style.display="inline";
+var docs=getDomArray('.fotobag');
+docs.forEach(function(el){
+el.addEventListener('click',sagsize,false);});
+}
+	
+function sagsize(el){
+var st=el.target;
+alert('this.naturalWidth'+' : '+st.naturalWidth);
+}
+	
+function toServak(){
+var formi=new FormData();
+var elcnv=document.getElementsByClassName('uricontent');
+var xhr=new XMLHttpRequest();
+//xhr.open("post","/multipics",true);
+//xhr.onload=function(e){if(xhr.status==200){resultat.innerHTML=this.response}else{alert(this.status)}}
+//xhr.onerror=function(e){alert(this.status+this.response+e.status)}
+var vadik=[];
+var len=elcnv.length;
+
+formi.append("user_id",document.getElementById('user_id').textContent);
+formi.append('user_email', user_email.textContent);
+formi.append("album_id",document.getElementById('album_id').textContent);
+for(var i=len-1;i >= 0;i--){
+var uric=elcnv[i].getAttribute('href');
+var nickname=elcnv[i].getAttribute('download');
+formi.append('file',uriBlob(uric),nickname+'.jpg');
+}
+	alert('formi '+formi);
+//xhr.send(formi);
+}
+	
+function uriBlob(uri){
+var bytestring;
+if(uri.split(',')[0].indexOf('base64') >= 0)
+bytestring=atob(uri.split(',')[1]);
+else
+bytestring=unescape(uri.split(',')[1]);
+var mimestring=uri.split(',')[0].split(':')[1].split(';')[0];
+var ia=new Uint8Array(bytestring.length);
+for(var i=0;i<bytestring.length;i++){
+ia[i]=bytestring.charCodeAt(i);
+}
+return new Blob([ia],{type:mimestring});
+}
+	
+function clearFoto(){
+ if(multcontainer.hasChildNodes()){
+while(multcontainer.hasChildNodes()){
+multcontainer.removeChild(multcontainer.firstChild);
+}} 
+}
+
+function testinchk(el){
+//alert('el.');
+var buka=el.getAttribute('data-fotoname');
+var rmvs=getDomArray('[data-fotoname="'+buka+'"]');
+	//alert(rmvs);
+rmvs.forEach(function(el,l){
+rmvs[l].remove();
+l.className="redChecked";
+});
+}	
+	
+function getDomArray(selector){
+var elcol=document.querySelectorAll(selector);
+var elar=Array.prototype.slice.apply(elcol);
+return elar;
+}
+function crel(s){return document.createElement(s);}
+</script>
+</body>
+<html>
