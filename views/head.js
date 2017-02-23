@@ -7,8 +7,9 @@ var head=(n)=>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <!-- here must be socials metatags - twitter,fb -->
 <link rel="shortcut icon" type="image/ico" href="/images/w4.png"> 
-${n.csslink2 ? `<link href="${n.csslink2}" rel="stylesheet">` : ''}
+
 ${n.csslink ? `<link href="${n.csslink}" rel="stylesheet">` :''}
+${n.csslink2 ? `<link href="${n.csslink2}" rel="stylesheet">` : ''}
 ${n.csshelper ? `<style>${n.csshelper}</style>`:``}
 <script>
 var html=document.getElementsByTagName("html")[0],dtct=document.createElement('div');

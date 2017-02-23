@@ -1,28 +1,34 @@
 <html>
-	<head><title>Image_Loader</title>
+	<head><title>Image_Uploader</title>
 		<style>
-	canvas{border:1px solid green;}
-	.popup h3{font: .81/150% Arial;color:lightgray;}
+
+.popup h3{font: .81/150% Arial;color:lightgray;}
 .panel {
- background-color: /*#444*/red;
-    height: 34px;
-    padding: 10px;
-border-radius:10px;
-border:2px solid #194;
+background-color: lightgray;
+height: 24px;
+padding: 10px;
+border:2px solid transparent;
+}
+.panel a{
+font-weight:bold;
+font-size:24px;
+text-decoration:none;
 }
 .panel a#login_pop, .panel a#popup-img-upload {
-    border: 2px solid #aaa;
-    color: lightblue;
-    display: block;
-    float: right;
-    margin-right: 10px;
-    padding: 5px 10px;
-    text-decoration: none;
-    text-shadow: 1px 1px #000;
+border: 2px solid #aaa;
+color: red;
+display: block;
+float: right;
+margin-right: 10px;
+padding: 5px 10px;
+text-decoration: none;
+text-shadow: 1px 1px #000;
 border-radius: 10px;
 }
-a#login_pop:hover, a#join_pop:hover {
-    border-color: #eee;
+a#login_pop:hover, a#join_pop:hover , .panel a:hover{
+    border-color:#eee;
+	border:1px solid red;
+	color:blue;
 }
 .overlay {
     background-color: rgba(0, 0, 0, 0.6);
@@ -65,7 +71,7 @@ opacity: 1;
 .popup {
 scrollbar-arrow-color:gray;
 color:gray;
-background-color: rgba(0,0,0,.2);
+background-color: rgba(0,0,0,.7);
 border: 3px solid rgba(255,255,255,0.4);
 display: inline-block;
 left: 50%;
@@ -101,7 +107,7 @@ visibility: visible;
     right: 0;
     text-align: center;
     text-decoration: none;
-    top: -15px;
+    top: 15px;
     width: 30px;
  border-radius: 15px;
 }
@@ -122,24 +128,55 @@ visibility: visible;
     text-align: left;
     width: 120px;
 }
-
-.redChecked{background:red;}
+.popup hr{background-color: black;}
+.del-comp{
+position:absolute;
+cursor:pointer;
+right:0;
+top:0;
+display:block;
+background:black;
+color:red;
+padding-right:3px;
+padding-left:3px;
+font-weight:bold;
+border-radius:3px;
+}
+.capt-size{
+color:black;
+background:lightgray;
+padding-right:5px;
+padding-left:5px;
+width:auto;
+}
+.uricontent{
+color:yellow;
+text-decoration:none;
+}
+.popup #multcontainer{
+margin-top:1.5em;
+display:flex;flex-wrap:wrap;
+background:inherit;
+height:auto;
+position:relative;
+border:1px solid transparent;
+border-radius:2px;
+width:100%;
+}
+.fluiditems{
+width:auto;
+height:auto;
+position:relative;
+display:inline-block;
+}
 @media screen and (max-width: 650px) {
 .popup{color:red;left:50%;top:50%;width:91%;height:70vmin;}
 overlay:target+.popup{left:0;}
 }
-/*
-@media screen and (max-width: 360px) {
-.popup{width:82%;left:calc(100% - 100%);}
-textarea{width:96%;}
-.popup input[type="text"]{width:90%;}
-.overlay:target+.popup {color:green;top:20%;}
-}*/
-
-		</style>
-	</head>
-	<body>
-<div class="panel"><a href="#popup-img-upload">uploader</a></div>
+</style>
+</head>
+<body>
+<section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section>
 
 <b>User id: </b><span id="user_id">24</span><br>
 <b>User email: </b><span id="user_email">example@ya.ru</span>
@@ -148,24 +185,23 @@ textarea{width:96%;}
 <br><b>Album id :</b><span id="album_id">4</span>
 <br><b>Album name :</b><span id="album_name">mama</span>
 <hr>
-<a href="#x" class="overlay" id="popup-img-upload"></a>
+		
+<a href="#" class="overlay" id="popup-img-upload"></a>
 <div class="popup">
+<a href="" class="close"></a>
 <h3>Multi image uploader</h3>
-1536 |1152 | 768 | 384
-<label>Thumb Size:</label>
-<input id='textsize' type='text' style='width:40px' value='384'/>px<hr>
-<label>To Folder:</label>
-<input id='texFolder' type='text' style='width:40px' value='kuri'/>folder<hr>
-<label>koeff compression:</label>
-<input id='texCompress' type='text' style='width:40px' value='0.1'/>0.0 - 1.0
-<hr>
+
+	<label title="Hard coded">Photo sizes: </label>1536 |1152 | 768 | 384<br><br>
+<!-- <input id='textsize' type='text' style='width:40px' value='384'/>px<hr> -->
+<label>Compression:</label>
+<input id='texCompress' type='number'  value='0.5' min="0.0" max="1" step="0.1"/>
+<hr><br>
 <label>Select File to create thumb:</label>
-<input type='file' id='input' multiple onchange='thumb(this.files)' accept='image/png,image/jpeg' autofocus>
-<button id="toservak" onclick="toServak()">to server</button>
+<input type='file' id='input' multiple onchange='thumb(this.files)' accept='image/png,image/jpeg' autofocus required>
+&nbsp;<button id="toservak" onclick="toServak()">upload</button>&nbsp;
 <button onclick="clearFoto()">clear</button>
 
-
-<div id="multcontainer"></div>
+<section id="multcontainer" style=""></section>
 <br>
 <div id="output2"></div>
 <ul id="ulur"></ul>
@@ -219,10 +255,13 @@ c.drawImage(img,0,0,cnv.width,cnv.height);
 var bi=e.name.lastIndexOf('.');
 var basename=e.name.substr(0,bi);
 bext=e.name.substr(bi);
-var a=cnv.toDataURL('image/jpeg',0.1);
-//var a=cnv.toBlob()
+	//alert(Number(compression));
+var a=cnv.toDataURL('image/jpeg',Number(compression));
 //alert(a);
-toDataUri(a,basename,tsize,ab[i],cnv);});
+if(navigator.userAgent.indexOf("Firefox") !=-1){ console.log(a);}
+
+toDataUri(a, basename, tsize, ab[i],cnv);});
+
 }
 }
 
@@ -233,10 +272,12 @@ var link=crel('a');
 //signal.innerHTML="";
 var figura=crel('figure');
 figura.setAttribute('data-fotoname',basename);
+figura.className="fluiditems";
 var caption=crel('caption');
 var sutti=[perW,'x',cnv.height];
-var inchk='<input type="checkbox" class="inchk" data-fotoname="'+basename+'" onchange="testinchk(this)"/>'
-caption.innerHTML+='<span>'+sutti.join('')+'</span>'+inchk;
+//var inchk='<input type="checkbox" class="inchk" data-fotoname="'+basename+'" onchange="testinchk(this)"/>'
+var delComp='<div class="del-comp" style="" data-fotoname="'+basename+'" onclick="removeComponent(this)" title="remove">X</div>';
+caption.innerHTML+='<div class="capt-size" style="">'+sutti.join('')+'</div>'+delComp;
 var div=crel('div');
 div.className="div-pic";
 var im=crel('img');
@@ -247,6 +288,7 @@ im.width=tsize/6;
 link.className="uricontent";
 link.href=uri;
 link.download=basename+'-k'+k;
+link.title="Download";
 link.setAttribute("data-ext",bext);
 
 link.textContent=basename + '-k'+k;
@@ -278,22 +320,24 @@ alert('this.naturalWidth'+' : '+st.naturalWidth);
 function toServak(){
 var formi=new FormData();
 var elcnv=document.getElementsByClassName('uricontent');
+	//alert(elcnv);
 var xhr=new XMLHttpRequest();
 //xhr.open("post","/multipics",true);
 //xhr.onload=function(e){if(xhr.status==200){resultat.innerHTML=this.response}else{alert(this.status)}}
 //xhr.onerror=function(e){alert(this.status+this.response+e.status)}
 var vadik=[];
 var len=elcnv.length;
-
+//alert('len: '+len);
 formi.append("user_id",document.getElementById('user_id').textContent);
 formi.append('user_email', user_email.textContent);
 formi.append("album_id",document.getElementById('album_id').textContent);
 for(var i=len-1;i >= 0;i--){
 var uric=elcnv[i].getAttribute('href');
+	//alert(uric);
 var nickname=elcnv[i].getAttribute('download');
 formi.append('file',uriBlob(uric),nickname+'.jpg');
 }
-	alert('formi '+formi);
+	if(len !==0){alert('formi '+formi);}
 //xhr.send(formi);
 }
 	
@@ -318,14 +362,14 @@ multcontainer.removeChild(multcontainer.firstChild);
 }} 
 }
 
-function testinchk(el){
+function removeComponent(el){
 //alert('el.');
 var buka=el.getAttribute('data-fotoname');
 var rmvs=getDomArray('[data-fotoname="'+buka+'"]');
 	//alert(rmvs);
 rmvs.forEach(function(el,l){
 rmvs[l].remove();
-l.className="redChecked";
+//l.className="redChecked";
 });
 }	
 	
