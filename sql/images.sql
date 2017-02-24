@@ -2,10 +2,10 @@
 --drop table images;
 
 create table images(id varchar(24) not null default generate_object_id(),
-                                            title text,
-                                            dsc text,
+                                            --title text,
+                                            img_dsc text,
                                             alb_id text not null,
-                                             -- alb_title text not null,
+                                           -- alb_title text not null,
                                             us_id text not null references busers(email) on delete cascade on update cascade,
                                             src1 text,
                                             src2 text,

@@ -24,8 +24,9 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 <b>User email: </b><span id="user_email">${buser ? buser.email : ''}</span>
 <hr>
 <br><b>Multi: </b><span id="multi">4</span>
-<br><b>Album id :</b><span id="album_id">${photos ? photos[0].alb_id : ''}</span>
-<br><b>Album name :</b><span id="album_name">mama</span>
+<br><b>Album id :</b><span id="album_id">${n.alb_id ? n.alb_id : ''}</span>
+<br><b>Album name :</b><span id="album_name">${photos ? photos[0].alb_title : ''}</span>
+<br><b>alb_ids: </b><span id="alb_ids">${n.alb_id ? n.alb_id : ''}</span>
 <hr>
 ${photos !==null ? `${list_photos(photos)}`:'<b>no photos</b>'}
 
@@ -46,7 +47,7 @@ ${photos !==null ? `${list_photos(photos)}`:'<b>no photos</b>'}
 
 <section id="multcontainer" style=""></section>
 <br>
-<div id="output2"></div>
+<div id="resultat"></div>
 <ul id="ulur"></ul>
  </div>
 
@@ -165,23 +166,29 @@ var formi=new FormData();
 var elcnv=document.getElementsByClassName('uricontent');
 	//alert(elcnv);
 var xhr=new XMLHttpRequest();
-//xhr.open("post","/multipics",true);
-//xhr.onload=function(e){if(xhr.status==200){resultat.innerHTML=this.response}else{alert(this.status)}}
-//xhr.onerror=function(e){alert(this.status+this.response+e.status)}
+xhr.open("post","/multipics",true);
+xhr.onload=function(e){if(xhr.status==200){resultat.innerHTML=this.response}else{alert(this.response)}}
+xhr.onerror=function(e){alert(this.status+this.response+e.status)}
 var vadik=[];
 var len=elcnv.length;
 //alert('len: '+len);
-formi.append("user_id",document.getElementById('user_id').textContent);
-formi.append('user_email', user_email.textContent);
+//alert(user_id.textContent);
+formi.append("user_id",user_id.textContent);
+//alert(alb_ids.textContent);
+formi.append('useremail', user_email.textContent);
 formi.append("album_id",document.getElementById('album_id').textContent);
+formi.append("album_title",[album_name.textContent]);
+formi.append("album_ids",[alb_ids.textContent]);
 for(var i=len-1;i >= 0;i--){
 var uric=elcnv[i].getAttribute('href');
 	//alert(uric);
 var nickname=elcnv[i].getAttribute('download');
 formi.append('file',uriBlob(uric),nickname+'.jpg');
 }
-	if(len !==0){alert('formi '+formi);}
-//xhr.send(formi);
+//if(len !==0){
+//alert('formi '+formi);
+xhr.send(formi);
+//}
 }
 	
 function uriBlob(uri){

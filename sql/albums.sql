@@ -1,19 +1,19 @@
 -- \i /home/globik/alikon/sql/albums.sql
-/*
-alter table albums drop constraint unique_title;
-drop table albums;
-create table albums(id varchar(24) not null default generate_object_id(),
-							   title varchar(255) not null,
+
+--alter table albums drop constraint unique_title;
+--drop table albums;
+create table albums(id varchar(24) not null,
+							   alb_title varchar(255) not null,
                                us_id text not null references busers(email) on delete cascade on update cascade,
-                               descr text,
+                               alb_dsc text,
 							   created timestamp not null default now(),
 					           visi int not null default 1,
 					           seen int not null default 0,
-				               constraint unique_title unique(title)
+				               constraint unique_title unique(alb_title)
 );
-*/
 
-insert into albums(title, us_id) values ('brother','gru5@yandex.ru');
+
+--insert into albums(id,alb_title, us_id) values ('brother','gru5@yandex.ru');
 
 
 --update albums set us_data = jsonb_set(us_data::jsonb, '[{"src1":"/src1.png","src2":"/src2.png","src3":"/src3.png","src4":"/src4.png","title":"some title"}]');
