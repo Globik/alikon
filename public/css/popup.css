@@ -1,16 +1,24 @@
 .popup h3{font: .81/150% Arial;color:lightgray;}
 .panel {
 background-color: lightgray;
+display:block;
+position:relative;
+width:100%;
 height: 24px;
-padding: 10px;
+padding: 0px;
 border:2px solid transparent;
 }
 .panel a{
+/*background:red;*/
 font-weight:bold;
 font-size:24px;
+line-height:1;
 text-decoration:none;
+margin-left:4px;
+padding-left:2px;
+padding-right:2px;
 }
-.panel a#login_pop, .panel a#popup-img-upload {
+.panel a#login_pop {
 border: 2px solid #aaa;
 color: red;
 display: block;
@@ -23,7 +31,7 @@ border-radius: 10px;
 }
 a#login_pop:hover, a#join_pop:hover , .panel a:hover{
     border-color:#eee;
-	border:1px solid red;
+	
 	color:blue;
 }
 .overlay {

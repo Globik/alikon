@@ -11,21 +11,34 @@ var haupt_ban=false;
 var album_view=n=>{
 let {buser, photos, showmodule:{mainmenu,profiler}}=n;
 return`<!DOCTYPE html><html lang="en">
-<head>${head.head({title:"Image uploader",csslink:"/css/main2.css",csslink2:"/css/popup.css"/*csshelper:`${login_css.login_css({})}`*/})}</head>
+<head>${head.head({title:"Image uploader", cssl:["/css/main2.css","/css/popup.css"]})}</head>
 <body>
 ${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
+<!-- <section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section> -->
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+<!-- <section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section> -->
+<style>
+#img-wrap{
+width:100%;
+background:green;
+}
+.img-fluid{
+background:yellow;
+display:inline-block;}
+</style>
 <main id="pagewrap">
-<section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section>
+ <!-- <section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section> -->
 
+
+<h4>Meta information</h4>
 <b>User id: </b><span id="user_id">${buser ? buser.id :  ''}</span><br>
 <b>User email: </b><span id="user_email">${buser ? buser.email : ''}</span>
-<hr>
-<br><b>Multi: </b><span id="multi">4</span>
+
+<b>Multi: </b><span id="multi">4</span>
 <br><b>Album id :</b><span id="album_id">${n.alb_id ? n.alb_id : ''}</span>
-<br><b>Album name :</b><span id="album_name">${photos ? photos[0].alb_title : ''}</span>
+<br><b>Album name :</b><span id="album_name">${n.alb_title ? n.alb_title : ''}</span>
 <br><b>alb_ids: </b><span id="alb_ids">${n.alb_id ? n.alb_id : ''}</span>
 <hr>
 ${photos !==null ? `${list_photos(photos)}`:'<b>no photos</b>'}
@@ -235,10 +248,11 @@ function crel(s){return document.createElement(s);}
 module.exports={album_view}
 
 function list_photos(n){
-let s='<ul>';
+let s='<div id="img-wrap"><section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section>';
 n.forEach((el,i)=>{
-s+=`<li>${el.title}<li><img src="/uploads/${el.src1}">`
+s+=`<div class="img-fluid"><img src="/uploads/${el.src1}">
+<li>${el.title}<li><b>Description: </b>${el.dsc !==null ? el.dsc : "Add a notice"}</div>`
 })
-s+='</ul>';
+s+='</div>';
 return s;
 }

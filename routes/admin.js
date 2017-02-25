@@ -12,17 +12,16 @@ var admin=new Router();
 admin.get('/dashboard', authed, function*(){
 this.body=this.render('admin_dashboard',{buser:this.req.user});
 })
-//var admin_dashboard_articles=rel(`${viewpath}//admin_dashboard_articles.js`);
+
 admin.get('/dashboard/articles',authed,function *(){
 let db=this.db;
 	try{
 	var posts=yield db.query('select*from articles order by id desc limit 10');
 	}catch(e){console.log('err in dashboard articles: ',e)}
-this.body=this.render('admin_dashboard_articles',{buser:this.req.user, posts:posts.rows});
+this.body=this.render('admin_dashboard_articles'/*'articles_manager'*/,{buser:this.req.user, posts:posts.rows});
 });
 
 admin.post('/dashboard/article_create', authed, bodyParser({multipart:true,formidable:{}}), function *(){
-//let {dob}=this, docs=dob.collection('posts');
 let db=this.db;
 let locs=this.request.body.fields;
 locs.slug=sluger(locs.title);
@@ -84,6 +83,32 @@ yield db.query(`delete from articles where id=${this.params.dataid}`);
 }catch(e){console.log('error find article: ',e);this.throw(404,e);}
 this.body={info:'OK. '+this.params.dataid+' is deleted'};
 })
+
+admin.get('/dashboard/articles/edit_photo/:article_id', authed, function*(){
+let db=this.db;
+let post=null;
+try{
+var resultat=yield db.query(`select*from articles where id=${this.params.article_id}`);
+if(resultat.rows && resultat.rows[0]){post=resultat.rows[0];}
+}catch(e){
+
+}
+this.body=this.render("adm_photo_gal",{buser:this.req.user,post});
+})
+
+admin.post('/dashboard/albums_list', authed, function*(){
+let db=this.db;
+var albums=null;
+var user_email=this.request.body.user_email;
+try{
+var resultat=yield db.query(`select*from albums where us_id='${user_email}'`)
+if(resultat.rows){albums=resultat.rows;console.log('resultat: ',albums);}
+}catch(e){throw(400,e.message);}
+this.body={albums:albums}
+
+})
+
+
 /* ************************  Albums  */
 var parse=require('co-busboy');
 var shortid=require('shortid');
@@ -98,15 +123,16 @@ if(result.rows && result.rows[0]){albums=result.rows;}
 this.body=this.render('albums',{buser:this.req.user,albums});
 });
 
-admin.get('/dashboard/albums/:alb_id', function*(){
+admin.get('/dashboard/albums/:alb_id/:alb_title', function*(){
 var photos=null;
+	
 let db=this.db;
 try{
-//var result=yield db.query(`select*from images where alb_id='${this.params.alb_id}'`);
-	var result=yield db.query(`select*from images inner join albums on alb_id=albums.id where alb_id='${this.params.alb_id}'`);
+var result=yield db.query(`select*from images where alb_id='${this.params.alb_id}'`);
+//var result=yield db.query(`select*from images inner join albums on alb_id=albums.id where alb_id='${this.params.alb_id}'`);
 if(result.rows && result.rows[0]){photos=result.rows;console.log('resultat: ',result.rows);}
 }catch(e){console.log(e)}
-this.body=this.render('album_view',{buser:this.req.user,photos,alb_id:this.params.alb_id});
+this.body=this.render('album_view',{buser:this.req.user,photos,alb_id:this.params.alb_id,alb_title:this.params.alb_title});
 })
 
 admin.get('/dashboard/articles_manager', authed, function *(){

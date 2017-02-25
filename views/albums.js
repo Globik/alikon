@@ -11,7 +11,7 @@ var haupt_ban=false;
 var albums= n =>{
 let {buser, albums, showmodule:{mainmenu,profiler}}=n;
 return `<!DOCTYPE html><html lang="en">
-<head>${head.head({title:"Photo Albums",csslink:"/css/main2.css",/*csshelper:`${login_css.login_css({})}`*/})}</head>
+<head>${head.head({title:"Photo Albums",cssl:["/css/main2.css"],/*csshelper:`${login_css.login_css({})}`*/})}</head>
 <body>
 ${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
@@ -81,6 +81,6 @@ module.exports={albums};
 function list_albums(n){
 let s='';
 n.forEach((el, i)=>{
-s+=`<li><a href="/dashboard/albums/${el.id}">${el.alb_title}</a></li>`;
+s+=`<li><a href="/dashboard/albums/${el.id}/${el.alb_title}">${el.alb_title}</a></li>`;
 })
 return s;}

@@ -10,6 +10,7 @@ var head=(n)=>
 
 ${n.csslink ? `<link href="${n.csslink}" rel="stylesheet">` :''}
 ${n.csslink2 ? `<link href="${n.csslink2}" rel="stylesheet">` : ''}
+${n.cssl ? get_cssl(n) : ''}
 ${n.csshelper ? `<style>${n.csshelper}</style>`:``}
 <script>
 var html=document.getElementsByTagName("html")[0],dtct=document.createElement('div');
@@ -18,3 +19,11 @@ dtct.style.display='flex';if(dtct.style.display === 'flex'){html.className='flex
 <!--[if lt IE 9]><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->`;
 
 module.exports={head};
+
+function get_cssl(n){
+let s='';
+n.cssl.forEach((el,i)=>{
+s+=`<link href="${el}" rel="stylesheet">`;
+})
+return s;
+}

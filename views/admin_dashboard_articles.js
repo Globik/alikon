@@ -4,7 +4,7 @@ var admin_main_menu=require('./admin_main_menu.js');
 var admin_dashboard_articles=n=>{return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Articles Manager</title>
 </head><body>
 ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
-<br><h3>Welcome to the Articles Manager</h3>
+<br><h3>Welcome to the Articles Manager-3</h3>
 <div class="articles-count">
 ${n.posts ? `<b>Total articles : </b>${n.posts.length}` : ``}
 <h3>Articles Manager</h3>
@@ -76,7 +76,7 @@ function showDialog(el,bool){
 function get_posts(n){
 let s='';
 	n.posts.forEach(function(el,p){
-	s+=`<li><span data-id="${el.id}" onclick="insertDataIda(this);" >${el.title}</span>`;
+	s+=`<li><a data-id="${el.id}" href="/dashboard/articles/edit_photo/${el.id}" >${el.title}</a>`;
 	})
 	return s;
 }
