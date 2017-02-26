@@ -1,5 +1,5 @@
 "use strict";
-var pool=require('./app4.js');
+//var pool=require('./app4.js');
 const ms = require('ms');
 const EventEmitter = require('events');
 module.exports = class PgSession extends EventEmitter {
@@ -129,8 +129,11 @@ throw new Error(`Error trying to access koa postgres session: session setup has 
         let sess = this;
 //Each interval of cleanupTime, run the cleanup script
         setTimeout(function interval() {
-            sess.query(sess.cleanupSql, Date.now() / 1000).then(()=> {
+           // sess.query(sess.cleanupSql, Date.now() / 1000).then(()=> {
+			sess.query(sess.cleanupSql/*,Date.now()/1000*/,(err,r)=>{
                 //Recurse so that the cleanupTime can be dynamic
+				//if(err)console.log('err: ',err)
+				//console.log('r: ',r);
                 setTimeout(interval, sess.options.cleanupTime);
             });
         }, sess.options.cleanupTime);
@@ -155,6 +158,6 @@ get destroyValueSql() {
 return `DELETE from ${this.options.schema}.${this.options.table} WHERE id = $1`;
     }
 get cleanupSql() {
-return `DELETE FROM ${this.options.schema}.${this.options.table} WHERE expiry <= to_timestamp($1)`;
+return `DELETE FROM ${this.options.schema}.${this.options.table} WHERE expiry <= to_timestamp(${Date.now()/1000})`;
     }
 };

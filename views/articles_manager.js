@@ -159,7 +159,8 @@ var li=document.createElement('li');
 var title=data.album[i].title;
 var multik=data.album[i].multi;
 var albumFold=data.folders[i];
-var str1='<button class='+(title !== "tmp" ? "z" : "zapret")+' onclick='+(title !== "tmp" ? "showFots2(this)" : null)+' data-multi='+multik+' value='+albumFold+'>'+title+'</button>';
+var str1='<button class='+(title !== "tmp" ? "z" : "zapret")+' onclick='+(title !== "tmp" ? "showFots2(this)" : null)+' 
+data-multi='+multik+' value='+albumFold+'>'+title+'</button>';
 	
 //(user*aka user._id*,multi,createdat,_id,[fotkis])
 li.innerHTML=str1;
@@ -203,8 +204,7 @@ var docfrag=document.createDocumentFragment();
 	 var pics=data.fotkis[i];
 	//(foldername,fotkis,basedir,who)
 	 var div=document.createElement('figure');
-	 //var fold=el.value;
-	 //var who=data.who;
+	 
 	 div.className='pig';
 	 div.setAttribute('data-picname',pics);
 	 div.setAttribute("data-src",'/images/upload/'+who+'/'+fold+'/'+pics+'');

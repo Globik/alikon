@@ -102,13 +102,22 @@ var albums=null;
 var user_email=this.request.body.user_email;
 try{
 var resultat=yield db.query(`select*from albums where us_id='${user_email}'`)
-if(resultat.rows){albums=resultat.rows;console.log('resultat: ',albums);}
+if(resultat.rows){albums=resultat.rows;console.log('resultat: ',albums[0]);}
 }catch(e){throw(400,e.message);}
 this.body={albums:albums}
 
 })
 
-
+admin.post('/dashboard/albums_list/images',authed, function*(){
+let db=this.db;
+var images=null;
+var alb_id=this.request.body.alb_id;
+try{
+var resultat=yield db.query(`select*from images where alb_id='${alb_id}'`);
+if(resultat.rows && resultat.rows.length){images=resultat.rows;}
+}catch(e){this.throw(400,e.message);}
+this.body={images};
+})
 /* ************************  Albums  */
 var parse=require('co-busboy');
 var shortid=require('shortid');
