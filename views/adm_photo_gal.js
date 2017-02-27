@@ -18,7 +18,10 @@ ${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
-
+<style>
+.redChecked{background:red;}
+.orangeUnchecked{background:orange;}
+</style>
 <main id="pagewrap">
 <h4>Add photo gallery</h4>
 <h5>Metainfo</h5>
@@ -30,6 +33,8 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 <button onclick="get_albums();">get album list</button><br>
 <span id="out"></span>
 <ul id="alb_el"></ul>
+<hr>
+<button id="rmv_unch" style="display:none;" onclick="remove_unchecked()">remove_unchecked</button>
 <hr>
 <div id="fotkis"></div>
 <hr>
@@ -44,7 +49,7 @@ xhr.onload=function(e){
 if(xhr.status==200){
 var docfr=document.createDocumentFragment();
 var mata=JSON.parse(this.response);
-alert(this.response);
+//alert(this.response);
 if(alb_el.hasChildNodes()){
 while(alb_el.hasChildNodes()){
 alb_el.removeChild(alb_el.firstChild);}}
@@ -69,7 +74,7 @@ xhr.open('post','/dashboard/albums_list/images');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
-alert(this.response);
+//alert(this.response);
 var mata=JSON.parse(this.response);
 var docfr=document.createDocumentFragment();
 if(fotkis.hasChildNodes()){
@@ -82,10 +87,10 @@ mata.images.forEach(function(el,i){
 	 var div=document.createElement('figure');
 	 var basedir="/uploads";
 	 div.className='pig';
-	 div.setAttribute('data-picname', el);
+	 div.setAttribute('data-picname', el.id);
 	 div.setAttribute("data-src", el.src1);
 	 //div.onclick=function(){alert(this.getAttribute("data-identif"))}
-var str1='<caption>'+[i+1]+'<p class="capitan"></p><input type="checkbox" data-picname='+el+' onchange="ckeckboxVal(this)"></caption>';
+var str1='<caption>'+[i+1]+'<p class="capitan"></p><input type="checkbox" data-picname='+el.id+' onchange="ckeckboxVal(this)"></caption>';
 var str2='<div class="img-cont"><img src="'+basedir+'/'+el.src1+'"></div>';
 var str3='<figcaption><span class="p-descr" contenteditable=true>Description</span></br>';
 var str4='<span class="p-title" contenteditable=true>Title</span></br>';
@@ -143,6 +148,41 @@ return false;
     col.addEventListener('drop', handleDrop, false);
     col.addEventListener('dragend', handleDragEnd, false);
   });
+}
+function ckeckboxVal(el){
+//alert(el.checked);
+var buka=el.getAttribute('data-picname');
+//alert('data-picname: '+buka);
+var rmvs=getDomArray('[data-picname="'+buka+'"]');
+rmvs.forEach(function(l,i){
+//rmvs[i].remove();
+if(el.checked){
+
+l.className="redChecked";
+go_orange();}
+else{l.className="orangeUnchecked";rmv_unch.style.display="block";}
+});
+}
+function go_orange(){
+var ori=getDomArray('.pig');
+ori.forEach(function(el,i){
+el.className="orangeUnchecked";
+});
+rmv_unch.style.display="block";
+}
+function remove_unchecked(el){
+//alert('ok')
+var rmvs=getDomArray('.orangeUnchecked');
+rmvs.forEach(function(el,i){
+rmvs[i].remove();
+});
+rmv_unch.style.display="none";
+}
+
+function getDomArray(selector){
+var elcol=document.querySelectorAll(selector);
+var elar=Array.prototype.slice.apply(elcol);
+return elar;
 }
 </script>
 </main><footer id="footer">${footer.footer({})}</footer>

@@ -135,7 +135,7 @@ var xhr=new XMLHttpRequest();
 
 	 var li=document.createElement('li');
 	 var doc=docs.folders[i];
-	 li.innerHTML='<button class='+(doc !== "tmp" ? "z" : "zapret")+' onclick='+(doc !== "tmp" ? "showFots(this)" : null)+' value='+doc+'>'+doc+'</button>';
+li.innerHTML='<button class='+(doc !== "tmp" ? "z" : "zapret")+' onclick='+(doc !== "tmp" ? "showFots(this)" : null)+' value='+doc+'>'+doc+'</button>';
 	
 	 direction.appendChild(li);}}
 	 }
