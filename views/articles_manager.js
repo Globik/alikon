@@ -89,7 +89,7 @@ img{width:100%;}
 </br><button id="btnPicstar" onclick="addpicsar()" style="display:none;">send pics to db</button></hr>
  | <button id="btnOrder" onclick="inOrdnung()">Упорядочить!</button>
  </br><b>Mult-info :</b><span id="multInfo"></span>
- <div style="display:inline-blobk;">
+ <div style="display:inline-block;">
  <select id="level" >onchange="change_was(this.value)"
  <option value="menu">menu</option>
 <option value="remove_checked">remove_checked</option>
@@ -210,7 +210,7 @@ var docfrag=document.createDocumentFragment();
 	 div.setAttribute("data-src",'/images/upload/'+who+'/'+fold+'/'+pics+'');
 	 //div.onclick=function(){alert(this.getAttribute("data-identif"))}
 var str1='<caption>'+[i+1]+'<p class="capitan"></p><input type="checkbox" data-picname='+pics+' onchange="ckeckboxVal(this)"></caption>';
-var str2='<div class="img-cont"><img src="'+basedir+who+'/'+fold+'/'+pics+'"></div>';
+var str2='<div class="img-cont"><img src="'+basedir+'/'+pics+'"></div>';
 var str3='<figcaption><span class="p-descr" contenteditable=true>Description</span></br>';
 var str4='<span class="p-title" contenteditable=true>Title</span></br>';
 var str5='<span class="srcset" contenteditable=true>'+basedir+who+'/'+fold+'/'+pics+'</span></details></br></figcaption>';
