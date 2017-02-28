@@ -7,12 +7,13 @@ const admin_main_menu=require('./admin_main_menu');
 const footer=require('./footer');
 var warnig=false;	  
 var haupt_ban=false;
-
+var photos2=null;
 var album_view=n=>{
 let {buser, photos, showmodule:{mainmenu,profiler}}=n;
 return`<!DOCTYPE html><html lang="en">
 <head>${head.head({title:"Image uploader", cssl:["/css/main2.css","/css/popup.css"]})}</head>
 <body>
+<!-- album_view.js -->
 ${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
@@ -41,7 +42,8 @@ display:inline-block;}
 <br><b>Album name :</b><span id="album_name">${n.alb_title ? n.alb_title : ''}</span>
 <br><b>alb_ids: </b><span id="alb_ids">${n.alb_id ? n.alb_id : ''}</span>
 <hr>
-${photos !==null ? `${list_photos(photos)}`:'<b>no photos</b>'}
+
+${ins_list_photos(photos !==null ? list_photos(photos):"<b>no pics yet</b>")}
 
 <a href="#" class="overlay" id="popup-img-upload"></a>
 <div class="popup">
@@ -248,11 +250,15 @@ function crel(s){return document.createElement(s);}
 module.exports={album_view}
 
 function list_photos(n){
-let s='<div id="img-wrap"><section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section>';
+let s='';
 n.forEach((el,i)=>{
 s+=`<div class="img-fluid"><img src="/uploads/${el.src1}">
 <li>${el.title}<li><b>Description: </b>${el.dsc !==null ? el.dsc : "Add a notice"}</div>`
-})
-s+='</div>';
+});
 return s;
+}
+
+function ins_list_photos(n){
+let s=`<div id="img-wrap"><section class="panel"><a href="#popup-img-upload" title="download photos">+</a></section>${n}</div>`;
+	return s;
 }

@@ -3,6 +3,7 @@
 var admin_main_menu=require('./admin_main_menu.js');
 var admin_dashboard_articles=n=>{return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Articles Manager</title>
 </head><body>
+<!-- admin_dashboard_articles.js -->
 ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <br><h3>Welcome to the Articles Manager-3</h3>
 <div class="articles-count">
