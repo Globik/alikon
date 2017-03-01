@@ -96,6 +96,17 @@ if(resultat.rows && resultat.rows[0]){post=resultat.rows[0];}
 this.body=this.render("adm_photo_gal",{buser:this.req.user,post});
 })
 
+//pics to the articles
+admin.post('/dashboard/pics_to_post',authed,function*(){
+let db=this.db;
+try{
+var resultat=yield db.query(`update articles set images='${JSON.stringify(this.request.body.images)}' where id=${this.request.body.article_id}`);
+}catch(e){
+this.throw(400,e.message);
+}
+this.body={info:this.request.body}
+})
+
 admin.post('/dashboard/albums_list', authed, function*(){
 let db=this.db;
 var albums=null;

@@ -220,7 +220,7 @@ pSrc4=getDomArray('.srcset4');
 
 	var data={};
 	data.images=[];
-	data.bi=article_id.textContent;//"345";
+	data.article_id=article_id.textContent;//"345";
 	//alert(dataId);
 	if(article_id.textContent !==undefined){
 	
@@ -230,13 +230,13 @@ pSrc4=getDomArray('.srcset4');
 
 	data.images.push({
     title:pTitle[k].innerHTML,
-    content:pDescr[k].innerHTML,
-    alt:pAlt[k].textContent,
+    content: pDescr[k].innerHTML,
+    alt: pAlt[k].textContent,
     quelle:pQuelle[k].textContent,
-    src1:pSrc1[k].dataset.src1,
-	src2:pSrc1[k].dataset.src2,
-    src3:pSrc1[k].dataset.src3,  
-    src4:pSrc1[k].dataset.src4});
+    src1: pSrc1[k].dataset.src1,
+	src2: pSrc1[k].dataset.src2,
+    src3: pSrc1[k].dataset.src3,  
+    src4: pSrc1[k].dataset.src4});
 
 //data.images.push({title:pTitle[k].innerHTML,content:pDescr[k].innerHTML,
    // src1:pSrc1[k].getAttribute("data-src1"),
@@ -251,8 +251,8 @@ pSrc4=getDomArray('.srcset4');
 	alert(JSON.stringify(data));
 	
 	var xhr=new XMLHttpRequest();
-	//xhr.open('post','/picstopost');
-	//xhr.setRequestHeader('Content-Type','application/json','utf-8');
+	xhr.open('post','/dashboard/pics_to_post');
+	xhr.setRequestHeader('Content-Type','application/json','utf-8');
 	xhr.onload=function(e){
 	 if(xhr.status==200){
 	 //var data=JSON.parse(this.response);
@@ -262,7 +262,7 @@ pSrc4=getDomArray('.srcset4');
 	 }}
 	 //data._id="123456";
 	 //alert(JSON.stringify(data.images));
-	// xhr.send(JSON.stringify(data));
+ xhr.send(JSON.stringify(data));
 	
 	 } 
 	 else{alert('datid not fullfilled');}
