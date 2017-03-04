@@ -1,13 +1,13 @@
 // articles_page.js 
 'use strict'; 
 //let rel=require('../libs/hotreload.js');
-var head=require('./head.js');
-var header_menu=require('./header_menu.js');
-var admin_main_menu=require('./admin_main_menu.js');
-var articles_block=require('./articles_block.js');
-var paginator=require('./paginator.js');
-var article_editor=require('./article_editor.js');
-var footer=require('./footer.js'); 
+const head=require('./head.js');
+const header_menu=require('./header_menu.js');
+const admin_main_menu=require('./admin_main_menu.js');
+const articles_block=require('./articles_block.js');
+const paginator=require('./paginator.js');
+const article_editor=require('./article_editor.js');
+const footer=require('./footer.js'); 
 
 var articles_page=n=>{ 
 let {buser,showmodule:{mainmenu,profiler}}=n;
@@ -23,7 +23,7 @@ ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 ${articles_block.articles_block(n)}
 </section> 
 ${(n.locals.total_pages > 1 ? `<div id="pagination">${paginator.paginator(n)}</div>`: ``)}
-	${article_editor.article_editor({buser})}
+${article_editor.article_editor({buser})}
 </main><footer id="footer">${footer.footer({boo:"By"})}</footer></body></html><!-- end articles_page.js -->`;}
 module.exports={articles_page};
 function getCssLink(){return `/css/articles-paginator.css`;}

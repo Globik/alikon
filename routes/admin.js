@@ -6,6 +6,7 @@ var co=require('co');
 var fs=require('fs');
 var cfs=require('co-fs');
 var path=require('path');
+const moment=require('moment');
 //var diskspace=require('diskspace');
 
 var admin=new Router();
@@ -87,9 +88,13 @@ this.body={info:'OK. '+this.params.dataid+' is deleted'};
 admin.get('/dashboard/articles/edit_photo/:article_id', authed, function*(){
 let db=this.db;
 let post=null;
+
 try{
 var resultat=yield db.query(`select*from articles where id=${this.params.article_id}`);
-if(resultat.rows && resultat.rows[0]){post=resultat.rows[0];}
+if(resultat.rows && resultat.rows[0]){
+	post=resultat.rows[0];
+
+}
 }catch(e){
 
 }
@@ -99,12 +104,23 @@ this.body=this.render("adm_photo_gal",{buser:this.req.user,post});
 //pics to the articles
 admin.post('/dashboard/pics_to_post',authed,function*(){
 let db=this.db;
+var result=null;
+var resp={};
 try{
-var resultat=yield db.query(`update articles set images='${JSON.stringify(this.request.body.images)}' where id=${this.request.body.article_id}`);
+var res=yield db.query(`update articles set images='${JSON.stringify(this.request.body.images)}'
+ where id=${this.request.body.article_id} returning slug, date_url`);
+//console.log('resultat in dashb/piccs_to_post: ', result);
+	//moment(date_url).format('YYYY-MM-DD')
+	if(res && res.rows.length){
+		resp.date_url=moment(res.rows[0].date_url).format('YYYY-MM-DD');
+		resp.slug=res.rows[0].slug;
+		result=resp;
+		
+	}
 }catch(e){
 this.throw(400,e.message);
 }
-this.body={info:this.request.body}
+this.body={info:this.request.body,result:result}
 })
 
 admin.post('/dashboard/albums_list', authed, function*(){

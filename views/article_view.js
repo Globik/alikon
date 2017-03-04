@@ -67,8 +67,8 @@ ${n.post && n.post.images.length ? sumatorFoto(n):''}
 <li>Serial: ${part}</li>  
 <li>gesamt_seen: ${gesamt_seen}</li>
 <li>date_url: <span id="dateurl">${moment(date_url).format('YYYY-MM-DD')}</span></li>
-<li>fucker : ${fucker}</li>
 <li>${created_on}</li>
+<li><a href="/dashboard/articles/edit_photo/${id}">Photo gallery</a>
 ${fucker?"<b>yes</b>":"<b>no</b>"} 
 ${n.buser ? '<button onclick="go_edit()">save</button>':''}
 </section>
@@ -97,7 +97,8 @@ return s;
 }
 function getImgErr(){
 	let s='';
-	s+=`var count=0;function digku(el){console.log('error',el.src,window.location.href);
+	s+=`var count=0;
+    function digku(el){console.log('error',el.src,window.location.href);
 	console.log(el.getAttribute('data-art-id'))
 	var data={};
 	data._id=el.getAttribute('data-art-id');

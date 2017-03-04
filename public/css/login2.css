@@ -1,45 +1,138 @@
 *{box-sizing: border-box;}
-html{font-size:1vw;font-family: "Arial Black",Arial, sans-serif;}
-		html,body{background:pink;margin:0;padding:0;height:100%;}
-		
-#pagewrap{padding:0.9em;}
-	
-		.green{background:green;} .red{background:red;} 
-		.lightgreen{background:lightgreen;}
-		.blue{color: blue} 
-
-		#mform{
-		display:block;
-		width:30%;
-		margin:2rem auto;
-		border:1px solid silver;
+html{font-size: 100%;}
+body{
+	font-size: 1rem;
+	font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
+	background: rgb(167,85, 2);
+	margin:0;
+	padding:0;
+	height:100%;
+		}
+#pagewrap{padding:2rem;}
+h2{
+	padding-left:6%;
+    padding-bottom:10px;
+	line-height:2;
+	color: rgb(112,66, 20);
+		}
+h4{
+line-height: 1;
+font-size:0.9rem;
+color: rgba(0,0,30,0.9);
 }
-#mform div{margin-bottom:2px;padding-top:20px;}
-#mffakeorm :nth-child(even){background:blue;}
-		input[type=password], input[type=email], input[type=text]{
-		width:100%;
-		padding:1em 0.2em;
-		margin: 0.1rem 0;
-		display:block;
-		border: 0.1rem solid #ccc;
+strong{
+font-size:0.9rem;
+color: rgba(0,0,30,0.9);
+font-family: Courier;
+}
+#red-warnig{background:red;}
+.red{background:red;line-height:2;padding:4%;}
+.lightgreen{background: lightgreen;}
+
+#mform{
+display:block;
+width: 100%;
+padding-left:6%;
+padding-right:6%;
+
+}
+#wrap{
+background: rgba(237, 201, 175,0.2);
+width: 35%;
+margin:0 auto;
+border: 1px solid transparent;
+max-width:31.250em;
+		}
+.email, .password, .username{
+	padding-top:10px;
+	padding-bottom:20px;
+	position:relative;
+   display:block;
+		}
+
+.email.red-warning, .password.red-warning{border:1px solid red;}
+.sess_orange{background:orange;color:green;}
+a{
+text-decoration:none;
+font-size:0.8rem;
+padding-right:1%;
+cursor:pointer;
+font-weight:normal;
+color: rgb(25,25,39);
+letter-spacing: 0.1vw;
+		}
+a:hover{color: blue;}
+.submit{
+	display:block;
+	position:relative;
+	padding-top:0px;
+	padding-bottom:0px;
+	width:100%;}
+		
+input[type=password], input[type=email], input[type=text]{
+width:100%;
+display:block;
+padding-top:10px;
+padding-bottom:10px;
+margin-top: 4px;
+border: 1px solid #ccc;
 		}
 input[type=submit]{
 width: 30%;
-	cursor: pointer;	
-	background: rgb(61, 157, 179);
-	padding: 8px 5px;
-	font-family: 'BebasNeueRegular','Arial Narrow',Arial,sans-serif;
-	color: #fff;
-	font-size: 24px;	
-	border: 1px solid rgb(28, 108, 122);	
-	margin-bottom: 10px;	
-	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
-	
-	        border-radius: 3px;	
-
-
+display:block;
+margin-left:70%;
+padding-top:10px;
+padding-bottom:10px;
+cursor: pointer;	
+background: /*rgb(61, 157, 179)*/ brown;
+font-family: Courier,sans-serif;
+font-weight:bold;
+font-size: 0.9rem;
+color: rgb(25,25,39);
+border: 1px solid rgb(28, 108, 122);		
 }
-		#outresult{display:none;background: lightblue;width:90%;margin:1rem auto;min-height:300px;}
+#bott, .bott{
+display: block; 
+width:100%; 
+position:relative;
+padding-top:10px;
+padding-left: 6%;
+padding-right:6%;
+padding-bottom:20px;
+		}
+
+/* social icons */
+
+.soc-desc1{
+display:block;
+position:absolute;
+}
+		
+.soc-desc{
+position:relative;
+display:block;
+height: auto;
+width: 100%;
+
+text-align:center;
+}
+.soc-desc.fb{background: #4c74c4;background:linear-gradient(to bottom right, #4c74c4, #3b5998);}
+.soc-desc.vk{background:#45668e;}
+				
+.span-social{line-height: 5;}
+
+/* end social icons */
+
+#outresult{
+display: none;
+background: lightgreen;
+width:90%;
+margin:1rem auto;
+padding:6%;
+line-height:2;
+/*color:red;*/
+}
+
 		
 		#loader{
 			position: absolute;
@@ -68,24 +161,23 @@ width: 30%;
 			from{bottom:-10rem;opacity:0;}
 			to{bottom:0;opacity:1}
 		}
-		.container{padding-left:0.8rem;padding-right:0.8rem;background:yellow;}
-		#bottom, .imgcontainer{text-align:center;margin:1rem 0 1rem 0;}
-		button{
-			background-color: #4caf50;
-			color:white;
-			padding:1rem 0;
-			margin: 0.2rem 0;
-			border:none;
-			cursor:pointer;
-			width:100%;
-			font-size:1em;
-			letter-spacing:0.1rem;
-		}
-@media screen and (max-width: 1020px) {
-html,body{font-size:1.8vw;background:brown;}
-	#mform{width:50%;}
+		
+@media screen and (max-width: 1024px) {
+#wrap{width:80%;}
 }
-@media screen and (max-width: 320px) {
-	html,body{background:green;font-size:5vw;}
-	#mform{width:100%;margin:0;padding:0;border:none;}
+
+@media screen and (max-width: 650px) {
+html,body{}
+	#wrap, #mform{
+	width:100%;
+	}
+.fb, .vk{width:100%;}
+
+}
+@media screen and (max-width: 480px) {
+	
+	#pagewrap{padding:0.1rem;}
+#mform{margin-top:2rem;}
+	h1{padding-left:0;}
+.nav{margin: 0.5rem;line-height: 2;}
 }

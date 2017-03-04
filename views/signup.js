@@ -4,12 +4,12 @@ var dev_pwd=process.env.DEV_PWD;
 var dev_email=process.env.DEV_EMAIL;
 var login_css=require('./login_css.js');
 var head=require('./head.js');
-var glocal_style=true;
+//var glocal_style=true;
 
 var signup = n =>{
-return `<!DOCTYPE html><html lang="en"><head>
-${head.head({title:"sign up",[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${glocal_style ? `${login_css.login_css({})}` : `${get_local_style()}`}`})}
-
+return `<!DOCTYPE html><html lang="en">
+<head>
+${head.head({title:"sign up",cssl:["/css/login2.css"]})};
 </head>
 <body>
 <main id="pagewrap">
@@ -39,12 +39,15 @@ ${head.head({title:"sign up",[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${gl
  <strong>Already a member?</strong> <a href="/login">Login</a><br><br>
 <strong>Or you can sign in with:</strong><br><br>
 
-
-
-<a href="/auth/facebook"><div class="soc-desc fb"><div class="soc-desc1"><img src="/images/facebook-icon_64.png"/></div><span>facebook</span></div>
+<a href="/auth/facebook">
+<div class="soc-desc fb">
+<div class="soc-desc1">
+<img src="/images/facebook-icon_64.png"/>
+</div>
+<span class="span-social">facebook</span>
+</div>
 	</a>
-
-<a href="/auth/vkontakte"><div class="soc-desc vk"><div class="soc-desc1"><img src="/images/vk.png"/></div><span>vkontakte</span>
+<a href="/auth/vkontakte"><div class="soc-desc vk"><div class="soc-desc1"><img src="/images/vk.png"/></div><span class="span-social">vkontakte</span>
 	</div>
 	</a>
 	

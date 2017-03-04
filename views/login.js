@@ -8,7 +8,7 @@ const timeout_login=5000;
 const dev_email=process.env.DEV_EMAIL;
 var login= n =>{
 	let {buser,showmodule:{mainmenu,profiler}}=n;
-return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",csshelper:`${login_css.login_css({})}`})}</head>
+return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",cssl:["css/login2.css"]})}</head>
 <body>
 <main id="pagewrap">
 <a class="nav" href="/">home</a><br>

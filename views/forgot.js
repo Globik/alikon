@@ -5,8 +5,7 @@ var glocal_style=true;
 var forgot= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
-${head.head({title:"Reset Password", 
-[`${glocal_style ? 'csshelper' : 'csslink'}`]:`${glocal_style ? `${login_css.login_css({})}` : `${get_local_style()}`}`})}
+${head.head({title:"Reset Password",cssl:["/css/login2.css"] })}
 
 </head><body>
 <main id="pagewrap">
