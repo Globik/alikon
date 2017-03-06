@@ -343,11 +343,12 @@ output.innerHTML='<span>Photos saved. Go to <a href="/articles/'+d.result.date_u
 fountainG.style.display="none";
 out.innerHTML=this.response;
 	 }}
+xhr.onerror=function(e){alert(e);fountainG.style.display="none";};
 	
 fountainG.style.display="block";
-setTimeout(function(){
+//setTimeout(function(){
      xhr.send(JSON.stringify(data));
-},5000)
+//},5000)
 	
 	 } 
 	 else{alert('datid not fullfilled');}

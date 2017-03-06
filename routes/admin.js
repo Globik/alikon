@@ -59,7 +59,8 @@ var result=yield db.query(`update articles set ${bef_upd(locs)} where id=${locs.
 }catch(e){console.log(e);this.throw(404,e);}
 this.body={locs,result};
 });
-admin.post('/save_editable_article', authed, function*(){
+
+admin.post('/dashboard/save_editable_article', authed, function*(){
 let db=this.db;
 let locs=this.request.body;
 	console.log('locs: ',locs);
@@ -76,6 +77,16 @@ s+=`${i==0 ? '': ', '}${el[0]}='${el[1]}'`;
 })
 return s;
 }
+
+admin.post('/dashboard/save_img_content',authed,function*(){
+//save jsonb images within table articles ["content","quelle"]
+let db=this.db;
+try{
+db.query(`update articles set images= where id=${this.request.body.art_id}`);
+}catch(e){this.throw(400,e.message);}
+this.body={info:"ok",body:this.request.body};
+})
+
 admin.get('/remove_an_article/:dataid',authed,function*(){
 let db=this.db;
 console.log('dataid: ', this.params.dataid);
@@ -175,6 +186,7 @@ admin.get('/dashboard/articles_manager', authed, function *(){
 	
 this.body=this.render('articles_manager',{buser:this.req.user});
 });
+
 admin.post('/create_album',authed,function *(){
 	let db=this.db;
 	//var docs=wrap(db.get('fotoalbums'));

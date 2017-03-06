@@ -59,6 +59,8 @@ return `<article class="post">
 <div data-mattr="body" data-id=${id} ${n.buser ? 'contenteditable="true"':''}>${body}</div>
 ${n.post && n.post.images.length ? sumatorFoto(n):''} 
 <section>
+<h4>Meta Info</h4>
+<li><span id="art_id">${id}</span></li>
 <li>Last time edited: ${moment(last_modified).format('MMM D, YYYY')}</li>
 <li>Tags: ${tags}</li>
 <li>Category : ${category}</li>
@@ -76,21 +78,27 @@ ${n.buser ? '<button onclick="go_edit()">save</button>':''}
 <script>${getImgErr()}</script>
 ${n.buser ? `<script>${redact_editable()}</script>` : ''}`;
 }
-function sumatorFoto(n){let s='';
-for(var {src,src1,src2,src3,title,content} of n.post.images){
+function sumatorFoto(n){
+	//console.log('HERE BUSER: ',n.buser);
+	let s='';
+for(var {id,src1,src2,src3,src4,alt,title,content,quelle} of n.post.images){
 if( n.post.images[0].src1){
 s+=`<p>${title}</p> 
 <figure style="background:rgba(0,0,244,0.1);width:100%;margin-left:0;">
 <picture>
-<source media="(min-width: 1366px)" srcset="${src3}">
-<source media="(min-width: 808px)" srcset="${src2}">
-<source media="(min-width: 600px)" srcset="${src1}">
-<source media="(max-width: 320px)" srcset="${src}">
-<img src="${src1}" title="${title}" alt="${title}" sizes="100vw" srcset="${src} 384w,${src1} 768w,${src2} 1152w,${src3} 1536w"/>
+<source media="(min-width: 1366px)" srcset="/uploads/${src4}">
+<source media="(min-width: 808px)" srcset="/uploads/${src3}">
+<source media="(min-width: 600px)" srcset="/uploads/${src2}">
+<source media="(max-width: 320px)" srcset="/uploads/${src1}">
+<img src="/uploads/${src1}" title="${title}" onerror="digku(this) alt="${alt}" sizes="100vw"/>
 </picture>
-<figcaption><p>${content}</p></figcaption></figure>`;
+<figcaption>
+${n.buser && n.buser.role=="superadmin" ? `<button data-id="${id}" onclick="edit_content(this);">edit</button>&nbsp;|&nbsp;<button data-id="${id}" onclick="save_content(this);">save</button>`:""}
+<p data-pid="${id}" data-field="content" contenteditable="false">${content}</p>
+${quelle ? `<span data-pid="${id}" data-field="quelle" contenteditable="false">${quelle}</span>`:''}
+</figcaption></figure>`;
 }else{
-if(src){s+=`<p>${title}<img src="${src}" title="${title}" data-art-id="${n.post._id}" onerror="digku(this)"/></p>`;}
+if(src){s+=`<p>${title}<img src="/uploads/${src1}" title="${title}" data-art-id="${n.post._id}" onerror="digku(this)"/></p>`;}
 }
 }
 return s; 
@@ -126,7 +134,7 @@ mata[editis[i].getAttribute('data-mattr')]=editis[i].innerHTML;
 mata.id=editis[0].getAttribute('data-id');
 var matajs=JSON.stringify(mata);
 var xhr=new XMLHttpRequest();
-xhr.open('post','/save_editable_article');
+xhr.open('post','/dashboard/save_editable_article');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(){
 if(xhr.status==200){alert(this.response);
@@ -136,6 +144,50 @@ window.location.href="/articles/"+dateurl.textContent+"/"+ab.moody;
 }
 xhr.onerror=function(e){console.log(e);}
 xhr.send(matajs);
+}
+
+function edit_content(el){
+var me=el.getAttribute('data-id');
+var els=getDomArray('[data-pid="'+me+'"]');
+els.forEach(function(l,i){
+l.style.background="green";
+l.setAttribute("contenteditable","true");
+});
+}
+
+function save_content(el){
+var data={}
+var me=el.getAttribute('data-id');
+var els=getDomArray('[data-pid="'+me+'"]');
+data.foto_id=me;
+els.forEach(function(l,i){
+l.setAttribute("contenteditable","false");
+l.style.background="inherit";
+//data.quelle=l.textContent;
+data[l.getAttribute("data-field")]=l.textContent;
+
+});
+data.art_id=art_id.textContent;
+var b=JSON.stringify(data);
+alert(b);
+var xhr=new XMLHttpRequest();
+xhr.open('post','/dashboard/save_img_content');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(){
+if(xhr.status==200){
+alert(this.response);
+//var ab=JSON.parse(this.response);
+//window.location.href="/articles/"+dateurl.textContent+"/"+ab.moody;
+}else{alert(this.response);}
+}
+xhr.onerror=function(e){console.log(e);}
+xhr.send(b);
+}
+
+function getDomArray(selector){
+var elcol=document.querySelectorAll(selector);
+var elar=Array.prototype.slice.apply(elcol);
+return elar;
 }
 `;
 return s;}
