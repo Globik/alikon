@@ -15,7 +15,7 @@ function getArt(n){
 	<li><a onclick="redaktorHref(this)"  data-id="${id}" href="#popredaktor">redact</a></li>
 <li data-id="${id}" onclick="remove_post(this)">remove</li><li>visibility ${status}</li></ul></div>
 <div class="foto-cont">                 
-<img src="${images.length ? images[0].src1 : '/images/kuku.png'}"/></div>	
+<img src="${images.length ? `/uploads/${images[0].src1}` : '/images/kuku.png'}"/></div>	
 <section class="article-info"> 
 <div class="time-service"><b>${moment(created_on).format('MMM D, YYYY')}</b></div>
 <div class="time-service"><b>comments 1</b></div>

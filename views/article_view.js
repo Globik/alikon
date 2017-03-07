@@ -22,11 +22,16 @@ str+= `<!DOCTYPE html>
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <!-- banner -->
+<style>
+.edit-sp{background:orange;}
+.edit-sp.content{background:blue;}
+.edit-sp.ajx{background:red;}
+</style>
 <div class="codops-header" style="z-index:0;">${getHeadLine(n)}
 <div class="codrops-demos">
 <a class="current-demo" href="">fb</a><a href="">vk</a><a href="">g+</a>
 </div>	  
-</div>
+</div>jsonb_set(images,'{0,title}','"F new TITLE1!!!"')
 <main id="pagewrap" style="padding:0;">
 <div id="content">
 ${getArticleBody(n)}
@@ -80,7 +85,7 @@ ${n.buser ? `<script>${redact_editable()}</script>` : ''}`;
 }
 function sumatorFoto(n){
 	//console.log('HERE BUSER: ',n.buser);
-	let s='';
+	let s='';var ik=0;
 for(var {id,src1,src2,src3,src4,alt,title,content,quelle} of n.post.images){
 if( n.post.images[0].src1){
 s+=`<p>${title}</p> 
@@ -92,14 +97,18 @@ s+=`<p>${title}</p>
 <source media="(max-width: 320px)" srcset="/uploads/${src1}">
 <img src="/uploads/${src1}" title="${title}" onerror="digku(this) alt="${alt}" sizes="100vw"/>
 </picture>
-<figcaption>
-${n.buser && n.buser.role=="superadmin" ? `<button data-id="${id}" onclick="edit_content(this);">edit</button>&nbsp;|&nbsp;<button data-id="${id}" onclick="save_content(this);">save</button>`:""}
-<p data-pid="${id}" data-field="content" contenteditable="false">${content}</p>
-${quelle ? `<span data-pid="${id}" data-field="quelle" contenteditable="false">${quelle}</span>`:''}
+<figcaption class="fg-cap">
+${n.buser && n.buser.role=="superadmin" ? `<button data-id="${id}" onclick="edit_content(this);">edit</button>&nbsp;|&nbsp;
+<button data-id="${id}" onclick="save_content(this);">save</button>`:""}
+<p class="edit-sp" data-pid="${id}" data-ord="${ik}" data-field="content" contenteditable="false">${content}</p>
+${quelle && n.buser && n.buser.role=="superadmin" ? `<button data-id="${id}" onclick="edit_content2(this);">edit</button>&nbsp;|&nbsp;
+<button data-id="${id}" data-field="quelle" onclick="save_content2(this);">save</button>`:""}
+${quelle ? `<span class="edit-sp" data-qpid="${id}" data-ord="${ik}" data-field="quelle" contenteditable="false">${quelle}</span>`:''}
 </figcaption></figure>`;
 }else{
 if(src){s+=`<p>${title}<img src="/uploads/${src1}" title="${title}" data-art-id="${n.post._id}" onerror="digku(this)"/></p>`;}
 }
+	ik++;
 }
 return s; 
 }
@@ -147,41 +156,85 @@ xhr.send(matajs);
 }
 
 function edit_content(el){
+druv(el,'data-id','data-pid');
+/*
 var me=el.getAttribute('data-id');
 var els=getDomArray('[data-pid="'+me+'"]');
 els.forEach(function(l,i){
 l.style.background="green";
 l.setAttribute("contenteditable","true");
 });
+*/
 }
-
-function save_content(el){
-var data={}
-var me=el.getAttribute('data-id');
-var els=getDomArray('[data-pid="'+me+'"]');
-data.foto_id=me;
+function edit_content2(el){
+druv(el,'data-id','data-qpid');
+/*var me=el.getAttribute('data-id');
+var els=getDomArray('[data-qpid="'+me+'"]');
+els.forEach(function(l,i){
+l.style.background="green";
+l.setAttribute("contenteditable","true");
+});
+*/
+}
+function druv(n,d1,d2){
+var me=n.getAttribute(d1);
+var els=getDomArray('['+d2+'="'+me+'"]');
+els.forEach(function(l,i){
+//l.style.background="green";
+l.classList.add('content');
+l.setAttribute("contenteditable","true");
+});
+}
+function bruv(el,d1,d2){
+var data={};
+var me=el.getAttribute(d1);
+var els=getDomArray('['+d2+'="'+me+'"]');
 els.forEach(function(l,i){
 l.setAttribute("contenteditable","false");
-l.style.background="inherit";
-//data.quelle=l.textContent;
-data[l.getAttribute("data-field")]=l.textContent;
-
+l.classList.remove('content');
+l.classList.add("ajx");
+//l.style.background="inherit";
+//l.classList.add('ajx');
+data.key=l.getAttribute("data-field");
+data.value=l.textContent;
+//data[l.getAttribute("data-field")]=l.textContent;
+data.order=l.getAttribute('data-ord');
 });
+return data;
+}
+
+
+function save_content(el){
+var data=bruv(el,'data-id','data-pid');
 data.art_id=art_id.textContent;
 var b=JSON.stringify(data);
 alert(b);
+to_xhr(b);
+}
+
+function save_content2(el){
+var data=bruv(el,'data-id','data-qpid');
+data.art_id=art_id.textContent;
+var b=JSON.stringify(data);
+alert(b);
+to_xhr(b);
+}
+
+function to_xhr(da){
 var xhr=new XMLHttpRequest();
 xhr.open('post','/dashboard/save_img_content');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(){
 if(xhr.status==200){
 alert(this.response);
-//var ab=JSON.parse(this.response);
-//window.location.href="/articles/"+dateurl.textContent+"/"+ab.moody;
+var els=getDomArray('.edit-sp.ajx');
+els.forEach(function(l,i){
+l.classList.remove('ajx');
+})
 }else{alert(this.response);}
 }
 xhr.onerror=function(e){console.log(e);}
-xhr.send(b);
+xhr.send(da);
 }
 
 function getDomArray(selector){

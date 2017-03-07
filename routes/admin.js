@@ -81,8 +81,13 @@ return s;
 admin.post('/dashboard/save_img_content',authed,function*(){
 //save jsonb images within table articles ["content","quelle"]
 let db=this.db;
+var order=this.request.body.order;
+var art_id=this.request.body.art_id;
+var key=this.request.body.key;
+var value=this.request.body.value;
+
 try{
-db.query(`update articles set images= where id=${this.request.body.art_id}`);
+yield db.query(`update articles set images=jsonb_set(images,'{${order},${key}}','"${value}"') where id=${art_id}`);
 }catch(e){this.throw(400,e.message);}
 this.body={info:"ok",body:this.request.body};
 })
