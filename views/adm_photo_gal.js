@@ -336,7 +336,7 @@ var d=JSON.parse(this.response);
 out.innerHTML=this.response;
 
 window.location.href="#resultativ";
-output.innerHTML='<span>Photos saved. Go to <a href="/articles/'+d.result.date_url+'/'+d.result.slug+'" target="_blank">article</a>';
+output.innerHTML='<span>Photos saved. Go to <a href="/articles/'+d.result.art_id+'/'+d.result.slug+'" target="_blank">article</a>';
 
  }
 	 else{

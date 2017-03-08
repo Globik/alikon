@@ -26,12 +26,14 @@ ${(buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 .edit-sp{background:orange;}
 .edit-sp.content{background:blue;}
 .edit-sp.ajx{background:red;}
+
+.post-title.editable, .cbody.editable{background:blue;}
 </style>
 <div class="codops-header" style="z-index:0;">${getHeadLine(n)}
 <div class="codrops-demos">
 <a class="current-demo" href="">fb</a><a href="">vk</a><a href="">g+</a>
 </div>	  
-</div>jsonb_set(images,'{0,title}','"F new TITLE1!!!"')
+</div>
 <main id="pagewrap" style="padding:0;">
 <div id="content">
 ${getArticleBody(n)}
@@ -57,11 +59,11 @@ leader="lead absatz",body="maincontent",last_modified="22,2,2005",tags=[""],
 category="category",id,rubrik="rubrik",status="1",part="1",gesamt_seen,date_url,fucker=''}=n.post || {};
 //var as=new Date(parseInt(_id.toString().substring(0,8),16)*1000);
 //var gab=moment(as).format('YYYY-MM-DD');  
-return `<article class="post">     
-<h1 class="post-title" data-id=${id} data-mattr="title" ${n.buser ? 'contenteditable="true"' :''}>${title}</h1>
+return `<article class="post"> ${n.buser ? '<button onclick="make_edit();">edit</button>|<button onclick="go_edit()">save</button>' :''}    
+<h1 id="post_title" class="post-title" data-id=${id} data-mattr="title" contenteditable="false">${title}</h1>
 <p><small>${moment(created_on).format('MMMM D, YYYY')}  by ${author}</small></p>
 <p><i>${leader}</i></p>
-<div data-mattr="body" data-id=${id} ${n.buser ? 'contenteditable="true"':''}>${body}</div>
+<div id="cbody" class="cbody" data-mattr="body" data-id=${id} contenteditable="false">${body}</div>
 ${n.post && n.post.images.length ? sumatorFoto(n):''} 
 <section>
 <h4>Meta Info</h4>
@@ -75,8 +77,8 @@ ${n.post && n.post.images.length ? sumatorFoto(n):''}
 <li>gesamt_seen: ${gesamt_seen}</li>
 <li>date_url: <span id="dateurl">${moment(date_url).format('YYYY-MM-DD')}</span></li>
 <li>${created_on}</li>
-<li><a href="/dashboard/articles/edit_photo/${id}">Photo gallery</a>
-${fucker?"<b>yes</b>":"<b>no</b>"} 
+<li><a href="/dashboard/articles/edit_photo/${id}">Photo gallery</a><br>
+${fucker?"<b>yes</b>":"<b>no</b>"}<br> 
 ${n.buser ? '<button onclick="go_edit()">save</button>':''}
 </section>
 </article>
@@ -132,9 +134,23 @@ function getImgErr(){
 function redact_editable(){
 let s='';
 s+=`
-var editis=document.querySelectorAll('[contenteditable="true"]');
+function make_edit(){
+post_title.classList.add("editable");
+post_title.setAttribute("contenteditable",true);
+cbody.classList.add("editable");
+cbody.setAttribute("contenteditable",true);   
+}
+
+function clear_editable(){
+post_title.classList.remove("editable");
+post_title.setAttribute("contenteditable",false);
+cbody.classList.remove("editable");
+cbody.setAttribute("contenteditable",false); 
+}
+
 var mata={};
 function go_edit(){
+var editis=document.querySelectorAll('[contenteditable="true"]');
 for(var i=0;i<editis.length;i++){
 //alert(editis[i].innerHTML);
 //alert(editis[i].getAttribute('data-mattr'));
@@ -146,10 +162,16 @@ var xhr=new XMLHttpRequest();
 xhr.open('post','/dashboard/save_editable_article');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(){
-if(xhr.status==200){alert(this.response);
+if(xhr.status==200){
+clear_editable();
+alert(this.response);
+
 var ab=JSON.parse(this.response);
-window.location.href="/articles/"+dateurl.textContent+"/"+ab.moody;
-}else{alert(this.response);}
+window.location.href="/articles/"+art_id.textContent+"/"+ab.moody;
+}else{
+clear_editable();
+alert(this.response);
+}
 }
 xhr.onerror=function(e){console.log(e);}
 xhr.send(matajs);

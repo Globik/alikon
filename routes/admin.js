@@ -124,12 +124,13 @@ var result=null;
 var resp={};
 try{
 var res=yield db.query(`update articles set images='${JSON.stringify(this.request.body.images)}'
- where id=${this.request.body.article_id} returning slug, date_url`);
+ where id=${this.request.body.article_id} returning id, slug, date_url`);
 //console.log('resultat in dashb/piccs_to_post: ', result);
 	//moment(date_url).format('YYYY-MM-DD')
 	if(res && res.rows.length){
 		resp.date_url=moment(res.rows[0].date_url).format('YYYY-MM-DD');
 		resp.slug=res.rows[0].slug;
+		resp.art_id=res.rows[0].id;
 		result=resp;
 		
 	}

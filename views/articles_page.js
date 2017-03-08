@@ -15,7 +15,7 @@ let {buser,showmodule:{mainmenu,profiler}}=n;
 return `<!DOCTYPE html>
 <!-- articles_page.js -->
 <html lang="en">
-<head>${head.head({csslink:getCssLink(),csslink2:"/css/main2.css"})}</head>
+<head>${head.head({cssl:["/css/main2.css","/css/articles-paginator.css","css/popup.css"]})}</head>
 <body><nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <main id="pagewrap">

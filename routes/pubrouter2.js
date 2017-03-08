@@ -168,11 +168,12 @@ const {get_all_articles, get_all_articles_page, article_slug}=require('./pub/art
 
 pub.get('/articles', pagination, get_all_articles);
 pub.param('page', param_page).get('/articles/:page', pagination, get_all_articles_page);
-pub.get('/articles/:date_url/:slug', article_slug);
+pub.get('/articles/:id/:slug', article_slug);
 
 function* param_page(page,next){
 if(isNumb(page)==false){this.redirect('/articles')}
-else if(page==0 || page==1){this.redirect('/articles');}else{yield next;}
+else
+	if(page==0 || page==1){this.redirect('/articles');}else{yield next;}
 }
 /* end of articles */
 
