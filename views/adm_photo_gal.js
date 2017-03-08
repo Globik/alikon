@@ -75,7 +75,7 @@ position:relative;margin:0;
 	<div id="fountainG_8" class="fountainG"></div>
 </div>
 
-<div id="article_fotkis">${post && post.images ? list_post_imgs(post.images) : "No images yet. Add photos from album."}</div>
+<div id="article_fotkis">${post && post.images && post.images.length ? list_post_imgs(post.images) : "No images yet. Add photos from album."}</div>
 
 <!-- <button id="to_art_imgs" onclick="add_to_art_imgs();">add pics to post sector</button> -->
 <!-- <div id="fotkis"></div> -->
