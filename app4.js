@@ -29,7 +29,7 @@ var locals={
 };
 var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
 //var database_url=configDB.pg_url;// for home development
-//'postgres://globik:null@localhost:5432/postgres';
+//var database_url='postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
 var pars=url.parse(database_url);
@@ -132,7 +132,8 @@ pool.on('error', (err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
-	dop_ssl='';
+	//dop_ssl="?ssl=true";
+	dop_ssl="";
 }else{dop_ssl="?ssl=true"}
 var ps=new PS(database_url+dop_ssl);
 

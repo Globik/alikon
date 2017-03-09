@@ -23,6 +23,28 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 Vkontakte: <a href="/auth/vkontakte">vk</a>
 
 <div>Some div with user's personals fades ${douser(buser)}</div>
+<!-- reklama -->
+<div id="rontar_adplace_13418"></div>
+<script type="text/javascript">
+ 
+    (function (w, d, n) {
+        var ri = { rontar_site_id: 4689, rontar_adplace_id: 13418, rontar_place_id: 'rontar_adplace_13418', adCode_rootUrl: 'http://adcode.rontar.com/' };
+        w[n] = w[n] || [];
+        w[n].push(
+            ri
+        );
+        var a = document.createElement('script');
+        a.type = 'text/javascript';
+        a.async = true;
+        a.src = 'http://adcode.rontar.com/rontar2_async.js?rnd=' + Math.round(Math.random() * 100000);
+        var b = document.getElementById('rontar_adplace_' + ri.rontar_adplace_id);
+        b.parentNode.insertBefore(a, b);
+    })(window, document, 'rontar_ads');
+</script>
+
+
+
+<!-- end reklama -->
 <output id="out4"></output>
 <output id="out5"></output>
 <aside>${showModule(n)}</aside>
