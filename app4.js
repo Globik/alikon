@@ -23,12 +23,15 @@ const adminrouter=require('./routes/admin.js');
 const configDB=require('./config/database.js');
 const {msg_handler} = require('./libs/mailer.js');
 var {script}=require('./libs/filter_script');
+/*
 var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
-	return mn;}catch(e){console.log(e);}}
+	return mn;}catch(e){console.log(e);return e;}},
+* show_banners(){try{let m=yield this.db.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
 };
-var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-//var database_url=configDB.pg_url;// for home development
+*/
+//var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+var database_url=configDB.pg_url;// for home development
 //var database_url='postgres://globik:null@localhost:5432/postgres';
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
@@ -45,7 +48,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl: true};//local_host=false heroku=true
+ssl: false};//local_host=false heroku=true
 
 var app=koa();
 var pool=module.exports=new Pool(pconfig);
@@ -54,6 +57,13 @@ require('./config/passport2.js')(pool, passport);
 
 var pg_store=new PgStore(pool);
 //var pg_store=new PgStore(database_url);
+
+var locals={
+* showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
+	return mn;}catch(e){console.log(e);return e;}},
+* show_banners(){try{let m=yield pool.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
+};
+
 render(app,{})
 app.use(serve(__dirname+'/public'));
 //app.use(favicon());
@@ -90,6 +100,7 @@ lasha=false;
 
 this.state.showmodule=mobject.showmodule;
 this.state.showmodulecache=lasha;
+this.state.banner=yield locals.show_banners();
 if(this.path=='/module_cache'){
 lasha=true;}
 yield next;

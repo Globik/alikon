@@ -20,7 +20,7 @@ function getArt(n){
 <div class="time-service"><b>${moment(created_on).format('MMM D, YYYY')}</b></div>
 <div class="time-service"><b>comments 1</b></div>
 <div class="time-service"><b>23 Shares</b></div>
-<h5><a href="/articles/${id}/${slug}">${title}</a></h5> 
+<h5><a href="/articles/${slug}">${title}</a></h5> 
 ${sub_title ? `<p>${sub_title}</p>` : ''}  
 	${metatagsector ? `<div class="tags">${tags? tags : ""}</div>`:""}
 </section>

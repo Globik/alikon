@@ -40,8 +40,9 @@ ${getArticleBody(n)}
 </div>
 <aside id="sidebar">
 <section class="widget">
-<h4 class="widgettitle">attariku</h4>
-<img src='/images/emblema-a.svg' width="100%" height="100%"/>
+${n.banner && n.banner[0].type=="sidebar" ?
+`<h4 class="widgettitle">attariku</h4>
+<a href="${n.banner[0].href}"><img src='${n.banner[0].src}' width="100%" height="100%"/></a>`:'<b>no reklama</b>'}
 </section>
 </aside>
 <div style="clear:both;"></div>

@@ -13,9 +13,9 @@ if(pag){
 	
 (n.locals.prev ? s+=`<a href="${psaki(n)}"><div class="num">prev</div></a>`:``)
 pag.forEach(d=>{(page==d ? s+=`<div class="pactive">${d}</div>`:
-s+=`<a href="${(page>=2 && d==1 ? `/articles`:`/articles/${d}`)}"><div class="num">${d}</div></a>`)
+s+=`<a href="${(page>=2 && d==1 ? `/articles`:`/articles/p/${d}`)}"><div class="num">${d}</div></a>`)
 });
-(n.locals.next ? s+=`<a href="/articles/${page+1}"><div class="num">next</div></a>`:``)
+(n.locals.next ? s+=`<a href="/articles/p/${page+1}"><div class="num">next</div></a>`:``)
 }
 return s;} 
 function psaki(n){let s=``,page=n.locals.page;if(page==2){s+="/articles";}

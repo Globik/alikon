@@ -37,7 +37,7 @@ this.session.dorthin=this.path;
 let db=this.db;
 var vpost;
 try{
-var post=yield db.query(`update articles set gesamt_seen=gesamt_seen+1 where id=${this.params.id} and slug='${this.params.slug}' returning *`);
+var post=yield db.query(`update articles set gesamt_seen=gesamt_seen+1 where slug='${this.params.slug}' returning *`);
 if(post.rows.length){
 vpost=post.rows[0];
 	console.log('vpost: ',vpost)

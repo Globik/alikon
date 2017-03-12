@@ -167,8 +167,8 @@ articles
 const {get_all_articles, get_all_articles_page, article_slug}=require('./pub/article.js');
 
 pub.get('/articles', pagination, get_all_articles);
-pub.param('page', param_page).get('/articles/:page', pagination, get_all_articles_page);
-pub.get('/articles/:id/:slug', article_slug);
+pub.param('page', param_page).get('/articles/p/:page', pagination, get_all_articles_page);
+pub.get('/articles/:slug', article_slug);
 
 function* param_page(page,next){
 if(isNumb(page)==false){this.redirect('/articles')}

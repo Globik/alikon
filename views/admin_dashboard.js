@@ -18,7 +18,7 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 hallo ${buser.name}<br>
 <li><a href="/dashboard/articles">Articles Manager</a>
 <li><a href="/dashboard/albums">Photos</a>
-<li><a href="/dashboard/articles_manager">Articles Image Manager</a>
+
 <li><a href="/dashboard/mongodb">Mongodb</a>
 </main><footer id="footer">${footer.footer({})}</footer></body></html>`;
 }
