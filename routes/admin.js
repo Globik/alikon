@@ -7,11 +7,23 @@ var fs=require('fs');
 var cfs=require('co-fs');
 var path=require('path');
 const moment=require('moment');
+//var pool=require('../app4.js');
+//boss.publish('workbanner',{message:'ok banner start'},{startIn:'6 seconds'}).then(j=>console.log(j));
 //var diskspace=require('diskspace');
-
+//pool.query('select from busers',function(er,r){console.log(er);console.log(r);})
 var admin=new Router();
 admin.get('/dashboard', authed, function*(){
 this.body=this.render('admin_dashboard',{buser:this.req.user});
+})
+
+//boss
+
+admin.post('/api/set_banner',authed, function*(){
+	let boss=this.boss;
+var jobid=yield boss.publish('workbanner2',{message:'atention please'},{startIn:this.request.body.start});//.then(jobid=>{
+	console.log(jobid);
+
+this.body={info:this.request.body,jobid: jobid}
 })
 
 admin.get('/dashboard/articles',authed,function *(){
@@ -28,7 +40,14 @@ let locs=this.request.body.fields;
 locs.slug=sluger(locs.title);
 let date=new Date();
 locs.created_on=date;
-locs.last_modified=locs.created_on;
+locs.last_modified=locs.created_on;boss.start().then(ready).catch(err=>console.log(err));
+/*
+function ready(){
+boss.subscribe('workbanner', (job,done)=>{
+console.log(job.name,job.id,job.data);
+done().then(()=>console.log('confirmed done'))
+})
+}*/	
 locs.date_url=date.getTime().toString().slice(0,8);
 try{
 //insert into articles(title, slug, author, body) values('Mama-3', 'mama-3', 'Globik', 'Hello, Sister!');

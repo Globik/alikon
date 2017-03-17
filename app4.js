@@ -18,6 +18,7 @@ var session=require('koa-generic-session');
 var PgStore=require('./pg-sess.js');
 const passport=require('koa-passport');
 const fs=require('co-fs');
+const PgBoss=require('pg-boss');
 const pubrouter=require('./routes/pubrouter2.js');
 const adminrouter=require('./routes/admin.js');
 const configDB=require('./config/database.js');
@@ -30,9 +31,16 @@ var locals={
 * show_banners(){try{let m=yield this.db.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
 };
 */
-//var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-var database_url=configDB.pg_url;// for home development
+var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+//var database_url=configDB.pg_url;// for home development
 //var database_url='postgres://globik:null@localhost:5432/postgres';
+var dop_ssl='';
+if(process.env.DEVELOPMENT ==="yes"){
+	//dop_ssl="?ssl=true";
+	dop_ssl="";
+}else{dop_ssl="?ssl=true"}
+var boss=new PgBoss(database_url+dop_ssl);
+
 console.log('database_url: ',database_url);
 console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
 var pars=url.parse(database_url);
@@ -48,7 +56,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl: false};//local_host=false heroku=true
+ssl: true};//local_host=false heroku=true
 
 var app=koa();
 var pool=module.exports=new Pool(pconfig);
@@ -91,6 +99,7 @@ var mobject={};
 app.use(function*(next){
 this.state.filter_script=script;
 	this.db=pool;
+	this.boss=boss;
 var sa;
 if(lasha){sa=yield locals.showmodule();
 sa=JSON.parse(sa);
@@ -114,7 +123,7 @@ app.use(function*(next){
 	try{
 		
 		yield next;
-	console.log('THIS.STATUS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ', this.status);
+	console.log('THIS.STATUS!!!!: ', this.status);
 		if(this.status === 404) this.throw(404,"fuck not found",{user:"fuck userss"});
 	}catch(err){
 	this.status=err.status || 500;
@@ -141,16 +150,31 @@ console.log('soll on 5000');
 pool.on('connect', client=>console.log('pool connected'));
 pool.on('error', (err, client)=>console.log('error in pool: ', err.message));
 pool.on('acquire', client=>console.log('pool acquired '));
-var dop_ssl='';
+/*var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
 	dop_ssl="";
 }else{dop_ssl="?ssl=true"}
+*/
 var ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);
 //--trace-warnings
+
+boss.start().then(ready).catch(err=>console.log(err));
+
+function ready(){
+boss.subscribe('workbanner2', (job,done)=>{
+console.log(job.name,job.id,job.data);
+co(function*(){
+try{
+yield pool.query(`update banners set title='fucker'`);
+}catch(e){console.log(e)}
+})
+done().then(()=>console.log('confirmed done'))
+})
+}	
 
 process.on('unhundledRejection',(reason, p)=>{
 	console.log('Unhandled Rejection at: Promise', p, 'reason: ', reason);

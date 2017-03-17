@@ -1,3 +1,5 @@
+-- \i /home/globik/alikon/sql/pg-notify.sql
+
 CREATE OR REPLACE FUNCTION notify_event() RETURNS TRIGGER AS $$
 
 DECLARE
@@ -15,8 +17,9 @@ RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER  IF EXISTS products_notify_event ON cars;
+ -- DROP TRIGGER  IF EXISTS products_notify_event ON cars;
+DROP TRIGGER IF EXISTS notif_banner ON banners;
 
-CREATE TRIGGER products_notify_event
-AFTER INSERT OR UPDATE OR DELETE ON cars
+CREATE TRIGGER  notif_banner
+AFTER INSERT OR UPDATE OR DELETE ON banners
 FOR EACH ROW EXECUTE PROCEDURE notify_event();

@@ -27,7 +27,8 @@ Vkontakte: <a href="/auth/vkontakte">vk</a>
 <div id="rontar">
 ${n.banner[0].src}
 </div>
-</script>
+<button onclick="set_banner();">set banner</button>
+<script>${clearCache()}</script>
 
 
 
@@ -59,7 +60,7 @@ return s2;}
 	function clearCache(){
 		let s=``;
 	s+=` 
-	var formface=document.forms.namedItem("smsg");
+	/* var formface=document.forms.namedItem("smsg");
 	formface.addEventListener('submit',sendDirekt,false);
 	function sendDirekt(e){
 	e.preventDefault();
@@ -75,7 +76,24 @@ return s2;}
 	var daq=JSON.stringify(data);
 	alert('daq: '+daq);
 	xhr.send(daq);}
+*/
+function set_banner(){
+var data={};
+data.start='16 seconds';
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/set_banner');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert(this.response);
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){alert(this.response + e)}
+//alert(JSON.stringify(data));
+xhr.send(JSON.stringify(data));
+}
 	`;
 	
 	
-	return '';}
+	return s;}

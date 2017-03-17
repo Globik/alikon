@@ -8,8 +8,8 @@ create table banners(
 	cust_id int not null default 1,
 	active boolean default false,
 	cr_at timestamp not null default now(),
-	start timestamp,
-	endi timestamp,
+	start text,
+	endi text,
 	l_mod timestamp not null default now(),
 	type text not null, -- main, sidebar
 	title text not null default 'Nokia',
