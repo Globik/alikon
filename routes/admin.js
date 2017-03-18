@@ -18,12 +18,25 @@ this.body=this.render('admin_dashboard',{buser:this.req.user});
 
 //boss
 
-admin.post('/api/set_banner',authed, function*(){
-	let boss=this.boss;
-var jobid=yield boss.publish('workbanner2',{message:'atention please'},{startIn:this.request.body.start});//.then(jobid=>{
-	console.log(jobid);
+admin.get('/dashboard/banners', authed, function*(){
+let db=this.db;
+var result=null;
+try{
+var banners=yield db.query(`select*from banners`);
+if(banners.rows.length){result=banners.rows;
+console.log('result: ',result);			   
+					   }
+}catch(e){console.log(e);}
+this.body=this.render('adm_dsh_banners',{buser:this.req.user,banners:result});
+})
 
-this.body={info:this.request.body,jobid: jobid}
+
+admin.post('/banner/set_banner', authed, function*(){
+	let boss=this.boss;
+var jobid_en=yield boss.publish('banner_enable',{message:{ban_id:ban_id,href,src,title,type}},{startIn:this.request.body.start});//.then(jobid=>{
+	console.log(jobid_en);
+
+this.body={info:this.request.body}
 })
 
 admin.get('/dashboard/articles',authed,function *(){

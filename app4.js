@@ -31,8 +31,8 @@ var locals={
 * show_banners(){try{let m=yield this.db.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
 };
 */
-var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-//var database_url=configDB.pg_url;// for home development
+//var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+var database_url=configDB.pg_url;// for home development
 //var database_url='postgres://globik:null@localhost:5432/postgres';
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
@@ -56,7 +56,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl: true};//local_host=false heroku=true
+ssl: false};//local_host=false heroku=true
 
 var app=koa();
 var pool=module.exports=new Pool(pconfig);
@@ -165,15 +165,28 @@ ps.addChannel('reset', msg_handler);
 boss.start().then(ready).catch(err=>console.log(err));
 
 function ready(){
-boss.subscribe('workbanner2', (job,done)=>{
+boss.subscribe('banner_enable', (job,done)=>{
 console.log(job.name,job.id,job.data);
 co(function*(){
 try{
-yield pool.query(`update banners set title='fucker'`);
+yield pool.query(`insert into ban_act(ban_id,href,src,title,type) values('${job.data.ban_id}',
+'${job.data.href}','${job.data.src}','${job.data.title}','${job.data.type}')`);
 }catch(e){console.log(e)}
 })
 done().then(()=>console.log('confirmed done'))
 })
+
+boss.subscribe('banner_disable', (job,done)=>{
+console.log(job.name,job.id,job.data);
+co(function*(){
+try{
+yield pool.query(`delete from ban_act where ban_id='${job.data.ban_id}'`);
+}catch(e){console.log(e)}
+})
+done().then(()=>console.log('confirmed done'))
+})
+
+
 }	
 
 process.on('unhundledRejection',(reason, p)=>{
