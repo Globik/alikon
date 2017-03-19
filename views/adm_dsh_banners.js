@@ -26,6 +26,47 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 ${n.banners !==null ? banner_list(n.banners) : '<b>no banners yet</b>'}
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
+<script>
+var msecperminute=1000*60;
+var msecperhour=msecperminute*60;
+var msecperday=msecperhour*24;
+function form_date(el){
+el.nextSibling.textContent=el.value;
+		var bate=new Date();
+		//var date=new Date('3/20/2017 17:54:0');
+		//var date=new Date('2017-03-20T18:08')
+			if(el.value){
+		var date=new Date(el.value);
+		var datemsec=date.getTime();
+		//alert(bate.getMonth());
+		date.setMonth(bate.getMonth());
+		date.setDate(bate.getDate());
+		date.setYear(bate.getFullYear());
+		date.setHours(bate.getHours(), bate.getMinutes(),0,0);
+		var interval=datemsec-date.getTime();
+		var days=Math.floor(interval/msecperday);
+		interval=interval-(days*msecperday);
+		
+		var hours=Math.floor(interval/msecperhour);
+		interval=interval-(hours*msecperhour);
+		
+		var minutes=Math.floor(interval/msecperminute);
+		interval=interval-(minutes*msecperminute);
+		var seconds=Math.floor(interval/1000);
+		el.nextSibling.nextSibling.textContent=days+' days '+hours+' hours '+minutes+' mins';//, '+seconds+' secs.';
+			}else{
+alert('fill in normal');
+}
+}
+function  mach(el){
+if(el.checked){
+el.nextSibling.textContent="true";
+el.value="true";
+}else{el.nextSibling.textContent="false";
+el.value="false";
+}
+}
+</script>
 </html>
 `;}
 
@@ -33,15 +74,20 @@ module.exports={adm_dsh_banners}
 function banner_list(n){
 let s='';
 n.forEach((el,i)=>{
-s+=`<ul><div><button value="${el.id}" onclick="altivieren();">aktivieren</button></div><li><b>title: </b>${el.title}
-<li><b>id: </b>${el.id}<li><b>alt: </b>${el.alt}<li><b>href: </b>${el.href}<li><b>src: </b>${el.src}
-<li><b>cust_id: </b>${el.cust_id}<li><b>active: </b>${el.active}
-<li><b>cr_at: </b>${el.cr_at}
-<li><b>start: </b><span>${el.start}</span><input type="datetime-local"/>
-<li><b>endi: </b>${el.endi}
-<li><b>l_mod: </b>${el.l_mod}
-<li><b>type: </b>${el.type}
-<li><b>price: </b></ul>`;	
+s+=`<form action=""><div><input type="submit" value="submit" onsubmit="altivieren(this);"/></div>
+<b>title: </b><input type="text" name="title" value="${el.title}"/><br>
+<b>id: </b><input type="text" name="id" value="${el.id}"/><br>
+<b>alt: </b><input type="text" name="alt" value="${el.alt}"/><br>
+<b>href: </b><input type="text" name="href" value="${el.href}"/><br>
+<b>src: </b><input type="text" name="url" value="${el.src}"/><br>
+<b>cust_id: </b>${el.cust_id}<br>
+<b>active: </b><input type="checkbox" name="active" value="${el.active}" required onchange="mach(this);"/><span>${el.active}</span><br>
+<b>cr_at: </b>${el.cr_at}<br>
+<b>start: </b><input type="datetime-local" placeholder="YYYY-MM-DD HH:mm" oninput="form_date(this)" required/> <span>${el.start}</span><span></span><br>
+<b>endi: </b><input type="datetime-local" placeholder="YYYY-MM-DD HH:mm" oninput="form_date(this)" required/> <span>${el.endi}</span><span></span><br>
+<b>l_mod: </b>${el.l_mod}<br>
+<b>type: </b><input type="text" name="type" value="${el.type}"/><br>
+<b>price: </b></form>`;	
 });
 	
 		  return s;

@@ -1,0 +1,45 @@
+<html>
+<body>
+	<ul><div>bla</div>
+		
+<li><b>date: </b><span>Hello span!</span>&nbsp;<input id="dat" type="datetime-local" placeholder="YYYY-MM-DD HH:mm" oninput="dodas(this)"/>
+	
+	<button onclick="dodas();">click</button>
+	<span id="out1"></span><br>
+	<span id="out2"></span>
+	<script>
+	
+		
+		var msecperminute=1000*60;
+		var msecperhour=msecperminute*60;
+		var msecperday=msecperhour*24;
+		function dodas(el){
+			out1.textContent=dat.value;
+		var bate=new Date();
+		//var date=new Date('3/20/2017 17:54:0');
+		//var date=new Date('2017-03-20T18:08')
+			if(dat.value){
+		var date=new Date(dat.value);
+		var datemsec=date.getTime();
+		//alert(bate.getMonth());
+		date.setMonth(bate.getMonth());
+		date.setDate(bate.getDate());
+		date.setYear(bate.getFullYear());
+		date.setHours(bate.getHours(), bate.getMinutes(),0,0);
+		var interval=datemsec-date.getTime();
+		var days=Math.floor(interval/msecperday);
+		interval=interval-(days*msecperday);
+		
+		var hours=Math.floor(interval/msecperhour);
+		interval=interval-(hours*msecperhour);
+		
+		var minutes=Math.floor(interval/msecperminute);
+		interval=interval-(minutes*msecperminute);
+		var seconds=Math.floor(interval/1000);
+		out2.textContent=days+' days, '+hours+' hours, '+minutes+' mins';//, '+seconds+' secs.';
+			}else{alert('fill in normal');}
+			alert(el.previousSibling.textContent);
+		}
+	</script>
+	</body>
+</html>
