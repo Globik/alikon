@@ -5,14 +5,46 @@ const bodyParser=require('koa-body');
 const Router=require('koa-router');
 //var moment=require('moment');
 const cofs=require('co-fs');
+const fs=require('fs');
+var bitpay=require('bitpay-rest');
+var bitauth=require('bitauth');
+
+//var privkey=bitauth.decrypt('',fs.readFileSync('/home/globik/.bitpay/api.key','utf8'));
+var privkey=bitauth.decrypt('',process.env.BITPAY_TEST_APIKEY);
+console.log('privkey: ',privkey);
+
 const pub=new Router();
 //var debug=require('debug');^.+@.+\..+$^.+@.+\..+$
+var bpclient=bitpay.createClient(privkey);
+bpclient.on('error',err=>console.log(err));
 
+bpclient.on('ready',()=>{console.log('bitpay ready')})
 const limit=3;
 pub.get('/',function *(){
 this.session.dorthin=this.path;
 this.body=this.render('haupt_page',{buser:this.req.user});
 });
+
+pub.post('/create_invoice',function*(){
+var mata=this.request.body;
+/*bpclient.as('merchant').post('invoices',mata,(err,invoice)=>{
+if(err){console.log('err in bitpay: ', err);}
+else{
+console.log('invoice data: ', invoice);
+}
+});
+*/
+	console.log('mata: ',mata);
+	function bitp(d){
+	return new Promise((resolve,reject)=>{bpclient.as('merchant').post('invoices',d,(err,invoice)=>err?reject(err):resolve(invoice))
+	})
+	}
+	try{
+	var invoice=yield bitp(mata);
+		console.log('invoice resultat: ',invoice);
+	}catch(e){console.log(e);this.throw(400,e.message);}
+	this.body={id:invoice.id};
+})
 
 pub.get('/login',function *(){
 var m=this.session.messaga;

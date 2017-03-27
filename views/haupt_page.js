@@ -10,7 +10,7 @@ var haupt_page= n=>{
 	var {buser,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
-<head>${head.head({title:"Haupt Page", csslink:"/css/main2.css"})}</head>
+<head>${head.head({title:"Haupt Page", csslink:"/css/main2.css",js:["https://bitpay.com/bitpay.js"]})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
@@ -37,9 +37,32 @@ ${n.banner[0].src}
 <output id="out5"></output>
 <aside>${showModule(n)}</aside>
 <!-- <iframe src="/articles" width="1000" height="400"></iframe> -->
+<h2>bitpay part</h2>
+<button onclick="payt()">pay</button>
+<script>
+function payt(){
+//alert('fuck');
+var data={};
+data.price=1;
+data.currency='USD';
+var xhr=new XMLHttpRequest();
+xhr.open('post','/create_invoice');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+//alert(this.response);
+var mata=JSON.parse(this.response);
+bitpay.enableTestMode();
+bitpay.showInvoice(mata.id);
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){alert(this.response + e)}
+//alert(JSON.stringify(data));
+xhr.send(JSON.stringify(data));
 
-
-
+}
+</script>
 
 </main>
 <footer id="footer">${footer.footer({})}</footer></body></html>`;}
