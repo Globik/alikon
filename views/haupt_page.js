@@ -38,10 +38,12 @@ ${n.banner[0].src}
 <aside>${showModule(n)}</aside>
 <!-- <iframe src="/articles" width="1000" height="400"></iframe> -->
 <h2>bitpay part</h2>
+<p>Invoice status:<span id="bitpaystatus"></span><br></p>
 <button onclick="payt()">pay</button>
 <script>
 function payt(){
 //alert('fuck');
+bitpaystatus.innerHTML='<b style="background:green;">Waiting an invoice!...</b>';
 var data={};
 data.price=1;
 data.currency='USD';
@@ -51,6 +53,7 @@ xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
 //alert(this.response);
+bitpaystatus.innerHTML='<b>connected!</b>';
 var mata=JSON.parse(this.response);
 bitpay.enableTestMode();
 bitpay.showInvoice(mata.id);
@@ -60,8 +63,12 @@ alert(this.response);
 xhr.onerror=function(e){alert(this.response + e)}
 //alert(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
-
 }
+
+window.addEventListener('message', function(event){
+bitpaystatus.innerHTML=event.data.status;
+if(event.data.status==="paid"){alert("Paid!!!");}
+},false);
 </script>
 
 </main>

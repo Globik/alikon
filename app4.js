@@ -25,6 +25,7 @@ const configDB=require('./config/database.js');
 const {msg_handler} = require('./libs/mailer.js');
 var {script}=require('./libs/filter_script');
 /*
+gg
 var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
 	return mn;}catch(e){console.log(e);return e;}},

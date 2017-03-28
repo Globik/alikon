@@ -34,7 +34,20 @@ console.log('invoice data: ', invoice);
 }
 });
 */
-	console.log('mata: ',mata);
+	mata.posData='{"ref":"referal-1342"}';
+	//mata.posData.ref="referal-123456"; mata.posData.affiliate="some affiliate fucker";
+	mata.itemDesc="Fishka";
+	mata.itemCode="Some fucking code";
+	//mata.buyer={"buyerEmail": process.env.DEV_EMAIL};
+	//mata.buyerEmail=process.env.DEV_EMAIL;
+    mata.buyerName="Ali Boos";
+	mata.orderID="123456789fd";
+	mata.fullNotifications=true;
+	//mata.notificationEmail=process.env.DEV_EMAIL;
+	mata.notificationURL="https://alikon.herokuapp.com/bp/cb";
+	
+	
+	//console.log('mata: ',mata);
 	function bitp(d){
 	return new Promise((resolve,reject)=>{bpclient.as('merchant').post('invoices',d,(err,invoice)=>err?reject(err):resolve(invoice))
 	})
@@ -42,10 +55,18 @@ console.log('invoice data: ', invoice);
 	try{
 	var invoice=yield bitp(mata);
 		console.log('invoice resultat: ',invoice);
+		console.log('posData: ', JSON.parse(invoice.posData).ref);
 	}catch(e){console.log(e);this.throw(400,e.message);}
 	this.body={id:invoice.id};
 })
-
+pub.post("/bp/cb",function*(){
+console.log("FROM BITPAY? :", this.request.body);
+let db=this.db;
+	try{yield db.query(`insert into bitpayers(infbp) values('${JSON.stringify(this.request.body)}')`);
+	   }catch(e){this.throw(400,e.message);}
+	this.status=200;
+this.body={info:"OK"}
+})
 pub.get('/login',function *(){
 var m=this.session.messaga;
 	this.body=this.render('login',{message:m});
