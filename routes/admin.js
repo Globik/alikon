@@ -1,20 +1,78 @@
 'use strict';
-var sluger=require('limax');
-var bodyParser=require('koa-body');
-var Router=require('koa-router');
-var co=require('co');
-var fs=require('fs');
-var cfs=require('co-fs');
-var path=require('path');
+const sluger=require('limax');
+const bodyParser=require('koa-body');
+const Router=require('koa-router');
+const co=require('co');
+const fs=require('fs');
+const cfs=require('co-fs');
+const path=require('path');
 const moment=require('moment');
 //var pool=require('../app4.js');
 //boss.publish('workbanner',{message:'ok banner start'},{startIn:'6 seconds'}).then(j=>console.log(j));
 //var diskspace=require('diskspace');
 //pool.query('select from busers',function(er,r){console.log(er);console.log(r);})
+
+const bitpay=require('bitpay-rest');
+const bitauth=require('bitauth');
+
+//var privkey=bitauth.decrypt('',fs.readFileSync('/home/globik/.bitpay/api.key','utf8'));
+const privkey=bitauth.decrypt('',process.env.BITPAY_TEST_APIKEY);
+console.log('privkey: ',privkey);
+
+const pub=new Router();
+//var debug=require('debug');^.+@.+\..+$^.+@.+\..+$
+const bpclient=bitpay.createClient(privkey);
+bpclient.on('error',err=>console.log(err));
+
+bpclient.on('ready',()=>{console.log('bitpay ready')})
+
 var admin=new Router();
 admin.get('/dashboard', authed, function*(){
 this.body=this.render('admin_dashboard',{buser:this.req.user});
 })
+
+/* **************************************************
+   BITPAY PART
+ *************************************************** */
+admin.post('/create_invoice', authed,bodyParser({multipart:true,formidable:{}}), function*(){
+var mata=this.request.body.fields;
+//console.log('mata: ',mata);
+	mata.posData=`{"items":${mata.items}}`;
+	//mata.posData.ref="referal-123456"; mata.posData.affiliate="some affiliate fucker";
+	mata.itemDesc=mata.items+" Tokens";
+	mata.itemCode=66666;
+	
+	//mata.buyerEmail=process.env.DEV_EMAIL;
+    //mata.buyerName="Ali Boos";
+	mata.orderID="123456789fd";
+	mata.fullNotifications=true;
+	//mata.notificationEmail=process.env.DEV_EMAIL;
+	mata.notificationURL="https://alikon.herokuapp.com/bp/cb";
+	//mata.notificationURL="https://localhost:5000/bp/cb";
+	
+	console.log('mata: ',mata);
+	//console.log('mata: ',mata);
+	function bitp(d){
+	return new Promise((resolve,reject)=>{bpclient.as('merchant').post('invoices',d,(err,invoice)=>err?reject(err):resolve(invoice))
+	})
+	}
+	var binv=null;
+	try{
+	var invoice=yield bitp(mata);
+		console.log('invoice resultat: ',invoice);
+		console.log('posData: ', JSON.parse(invoice.posData).items);
+		//console.log('posData: ',invoice.posData.items);
+		console.log('buyeremail: ',invoice.buyer.email);
+	}catch(e){console.log(e);this.throw(400,e.message);}
+	if(process.env.DEVELOPMENT=="yes"){binv=invoice;}
+	this.body={id:invoice.id, messy:binv};
+})
+
+/* ***********************************
+END BITPAY PART
+****************************** */
+
+
 
 //boss
 
@@ -33,7 +91,8 @@ this.body=this.render('adm_dsh_banners',{buser:this.req.user,banners:result});
 
 admin.post('/banner/set_banner', authed, function*(){
 	let boss=this.boss;
-var jobid_en=yield boss.publish('banner_enable',{message:{ban_id:ban_id,href,src,title,type}},{startIn:this.request.body.start});//.then(jobid=>{
+var jobid_en=yield boss.publish('banner_enable',{message:{ban_id:ban_id,href,src,title,type}},{startIn:this.request.body.start});
+	//.then(jobid=>{
 	console.log(jobid_en);
 
 this.body={info:this.request.body}

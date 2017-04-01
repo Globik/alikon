@@ -10,7 +10,7 @@ var haupt_page= n=>{
 	var {buser,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
-<head>${head.head({title:"Haupt Page", csslink:"/css/main2.css",js:["https://bitpay.com/bitpay.js"]})}</head>
+<head>${head.head({title:"Haupt Page", csslink:"/css/main2.css",js:["https://bitpay.com/bitpay.min.js"]})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
@@ -37,38 +37,101 @@ ${n.banner[0].src}
 <output id="out5"></output>
 <aside>${showModule(n)}</aside>
 <!-- <iframe src="/articles" width="1000" height="400"></iframe> -->
-<h2>bitpay part</h2>
+
+<!-- <h2>bitpay part</h2>
 <p>Invoice status:<span id="bitpaystatus"></span><br></p>
 <button onclick="payt()">pay</button>
+-->
+<style>
+.sect{background:lightgreen;padding:10px;margin:0;}
+		.sect h1{padding:20px;margin:10px;}
+			#payment h4{padding:12px;margin:12px;}
+			.inp{padding:10px;margin:10px;}
+.warn_pay{padding:20px;}
+</style>
+<section class="sect">
+		<h1>Get Tokens - test mode</h1>
+<output id="payoutinfo"></output>
+		<form id="payment"  name="payment" method="post" enctype="multipart/form-data">
+			<h4>The more tokens you buy, the less they cost!</h4>
+			<input id="payEmail" type="hidden" name="buyerEmail" value="${buser ? buser.email : ''}"/>
+            <input type="hidden" name="buyerName" value="${buser ? buser.name : ''}"/>
+            <input type="hidden" name="price" value=""/>
+            <input type="hidden" name="currency" value="USD"/>
+			<div class="inp"><input type="radio" name="items" value="100" data-price="1" onchange="set_price(this);"/> 100 tokens for $1</div>
+			<div class="inp"><input type="radio" name="items" value="200" data-price="20" onchange="set_price(this);"/> 200 tokens for $20</div>
+			<div class="inp"><input type="radio" name="items" value="500" data-price="50" onchange="set_price(this);"/> 500 tokens for $50</div>
+			<h4>Payment options:</h4>
+			<div class="inp"><input type="radio" name="bitc" value="bitcoin" checked/> Bitcoin</div>
+		<div class="inp"><input type="submit" value="go to pay"></div>
+		</form>
+		</section>
 <script>
-function payt(){
-//alert('fuck');
-bitpaystatus.innerHTML='<b style="background:green;">Waiting an invoice!...</b>';
-var data={};
-data.price=1;
-data.currency='USD';
+var messy=null;
+var forma=document.forms.namedItem("payment");
+function set_price(el){
+//alert(el.getAttribute('data-price'))
+forma.price.value=el.getAttribute('data-price');
+}
+forma.addEventListener('submit',function(ev){
+if(payEmail.value){
+payoutinfo.innerHTML="Connecting to server...";
+var data=new FormData(document.forms.namedItem("payment"));
+
 var xhr=new XMLHttpRequest();
-xhr.open('post','/create_invoice');
+xhr.open("post","/create_invoice",true);
+xhr.onload=function(e){
+if(xhr.status==200){
+payoutinfo.innerHTML="Connecting to payment server...";
+//console.log(this.response);
+
+show_invoice(e);
+}
+else{
+payoutinfo.innerHTML=this.response;
+}}
+xhr.onerror=function(e){payoutinfo.innerHTML=e;}
+xhr.send(data);
+//ev.preventDefault();
+}else{
+payoutinfo.innerHTML='<p class="warn_pay">You must first to <a href="/login">log in</a> or <a href="/signup">sign up</a>.</p>';
+}
+ev.preventDefault();
+},false);
+
+
+function show_invoice(e){
+var mata=JSON.parse(e.target.response);
+console.log('mata: ',mata.id);
+bitpay.enableTestMode();
+bitpay.showInvoice(mata.id);
+//messy=mata.messy;
+//dummy_process();
+}
+
+
+window.addEventListener('message', function(event){
+//bitpaystatus.innerHTML=event.data.status;
+if(event.data.status==="paid"){
+//alert("Paid!!!");
+console.log('paid');
+${process.env.DEVELOPMENT==="yes" ? 'dummy_process();' : ""}
+}
+},false);
+function dummy_process(){
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/dummy_set_bitpay');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
-//alert(this.response);
-bitpaystatus.innerHTML='<b>connected!</b>';
-var mata=JSON.parse(this.response);
-bitpay.enableTestMode();
-bitpay.showInvoice(mata.id);
+console.log(this.response);
 }else{
-alert(this.response);
+console.log(this.response);
 }}
-xhr.onerror=function(e){alert(this.response + e)}
-//alert(JSON.stringify(data));
-xhr.send(JSON.stringify(data));
-}
+xhr.onerror=function(e){console.log(this.response + e)}
 
-window.addEventListener('message', function(event){
-bitpaystatus.innerHTML=event.data.status;
-if(event.data.status==="paid"){alert("Paid!!!");}
-},false);
+xhr.send(JSON.stringify(messy));
+}
 </script>
 
 </main>

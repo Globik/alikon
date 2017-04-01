@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<title>BitPay</title>
+		<style>
+		.sect{background:lightgreen;padding:10px;margin:10px;}
+		.sect h1{padding:20px;margin:10px;}
+			#payment h4{padding:12px;margin:12px;}
+			.inp{padding:10px;margin:10px;}
+		</style>
+	</head>
+	<body>
+		<section class="sect">
+		<h1>Get Tokens - test mode</h1>
+		<form id="payment"  name="payment" method="post" enctype="multipart/form-data">
+			<h4>The more tokens you buy, the less they cost!</h4>
+			<input type="hidden" name="email" value="a@ya.ru"/>
+			<div class="inp"><input type="radio" name="items" value="100"/> 100 tokens for $1</div>
+			<div class="inp"><input type="radio" name="items" value="200"/> 200 tokens for $20</div>
+			<div class="inp"><input type="radio" name="items" value="500"/> 500 tokens for $50</div>
+			<h4>Payment options:</h4>
+			<div class="inp"><input type="radio" name="bitc" value="bitcoin" checked/> Bitcoin</div>
+		<div class="inp"><input type="submit" value="go to pay"></div>
+		</form>
+		</section>
+		<script>
+var forma=document.forms.namedItem("payment");
+forma.addEventListener('submit',function(ev){
+var data=new FormData(document.forms.namedItem("payment"));
+var xhr=new XMLHttpRequest();
+xhr.open("post","/create_invoice",true);
+xhr.onload=function(e){
+if(xhr.status==200){}
+else{}}
+xhr.onerror=function(e){console.log(e);}
+console.log(data);
+//xhr.send(data);
+ev.preventDefault();},false);	
+		</script>
+	</body>
+</html>

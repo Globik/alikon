@@ -6,26 +6,27 @@ const Router=require('koa-router');
 //var moment=require('moment');
 const cofs=require('co-fs');
 const fs=require('fs');
+/*
 var bitpay=require('bitpay-rest');
 var bitauth=require('bitauth');
 
 //var privkey=bitauth.decrypt('',fs.readFileSync('/home/globik/.bitpay/api.key','utf8'));
 var privkey=bitauth.decrypt('',process.env.BITPAY_TEST_APIKEY);
 console.log('privkey: ',privkey);
-
+*/
 const pub=new Router();
 //var debug=require('debug');^.+@.+\..+$^.+@.+\..+$
-var bpclient=bitpay.createClient(privkey);
-bpclient.on('error',err=>console.log(err));
+//var bpclient=bitpay.createClient(privkey);
+//bpclient.on('error',err=>console.log(err));
 
-bpclient.on('ready',()=>{console.log('bitpay ready')})
+//bpclient.on('ready',()=>{console.log('bitpay ready')})
 const limit=3;
 pub.get('/',function *(){
 this.session.dorthin=this.path;
 this.body=this.render('haupt_page',{buser:this.req.user});
 });
 
-pub.post('/create_invoice',function*(){
+pub.post('/ttttttttttttttttttttttttcreate_invoice',function*(){
 var mata=this.request.body;
 /*bpclient.as('merchant').post('invoices',mata,(err,invoice)=>{
 if(err){console.log('err in bitpay: ', err);}
@@ -38,13 +39,14 @@ console.log('invoice data: ', invoice);
 	//mata.posData.ref="referal-123456"; mata.posData.affiliate="some affiliate fucker";
 	mata.itemDesc="Fishka";
 	mata.itemCode="Some fucking code";
-	//mata.buyer={"buyerEmail": process.env.DEV_EMAIL};
+	
 	//mata.buyerEmail=process.env.DEV_EMAIL;
     mata.buyerName="Ali Boos";
 	mata.orderID="123456789fd";
 	mata.fullNotifications=true;
 	//mata.notificationEmail=process.env.DEV_EMAIL;
-	mata.notificationURL="https://alikon.herokuapp.com/bp/cb";
+	//mata.notificationURL="https://alikon.herokuapp.com/bp/cb";
+	mata.notificationURL="https://localhost:5000/bp/cb";
 	
 	
 	//console.log('mata: ',mata);
@@ -52,21 +54,92 @@ console.log('invoice data: ', invoice);
 	return new Promise((resolve,reject)=>{bpclient.as('merchant').post('invoices',d,(err,invoice)=>err?reject(err):resolve(invoice))
 	})
 	}
-	try{
+	/*try{
 	var invoice=yield bitp(mata);
 		console.log('invoice resultat: ',invoice);
 		console.log('posData: ', JSON.parse(invoice.posData).ref);
 	}catch(e){console.log(e);this.throw(400,e.message);}
-	this.body={id:invoice.id};
+	*/
+	this.body={id:'invoice.id'};
 })
 pub.post("/bp/cb",function*(){
 console.log("FROM BITPAY? :", this.request.body);
 let db=this.db;
-	try{yield db.query(`insert into bitpayers(infbp) values('${JSON.stringify(this.request.body)}')`);
-	   }catch(e){this.throw(400,e.message);}
+try{
+//yield db.query(`insert into bitpayers(infbp) values('${JSON.stringify(this.request.body)}')`);
+yield db.query(`insert into bitpayers(infbp) values('${JSON.stringify(this.request.body)}') 
+on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"${this.request.body.status}"') 
+where bitpayers.infbp->>'status' not like '%complete%'`);
+	}catch(e){console.log(e.message);this.throw(400,e.message);}
 	this.status=200;
 this.body={info:"OK"}
+});
+
+pub.post('/api/dummy_set_bitpay',function*(){
+//console.log('DUMMY: ',this.request.body);
+	let locs=this.request.body;
+	var mummy={},zomby={};
+	let boss=this.boss;
+	mummy.id=locs.id;
+	mummy.status="paid";
+	mummy.posData=locs.posData;
+	mummy.buyerFields={};
+	mummy.buyerFields.buyerName=locs.buyer.name;
+	mummy.buyerFields.buyerEmail=locs.buyer.email;
+	mummy.invoiceTime=locs.invoiceTime;
+	
+	zomby.id=locs.id;
+	zomby.status="complete";
+	zomby.posData=locs.posData;
+	zomby.buyerFields={};
+	zomby.buyerFields.buyerName=locs.buyer.name;
+	zomby.buyerFields.buyerEmail=locs.buyer.email;
+	zomby.invoiceTime=locs.invoiceTime;
+	
+	try{
+// '{"id":"a","status":"complete","posData":"{\"items\":10}","buyerFields":"{\"buyerEmail\":\"gru5@yandex.ru\"}"}'
+	console.log('mummy: ',mummy);
+let jobid=yield boss.publish('bitpay_paid',{message:mummy},{startIn:'35 seconds'});
+	console.log('jobid: ',jobid);
+let jobidu=yield boss.publish('bitpay_complete',{message:zomby},{startIn:'1 minute'});
+	console.log('jobidu: ',jobidu);
+	}catch(e){console.log(e);this.throw(400,e.message);}
+	this.body={info:"OK"};
+	
+	/*DUMMY:  { url: 'https://test.bitpay.com/invoice?id=3da5psPieZE2H4TJkiKwwo',
+  posData: '{"items":100}',
+  status: 'new',
+  btcPrice: '0.000932',
+  btcDue: '0.000933',
+  price: 1,
+  currency: 'USD',
+  exRates: { USD: 1072.64 },
+  buyerTotalBtcAmount: '0.000933',
+  itemDesc: '100 Tokens',
+  orderId: '123456789fd',
+  invoiceTime: 1491081859206,
+  expirationTime: 1491082759206,
+  currentTime: 1491081859671,
+  guid: '47e54fbc-9cc0-01d9-3372-5225fea12821',
+  id: '3da5psPieZE2H4TJkiKwwo',
+  btcPaid: '0.000000',
+  rate: 1072.64,
+  exceptionStatus: false,
+  transactions: [],
+  flags: { refundable: false },
+  refundAddresses: [],
+  buyerPaidBtcMinerFee: '0.000001',
+  paymentUrls: 
+   { BIP21: 'bitcoin:mqWzsnkXizvhoSmsKVMqKpg231XH6M2tom?amount=0.000933',
+     BIP72: 'bitcoin:mqWzsnkXizvhoSmsKVMqKpg231XH6M2tom?amount=0.000933&r=https://test.bitpay.com/i/3da5psPieZE2H4TJkiKwwo',
+     BIP72b: 'bitcoin:?r=https://test.bitpay.com/i/3da5psPieZE2H4TJkiKwwo',
+     BIP73: 'https://test.bitpay.com/i/3da5psPieZE2H4TJkiKwwo' },
+  bitcoinAddress: 'mqWzsnkXizvhoSmsKVMqKpg231XH6M2tom',
+  token: '9eV9CZmk6mLe9YCDtmv1191RMktUdEcBxNFGzkK9MpzoHNoUFMUvV3JFdrAqMVY7vt',
+  buyer: { name: 'nik', email: 'example@yandex.ru' } }
+*/
 })
+
 pub.get('/login',function *(){
 var m=this.session.messaga;
 	this.body=this.render('login',{message:m});

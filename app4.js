@@ -1,7 +1,7 @@
 'use strict';
 const koa=require('koa');
-
-
+//const http=require('http');
+//const https=require('https');
 const co=require('co');
 const render=require('./libs/render.js');
 const path=require('path');
@@ -18,6 +18,7 @@ var session=require('koa-generic-session');
 var PgStore=require('./pg-sess.js');
 const passport=require('koa-passport');
 const fs=require('co-fs');
+const fss=require('fs');
 const PgBoss=require('pg-boss');
 const pubrouter=require('./routes/pubrouter2.js');
 const adminrouter=require('./routes/admin.js');
@@ -25,7 +26,7 @@ const configDB=require('./config/database.js');
 const {msg_handler} = require('./libs/mailer.js');
 var {script}=require('./libs/filter_script');
 /*
-gg
+
 var locals={
 * showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
 	return mn;}catch(e){console.log(e);return e;}},
@@ -142,9 +143,21 @@ console.log('app.on.error: ',err, ctx.request.url);
 });
 
 pg_store.on('connect',()=>console.log('PG_STORE IS CONNECTED!!!'));
+
+var ssl_options={key:fss.readFileSync('server.key'),
+				cert:fss.readFileSync('server.crt')};
+
 pg_store.setup().then(()=>{
 	console.log('soll listnening port 5000 via setup()');
 app.listen(process.env.PORT || 5000)
+	/*
+	https.createServer(ssl_options,app.callback()).listen(process.env.PORT || 5000, (err) => {
+    //if (err) { throw new Error(err);}
+
+    console.log('Listening on https//localhost: 5000');
+  });
+	*/
+	
 });
 console.log('soll on 5000');
 
@@ -161,11 +174,43 @@ var ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);
+
+ps.addChannel('events_bitpay', bp_msg=>{
+	console.log('bpmsg: ', bp_msg);
+	console.log('status: ',bp_msg.data.infbp.status);
+//var mail=JSON.parse(bp_msg.data.infbp.buyerFields).buyerEmail;
+var mail=bp_msg.data.infbp.buyerFields.buyerEmail;
+	console.log('mail: ',bp_msg.data.infbp.buyerFields.buyerEmail);
+var items=JSON.parse(bp_msg.data.infbp.posData).items;
+if(bp_msg.data.infbp.status==="paid"){
+co(function*(){
+try{
+//console.log('Durak: ',JSON.parse(bp_msg.data.infbp.buyerFields).buyerEmail);
+	//console.log('email: ',bp_msg.data.infbp.buyerFields.buyerEamil);
+//console.log('items: ',JSON.parse(bp_msg.data.infbp.posData).items);
+yield pool.query(`update busers set w_items=${items} where email='${mail}'`);
+}catch(e){console.log('err in evs bitpay status paid: ', e);}
+})
+}else if(bp_msg.data.infbp.status==="complete"){
+co(function*(){
+try{
+yield pool.query(`update busers set items=items+${items}, w_items=w_items-${items} where email='${mail}'`);
+}catch(e){console.log('err in evs bitpay status complete: ', e);}
+})
+}else if(bp_msg.data.infbp.status==="invalid"){
+co(function*(){
+try{
+yield pool.query(`update busers set w_items=w_items-${items} where email='${mail}'`);
+}catch(e){console.log('err in ev bitpay status invalid: ',e);}
+})
+}else{}
+})
 //--trace-warnings
 
 boss.start().then(ready).catch(err=>console.log(err));
 
 function ready(){
+	
 boss.subscribe('banner_enable', (job,done)=>{
 console.log(job.name,job.id,job.data);
 co(function*(){
@@ -186,6 +231,31 @@ yield pool.query(`delete from ban_act where ban_id='${job.data.ban_id}'`);
 })
 done().then(()=>console.log('confirmed done'))
 })
+//dummy bitpay webhooks
+boss.subscribe('bitpay_paid', (job,done)=>{
+console.log(job.name,job.id,job.data);
+co(function*(){
+try{
+yield pool.query(`insert into bitpayers(infbp) values('${JSON.stringify(job.data.message)}') 
+on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"${job.data.message.status}"') 
+where bitpayers.infbp->>'status' not like '%complete%'`);
+}catch(e){console.log(e)}
+})
+done().then(()=>console.log('confirmed done'))
+})
+
+boss.subscribe('bitpay_complete', (job,done)=>{
+console.log(job.name,job.id,job.data);
+co(function*(){
+try{
+yield pool.query(`insert into bitpayers(infbp) values('${JSON.stringify(job.data.message)}') 
+on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"${job.data.message.status}"') 
+where bitpayers.infbp->>'status' not like '%complete%'`);
+}catch(e){console.log(e)}
+})
+done().then(()=>console.log('confirmed done'))
+})
+
 
 
 }	
