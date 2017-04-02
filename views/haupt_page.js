@@ -146,8 +146,10 @@ return s1;
 function douser(buser){
 var s2='';
 if(buser){
-s2=`<ul><li>${buser.name}</li>
-${(buser.email ? `<li>${buser.email}</li>` : `<li>No Mail</li>`)}</ul>`;}
+s2=`<ul><li><b>name: </b>${buser.name}</li>
+${(buser.email ? `<li><b>email: </b>${buser.email}</li>` : `<li>No Mail</li>`)}
+<li><b>items: </b>${buser.items}</li>
+<li><b>w_items: </b>${buser.w_items}</li></ul>`;}
 return s2;}
 
 	function clearCache(){
