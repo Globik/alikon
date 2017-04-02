@@ -33,9 +33,9 @@ var locals={
 * show_banners(){try{let m=yield this.db.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
 };
 */
-var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+//var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
 //var database_url=configDB.pg_url;// for home development
-//var database_url='postgres://globik:null@localhost:5432/postgres';
+var database_url='postgres://globik:null@localhost:5432/postgres';
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";

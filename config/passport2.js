@@ -11,7 +11,7 @@ passport.serializeUser((user, done)=> {
 
 passport.deserializeUser((email, done)=> {
 	console.log('name: ',email);
-db.query(`select id, name,role,mjoind,email,verif from busers where email='${email}'`,(err,luser)=>{
+db.query(`select id, name,role,mjoind,email,verif,items,w_items from busers where email='${email}'`,(err,luser)=>{
 if(err){return done(err);}
 	//for this.req.user in global haupt_page.html rendering
 done(null,luser.rows[0]);
