@@ -144,8 +144,7 @@ console.log('app.on.error: ',err, ctx.request.url);
 
 pg_store.on('connect',()=>console.log('PG_STORE IS CONNECTED!!!'));
 
-var ssl_options={key:fss.readFileSync('server.key'),
-				cert:fss.readFileSync('server.crt')};
+//var ssl_options={key:fss.readFileSync('server.key'),cert:fss.readFileSync('server.crt')};
 
 pg_store.setup().then(()=>{
 	console.log('soll listnening port 5000 via setup()');

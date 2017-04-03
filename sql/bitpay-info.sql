@@ -1,7 +1,7 @@
 -- \i /home/globik/alikon/sql/bitpay-info.sql
 --create table bitpayers(infbp jsonb not null default '{}');
---create index j_idx on bitpayers using gin(infbp jsonb_path_ops);
---create unique index bp_id on bitpayers((infbp->>'id'));
+create index j_idx on bitpayers using gin(infbp jsonb_path_ops);
+create unique index bp_id on bitpayers((infbp->>'id'));
 
 --insert into bitpayers(infbp) values('{"id":"a","status":"paid"}');
 --insert into bitpayers(infbp) values('{"id":"a","status":"confirmed"}') on conflict((infbp->>'id'::text)) do update
@@ -13,7 +13,7 @@
 --insert into bitpayers(infbp) values('{"id":"a","status":"complete","posData":"{\"items\":10}","buyerFields":"{\"buyerEmail\":\"gru5@yandex.ru\"}"}') 
 --on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"complete"') where bitpayers.infbp->>'status' not like '%complete%';
 
-
+/*
 create or replace function log_bitp() RETURNS TRIGGER AS $$
 DECLARE
 	data json;
@@ -33,7 +33,7 @@ $$ LANGUAGE plpgsql;
 --drop function log_bitp();
 drop trigger if exists l_log_bitp on bitpayers;
 create trigger l_log_bitp after insert or update on bitpayers for each row execute procedure  log_bitp();
-
+*/
 
 /*
  {"id": "4BJQ6scN6y1ekMrDtcGmVk", 

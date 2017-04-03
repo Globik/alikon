@@ -22,46 +22,17 @@ const pub=new Router();
 //bpclient.on('ready',()=>{console.log('bitpay ready')})
 const limit=3;
 pub.get('/',function *(){
+let result=null;
+let db=this.db;
+try{
+var us=yield db.query(`select name from busers`);
+	result=us.rows;
+}catch(e){console.log(e)}
 this.session.dorthin=this.path;
-this.body=this.render('haupt_page',{buser:this.req.user});
+this.body=this.render('haupt_page',{buser:this.req.user,lusers:result});
 });
 
-pub.post('/ttttttttttttttttttttttttcreate_invoice',function*(){
-var mata=this.request.body;
-/*bpclient.as('merchant').post('invoices',mata,(err,invoice)=>{
-if(err){console.log('err in bitpay: ', err);}
-else{
-console.log('invoice data: ', invoice);
-}
-});
-*/
-	mata.posData='{"ref":"referal-1342"}';
-	//mata.posData.ref="referal-123456"; mata.posData.affiliate="some affiliate fucker";
-	mata.itemDesc="Fishka";
-	mata.itemCode="Some fucking code";
-	
-	//mata.buyerEmail=process.env.DEV_EMAIL;
-    mata.buyerName="Ali Boos";
-	mata.orderID="123456789fd";
-	mata.fullNotifications=true;
-	//mata.notificationEmail=process.env.DEV_EMAIL;
-	//mata.notificationURL="https://alikon.herokuapp.com/bp/cb";
-	mata.notificationURL="https://localhost:5000/bp/cb";
-	
-	
-	//console.log('mata: ',mata);
-	function bitp(d){
-	return new Promise((resolve,reject)=>{bpclient.as('merchant').post('invoices',d,(err,invoice)=>err?reject(err):resolve(invoice))
-	})
-	}
-	/*try{
-	var invoice=yield bitp(mata);
-		console.log('invoice resultat: ',invoice);
-		console.log('posData: ', JSON.parse(invoice.posData).ref);
-	}catch(e){console.log(e);this.throw(400,e.message);}
-	*/
-	this.body={id:'invoice.id'};
-})
+// bitpay callback's webhook
 pub.post("/bp/cb",function*(){
 console.log("FROM BITPAY? :", this.request.body);
 let db=this.db;
@@ -312,7 +283,36 @@ this.body={info:this.request.body,somels:"OK - accepted!"}
 });
 pub.post('/module_cache',function *(){this.body={body:this.request.body};});
 pub.get('/labs',function *(){this.body='str';});
-	
+/* *************************************************************************
+WEBRTC STUFF /:models
+*************************************************************************** */
+
+pub.get('/:buser',function*(){
+let db=this.db;
+var us=null
+try{
+var result=yield db.query(`select*from busers where name='${this.params.buser}'`);
+	us=result.rows[0];
+}catch(e){console.log(e)}
+this.body=this.render('busers',{buser:this.req.user,model: us});
+});
+
+pub.post('/api/set_transfer', authed, function*(){
+if(!this.req.isAuthenticated()){
+	return;
+	//this.redirect('/login');
+}
+let db=this.db;
+let {from,to,amount,type}=this.request.body;
+try{
+yield db.query(`insert into transfer(tfrom, tos, amount,type) values('${from}','${to}',${amount},${type})`)
+}catch(e){this.throw(400,e.message);}
+this.body={info:this.request.body}
+})
+
+/* *************************************************************************
+END OF WEBRTC STUFF
+*************************************************************************** */
 function readStr(n){
 return new Promise((res,rej)=>{
 let resu=[];let resul='';
@@ -327,6 +327,9 @@ function readStr2(n){return new Promise((res,rej)=>{
 		}).once('end',()=>{res(resu)}).once('error',err=>{rej(err)})
 	})
 }
+
+
+
 
 module.exports=pub;
 
@@ -359,9 +362,12 @@ if(num<total_articles) {this.locals.next=true;}
 if(num>limit) {this.locals.prev=true;}
 yield next;
 }
-
+/*
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
+*/
+function *authed(next){
+if(this.req.isAuthenticated()){yield next;}else{ this.redirect('/login');}}
 function isNumb(str){var numstr=/^\d+$/;return numstr.test(str);}

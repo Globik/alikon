@@ -7,7 +7,7 @@ var warnig=false;
 var haupt_ban=false;
 
 var haupt_page= n=>{
-	var {buser,showmodule:{mainmenu,profiler}}=n;
+	var {buser,lusers,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
 <head>${head.head({title:"Haupt Page", csslink:"/css/main2.css",js:["https://bitpay.com/bitpay.min.js"]})}</head>
@@ -133,7 +133,9 @@ xhr.onerror=function(e){console.log(this.response + e)}
 xhr.send(JSON.stringify(messy));
 }
 </script>
-
+<hr>
+<h4>Users: </h4>
+${users_list(lusers)}
 </main>
 <footer id="footer">${footer.footer({})}</footer></body></html>`;}
 
@@ -146,11 +148,23 @@ return s1;
 function douser(buser){
 var s2='';
 if(buser){
-s2=`<ul><li><b>name: </b>${buser.name}</li>
+s2=`<ul><li><b>name: </b><a href="/${buser.name}">${buser.name}</a></li>
 ${(buser.email ? `<li><b>email: </b>${buser.email}</li>` : `<li>No Mail</li>`)}
 <li><b>items: </b>${buser.items}</li>
 <li><b>w_items: </b>${buser.w_items}</li></ul>`;}
 return s2;}
+
+function users_list(n){
+let s='';
+if(Array.isArray(n)){
+ s+='<ul>';
+ n.forEach((el,i)=>{
+s+=`<li><a href="/${el.name}">${el.name}</a>`;
+});
+	s+='</ul>';
+   }
+return s;
+}
 
 	function clearCache(){
 		let s=``;
