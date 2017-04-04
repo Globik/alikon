@@ -139,7 +139,7 @@ app.use(function*(next){
 });
 
 app.on('error',(err, ctx)=>{
-console.log('app.on.error: ',err, ctx.request.url);
+console.log('app.on.error: ',err.message, ctx.request.url);
 });
 
 pg_store.on('connect',()=>console.log('PG_STORE IS CONNECTED!!!'));

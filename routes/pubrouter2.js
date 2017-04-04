@@ -283,12 +283,18 @@ this.body={info:this.request.body,somels:"OK - accepted!"}
 });
 pub.post('/module_cache',function *(){this.body={body:this.request.body};});
 pub.get('/labs',function *(){this.body='str';});
+
+pub.get('/tipping/purchase_tokens',function*(){
+this.session.dorthin=this.path;
+this.body=this.render('purchase',{buser:this.req.user});
+});
 /* *************************************************************************
 WEBRTC STUFF /:models
 *************************************************************************** */
 
 pub.get('/:buser',function*(){
 let db=this.db;
+this.session.dorthin=this.path;
 var us=null
 try{
 var result=yield db.query(`select*from busers where name='${this.params.buser}'`);
@@ -297,10 +303,9 @@ var result=yield db.query(`select*from busers where name='${this.params.buser}'`
 this.body=this.render('busers',{buser:this.req.user,model: us});
 });
 
-pub.post('/api/set_transfer', authed, function*(){
+pub.post('/api/set_transfer', function*(){
 if(!this.req.isAuthenticated()){
-	return;
-	//this.redirect('/login');
+	this.throw(400,"Not Authorizied from me");
 }
 let db=this.db;
 let {from,to,amount,type}=this.request.body;
@@ -368,6 +373,9 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 */
-function *authed(next){
-if(this.req.isAuthenticated()){yield next;}else{ this.redirect('/login');}}
+function *auth(next){
+if(this.req.isAuthenticated()){yield next;}else{ 
+	//this.redirect('/login');
+this.throw(401,"Please, log in.");
+}}
 function isNumb(str){var numstr=/^\d+$/;return numstr.test(str);}
