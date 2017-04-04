@@ -136,23 +136,8 @@ data.from=yourEmail.textContent;
 data.to=modelEmail.textContent;
 data.amount=tokTosend.value;
 data.type=1;
-//var xhr=new XMLHttpRequest();
-//xhr.open('post','/api/set_transfer');
-//xhr.setRequestHeader('Content-Type','application/json','utf-8');
-//xhr.onload=function(e){
-//if(xhr.status==200){
-//var mata=JSON.parse(this.response);
-//modelTokens.textContent=Number(modelTokens.textContent)+mata.info.amount;
-//yourTokens.textContent-=mata.info.amount;
-//rechnet(this.response);
-//out.innerHTML=this.response;
-//}else{
-//out.innerHTML=this.response+this.status;
-//}}
-//xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e}
-//out.innerHTML=JSON.stringify(data);
+
 if(tokTosend.value<=Number(yourTokens.textContent)){
-//xhr.send(JSON.stringify(data));
 to_xhr(JSON.stringify(data),true);
 }else{out.innerHTML="Not enouth tokens!";}
 }else{out.innerHTML="Not enough tokens!";}
@@ -212,11 +197,7 @@ out.innerHTML="Not enough tokens!";}
 		if(s==10){
 		console.log("kuuu");
 		var sraka={};
-			
-		//modelTokens.textContent=Number(modelTokens.textContent)+Number(tokpermin.textContent);
-		//yourTokens.textContent-=tokpermin.textContent;
-		//yourTokens2.textContent=yourTokens.textContent;
-			
+		
 			sraka.from=yourEmail.textContent;
             sraka.to=modelEmail.textContent;
             sraka.amount=tokpermin.textContent;
