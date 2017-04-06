@@ -5,7 +5,8 @@ create table transfer(id serial primary key,
 					  tos text not null references busers(email),
 					  amount int not null,
 					  at timestamp not null default now(),
-					  type int not null);
+					  type int not null,
+					  pid text not null);
 					  
 					  
 					  

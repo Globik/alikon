@@ -308,12 +308,21 @@ if(!this.req.isAuthenticated()){
 	this.throw(400,"Not Authorizied from me");
 }
 let db=this.db;
-let {from,to,amount,type}=this.request.body;
+let {from,to,amount,type,pid}=this.request.body;
 try{
-yield db.query(`insert into transfer(tfrom, tos, amount,type) values('${from}','${to}',${amount},${type})`)
+yield db.query(`insert into transfer(tfrom, tos, amount,type,pid) values('${from}','${to}',${amount},${type},'${pid}')`)
 }catch(e){this.throw(400,e.message);}
 this.body={info:this.request.body}
 })
+
+pub.post('/api/set_seat',function*(){
+let db=this.db;
+var {pid,who,status}=this.request.body;
+	try{
+	yield db.query(`insert into seats(pid,us_id,status) values('${pid}','${who}','${status}')`);
+	}catch(e){console.log(e);}
+this.body={info:"OK"}
+});
 
 /* *************************************************************************
 END OF WEBRTC STUFF

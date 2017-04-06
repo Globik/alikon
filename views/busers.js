@@ -93,6 +93,11 @@ overlay:target+.popi{left:0;}
 }
 	
 </style>
+<div>
+<button>broadcast yourself</button>
+<div><b>obid: </b><span id="pid"></span></div>
+<div><b>time: </b><span id="timeinfo"></span></div>
+</div>
 <div class="modrtc">
 <h4>Model</h4>
 <b>As </b> <span id="modelName">${model.name}</span><br>
@@ -123,8 +128,9 @@ Time: <span id="mer">00:00:00</span><br><br>
 </output>
 
 <script>
+var seat=0;
 var init=0;
-var startDate,clocker;
+var startDate,clocker,mlocker,startingDate;
 yourTokens2.textContent=yourTokens.textContent;
 
 function send_tokens(){
@@ -136,6 +142,7 @@ data.from=yourEmail.textContent;
 data.to=modelEmail.textContent;
 data.amount=tokTosend.value;
 data.type=1;
+data.pid=pid.textContent;
 
 if(tokTosend.value<=Number(yourTokens.textContent)){
 to_xhr(JSON.stringify(data),true);
@@ -202,6 +209,7 @@ out.innerHTML="Not enough tokens!";}
             sraka.to=modelEmail.textContent;
             sraka.amount=tokpermin.textContent;
             sraka.type=2;
+            sraka.pid=pid.textContent;
 			var si=JSON.stringify(sraka);
 			to_xhr(si,true);
 		if(yourTokens.textContent<=Number(tokpermin.textContent)){
@@ -228,8 +236,70 @@ xhr.send(n);
 
 function get_one(){
 window.location.href="#resultativ";
-	}
+}
+var obid=function(){
+var tst=(new Date().getTime()/1000 | 0).toString(16);
+return tst+'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(){
+return (Math.random()*16 | 0).toString(16);
+}).toLowerCase();
+}
+function broadcast(){
+//alert(obid());
+seat=1;
+pid.textContent=obid();
+setTimeout(showTime, 1000);
+}
+broadcast();
+function showTime(){
+//var tt=setInterval(function(){
+//var d=new Date();
+//timeinfo.textContent=d;
+//},1000);
+startingDate=new Date();
+marttime();
+sendxhr();
+}
+function marttime(){
+	var thisdu=new Date();
+	var t=thisdu.getTime()-startingDate.getTime();
+		var ms=t%1000;
+		t-=ms;
+		ms=Math.floor(ms/10);
+		t=Math.floor(t/1000);
+		var s=t%60;
+		t-=s;
+		t=Math.floor(t/60);
+		var m=t%60;
+		t-=m;
+		t=Math.floor(t/60);
+		var h=t%60;
+		if(h<10) h='0'+h;
+		if(m<10) m='0'+m;
+		if(s<10) s='0'+s;
+		if(seat==1) timeinfo.textContent=h+':'+m+':'+s;
+		mlocker=setTimeout("marttime()",1000);
+		}
+function sendxhr(){
+if(modelEmail.textContent){
+var data={};
+data.pid=pid.textContent;
+data.status="active";
+data.who=modelEmail.textContent;
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/set_seat');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+out.innerHTML=this.response;
 
+}else{
+out.innerHTML=this.response+this.status;
+}}
+xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
+alert(JSON.stringify(data));
+xhr.send(JSON.stringify(data));
+}
+}
 </script>
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
