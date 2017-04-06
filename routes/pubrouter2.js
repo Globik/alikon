@@ -321,7 +321,7 @@ var {pid,who,status}=this.request.body;
 	try{
 	yield db.query(`insert into seats(pid,us_id,status) values('${pid}','${who}','${status}')`);
 	}catch(e){console.log(e);}
-this.body={info:"OK"}
+this.body={info:"OK",body:this.request.body}
 });
 
 /* *************************************************************************

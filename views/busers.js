@@ -296,7 +296,7 @@ out.innerHTML=this.response;
 out.innerHTML=this.response+this.status;
 }}
 xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
-alert(JSON.stringify(data));
+//alert(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
 }
