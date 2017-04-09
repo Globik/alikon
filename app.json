@@ -7,7 +7,7 @@
   {"name":"labs","path":"/labs"}],
 "profiler":{
 "profilername":"profile",
-"profilerpath":"/profile",
+"profilerpath":"/home/profile",
 "loginname":"log in",
 "loginpath":"/login",
 "logoutname":"log out",

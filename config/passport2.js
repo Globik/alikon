@@ -11,7 +11,7 @@ passport.serializeUser((user, done)=> {
 
 passport.deserializeUser((email, done)=> {
 	console.log('name: ',email);
-db.query(`select id, name,role,mjoind,email,verif,items,w_items from busers where email='${email}'`,(err,luser)=>{
+db.query(`select id, name,role,mjoind,email,verif,items,w_items, model, nick from busers where email='${email}'`,(err,luser)=>{
 if(err){return done(err);}
 	//for this.req.user in global haupt_page.html rendering
 done(null,luser.rows[0]);
@@ -33,11 +33,14 @@ return done(null, false, { message: 'Wrong user email or password!'});
 }
 				) }
 ));
-var get_str=n=> `insert into busers(email,pwd,name) values('${n.email}',crypt('${n.password}',gen_salt('bf',8)),'${n.username}') 
+var nicky=email=>{return email.substring(0,email.indexOf("@")); }
+var get_str=n=> `insert into busers(email,pwd,name,nick) values('${n.email}',crypt('${n.password}',gen_salt('bf',8)),'${n.username}','${n.nick}') 
 returning name,role,mjoind,email,verif`;
 	
 passport.use('local-signup',new LocalStrategy({usernameField:'email',passReqToCallback:true},(req,email,password,done)=> process.nextTick(()=>
-db.query(get_str({email:req.body.email,password:req.body.password,username:req.body.username}), (err,useri)=>{
+db.query(get_str({email:req.body.email,password:req.body.password,username:req.body.username,
+		nick:(`${nicky(req.body.email)}` ? `${nicky(req.body.email)}`:'none')}),
+		 (err,useri)=>{
 if (err) return done(err);
 return  done(null,useri.rows[0],{message:"OK saved a new user"});
 	})
@@ -78,7 +81,7 @@ passport.use(new FacebookStrategy({
 			if(user.rows[0]){return done(null,user.rows[0]);}else{
 		//})
 	
-		db.query(get_str({email:femail,password:fpassword, username:fname}), function(err, user) {
+		db.query(get_str({email:femail,password:fpassword, username:fname,nick:`${nicky(femail)}`}), function(err, user) {
         if (err) { console.log('err within fb insert user: ',err.message);
 				  return done(err); }
 console.log('fb user.rows[0] :' ,user.rows[0]);
@@ -110,8 +113,8 @@ db.query(`select * from busers where email='${vmail}'`, (err,user)=>{
 if(err){return done(err);}
 if(user.rows[0]){return done(null,user.rows[0]);}else{
 	
-db.query(get_str({email:vmail, password:vpassword, username:vname}), (err, user) =>{
-if (err) { console.log('err within fb insert user: ',err.message);
+db.query(get_str({email:vmail, password:vpassword, username:vname,nick:`${nicky(vmail)}`}), (err, user) =>{
+if (err) { console.log('err within vk insert user: ',err.message);
 return done(err); }
 console.log('VK user.rows[0] :' ,user.rows[0]);
 return done(null,user.rows[0]);

@@ -100,7 +100,7 @@ overlay:target+.popi{left:0;}
 </div>
 <div class="modrtc">
 <h4>Model</h4>
-<b>As </b> <span id="modelName">${model.name}</span><br>
+<b>As </b> <span id="modelName">${model.nick}</span><br>
 <b>Email:</b> <span id="modelEmail">${model.email}</span><br>
 <b>Tokens: </b> <span id="modelTokens">${model.items}</span><br>
 </div>
@@ -135,7 +135,7 @@ yourTokens2.textContent=yourTokens.textContent;
 
 function send_tokens(){
 if(yourName.textContent !=="a Guest"){
-if(yourName.textContent!=modelName.textContent){
+if(yourEmail.textContent!=modelEmail.textContent){
 if(yourTokens.textContent !=0){
 var data={};
 data.from=yourEmail.textContent;
@@ -148,6 +148,8 @@ if(tokTosend.value<=Number(yourTokens.textContent)){
 to_xhr(JSON.stringify(data),true);
 }else{out.innerHTML="Not enouth tokens!";}
 }else{out.innerHTML="Not enough tokens!";}
+}else{
+out.innerHTML='not selbst!';
 }}else{out.innerHTML='Please <a href="/login">log in</a>';}
 }
 
@@ -167,12 +169,14 @@ function rechnet(n){
 function get_room(){
 	if(init==0){
 	if(yourName.textContent !=="Guest"){
-	if(yourName.textContent!=modelName.textContent){
+	if(yourEmail.textContent!=modelEmail.textContent){
     if(yourTokens.textContent !=0){
 	startDate=new Date();
 	starttime();
 	}else{
 out.innerHTML="Not enough tokens!";}
+}else{
+out.innerHTML="Not selbst!";
 }
 }else{out.innerHTML='Please <a href="/login">log in</a>';}	
 	init=1;}else{

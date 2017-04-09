@@ -11,6 +11,8 @@ mjoind timestamp not null default now()::timestamp);
 */
 -- CREATE TABLE
 -- insert into busers(email,pwd,role,verif,name) values('gru5@yandex.ru',crypt('b****',gen_salt('bf',8)),'superadmin',  true, 'k');
-alter table busers add column items int not null default 0;
-alter table busers add column w_items int not null default 0;
+-- alter table busers add column items int not null default 0;
+-- alter table busers add column w_items int not null default 0;
+--alter table busers add column model boolean default false;
+alter table busers add column nick text not null default 'nick';
 -- alter table transfer add column pid text not null default 'aa';

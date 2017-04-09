@@ -25,7 +25,7 @@ pub.get('/',function *(){
 let result=null;
 let db=this.db;
 try{
-var us=yield db.query(`select name from busers`);
+var us=yield db.query(`select nick from busers`);
 	result=us.rows;
 }catch(e){console.log(e)}
 this.session.dorthin=this.path;
@@ -297,7 +297,7 @@ let db=this.db;
 this.session.dorthin=this.path;
 var us=null
 try{
-var result=yield db.query(`select*from busers where name='${this.params.buser}'`);
+var result=yield db.query(`select*from busers where nick='${this.params.buser}'`);
 	us=result.rows[0];
 }catch(e){console.log(e)}
 this.body=this.render('busers',{buser:this.req.user,model: us});
@@ -327,6 +327,19 @@ this.body={info:"OK",body:this.request.body}
 /* *************************************************************************
 END OF WEBRTC STUFF
 *************************************************************************** */
+/*******************************************
+CABINET
+********************************************** */
+pub.get('/home/profile', authent, function*(){
+	let db=this.db;
+	//var result=null;
+	try{
+	var cards=yield db.query(`select addr from cards where us_id='${this.req.user.email} and model=true'`);
+		//result=cards.rows[0];
+		//console.log('cards.rows[0]: ',cards.rows[0]);
+	}catch(e){console.log(e);}
+this.body=this.render('cabinet',{buser:this.req.user,cards:cards.rows[0]});
+})
 function readStr(n){
 return new Promise((res,rej)=>{
 let resu=[];let resul='';
@@ -387,4 +400,7 @@ if(this.req.isAuthenticated()){yield next;}else{
 	//this.redirect('/login');
 this.throw(401,"Please, log in.");
 }}
+function *authent(next){
+if(this.req.isAuthenticated()){yield next;}else{this.redirect('/login');}
+}
 function isNumb(str){var numstr=/^\d+$/;return numstr.test(str);}

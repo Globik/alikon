@@ -20,7 +20,7 @@ ${getProfileMenu(n)}
 <li><div id="enc" class="znak-svg">pic</div><a href="/">home-1</a></li>
 <li><div class="znak-svg">pic</div><a href="/articles">articles</a>
 <li><div class="znak-svg">pic</div><a href="/labs">labs</a>
-${(n.buser ? `<li><div class="znak-svg">pic</div><a href="/profile">profile</a>`:``)}
+${(n.buser ? `<li><div class="znak-svg">pic</div><a href="/home/profile">profile</a>`:``)}
 ${(n.buser ? `<li><div class="znak-svg">pic</div><a href="/logout" id="login_pop">log out</a>`:`<li><div class="znak-svg">pic</div><a href="/login">log in</a></li>`)}
 ${(sign_up ? `<li><div class="znak-svg">pic</div><a href="#join_form" id="join_pop">sign up</a>` :``)}
 </ul>
