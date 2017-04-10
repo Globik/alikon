@@ -44,7 +44,7 @@ Enter your new account password below. Once confirmed, you'll be logged into you
 	outresult=gid("outresult"),
 	bod=document.getElementsByTagName('main')[0],
     form=gid("mform"),
-    wrap=gif("wrap"),
+    wrap=gid("wrap"),
 	show_pwd=gid('show_pwd'),
     pwd=form.password,
 		email=form.email,

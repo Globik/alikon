@@ -292,7 +292,7 @@ this.body=this.render('purchase',{buser:this.req.user});
 WEBRTC STUFF /:models
 *************************************************************************** */
 
-pub.get('/:buser',function*(){
+pub.get('/webrtc/:buser',function*(){
 let db=this.db;
 this.session.dorthin=this.path;
 var us=null

@@ -35,7 +35,7 @@ var locals={
 */
 var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
 //var database_url=configDB.pg_url;// for home development
-//var database_url='postgres://globik:null@localhost:5432/postgres';
+
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
@@ -262,4 +262,4 @@ done().then(()=>console.log('confirmed done'))
 process.on('unhundledRejection',(reason, p)=>{
 	console.log('Unhandled Rejection at: Promise', p, 'reason: ', reason);
 });
-		
+	//var database_url='postgres://globik:null@localhost:5432/postgres';	

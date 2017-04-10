@@ -69,7 +69,7 @@ let s='';
 if(Array.isArray(n)){
  s+='<ul>';
  n.forEach((el,i)=>{
-s+=`<li><a href="/${el.nick}">${el.nick}</a>`;
+s+=`<li><a href="/webrtc/${el.nick}">${el.nick}</a>`;
 });
 	s+='</ul>';
    }
