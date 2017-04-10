@@ -2,7 +2,8 @@
 var head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
-    footer=require('./footer');
+    footer=require('./footer'),
+	vidget_card=require('./vidget_card.js');
 var warnig=false;	  
 var haupt_ban=false;
 
@@ -16,21 +17,11 @@ return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <main id="pagewrap"> 
-<style>
-.cardadr{border:1px solid green;}
-</style>
 <li><a href="/api/anketa" onclick="get_anketa();">anketa</a>
 <li><a href="/api/payout">tokens</a>
 <li><a href="/api/settlement">settlement</a>
-<span id="useremail">gru5@yandex.ru</span>
-<h4>bitcoin address.</h4> Edit.
-<br>${get_card(n)}
-<script>
-function get_anketa(el){
-//mit_xhr(el.href+"/");
-}
-//alert(useremail.textContent.substring(0,useremail.textContent.indexOf("@")))
-</script>
+<br><span id="useremail">${buser ? buser.email:''}</span>
+${vidget_card.vidget_card(n)}
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
 </html>`;
@@ -41,7 +32,7 @@ let s='';
 	if(n.cards){
 	s+=`<div class="cardadr"><span id="cardaddr">${n.cards.addr}</span></div>`;
 	}else{
-	s+=`<div class="cardadr">Add one</div>`;
+	s+=`<div class="cardadr"><span onclick="">Add one</span></div>`;
 	}
 	return s;
 }

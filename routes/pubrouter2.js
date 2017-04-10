@@ -3,6 +3,7 @@ const valuid=require('uuid-validate');
 const passport=require('koa-passport');
 const bodyParser=require('koa-body');
 const Router=require('koa-router');
+const walletValidator=require('wallet-address-validator');//0.1.0
 //var moment=require('moment');
 const cofs=require('co-fs');
 const fs=require('fs');
@@ -334,12 +335,24 @@ pub.get('/home/profile', authent, function*(){
 	let db=this.db;
 	//var result=null;
 	try{
-	var cards=yield db.query(`select addr from cards where us_id='${this.req.user.email} and model=true'`);
+	var cards=yield db.query(`select addr from cards where us_id='${this.req.user.email}'`);
 		//result=cards.rows[0];
 		//console.log('cards.rows[0]: ',cards.rows[0]);
 	}catch(e){console.log(e);}
 this.body=this.render('cabinet',{buser:this.req.user,cards:cards.rows[0]});
 })
+
+pub.post('/api/set_bitcoin_address',auth,function*(){
+let db=this.db;
+	var {addr,useremail}=this.request.body;
+	var vali=walletValidator.validate(addr,'bitcoin','testnet');
+	if(!vali){this.throw(400,'not valid bitcoin address!');}
+	try{
+yield db.query(`insert into cards(addr,us_id) values('${addr}','${useremail}') on conflict(us_id) do update set addr='${addr}',lmod=now()`);
+	}catch(e){this.throw(400,e.message);}
+	this.body={info:"OK",body:this.request.body};
+})
+
 function readStr(n){
 return new Promise((res,rej)=>{
 let resu=[];let resul='';
