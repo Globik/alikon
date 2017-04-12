@@ -122,12 +122,12 @@ let s='';
 	s+=`
 <meta property="og:locale" content="ru_RU"/>
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Videochat Alikon"/>
+<meta property="og:title" content="Sex Videochat Alikon - эротический видеочат для взрослых - это лучшее место для виртуального общения. Тысячи моделей готовы пообщаться с тобой в любое время дня и ночи прямо из своих спален!"/>
 <meta property="og:description" content="Эротический видеочат для взрослых - это лучшее место для виртуального общения. Тысячи моделей готовы пообщаться с тобой в любое время дня и ночи прямо из своих спален!"/>
 <meta property="og:image" content="http://alikon.herokuapp.com/images/bona.png"/>
 <meta property="og:url" content="http://alikon.herokuapp.com"/>
 <meta property="og:site_name" content="Alikon"/>
-<meta itemprop="name" content="Alikon"/>
+<meta itemprop="name" content="Sex Videochat Alikon"/>
 <meta itemprop="description" content="Эротический видеочат для взрослых - это лучшее место для виртуального общения. Тысячи моделей готовы пообщаться с тобой в любое время дня и ночи прямо из своих спален!"/>
 <meta itemprop="image" content="http://alikon.herokuapp.com/images/bona.png"/>
 `;
