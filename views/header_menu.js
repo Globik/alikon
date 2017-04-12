@@ -8,7 +8,7 @@ var header_menu=n=>{
     <li><a href="/labs">labs</a>
     </ul> -->
 ${getMenu(n)} 
-<label style="position:absolute;right:3.2em;top:0.1em;background:yellow;">log in or sign up</label>
+<!-- <label style="position:absolute;right:3.2em;top:0.1em;background:yellow;">log in or sign up</label> -->
 <label id="lb-menu-all" class="lb-menu-all" onclick="dowas1();">
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>

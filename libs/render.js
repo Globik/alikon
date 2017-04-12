@@ -37,7 +37,6 @@ module.exports=(app,settings)=>{
 	/*function ender(v,ops){
 	//console.log(v);console.log('ops :',ops);
 	var fn=map.get(`${v}.js`);
-		console.log('func V: ',fn);
 		//console.log('ops: ',ops);
 return fn[v](ops) 
 	}*/
@@ -50,6 +49,7 @@ return fn[v](ops)
 try{	
 html=ender(v,context);
 } catch(err){
+//console.log(err)
 	html=ender('footer',{fuck: err,file:v,stack:err.stack});
 }
 	return html;}
@@ -58,10 +58,10 @@ html=ender(v,context);
 function ender(v,ops){
 	//console.log(v);console.log('ops :',ops);
 	//if(v=="haupt_page"){return;}
-	console.log('v: ',v);
+	//console.log('v: ',v);
 	var fn=map.get(`${v}.js`);
 		//console.log('ops: ',ops);
 		lay+=1;
-		console.log('lay: ',lay);
+		//console.log('lay: ',lay);
 return fn[v](ops) 
 	}

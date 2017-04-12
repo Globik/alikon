@@ -5,7 +5,7 @@ var head=(n)=>
 <title>${n.title ? n.title : "Simple title"}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<!-- here must be socials metatags - twitter,fb -->
+${n.meta ? n.meta : ''}
 <link rel="shortcut icon" type="image/ico" href="/images/w4.png"> 
 
 ${n.csslink ? `<link href="${n.csslink}" rel="stylesheet">` :''}

@@ -221,6 +221,28 @@ data.type=1;
 	window.location.href="#resultativ";
 	}
 </script>
-
+		<img id="ima" src="bona.jpg" onload="foo(this);"/><span id="mout"></span>
+		<canvas id="cnv" style="border:1px solid green;" width="683" height="550"></canvas>
+		<script>
+		function foo(el){
+			//alert('x');
+			mout.textContent=" "+el.naturalWidth+" ";
+		}	
+			var lin=410;
+			var cnv=document.getElementById("cnv");
+			var c=cnv.getContext('2d');
+			var img=new Image();
+			img.src="bona.jpg";
+			img.onload=function(){
+			c.drawImage(img,0,-70/*,cnv.width,cnv.height*/);
+				c.fillStyle="orange";
+				//c.fillRect(0,0,50,50);
+				c.font="34px bold Arial";
+				c.fillText("10$ per minute",lin,160);
+				c.font="40px bold Arial";
+				c.fillStyle="blue";
+				c.fillText("VIDEOCHAT",lin,100);
+			}
+		</script>
 	</body>
 </html>

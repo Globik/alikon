@@ -339,6 +339,9 @@ pub.get('/home/profile', authent, function*(){
 		//result=cards.rows[0];
 		//console.log('cards.rows[0]: ',cards.rows[0]);
 	}catch(e){console.log(e);}
+//this.set('Access-Control-Allow-Origin','*');
+//this.set('Access-Control-Allow-Methods','GET','HEAD','POST');
+//this.set('Access-Control-Allow-Headers','*')
 this.body=this.render('cabinet',{buser:this.req.user,cards:cards.rows[0]});
 })
 
@@ -351,6 +354,21 @@ let db=this.db;
 yield db.query(`insert into cards(addr,us_id) values('${addr}','${useremail}') on conflict(us_id) do update set addr='${addr}',lmod=now()`);
 	}catch(e){this.throw(400,e.message);}
 	this.body={info:"OK",body:this.request.body};
+})
+
+pub.post('/api/get_tokens', auth,function*(){
+	let mont=this.render('vidget_tokens',{buser:this.req.user});
+		 //console.log('mont: ',mont);
+this.body={content:mont,body:this.request.body};
+})
+
+pub.post('/api/get_bcaddress', auth, function*(){
+let db=this.db;
+	try{
+	var cards=yield db.query(`select addr from cards where us_id='${this.request.body.useremail}'`);
+	}catch(e){this.throw(400,e.message);}
+	let mont=this.render('vidget_card',{cards:cards.rows[0]});
+	this.body={info:"OK",content:mont};
 })
 
 function readStr(n){
