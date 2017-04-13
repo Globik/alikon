@@ -32,6 +32,7 @@ var locals={
 	return mn;}catch(e){console.log(e);return e;}},
 * show_banners(){try{let m=yield this.db.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
 };
+
 */
 var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
 //var database_url=configDB.pg_url;// for home development

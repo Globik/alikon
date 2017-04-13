@@ -24,7 +24,7 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 .f.pli{background:red;color:red;}
 .litab .f:first-child{margin-left:0;padding-left:0;}
 .litab .f a{color:white;cursor:pointer;text-decoration:none;}
-
+#cardaddr{width:50%;}
 #loader{
 			position: absolute;
 			display: none;
@@ -103,21 +103,36 @@ xhr.send(JSON.stringify(data));
 
 function convert(){
 if(check_balance()){
-
-}else{alert('not enough tokens');}
+var data={};
+data.useremail=useremail.textContent;
+data.amt_tok=tokens.textContent;
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/set_convert');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+var mata=JSON.parse(this.response);
+out.innerHTML=this.response;
+}else{
+out.innerHTML=this.response;
 }
+}
+xhr.onerror=function(e){out.innerHTML=this.response;}
+xhr.send(JSON.stringify(data));
+//alert(JSON.stringify(data));
+}else{alert("Not enough tokens.\\n Minimum 1000 tokens required.");}
+}
+
 function check_balance(){
 if(Number(tokens.textContent) >=1000){return true;}
 return false;
 }
 
 /* VIDGET_CARD.JS */
-function edit_addr(){
-cardaddr.setAttribute('contenteditable',true);
-}
+
 function save_addr(){
 var data={};
-data.addr=cardaddr.textContent;
+data.addr=cardaddr.value;
 data.useremail=useremail.textContent;
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/set_bitcoin_address');
@@ -125,7 +140,6 @@ xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
 var mata=JSON.parse(this.response);
-cardaddr.setAttribute('contenteditable',false);
 adrinfo.innerHTML=this.response;
 }else{
 adrinfo.innerHTML=this.response;
@@ -134,6 +148,7 @@ adrinfo.innerHTML=this.response;
 xhr.onerror=function(e){adrinfo.innerHTML=this.response;}
 xhr.send(JSON.stringify(data));
 }
+
 function furency(){
 var xhr=new XMLHttpRequest();
 xhr.open('GET',/*'https://bitaps.com/api/ticker/average'*/'https://bitpay.com/rates/usd');
@@ -146,7 +161,6 @@ xhr.send();
 //furency();
 
 function addcl(n){
-//loader.style.display="block";
 var es=document.querySelector(".f.pli");
 es.classList.remove("pli");
 n.parentNode.classList.add("pli");

@@ -333,6 +333,7 @@ CABINET
 ********************************************** */
 pub.get('/home/profile', authent, function*(){
 	let db=this.db;
+	this.session.dorthin=this.path;
 	//var result=null;
 	try{
 	var cards=yield db.query(`select addr from cards where us_id='${this.req.user.email}'`);
@@ -369,6 +370,15 @@ let db=this.db;
 	}catch(e){this.throw(400,e.message);}
 	let mont=this.render('vidget_card',{cards:cards.rows[0]});
 	this.body={info:"OK",content:mont};
+})
+
+pub.post('/api/set_convert',auth,function*(){
+let db=this.db;
+	var {useremail, amt_tok}=this.request.body;
+	try{
+yield db.query(`insert into converts(us_id, amt_tok) values('${useremail}', ${amt_tok})`)
+	}catch(e){this.throw(400,e.message);}
+	this.body={info:"OK",body:this.request.body}
 })
 
 function readStr(n){
