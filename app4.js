@@ -34,14 +34,16 @@ var locals={
 };
 
 */
-var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-//var database_url=configDB.pg_url;// for home development
+//var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+var database_url=configDB.pg_url;// for home development
 
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
 	dop_ssl="";
 }else{dop_ssl="?ssl=true"}
+const pgtypes=require('pg').types;
+pgtypes.setTypeParser(1114, str=>str);
 var boss=new PgBoss(database_url+dop_ssl);
 
 console.log('database_url: ',database_url);
@@ -59,7 +61,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl: true};//local_host=false heroku=true
+ssl: false};//local_host=false heroku=true
 
 var app=koa();
 var pool=module.exports=new Pool(pconfig);

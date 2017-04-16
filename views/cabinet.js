@@ -11,7 +11,7 @@ var cabinet = n=>{
 var {buser,model,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:"Cabinet", csslink:"/css/main2.css"})}</head>
+<head>${head.head({title:"Profile", csslink:"/css/main2.css"})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}

@@ -21,6 +21,7 @@ hallo ${buser.name}<br>
 
 <li><a href="/dashboard/mongodb">Mongodb</a>
 <li><a href="/dashboard/banners">banners</a>
+<li><a href="/dashboard/cabinet_admin">cabinet admin(payments)</a>
 
 </main><footer id="footer">${footer.footer({})}</footer></body></html>`;
 }

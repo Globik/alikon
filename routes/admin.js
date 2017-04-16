@@ -451,6 +451,37 @@ var album=yield albums.find({});
 	}
 	catch(err){yield this.body={err:err}}
 })
+/* ************************************************************************
+   CABINET_ADMIN
+   *********************************************************************** */
+admin.get('/dashboard/cabinet_admin', authed, function*(){
+	let db=this.db;
+	var result=null;
+	this.session.dorthin=this.path;
+	
+this.body=this.render('cabinet_admin',{buser:this.req.user})
+})
+admin.get('/dashboard/get_to_payments_list',auth,function*(){
+let db=this.db;
+var result=null;
+try{
+var pa=yield db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
+from conv inner join cardi on conv.us_id=cardi.us_id where status='waiting' order by at desc limit 4`)
+if(pa.rows){
+result=pa.rows;
+console.log('result: ',result);
+		}
+}catch(e){this.throw(400,e.message);}	
+this.body={content:this.render('vidget_admin_topayments',{data:result})};
+})
+admin.post('/dashboard/cabinet_admin/page',auth, function*(){
+	let db=this.db;
+	var {next}=this.request.body;
+try{var result=yield db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
+from conv inner join cardi on conv.us_id=cardi.us_id where conv.status='waiting' and conv.at < '${next}'::timestamp 
+order by at desc limit 4`)}catch(e){this.throw(400,e.message)}
+this.body={body:this.request.body,content:result.rows}
+})
 /*
 ==============================================================
 MONGODB MANAGER
@@ -516,6 +547,7 @@ try{var a=yield shlag(dob);data=a.data;}catch(e){error=e;}
 	});
 /* ==================================================================== */
 module.exports=admin;
-
+function *auth(next){
+if(this.isAuthenticated() && this.req.user.role=="superadmin"){yield next;}else{this.throw(401, "Please log in.")}}
 function *authed(next){
 if(this.req.isAuthenticated() && this.req.user.role == "superadmin"){yield next;}else{ this.redirect('/');}}
