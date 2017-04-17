@@ -47,7 +47,7 @@ pgtypes.setTypeParser(1114, str=>str);
 var boss=new PgBoss(database_url+dop_ssl);
 
 console.log('database_url: ',database_url);
-console.log('process.env.DEVELOPMENT and DEV_USER: ',/*process.env.DEVELOPMENT,*/process.env.DEV_PWD);
+
 var pars=url.parse(database_url);
 var cauth=pars.auth.split(':');
 console.log('user auth[0] ', cauth[0]);

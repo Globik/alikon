@@ -476,11 +476,14 @@ this.body={content:this.render('vidget_admin_topayments',{data:result})};
 })
 admin.post('/dashboard/cabinet_admin/page',auth, function*(){
 	let db=this.db;
+	var result=null;
 	var {next}=this.request.body;
-try{var result=yield db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
+try{var pa=yield db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
 from conv inner join cardi on conv.us_id=cardi.us_id where conv.status='waiting' and conv.at < '${next}'::timestamp 
-order by at desc limit 4`)}catch(e){this.throw(400,e.message)}
-this.body={body:this.request.body,content:result.rows}
+order by at desc limit 4`);
+   if(pa.rows){result=pa.rows;console.log('results: ',result);}
+   }catch(e){this.throw(400,e.message)}
+this.body={body:this.request.body,content:this.render('vidget_admin_topayments',{data:result})}
 })
 /*
 ==============================================================
