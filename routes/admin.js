@@ -485,6 +485,32 @@ order by at desc limit 4`);
    }catch(e){this.throw(400,e.message)}
 this.body={body:this.request.body,content:this.render('vidget_admin_topayments',{data:result})}
 })
+
+admin.post('/dashboard/cabinet_admin/set_payment',auth,function*(){
+let db=this.db;
+	/*var amttok=el.getAttribute('data-amttok'),
+    var usd=el.getAttribute('data-usd'),
+    sumbc=el.getAttribute('data-sumbc');
+   // proz=el.getAttribute('data-proz'),
+    //dtime=el.getAttribute('data-dtime'),
+    //status=el.getAttribute('data-status'),
+    //us_id=el.getAttribute('data-usid'),
+    //addr=el.getAttribute('data-addr');*/
+var {usid, status, amttok, usd, sumbc, proz, addr}=this.request.body;
+	//busers convi payouts
+	try{
+	yield db.query('begin');
+	yield db.query(`update conv set status='complete' where us_id='${usid}'`);
+		//us_id, status,amt_tok,amt_usd,amt_bc,proz,adr
+	yield db.query(`insert into payouts(us_id, status, amt_tok, amt_usd, amt_bc, proz, adr) 
+    values('${usid}', '${status}', ${amttok}, ${usd}, ${sumbc}, ${proz}, '${addr}')`);
+    yield db.query(`update busers set items=items-${amttok} where name='globik'`);
+    yield db.query('commit');
+	}catch(e){
+		yield db.query('rollback');
+		this.throw(400,e.message);}
+this.body={body:this.request.body}
+})
 /*
 ==============================================================
 MONGODB MANAGER

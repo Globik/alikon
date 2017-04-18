@@ -23,8 +23,10 @@ s+=`<section class="psector"><table><tbody>
 <th>Status: </th><td><span class="bcstatus">${el.status}</span></td>
 </tr>
 <tr><th>user id: </th><td><span class="us_id">${el.us_id}</span></td></tr>
-<tr><th>Bitcoin address: </th><td><span class="bcaddr">${el.addr}</span></td></tr></tbody></table><br>
-<button onclick="send_payment();">send pay</button><span id="connect"></span>
+<tr><th>Bitcoin address: </th><td><span class="bcaddr">${el.addr}</span></td></tr></tbody></table>
+<button class="btn" data-amttok="${el.amt_tok}" data-usd="" data-sumbc="" data-proz="${el.proz}" data-dtime="${el.at}" 
+data-status="${el.status}" data-usid="${el.us_id}" data-addr="${el.addr}" onclick="send_payment(this);">send pay</button>
+<span id="connect"></span><br>
 </section>`;
 });
 	return s;
