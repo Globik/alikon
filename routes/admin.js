@@ -458,7 +458,7 @@ admin.get('/dashboard/cabinet_admin', authed, function*(){
 	let db=this.db;
 	var result=null;
 	this.session.dorthin=this.path;
-	
+	//select sum(amt_tok) as total from conv
 this.body=this.render('cabinet_admin',{buser:this.req.user})
 })
 admin.get('/dashboard/get_to_payments_list',auth,function*(){
