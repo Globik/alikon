@@ -1,6 +1,8 @@
 //vidget_admin_topayments.js
 const vidget_admin_topayments=n=>{
 return `<h4>To payments</h4>
+<button onclick="set_bcs();">set BC</button>
+
 ${n.data && n.data.length !==0 ? get_datei(n.data) : 'no data'}
 <hr><button onclick="get_next();">next</button>
 `;
@@ -11,11 +13,11 @@ function get_datei(n){
 let s='';
 n.forEach((el, i)=>{
 s+=`<section class="psector"><table><tbody>
-<tr><th>tokens</th><td class="intok">${el.amt_tok}</td></tr>
+<tr><th>tokens</th><td><span class="intok">${el.amt_tok}</span></td></tr>
 
 <tr><th>usd</th><td><span class="usd"></span></td></tr>
 <tr><th>bitcoin</th><td><span class="sumbc"></span></td></tr>
-<tr><th>%</th><td class="inproz">${el.proz}</td></tr>
+<tr><th>%</th><td><span class="inproz">${el.proz}</span></td></tr>
 <tr>
 <th>Created: </th><td><span class="dtime">${el.at}</span></td>
 </tr>

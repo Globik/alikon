@@ -458,8 +458,15 @@ admin.get('/dashboard/cabinet_admin', authed, function*(){
 	let db=this.db;
 	var result=null;
 	this.session.dorthin=this.path;
+	try{
+	var ob=yield db.query(`select popa()`);
+		if(ob.rows.length !==0){
+		console.log('result: ',ob.rows[0].popa);
+			result=ob.rows[0].popa;
+		}
+	}catch(e){console.log(e);}
 	//select sum(amt_tok) as total from conv
-this.body=this.render('cabinet_admin',{buser:this.req.user})
+this.body=this.render('cabinet_admin',{buser:this.req.user, ledge:result})
 })
 admin.get('/dashboard/get_to_payments_list',auth,function*(){
 let db=this.db;

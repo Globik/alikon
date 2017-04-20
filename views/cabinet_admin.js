@@ -21,22 +21,44 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 tbody th, tbody td{border:1px solid lightgreen;}
 #connect{background:green;}
 </style>
+<button onclick="renew_bc_rate();">renew BC rate</button><br>
+<a href="https://bitpay.com/rates/usd" target="_blank">find rate</a><br>
 <h2>administrative</h2>
-<button onclick="set_bcs();">set BC</button>
-<br>
-<b>1 BC: </b><span id="bc">1182.05</span> USD
+<div>
+${n.ledge == null ? 'no data': get_ledge(n.ledge)}
+<button onclick="set_total_bcs();">total bc</button>
+</div>
+
+<b>1 BC: </b><span id="bc" contenteditable=true>1182.05</span> USD<br>
 <a onclick="get_to_payments();">To payments</a>
 
 <div id="ajxcontent"></div>
 <br><span id="out"></span>
 </main><footer id="footer">${footer.footer({})}</footer>
 <script>
-/*
+
 if(typeof(Storage) !=="undefined"){
-localStorage.setItem("bitcoin",bc.textContent);
+//localStorage.setItem("bitcoin",0);
 //.getItem("bitcoin").removeItem("bitcoin")
-}else{}
-*/
+bc.textContent=localStorage.getItem("bitcoin");
+}else{console.log('no storage')}
+
+
+function renew_bc_rate(){
+var xhr=new XMLHttpRequest();
+xhr.open('GET',/*'https://bitaps.com/api/ticker/average'*/'https://bitpay.com/rates/usd');
+xhr.onload=function(e){
+if(xhr.status==200){
+//alert(this.response);
+var m=JSON.parse(this.response);
+localStorage.setItem("bitcoin", m.data.rate);
+bc.textContent=m.data.rate;
+}else{
+alert(this.response)}
+}
+xhr.onerror=function(e){alert(this.response);}
+xhr.send();
+}
 
 function get_to_payments(){
 var xhr=new XMLHttpRequest();
@@ -48,6 +70,13 @@ ajxcontent.innerHTML=mata.content;
 }else{out.innerHTML=this.response;}}
 xhr.onerror=function(e){out.innerHTML=this.response;}
 xhr.send();
+}
+
+function set_total_bcs(){
+if(bc.textContent){
+var tbcs=(Number(totalUsd.textContent)/Number(bc.textContent)).toFixed(6);
+totalBcs.textContent=tbcs;
+}
 }
 
 function bcout(n,k){
@@ -144,18 +173,12 @@ xhr.send(JSON.stringify(data));
 </html>`;
 }
 module.exports={cabinet_admin};
-function get_datei(m){
+
+function get_ledge(m){
 let s='';
-	//if(Array.isArray(m)){
-m.forEach((el, i)=>{
-s+=`<section>${el.us_id} | <span class="intok">${el.amt_tok}</span> | <span class="inproz">${el.proz}</span> |
-${moment(el.at).format('YYYY-MM-DD HH:mm')} |
-${el.status} | ${el.addr} |<b>time</b><time class="dtime" datetime="${el.at}">${el.at}</time>
-<br><b>USD: </b><span class="usd"></span>
-<br><b>BC: </b><span class="sumbc"></span>
-</section><br>`;
-});
-//}else{s+=`${m.data.us_id} | ${m.amt_tok}`;}
-	
+s+=`<table><caption>total</caption><tr><th>tokens</th><td>${m.tokuser+m.tokmodel}</td></tr>
+<tr><th>usd</th><td><span id="totalUsd">${m.total_usd}</span></td></tr>
+<tr><th>BC</th><td><span id="totalBcs"></span></td></tr>
+</table>`;
 	return s;
 }
