@@ -47,6 +47,22 @@ ${users_list(lusers)}
 <h1>Buy Tokens for Bitcoins!</h1>
 <h6>In a test mode</h6>
 <a href='/tipping/purchase_tokens'>Purchase tokens</a>
+<output id="wso"></output>
+<script>
+/*
+var socket=new WebSocket('ws://'+location.hostname+':'+location.port);
+socket.onopen=function(){
+wso.innerHTML='websocket connected';
+socket.send("hello server");
+}
+socket.onclose=function(ev){wso.innerHTML='closed '+ev;}
+socket.onerror=function(e){wso.innerHTML=e.message;}
+socket.onmessage=function(ev){
+wso.innerHTML+='<br>message: '+ev.data;
+socket.send("Here is websocket client to server");
+}
+*/
+</script>
 </main>
 <footer id="footer">${footer.footer({})}</footer></body></html>`;}
 

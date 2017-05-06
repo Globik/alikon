@@ -296,12 +296,14 @@ WEBRTC STUFF /:models
 pub.get('/webrtc/:buser',function*(){
 let db=this.db;
 this.session.dorthin=this.path;
-var us=null
+var us=null;
+var owner=false;
 try{
 var result=yield db.query(`select*from busers where nick='${this.params.buser}'`);
 	us=result.rows[0];
+	if(this.req.user && this.req.user.nick===this.params.buser){owner=true;}
 }catch(e){console.log(e)}
-this.body=this.render('busers',{buser:this.req.user,model: us});
+this.body=this.render('busers',{buser:this.req.user,model: us,owner:owner});
 });
 
 pub.post('/api/set_transfer', function*(){

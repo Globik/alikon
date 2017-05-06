@@ -10,11 +10,16 @@ var busers = n=>{
 var {buser,model,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:"User", csslink:"/css/main2.css"})}</head>
+<head>${head.head({title:"User", csslink:"/css/main2.css"/*,js:["/js/socket.io.min.js"]*/})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+<style>
+/*#pagewrap{
+background-image:url("/images/vk.png");*/
+}
+</style>
 <main id="pagewrap"> 
 <style>
 .modrtc{width:30%;display:inline-block;background:green;padding:10px;}
@@ -94,7 +99,7 @@ overlay:target+.popi{left:0;}
 	
 </style>
 <div>
-<button>broadcast yourself</button>
+<button id="fuck">broadcast yourself</button>
 <div><b>obid: </b><span id="pid"></span></div>
 <div><b>time: </b><span id="timeinfo"></span></div>
 </div>
@@ -102,13 +107,17 @@ overlay:target+.popi{left:0;}
 <h4>Model</h4>
 <b>As </b> <span id="modelName">${model.nick}</span><br>
 <b>Email:</b> <span id="modelEmail">${model.email}</span><br>
+<b>Owner:</b> <span id="owner">${n.owner}</span><br>
 <b>Tokens: </b> <span id="modelTokens">${model.items}</span><br>
+<b>Websocket id:</b> <span id="modelWebsocketId"></span><br>
 </div>
+<input type="text" id="name" value="Gest1">
 <div class="modrtc">
 <h4>You</h4>
-<b>As</b> <span id="yourName">${buser ? buser.name:'a Guest'}</span><br>
+<b>As</b> <span id="yourName">${buser ? buser.nick:'a Guest'}</span><br>
 <b>Email: </b><span id="yourEmail">${buser ? buser.email:""}</span><br>
 <b>Tokens: </b><span id="yourTokens">${buser ? buser.items:''}</span><br>
+<b>your websocket id: </b><span id="yourWebsocketId"></span><br>
 </div><br>
 <div>
 <button onclick="get_one();">send tips</button><br><br>
@@ -126,11 +135,20 @@ Time: <span id="mer">00:00:00</span><br><br>
 <p><input id="tokTosend" type="number" value="1" placeholder="1"/></p>
 <button onclick="send_tokens();">send</button>
 </output>
-
+<form name="publish">
+<input type="text" name="message">
+<input type="submit" value="send">
+</form>
+<form name="mepublish">
+<input type="text" name="message">
+<input type="submit" value="send to only me">
+</form>
+<div id="subscribe"></div>
+<br><span id="wso"></span>
 <script>
 var seat=0;
 var init=0;
-var startDate,clocker,mlocker,startingDate;
+var startDate,clocker,mlocker, startingDate;
 yourTokens2.textContent=yourTokens.textContent;
 
 function send_tokens(){
@@ -301,9 +319,95 @@ out.innerHTML=this.response+this.status;
 }}
 xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
 //alert(JSON.stringify(data));
-xhr.send(JSON.stringify(data));
+//xhr.send(JSON.stringify(data));
 }
 }
+//websocket
+
+var clientId=0;
+var myusername=null;
+var targetusernamr=null;
+
+function setusername(s){
+if(owner.textContent==="true"){
+myusername=modelName.textContent;//document.getElementById("name").value;
+modelWebsocketId.textContent=clientId;
+}else{
+document.getElementById("yourWebsocketId").textContent=clientId;
+if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.textContent;}
+}
+s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:owner.textContent}));
+}
+
+var socket=new WebSocket('ws://'+location.hostname+':'+location.port+'/'+modelName.textContent);
+fuck.onclick=function(){
+//alert('fuck');
+var outm={};
+outm.room=modelName.textContent;
+outm.type="create_room";
+outm.msg="Creating a room";
+socket.send(JSON.stringify(outm));
+}
+
+socket.onopen=function(){
+wso.innerHTML='websocket connected';
+}
+
+
+
+document.forms.publish.onsubmit=function(){
+var outm={};
+outm.msg=this.message.value;
+outm.room=modelName.textContent;
+outm.type="inroom";
+
+socket.send(JSON.stringify(outm));
+return false;
+}
+
+document.forms.mepublish.onsubmit=function(){
+var outm={};
+outm.msg=this.message.value;
+outm.name=myusername;//"Guest1";
+//outm.id="dima";
+outm.type="onlyme";
+outm.target=modelName.textContent;
+
+socket.send(JSON.stringify(outm));
+return false
+}
+
+socket.onmessage=function(event){
+var msg=JSON.parse(event.data);
+switch(msg.type){
+case "id":
+clientId=msg.id;
+setusername(socket);
+
+console.log("case id: "+event.data);
+break;
+case "username":
+console.log("case username: "+event.data);
+break;
+case "message":
+console.log("case message: "+event.data);
+break;
+case "userlist":
+console.log("case userlist: "+event.data);
+}
+
+showmessage(event.data);
+}
+
+
+function showmessage(message){
+var messageelement=document.createElement('div');
+messageelement.appendChild(document.createTextNode(message));
+subscribe.appendChild(messageelement);
+}
+
+socket.onerror=function(e){wso.innerHTML="error: "+e;}
+socket.onclose=function(e){wso.innerHTML="closed";}
 </script>
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
