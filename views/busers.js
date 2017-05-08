@@ -119,6 +119,16 @@ overlay:target+.popi{left:0;}
 <b>Tokens: </b><span id="yourTokens">${buser ? buser.items:''}</span><br>
 <b>your websocket id: </b><span id="yourWebsocketId"></span><br>
 </div><br>
+<div class="firstchild" id="camera-container">
+<div class="camera-box">
+<video id="received_video" autoplay></video>
+<video id="local_video" autoplay muted></video>
+<button id="hangup-button" onclick="hangupcall();" disabled>Hung Up</button>
+</div>
+</div>
+
+
+
 <div>
 <button onclick="get_one();">send tips</button><br><br>
 <button onclick="get_room();">privat</button> <span id="tokpermin">10</span> tokens/min<br><br>
@@ -143,6 +153,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 <input type="text" name="message">
 <input type="submit" value="send to only me">
 </form>
+<button onclick="invite(this);">invite</button>
 <div id="subscribe"></div>
 <br><span id="wso"></span>
 <script>
@@ -323,10 +334,18 @@ xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
 }
 }
 //websocket
+var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
 var myusername=null;
-var targetusernamr=null;
+var targetusername=null;
+var mypeer=null;
+
+var hasAddTrack=false;
+//navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
+                            navigator.mozGetUserMedia || navigator.msGetUserMedia;
+RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
 
 function setusername(s){
 if(owner.textContent==="true"){
@@ -339,7 +358,16 @@ if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.
 s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:owner.textContent}));
 }
 
-var socket=new WebSocket('ws://'+location.hostname+':'+location.port+'/'+modelName.textContent);
+var loc1=location.hostname+':'+location.port;
+var loc2='alikon.herokuapp.com';
+var loc3=loc1 || loc2;
+//var socket=new WebSocket('ws://'+location.hostname+':'+location.port+'/'+modelName.textContent);
+var socket=new WebSocket('ws://'+loc3+'/'+modelName.textContent);
+function sendtoserver(msg){
+var msgjson=JSON.stringify(msg);
+socket.send(msgjson);
+}
+
 fuck.onclick=function(){
 //alert('fuck');
 var outm={};
@@ -356,10 +384,10 @@ wso.innerHTML='websocket connected';
 
 
 document.forms.publish.onsubmit=function(){
-var outm={};
+var outm={};http://localhost:5000/webrtc/gru5
 outm.msg=this.message.value;
-outm.room=modelName.textContent;
-outm.type="inroom";
+outm.id=clientId;
+outm.type="message";
 
 socket.send(JSON.stringify(outm));
 return false;
@@ -394,6 +422,22 @@ console.log("case message: "+event.data);
 break;
 case "userlist":
 console.log("case userlist: "+event.data);
+break;
+case "video-offer":
+console.log('handle video offer-1');
+handlevideooffermsg(msg);
+break;
+case "video-answer":
+handlevideoanswermsg(msg);
+break;
+case "new-ice-candidate":
+handlenewicecandidatemsg(msg);
+break;
+case "hang-up":
+handlehangupmsg(msg);
+break;
+default:
+console.log('unknown message received');
 }
 
 showmessage(event.data);
@@ -408,6 +452,313 @@ subscribe.appendChild(messageelement);
 
 socket.onerror=function(e){wso.innerHTML="error: "+e;}
 socket.onclose=function(e){wso.innerHTML="closed";}
+
+//webrtc one to one
+ 
+function createPeerConnection(){
+console.log('creating a connection');
+var pc_config = {"iceServers":[]};
+mypeer=new RTCPeerConnection(pc_config);
+hasAddTrack=(mypeer.addTrack !==undefined);
+
+mypeer.onicecandidate=handleicecandidateevent;
+mypeer.onremovestream=handleremovestreamevent;
+mypeer.oniceconnectionstatechange=handleiceconnectionstatechangeevent;
+mypeer.onicegatheringstatechange=handleicegatheringstatechangeevent;
+mypeer.onsignalingstatechange=handlesignalingstatechangeevent;
+mypeer.onnegotiationneeded=handlenegotiationneededevent;
+
+if(hasAddTrack){
+console.log('ontrack');
+mypeer.ontrack=handletrackevent;
+}else{
+console.log('onaddstream')
+mypeer.onaddstream=handleaddstreamevent;
+}
+}
+
+function handlenegotiationneededevent(){
+console.log('negotiation needed');
+console.log('creating offer');
+mypeer.createOffer().then(function(offer){
+console.log('creating new sdp to send to remote peer');
+return mypeer.setLocalDescription(offer);
+}).then(function(){
+console.log('sending offer to remote peer');
+sendtoserver({name:myusername,target:modelName.textContent,type:"video-offer",sdp:mypeer.localDescription});
+}).catch(reporterror);
+}
+
+function handletrackevent(event){
+console.log('track event')
+console.log(event.stream[0]);
+document.getElementById("received_video").srcObject=event.stream[0];
+document.getElementById("hangup-button").disabled=false;
+}
+
+function handleaddstreamevent(event){
+document.getElementById("received_video").srcObject=event.stream;
+document.getElementById("hangup-button").disabled=false;
+}
+
+function handleremovestreamevent(event){
+console.log('stream removed');
+closevideocall();
+}
+
+function handleicecandidateevent(event){
+if(event.candidate){
+console.log('event candidate: '+event.candidate.candidate);
+sendtoserver({type:"new-ice-candidate",target:modelName.textContent,candidate:event.candidate});
+}
+}
+
+function handleiceconnectionstatechangeevent(event){
+console.log('ice connection state changed to: '+mypeer.iceConnectionState);
+switch(mypeer.iceConnectionState){
+case "closed":
+case "failed":
+case "disconnected":
+closevideocall();
+break;
+}
+}
+
+function handlesignalingstatechangeevent(event){
+console.log('signaling state changed to: '+mypeer.signalingState);
+switch(mypeer.signalingState){
+case "closed":
+closevideocall();
+break;
+}
+}
+
+function handleicegatheringstatechangeevent(event){
+console.log('ice gathering changed to : '+mypeer.iceGatheringState);
+}
+
+function handleuserlistmsg(){}
+
+function closevideocall(){
+var remotevideo=document.getElementById("received_video");
+var localvideo=document.getElementById("local_video");
+console.log('closing video');
+if(mypeer){
+console.log('closing peer connection');
+mypeer.onaddstream=null;
+mypeer.ontrack=null;
+mypeer.onremovestream=null;
+mypeer.onicecandidate=null;
+mypeer.oniceconnectionstatechange=null;
+mypeer.onsignalingstatechange=null;
+mypeer.onicegatheringstatechange=null;
+mypeer.onnotificationneeded=null;
+if(remotevideo.srcObject){
+remotevideo.srcObject.getTracks().forEach(track=>track.stop());
+}
+if(localvideo.srcObject){localvideo.srcObject.getTracks().forEach(track=>track.stop());}
+remotevideo.src=null;
+localvideo.src=null;
+mypeer.close();
+mypeer=null;
+}
+document.getElementById("hangup-button").disabled=true;
+targetusername=null;
+}
+
+function handlehungupmsg(msg){
+closevideocall();
+}
+
+function hungupcall(){
+closevideocall();
+sendtoserver({name:myusername, target: targetusername, type:"hang-up"});
+}
+
+function invite(evt){
+if(mypeer){
+alert("you can't start a call cause you already have one open!");
+}else{
+var clickedusername='gru5';//evt.target.textContent;
+if(clickedusername===myusername){
+//alert("i'm afraid i can't let you talk to yourself");
+//return;
+}
+targetusername=clickedusername;
+createPeerConnection();
+console.log('inviting');
+
+navigator.mediaDevices.getUserMedia(mediaconstraints)
+.then(function(localstream){
+console.log('kuku');
+document.getElementById("local_video").src=window.URL.createObjectURL(localstream);
+document.getElementById("local_video").srcObject=localstream;
+if(hasAddTrack){
+console.log('has track');
+localstream.getTracks().forEach(track=>mypeer.addTrack(track,localstream));
+}else{
+console.log('has assstream');
+mypeer.addStream(localstream);
+}
+}).catch(handlegetusermediaerror);
+
+/*
+getdevicestream(mediaconstraints).then(function(stream){
+playvideo(document.getElementById('local_video'),stream);
+}).catch(function(e){
+
+console.log(e);return;})*/
+
+}
+}
+
+function getdevicestream(options){
+if('getUserMedia' in navigator.mediaDevices){
+console.log('navigator mediadevices getusermedia');
+return navigator.mediaDevices.getUserMedia(options);
+}else{console.log('wrap navig med devices with promise');
+return new Promise(function(res,rej){
+navigator.getUserMedia(options,res,rej);
+})
+}
+}
+function playvideo(element,stream){
+if('srcObject' in element){console.log('srcobject');element.srcObject=stream;}else{
+console.log('fuck');
+element.src=window.createObjectURL(stream);
+}
+element.play();
+element.volume=0;
+}
+
+function handlevideooffermsg(msg){
+var localstream=null;
+targetusername=msg.name;
+console.log('handle video offer msg');
+createPeerConnection();
+var desc=new RTCSessionDescription(msg.sdp);
+mypeer.setRemoteDescription(desc).then(function(){
+return navigator.mediaDevices.getUserMedia(mediaconstraints);
+}).then(function(stream){
+localstream=stream;
+document.getElementById('local_video').src=window.URL.createObjectURL(localstream);
+document.getElementById('local_video').srcObject=localstream;
+if(hasAddTrack){
+console.log('has track');
+localstream.getTracks().forEach(track=>mypeer.addTrack(track,localstream));
+}else{
+console.log('has addstream');
+mypeer.addStream(localstream);}
+})
+.then(function(){
+return mypeer.createAnswer();
+})
+.then(function(answer){
+return mypeer.setLocalDescription(answer);
+})
+.then(function(){
+var msg={
+name:myusername,
+target:targetusername,
+type:"video-answer",
+sdp:mypeer.localDescription
+};
+sendtoserver(msg)
+}).catch(handlegetusermediaerror);
+}
+
+function handlevideoanswermsg(msg){
+var desc=new RTCSessionDescription(msg.dsp);
+mypeer.setRemoteDescription(desc).catch(reporterror);
+}
+
+function handlenewicecandidatemsg(msg){
+//if(mypeer==null)return;
+var cand=new RTCIceCandidate(msg.candidate);
+//mypeer.addIceCandidate(cand).catch(reporterror);
+}
+
+function handlegetusermediaerror(e){
+switch(e.name){
+case "NotFoundError":
+alert("Unable to open your call cause no camera and or micrphone were found");
+break;
+case "SecurityError":
+case "PermissionDeniedError":
+break;
+default:
+alert("error opening yoour camera or microphone"+e.name);
+break;
+}
+closevideocall();
+}
+function reporterror(er){
+console.log(er.name+' '+er.message);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
