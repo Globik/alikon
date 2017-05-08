@@ -675,7 +675,7 @@ mypeer.setRemoteDescription(desc).catch(reporterror);
 function handlenewicecandidatemsg(msg){
 //if(mypeer==null)return;
 var cand=new RTCIceCandidate(msg.candidate);
-//mypeer.addIceCandidate(cand).catch(reporterror);
+mypeer.addIceCandidate(cand).catch(reporterror);
 }
 
 function handlegetusermediaerror(e){
