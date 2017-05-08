@@ -362,7 +362,7 @@ var loc1=location.hostname+':'+location.port;
 var loc2='alikon.herokuapp.com';
 var loc3=loc1 || loc2;
 //var socket=new WebSocket('ws://'+location.hostname+':'+location.port+'/'+modelName.textContent);
-var socket=new WebSocket('ws://'+loc3+'/'+modelName.textContent);
+var socket=new WebSocket('wss://'+loc3+'/'+modelName.textContent);
 function sendtoserver(msg){
 var msgjson=JSON.stringify(msg);
 socket.send(msgjson);
