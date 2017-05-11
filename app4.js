@@ -64,7 +64,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl: true};//local_host=false heroku=true
+ssl:true};//local_host=false heroku=true
 
 
 //var koaws=require('koa-ws');

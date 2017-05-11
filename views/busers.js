@@ -121,8 +121,9 @@ overlay:target+.popi{left:0;}
 </div><br>
 <div class="firstchild" id="camera-container">
 <div class="camera-box">
-<video id="received_video" autoplay></video>
-<video id="local_video" autoplay muted></video>
+<video id="remoteVideo" autoplay></video>
+<video id="localVideo" autoplay muted></video>
+<button onclick="call();">call</button>
 <button id="hangup-button" onclick="hangupcall();" disabled>Hung Up</button>
 </div>
 </div>
@@ -339,11 +340,10 @@ var mediaconstraints={audio:true,video:true};
 var clientId=0;
 var myusername=null;
 var targetusername=null;
-var mypeer=null;
+var pc;
 
 var hasAddTrack=false;
-//navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
-                            navigator.mozGetUserMedia || navigator.msGetUserMedia;
+//navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
 RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
 
@@ -406,39 +406,36 @@ return false
 }
 
 socket.onmessage=function(event){
+//if(!pc){call();}
 var msg=JSON.parse(event.data);
-switch(msg.type){
-case "id":
+
+if(msg.type=="id"){
 clientId=msg.id;
 setusername(socket);
 
 console.log("case id: "+event.data);
-break;
-case "username":
+}else if(msg.type=="username"){
 console.log("case username: "+event.data);
-break;
-case "message":
+}else if(msg.type=="message"){
 console.log("case message: "+event.data);
-break;
-case "userlist":
+}else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
-break;
-case "video-offer":
-console.log('handle video offer-1');
-handlevideooffermsg(msg);
-break;
-case "video-answer":
-handlevideoanswermsg(msg);
-break;
-case "new-ice-candidate":
-handlenewicecandidatemsg(msg);
-break;
-case "hang-up":
-handlehangupmsg(msg);
-break;
-default:
-console.log('unknown message received');
-}
+}else if(msg.desc){
+if(!pc){call()}
+var desc=msg.desc;
+	if(desc.type=='offer'){
+	pc.setRemoteDescription(desc).then(function(){
+	return pc.createAnswer();
+	}).then(function(answer){
+	return pc.setLocalDescription(answer);
+	}).then(function(){
+	var str=JSON.stringify({"target":msg.name,"name":myusername,"desc":pc.localDescription});
+		socket.send(str)
+	}).catch(function(e){console.error(e)})
+	}else if(desc.type=='answer'){
+	pc.setRemoteDescription(desc).catch(function(e){console.error(e)})
+	}else{console.log('unsupported type')}
+}else pc.addIceCandidate(msg.candidate).catch(function(e){console.error(e)})
 
 showmessage(event.data);
 }
@@ -454,247 +451,33 @@ socket.onerror=function(e){wso.innerHTML="error: "+e;}
 socket.onclose=function(e){wso.innerHTML="closed";}
 
 //webrtc one to one
- 
-function createPeerConnection(){
-console.log('creating a connection');
-var pc_config = {"iceServers":[]};
-mypeer=new RTCPeerConnection(pc_config);
-hasAddTrack=(mypeer.addTrack !==undefined);
-
-mypeer.onicecandidate=handleicecandidateevent;
-mypeer.onremovestream=handleremovestreamevent;
-mypeer.oniceconnectionstatechange=handleiceconnectionstatechangeevent;
-mypeer.onicegatheringstatechange=handleicegatheringstatechangeevent;
-mypeer.onsignalingstatechange=handlesignalingstatechangeevent;
-mypeer.onnegotiationneeded=handlenegotiationneededevent;
-
-if(hasAddTrack){
-console.log('ontrack');
-mypeer.ontrack=handletrackevent;
-}else{
-console.log('onaddstream')
-mypeer.onaddstream=handleaddstreamevent;
-}
-}
-
-function handlenegotiationneededevent(){
-console.log('negotiation needed');
-console.log('creating offer');
-mypeer.createOffer().then(function(offer){
-console.log('creating new sdp to send to remote peer');
-return mypeer.setLocalDescription(offer);
-}).then(function(){
-console.log('sending offer to remote peer');
-sendtoserver({name:myusername,target:modelName.textContent,type:"video-offer",sdp:mypeer.localDescription});
-}).catch(reporterror);
-}
-
-function handletrackevent(event){
-console.log('track event')
-console.log(event.stream[0]);
-document.getElementById("received_video").srcObject=event.stream[0];
-document.getElementById("hangup-button").disabled=false;
-}
-
-function handleaddstreamevent(event){
-document.getElementById("received_video").srcObject=event.stream;
-document.getElementById("hangup-button").disabled=false;
-}
-
-function handleremovestreamevent(event){
-console.log('stream removed');
-closevideocall();
-}
-
-function handleicecandidateevent(event){
-if(event.candidate){
-console.log('event candidate: '+event.candidate.candidate);
-sendtoserver({type:"new-ice-candidate",target:modelName.textContent,candidate:event.candidate});
-}
-}
-
-function handleiceconnectionstatechangeevent(event){
-console.log('ice connection state changed to: '+mypeer.iceConnectionState);
-switch(mypeer.iceConnectionState){
-case "closed":
-case "failed":
-case "disconnected":
-closevideocall();
-break;
-}
-}
-
-function handlesignalingstatechangeevent(event){
-console.log('signaling state changed to: '+mypeer.signalingState);
-switch(mypeer.signalingState){
-case "closed":
-closevideocall();
-break;
-}
-}
-
-function handleicegatheringstatechangeevent(event){
-console.log('ice gathering changed to : '+mypeer.iceGatheringState);
-}
-
-function handleuserlistmsg(){}
-
-function closevideocall(){
-var remotevideo=document.getElementById("received_video");
-var localvideo=document.getElementById("local_video");
-console.log('closing video');
-if(mypeer){
-console.log('closing peer connection');
-mypeer.onaddstream=null;
-mypeer.ontrack=null;
-mypeer.onremovestream=null;
-mypeer.onicecandidate=null;
-mypeer.oniceconnectionstatechange=null;
-mypeer.onsignalingstatechange=null;
-mypeer.onicegatheringstatechange=null;
-mypeer.onnotificationneeded=null;
-if(remotevideo.srcObject){
-remotevideo.srcObject.getTracks().forEach(track=>track.stop());
-}
-if(localvideo.srcObject){localvideo.srcObject.getTracks().forEach(track=>track.stop());}
-remotevideo.src=null;
-localvideo.src=null;
-mypeer.close();
-mypeer=null;
-}
-document.getElementById("hangup-button").disabled=true;
-targetusername=null;
-}
-
-function handlehungupmsg(msg){
-closevideocall();
-}
-
-function hungupcall(){
-closevideocall();
-sendtoserver({name:myusername, target: targetusername, type:"hang-up"});
-}
-
-function invite(evt){
-if(mypeer){
-alert("you can't start a call cause you already have one open!");
-}else{
-var clickedusername='gru5';//evt.target.textContent;
-if(clickedusername===myusername){
-//alert("i'm afraid i can't let you talk to yourself");
-//return;
-}
-targetusername=clickedusername;
-createPeerConnection();
-console.log('inviting');
-
-navigator.mediaDevices.getUserMedia(mediaconstraints)
-.then(function(localstream){
-console.log('kuku');
-document.getElementById("local_video").src=window.URL.createObjectURL(localstream);
-document.getElementById("local_video").srcObject=localstream;
-if(hasAddTrack){
-console.log('has track');
-localstream.getTracks().forEach(track=>mypeer.addTrack(track,localstream));
-}else{
-console.log('has assstream');
-mypeer.addStream(localstream);
-}
-}).catch(handlegetusermediaerror);
-
-/*
-getdevicestream(mediaconstraints).then(function(stream){
-playvideo(document.getElementById('local_video'),stream);
-}).catch(function(e){
-
-console.log(e);return;})*/
-
-}
-}
-
-function getdevicestream(options){
-if('getUserMedia' in navigator.mediaDevices){
-console.log('navigator mediadevices getusermedia');
-return navigator.mediaDevices.getUserMedia(options);
-}else{console.log('wrap navig med devices with promise');
-return new Promise(function(res,rej){
-navigator.getUserMedia(options,res,rej);
-})
-}
-}
-function playvideo(element,stream){
-if('srcObject' in element){console.log('srcobject');element.srcObject=stream;}else{
-console.log('fuck');
-element.src=window.createObjectURL(stream);
-}
-element.play();
-element.volume=0;
-}
-
-function handlevideooffermsg(msg){
-var localstream=null;
-targetusername=msg.name;
-console.log('handle video offer msg');
-createPeerConnection();
-var desc=new RTCSessionDescription(msg.sdp);
-mypeer.setRemoteDescription(desc).then(function(){
-return navigator.mediaDevices.getUserMedia(mediaconstraints);
-}).then(function(stream){
-localstream=stream;
-document.getElementById('local_video').src=window.URL.createObjectURL(localstream);
-document.getElementById('local_video').srcObject=localstream;
-if(hasAddTrack){
-console.log('has track');
-localstream.getTracks().forEach(track=>mypeer.addTrack(track,localstream));
-}else{
-console.log('has addstream');
-mypeer.addStream(localstream);}
-})
-.then(function(){
-return mypeer.createAnswer();
-})
-.then(function(answer){
-return mypeer.setLocalDescription(answer);
-})
-.then(function(){
-var msg={
-name:myusername,
-target:targetusername,
-type:"video-answer",
-sdp:mypeer.localDescription
+ var config = {
+    'iceServers': [
+        {'urls': 'stun:stun.services.mozilla.com'},
+        {'urls': 'stun:stun.l.google.com:19302'},
+    ]
 };
-sendtoserver(msg)
-}).catch(handlegetusermediaerror);
+function call(){
+pc=new RTCPeerConnection(config);
+pc.onicecandidate=function(ev){
+socket.send(JSON.stringify({"target":"gru5","name":myusername,"candidate":ev.candidate}));
 }
-
-function handlevideoanswermsg(msg){
-var desc=new RTCSessionDescription(msg.dsp);
-mypeer.setRemoteDescription(desc).catch(reporterror);
+pc.onnegotiationneeded=function(){
+pc.createOffer().then(function(offer){
+return pc.setLocalDescription(offer);
+}).then(function(){
+socket.send(JSON.stringify({"desc":pc.localDescription,"target":"gru5",name:myusername}))
+}).catch(function(e){console.error(e)})
 }
-
-function handlenewicecandidatemsg(msg){
-//if(mypeer==null)return;
-var cand=new RTCIceCandidate(msg.candidate);
-mypeer.addIceCandidate(cand).catch(reporterror);
+pc.onaddstream=function(ev){
+console.log('got remote stream');
+    //remoteVideo.src = window.URL.createObjectURL(event.stream);
+remoteVideo.srcObject=ev.stream;
 }
-
-function handlegetusermediaerror(e){
-switch(e.name){
-case "NotFoundError":
-alert("Unable to open your call cause no camera and or micrphone were found");
-break;
-case "SecurityError":
-case "PermissionDeniedError":
-break;
-default:
-alert("error opening yoour camera or microphone"+e.name);
-break;
-}
-closevideocall();
-}
-function reporterror(er){
-console.log(er.name+' '+er.message);
-}
+navigator.mediaDevices.getUserMedia({"audio":true,"video":true}).then(function(stream){
+localVideo.srcObject=stream;
+pc.addStream(stream);
+}).catch(function(e){console.error(e)}) }
 
 
 
