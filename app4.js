@@ -64,7 +64,7 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database: pars.pathname.split('/')[1],
-ssl:true};//local_host=false heroku=true
+ssl: true};//local_host=false heroku=true
 
 
 //var koaws=require('koa-ws');
@@ -177,126 +177,124 @@ var server=app.listen(process.env.PORT || 5000)
 	//if(err)console.log(err)
 	//console.log('listen on port 5000');
 	//});
-	const wss=new WebSocket.Server({server});
-	//var io=require('socket.io')(server);
-	var nextId=Date.now();
+const wss=new WebSocket.Server({server});
+//var io=require('socket.io')(server);
+var nextId=Date.now();
 	
-	function sendtooneuser(bs,target,mstring){
-		var bi=0;
-		for(let i of wss.clients){
-			bi++;
-		if(i.upgradeReq.url===bs.upgradeReq.url){
-			if(i && i.readyState===WebSocket.OPEN){
-			if(i.username===target){
-				console.log('i.username: ',i.username);
-			i.send(mstring);
-				break;
-			}
-			}}
-		//bi++;
-		}
-		console.log('bi: ',bi)
+function sendtooneuser(bs,target,mstring){
+var bi=0;
+for(let i of wss.clients){
+bi++;
+if(i.upgradeReq.url===bs.upgradeReq.url){
+if(i && i.readyState===WebSocket.OPEN){
+if(i.username===target){
+console.log('i.username: ',i.username);
+i.send(mstring);
+break;
+}
+}}
+}
+console.log('bi: ',bi)
+}
 	
-	}
+function getconnectionforid( bs, id){
+var connect=null;
+console.log('FUCK: ',bs.upgradeReq.url);
+for(let i of wss.clients){
+if(i.upgradeReq.url===bs.upgradeReq.url){	
+if(i.clientId===id){
+connect=i;
+break;
+}
+}}
+return connect;
+}
 	
-	function getconnectionforid( bs, id){
-	var connect=null;
-		console.log('FUCK: ',bs.upgradeReq.url);
+function makeuserlistmessage(bs){
+var userlistmsg={type:"userlist", users:[]};
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+userlistmsg.users.push({username:c.username,owner:c.owner});
+}}
+})
+return userlistmsg;
+}
 		
-
-		for(let i of wss.clients){
-		if(i.upgradeReq.url===bs.upgradeReq.url){	
-		if(i.clientId===id){
-		connect=i;
-			break;
-		}
-		}}
-		
-		return connect;
-	}
+function senduserlisttoall(bs){
+var userlistmsg=makeuserlistmessage(bs);
+var userlistmsgstr=JSON.stringify(userlistmsg);
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+c.send(userlistmsgstr)
+}}
+});
+}
+function heartbeat(){
+this.isAlive=true;
+//console.log('pong')
+}
+const interval=setInterval(function ping(){
+wss.clients.forEach(function each(ws){
+if(ws.isAlive===false)return ws.terminate();
+	ws.isAlive=false;
+	ws.ping(JSON.stringify({type:"ping"}),false,true)
+})
+},6000);
 	
-		function makeuserlistmessage(bs){
-		var userlistmsg={type:"userlist", users:[]};
-			wss.clients.forEach(c=>{
-				if(c.upgradeReq.url===bs.upgradeReq.url){
-					if(c && c.readyState===WebSocket.OPEN){
-			userlistmsg.users.push({username:c.username,owner:c.owner});
-				}}
-			})
-			return userlistmsg;
-		}
-		
-		function senduserlisttoall(bs){
-		var userlistmsg=makeuserlistmessage(bs);
-			var userlistmsgstr=JSON.stringify(userlistmsg);
-			var i;
-				
-			wss.clients.forEach(c=>{
-				if(c.upgradeReq.url===bs.upgradeReq.url){
-				if(c && c.readyState===WebSocket.OPEN){
-				c.send(userlistmsgstr)
-				}}
-				});
-		}
-		
-	wss.on('connection',ws=>{
-	console.log('websocket connected: ', ws.upgradeReq.url);
-		ws.clientId=nextId;
-		nextId++;
-		var msg={type:"id",id:ws.clientId};
-		ws.send(JSON.stringify(msg));
-		
-		ws.on('error',e=>console.log('err: ',err))
-		ws.on('close',()=>console.log('websocket closed'))
-		ws.on('message', message=>{
-			//console.log('wss.clients.length: ',ws.clients.size());
-			console.log('Message: ', message);
-			var sendtoclients=true;
-			msg=JSON.parse(message);
-			var connect=getconnectionforid(ws,msg.id);
-			//console.log('connect: ',connect);
-			switch(msg.type){
-				case "message":
-					msg.name=connect.username;
-					msg.text=msg.text;
-					break;
-				case "username":
-					connect.username=msg.name;
-					connect.owner=msg.owner;
-					senduserlisttoall(ws);
-					sendtoclients=false;
-					break;
-			}
-			if(sendtoclients){
-				var msgstring=JSON.stringify(msg);
-				
-			if(msg.target && msg.target !==undefined && msg.target.length !==0){
+wss.on('connection',ws=>{
+console.log('websocket connected: ', ws.upgradeReq.url);
+ws.isAlive=true;
+ws.on('pong',heartbeat);
+ws.clientId=nextId;
+nextId++;
+var msg={type:"id",id:ws.clientId};
+ws.send(JSON.stringify(msg));
+ws.on('error',e=>console.log('err: ',err))
+ws.on('close',()=>console.log('websocket closed'))
+ws.on('message', message=>{
+//console.log('wss.clients.length: ',ws.clients.size());
+console.log('Message: ', message);
+var sendtoclients=true;
+try{
+msg=JSON.parse(message);}catch(e){console.log('error json parse');}
+var connect=getconnectionforid(ws,msg.id);
+//console.log('connect: ',connect);
+switch(msg.type){
+case "message":
+if(connect){msg.name=connect.username;}
+msg.text=msg.text;
+break;
+case "username":
+connect.username=msg.name;
+connect.owner=msg.owner;
+senduserlisttoall(ws);
+sendtoclients=false;
+break;
+}
+if(sendtoclients){
+var msgstring=JSON.stringify(msg);
+if(msg.target && msg.target !==undefined && msg.target.length !==0){
 			//ws.send(message);
-				sendtooneuser(ws,msg.target, msgstring);
-			}else{
-		wss.clients.forEach(c=>{
-		if(c.upgradeReq.url===ws.upgradeReq.url){
-		if(c && c.readyState===WebSocket.OPEN){c.send(msgstring)}
-		}
-		})}
-		}
-			
-			
-		})
-	})
-	
-	
+sendtooneuser(ws,msg.target, msgstring);
+}else{
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===ws.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){c.send(msgstring)}
+}
+})}
+}
+})
+})
 	/*
-	https.createServer(ssl_options,app.callback()).listen(process.env.PORT || 5000, (err) => {
-    //if (err) { throw new Error(err);}
-
-    console.log('Listening on https//localhost: 5000');
-  });
+https.createServer(ssl_options,app.callback()).listen(process.env.PORT || 5000, (err) => {
+//if (err) { throw new Error(err);}
+console.log('Listening on https//localhost: 5000');
+});
 	*/
-	
 });
 console.log('soll on 5000');
-
 
 pool.on('connect', client=>console.log('pool connected'));
 pool.on('error', (err, client)=>console.log('error in pool: ', err.message));

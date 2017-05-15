@@ -110,8 +110,9 @@ overlay:target+.popi{left:0;}
 <b>Owner:</b> <span id="owner">${n.owner}</span><br>
 <b>Tokens: </b> <span id="modelTokens">${model.items}</span><br>
 <b>Websocket id:</b> <span id="modelWebsocketId"></span><br>
-</div>
-<input type="text" id="name" value="Gest1">
+</div><br>
+
+<br>
 <div class="modrtc">
 <h4>You</h4>
 <b>As</b> <span id="yourName">${buser ? buser.nick:'a Guest'}</span><br>
@@ -121,10 +122,10 @@ overlay:target+.popi{left:0;}
 </div><br>
 <div class="firstchild" id="camera-container">
 <div class="camera-box">
-<video id="remoteVideo" autoplay></video>
-<video id="localVideo" autoplay muted></video>
-<button onclick="call();">call</button>
-<button id="hangup-button" onclick="hangupcall();" disabled>Hung Up</button>
+<div><h4>local video</h4><video id="localvideo" autoplay muted style="width:250px;height:250px;border:2px solid green;"></video></div>
+<div><h4>remote video</h4><video id="remotevideo" autoplay style="width:250px;height:250px;border:2px solid red;"></video></div>
+
+<button id="hangupbtn">Hung Up</button>
 </div>
 </div>
 
@@ -136,6 +137,9 @@ overlay:target+.popi{left:0;}
 
 </div>
 Time: <span id="mer">00:00:00</span><br><br>
+<input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button>
+<h5>Userlist</h5>
+<div id="userlist"></div>
 <hr><output id="out"></output>
 
 <a href="#" class="overlay" id="resultativ"></a>
@@ -154,8 +158,11 @@ Time: <span id="mer">00:00:00</span><br><br>
 <input type="text" name="message">
 <input type="submit" value="send to only me">
 </form>
-<button onclick="invite(this);">invite</button>
+
+
 <div id="subscribe"></div>
+<br><b>WebRTC errors:</b><br>
+<span id="rtcerror"></span><br>
 <br><span id="wso"></span>
 <script>
 var seat=0;
@@ -259,7 +266,7 @@ xhr.open('post','/api/set_transfer');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
-out.innerHTML=this.response;
+out.innerHTML=this.response;;
 if(bool) rechnet(this.response);
 }else{
 out.innerHTML=this.response+this.status;
@@ -325,7 +332,7 @@ xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
 out.innerHTML=this.response;
-
+//<input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button>
 }else{
 out.innerHTML=this.response+this.status;
 }}
@@ -339,8 +346,14 @@ var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
 var myusername=null;
+var name,connecteduser;
 var targetusername=null;
-var pc;
+var pc=null;
+var socket=null;
+function do_socket(){
+go_socket();
+//return false;
+}
 
 var hasAddTrack=false;
 //navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -348,6 +361,7 @@ RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection |
 RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
 
 function setusername(s){
+/*
 if(owner.textContent==="true"){
 myusername=modelName.textContent;//document.getElementById("name").value;
 modelWebsocketId.textContent=clientId;
@@ -355,16 +369,37 @@ modelWebsocketId.textContent=clientId;
 document.getElementById("yourWebsocketId").textContent=clientId;
 if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.textContent;}
 }
-s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:owner.textContent}));
+*/
+//alert(document.getElementById("name").value);
+myusername=document.getElementById("name").value;
+s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:'bla'/*owner.textContent*/}));
 }
 
 var loc1=location.hostname+':'+location.port;
 var loc2='alikon.herokuapp.com';
 var loc3=loc1 || loc2;
-//var socket=new WebSocket('ws://'+location.hostname+':'+location.port+'/'+modelName.textContent);
-var socket=new WebSocket('wss://'+loc3+'/'+modelName.textContent);
-function sendtoserver(msg){
-var msgjson=JSON.stringify(msg);
+var new_uri;
+//alert(window.location.protocol);
+if(window.location.protocol==="https:"){
+new_uri='wss:';
+}else{
+new_uri='ws:';
+}
+function go_socket(){
+
+socket=new WebSocket(new_uri+'//'+loc3+'/'+modelName.textContent);
+socket.onopen=function(){
+wso.innerHTML='websocket connected';
+}
+socket.onmessage=go_message;
+socket.onerror=function(e){wso.innerHTML="error: "+e;}
+socket.onclose=function(e){wso.innerHTML="closed";}
+}
+
+function sendtoserver(message){
+if(connecteduser){
+message.target=connecteduser;}
+var msgjson=JSON.stringify(message);
 socket.send(msgjson);
 }
 
@@ -377,18 +412,15 @@ outm.msg="Creating a room";
 socket.send(JSON.stringify(outm));
 }
 
-socket.onopen=function(){
-wso.innerHTML='websocket connected';
-}
+
 
 
 
 document.forms.publish.onsubmit=function(){
-var outm={};http://localhost:5000/webrtc/gru5
+var outm={};
 outm.msg=this.message.value;
 outm.id=clientId;
 outm.type="message";
-
 socket.send(JSON.stringify(outm));
 return false;
 }
@@ -398,48 +430,49 @@ var outm={};
 outm.msg=this.message.value;
 outm.name=myusername;//"Guest1";
 //outm.id="dima";
-outm.type="onlyme";
-outm.target=modelName.textContent;
+outm.id=clientId;
+outm.type="message";
+outm.target=gid('name').value;//modelName.textContent;
 
 socket.send(JSON.stringify(outm));
 return false
 }
 
-socket.onmessage=function(event){
-//if(!pc){call();}
+function go_message(event){
 var msg=JSON.parse(event.data);
-
 if(msg.type=="id"){
 clientId=msg.id;
 setusername(socket);
-
 console.log("case id: "+event.data);
 }else if(msg.type=="username"){
 console.log("case username: "+event.data);
 }else if(msg.type=="message"){
-console.log("case message: "+event.data);
+//console.log("case message: "+event.data);
+showmessage(event.data);
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
-}else if(msg.desc){
-if(!pc){call()}
-var desc=msg.desc;
-	if(desc.type=='offer'){
-	pc.setRemoteDescription(desc).then(function(){
-	return pc.createAnswer();
-	}).then(function(answer){
-	return pc.setLocalDescription(answer);
-	}).then(function(){
-	var str=JSON.stringify({"target":msg.name,"name":myusername,"desc":pc.localDescription});
-		socket.send(str)
-	}).catch(function(e){console.error(e)})
-	}else if(desc.type=='answer'){
-	pc.setRemoteDescription(desc).catch(function(e){console.error(e)})
-	}else{console.log('unsupported type')}
-}else pc.addIceCandidate(msg.candidate).catch(function(e){console.error(e)})
+var si='';
+msg.users.forEach(function(el,i){
+si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
+})
+userlist.innerHTML=si;
 
-showmessage(event.data);
+}else if(msg.type=='offer'){
+handleoffer(msg.offer,msg.name);
+}else if(msg.type=='answer'){
+handleanswer(msg.answer);
+}else if(msg.type=='candidate'){
+handlecandidate(msg.candidate);
+}else if(msg.type=='leave'){
+handleleave();
+}else if(msg.type=='call_offer'){
+call_offer(msg.name);
+}else if(msg.type=='call_answer'){
+call_answer(msg.name,msg.answ);
+}else if(msg.type=='reject_call'){
+reject_call(msg.name);
+}else{console.warn('uknown msg type',msg.type);}
 }
-
 
 function showmessage(message){
 var messageelement=document.createElement('div');
@@ -447,101 +480,146 @@ messageelement.appendChild(document.createTextNode(message));
 subscribe.appendChild(messageelement);
 }
 
-socket.onerror=function(e){wso.innerHTML="error: "+e;}
-socket.onclose=function(e){wso.innerHTML="closed";}
-
 //webrtc one to one
- var config = {
-    'iceServers': [
-        {'urls': 'stun:stun.services.mozilla.com'},
-        {'urls': 'stun:stun.l.google.com:19302'},
-    ]
-};
-function call(){
+ var config = {'iceServers': [{'urls': 'stun:stun.services.mozilla.com'},{'urls': 'stun:stun.l.google.com:19302'}]};
+
+function callrtc(el){
+if(myusername==el.textContent){return;}
+socket.send(JSON.stringify({name:myusername,target:el.textContent,type:"call_offer"}));
+}
+
+function call_offer(name){
+if(confirm('User '+name+' sent you a call. Accept?')){
+socket.send(JSON.stringify({type:"call_answer",answ:true,target:name,name:myusername}));
+}else{
+socket.send(JSON.stringify({type:"call_answer",answ:false,target:name,name:myusername}));
+}
+}
+
+function call_answer(name,isok){
+console.log('call_answer: ',name, isok);
+if(isok){
+go_webrtc(name);
+}else{
+socket.send(JSON.stringify({type:"reject_call",name:myusername,target:name}))
+}
+}
+			
+function reject_call(name){
+console.warn('User '+name+' rejected your call!');
+}
+
+function go_webrtc(name){
+//if(el.textContent===myname.value){alert('u cant talk to yourself');return;}
+if(name==gid('name').value){alert('u cant talk to yourself');return;}
+if(pc !=null){console.error('pc gibt es');console.log('pc: ',pc);return;}  
+//var calltousername=el.textContent;
+var calltousername=name;
+//alert(calltousername);		
+navigator.mediaDevices.getUserMedia({video:true,audio:false}).then(function(mstream){
+				
+localvideo.srcObject=mstream;
+				
 pc=new RTCPeerConnection(config);
-pc.onicecandidate=function(ev){
-socket.send(JSON.stringify({"target":"gru5","name":myusername,"candidate":ev.candidate}));
+pc.addStream(mstream);
+pc.onaddstream=function(e){
+remotevideo.srcObject=e.stream;
 }
-pc.onnegotiationneeded=function(){
-pc.createOffer().then(function(offer){
-return pc.setLocalDescription(offer);
-}).then(function(){
-socket.send(JSON.stringify({"desc":pc.localDescription,"target":"gru5",name:myusername}))
-}).catch(function(e){console.error(e)})
+pc.onremovestream=function(){
+handleleave();
+console.log('on remove stream');					
 }
-pc.onaddstream=function(ev){
-console.log('got remote stream');
-    //remoteVideo.src = window.URL.createObjectURL(event.stream);
-remoteVideo.srcObject=ev.stream;
+pc.onicecandidate=function(event){
+if(event.candidate){
+sendtoserver({type:'candidate',candidate:event.candidate})
 }
-navigator.mediaDevices.getUserMedia({"audio":true,"video":true}).then(function(stream){
-localVideo.srcObject=stream;
+}
+if(calltousername.length>0){
+connecteduser=calltousername;
+pc.createOffer(function(offer){
+sendtoserver({type:'offer',offer:offer, name:myusername})
+pc.setLocalDescription(offer);
+},function(err){console.error(err);
+rtcerror.innerHTML=err+'<br>';
+})
+}
+}).catch(function(er){console.error(er);
+rtcerror.innerHTML=er.name+'<br>';
+})
+}
+
+function handleoffer(offer,name){
+//if(pc){console.error('pc gibt es');return;}  
+connecteduser=name;
+			
+navigator.mediaDevices.getUserMedia({video:true,audio:false}).then(function(stream){	
+
+localvideo.srcObject=stream;
+				
+pc=new RTCPeerConnection(config);
 pc.addStream(stream);
-}).catch(function(e){console.error(e)}) }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+pc.onaddstream=function(e){
+remotevideo.srcObject=e.stream;
+}
+pc.onremovestream=function(){
+handleleave();
+console.log('on remove stream');
+}
+pc.onicecandidate=function(event){
+if(event.candidate){
+sendtoserver({type:'candidate',candidate:event.candidate})
+}
+}
+pc.setRemoteDescription(offer);
+console.log('offer: ',offer.sdp);
+pc.createAnswer(function(answer){
+pc.setLocalDescription(answer);
+sendtoserver({type:'answer',answer:answer})
+},function(er){console.error(er);
+rtcerror.innerHTML=er+'<br>';
+})
+}).catch(function(er){console.error(er);
+rtcerror.innerHTML=er.name+'<br>';
+})
+}
+			
+function handleanswer(answer){
+console.log('ANSWER: ',answer.sdp);
+pc.setRemoteDescription(answer);
+}
+			
+function handlecandidate(cand){
+console.log('candidate came');
+if(pc)pc.addIceCandidate(cand);
+}
+			
+hangupbtn.addEventListener('click', function(){
+sendtoserver({type:'leave'});
+handleleave();
+})
+			
+function handleleave(){
+connecteduser=null;
+if(remotevideo.srcObject){
+remotevideo.srcObject.getTracks().forEach(function(track){track.stop();})
+}
+if(localvideo.srcObject){
+localvideo.srcObject.getTracks().forEach(function(track){track.stop();})
+}
+remotevideo.src=null;
+localvideo.src=null;
+//if(!pc.signalingState=='closed'){
+console.log('pc: ',pc.signalingState);
+pc.close();
+pc.onicecandidate=null;
+pc.onaddstream=null;
+pc.onremovestream=null;
+pc=null;
+//}
+}
+
+
+function gid(id){return document.getElementById(id);}
 </script>
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
