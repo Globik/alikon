@@ -58,6 +58,7 @@ console.log('pwd auth[1] ', cauth[1]);
 console.log('host: ',pars.hostname);
 console.log('port: ',pars.port);
 console.log('db name: ',pars.pathname.split('/')[1]);
+console.log('me');
 var pconfig={
 user:cauth[0],
 password:cauth[1],

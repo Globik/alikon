@@ -400,6 +400,7 @@ function sendtoserver(message){
 if(connecteduser){
 message.target=connecteduser;}
 var msgjson=JSON.stringify(message);
+console.log('msgjson: ',msgjson);
 socket.send(msgjson);
 }
 
@@ -472,6 +473,7 @@ call_answer(msg.name,msg.answ);
 }else if(msg.type=='reject_call'){
 reject_call(msg.name);
 }else{console.warn('uknown msg type',msg.type);}
+showmessage(event.data);
 }
 
 function showmessage(message){
@@ -481,7 +483,9 @@ subscribe.appendChild(messageelement);
 }
 
 //webrtc one to one
- var config = {'iceServers': [{'urls': 'stun:stun.services.mozilla.com'},{'urls': 'stun:stun.l.google.com:19302'}]};
+ var config = {'iceServers': [{'urls': 'stun:stun.services.mozilla.com'},{'urls': 'stun:stun.l.google.com:19302'},
+{'urls':'turn:numb.viagenie.ca','username':'gru5@yandex.ru','credential':'bischt'}
+]};
 
 function callrtc(el){
 if(myusername==el.textContent){return;}
@@ -540,11 +544,11 @@ pc.createOffer(function(offer){
 sendtoserver({type:'offer',offer:offer, name:myusername})
 pc.setLocalDescription(offer);
 },function(err){console.error(err);
-rtcerror.innerHTML=err+'<br>';
+rtcerror.innerHTML+=err+'<br>';
 })
 }
 }).catch(function(er){console.error(er);
-rtcerror.innerHTML=er.name+'<br>';
+rtcerror.innerHTML+=er.name+'<br>';
 })
 }
 
@@ -576,10 +580,10 @@ pc.createAnswer(function(answer){
 pc.setLocalDescription(answer);
 sendtoserver({type:'answer',answer:answer})
 },function(er){console.error(er);
-rtcerror.innerHTML=er+'<br>';
+rtcerror.innerHTML+=er+'<br>';
 })
 }).catch(function(er){console.error(er);
-rtcerror.innerHTML=er.name+'<br>';
+rtcerror.innerHTML+=er.name+'<br>';
 })
 }
 			
@@ -589,8 +593,11 @@ pc.setRemoteDescription(answer);
 }
 			
 function handlecandidate(cand){
-console.log('candidate came');
-if(pc)pc.addIceCandidate(cand);
+console.log('candidate came',cand);
+if(pc)pc.addIceCandidate(cand).then(function(){
+console.log('ice success');
+rtcerror.innerHTML+='ice success<br>';
+},function(e){console.error('ice: ',e);rtcerror.innerHTML+=e+'<br>';});
 }
 			
 hangupbtn.addEventListener('click', function(){
