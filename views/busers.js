@@ -483,10 +483,10 @@ subscribe.appendChild(messageelement);
 }
 
 //webrtc one to one
- var config = {'iceServers': [{'urls': 'stun:stun.services.mozilla.com'},{'urls': 'stun:stun.l.google.com:19302'},
+/* var config = {'iceServers': [{'urls': 'stun:stun.services.mozilla.com'},{'urls': 'stun:stun.l.google.com:19302'},
 {'urls':'turn:numb.viagenie.ca','username':'gru5@yandex.ru','credential':'bischt'}
-]};
-
+]};*/
+var config={"iceServers":[{"urls":"stun:stun.l.google.com:19302"}]}
 function callrtc(el){
 if(myusername==el.textContent){return;}
 socket.send(JSON.stringify({name:myusername,target:el.textContent,type:"call_offer"}));
@@ -538,12 +538,20 @@ if(event.candidate){
 sendtoserver({type:'candidate',candidate:event.candidate})
 }
 }
+
+pc.oniceconnectionstatechange=function(ev){
+console.log('ice connection state changed to: '+pc.iceConnectionState);
+rtcerror.innerHTML+='ice connect state: '+pc.iceConnectionState+'<br>';
+}
+
 if(calltousername.length>0){
 connecteduser=calltousername;
-pc.createOffer(function(offer){
-sendtoserver({type:'offer',offer:offer, name:myusername})
-pc.setLocalDescription(offer);
-},function(err){console.error(err);
+pc.createOffer().then(function(offer){
+//sendtoserver({type:'offer',offer:offer, name:myusername})
+ return pc.setLocalDescription(offer);
+}).then(function(){
+sendtoserver({type:'offer',offer:pc.localDescription, name:myusername})
+}).catch(function(err){console.error(err);
 rtcerror.innerHTML+=err+'<br>';
 })
 }
@@ -574,16 +582,21 @@ if(event.candidate){
 sendtoserver({type:'candidate',candidate:event.candidate})
 }
 }
-pc.setRemoteDescription(offer);
-console.log('offer: ',offer.sdp);
-pc.createAnswer(function(answer){
-pc.setLocalDescription(answer);
-sendtoserver({type:'answer',answer:answer})
-},function(er){console.error(er);
+pc.oniceconnectionstatechange=function(ev){
+console.log('ice connection state changed to: '+pc.iceConnectionState);
+rtcerror.innerHTML+='ice connect state: '+pc.iceConnectionState+'<br>';
+}
+pc.setRemoteDescription(offer).then(function(){
+//console.log('offer: ',offer.sdp);
+return pc.createAnswer().then(function(answer){
+return pc.setLocalDescription(answer);}).then(function(){
+sendtoserver({type:'answer',answer:pc.localDescription})
+}).catch(function(er){console.error(er);
 rtcerror.innerHTML+=er+'<br>';
 })
 }).catch(function(er){console.error(er);
 rtcerror.innerHTML+=er.name+'<br>';
+})
 })
 }
 			
