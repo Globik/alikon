@@ -141,7 +141,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 <br>
 <button onclick="xir();">get xir</button>
 <br>
-<span id="out"></span>
+<span id="fuckingout"></span>
 <br>
 <h5>Userlist</h5>
 <div id="userlist"></div>
@@ -491,7 +491,8 @@ subscribe.appendChild(messageelement);
 /* var config = {'iceServers': [{'urls': 'stun:stun.services.mozilla.com'},{'urls': 'stun:stun.l.google.com:19302'},
 {'urls':'turn:numb.viagenie.ca','username':'gru5@yandex.ru','credential':'bischt'}
 ]};*/
-var config={"iceServers":[{"urls":"stun:stun.l.google.com:19302"}]}
+//var config={"iceServers":[{"urls":"stun:stun.l.google.com:19302"}]};
+var config;
 function callrtc(el){
 if(myusername==el.textContent){return;}
 socket.send(JSON.stringify({name:myusername,target:el.textContent,type:"call_offer"}));
@@ -652,7 +653,7 @@ var application="default";
 var room="default";
 var secure=1;
 var xhr=new XMLHttpRequest();
-    xhr.open("POST","https://api.xirsys.com/getIceServers",true);//getIceServers
+    xhr.open("POST",/*"https://api.xirsys.com/getIceServers"*/'https://service.xirsys.com/ice',true);//getIceServers
 	var params='ident='+encodeURIComponent(ident)+'&secret='+encodeURIComponent(secret)
 	+'&domain='+encodeURIComponent(domain)+
 	'&application='+encodeURIComponent(application)+
@@ -660,15 +661,20 @@ var xhr=new XMLHttpRequest();
 	'&secure='+encodeURIComponent(secure);
 	 xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	 
-	 xhr.onload=function(e,data,status){
+	 xhr.onload=function(ev){
 	 if(this.status==200){
-	 var data=JSON.parse(this.response);
-	 out.innerHTML=data;
+alert(this.response);
+	 var wedata=JSON.parse(this.response);
+	 //fuckingout.innerHTML=this.response;
+fuckingout.innerHTML=wedata.d;
 	 //customConfig=data.d;
-	 alert(data+' : '+data.d);
+config=wedata.d;
+	 alert('data.d : '+wedata.s);
+
 	 }
 	 else{out.innerHTML=this.response;
 	 }}
+xhr.onerror=function(e){alert(e);}
 	 xhr.send(params);
 }
 
