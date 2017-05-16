@@ -68,7 +68,7 @@ database: pars.pathname.split('/')[1],
 ssl: true};//local_host=false heroku=true nn
 
 
-//var koaws=require('koa-ws');
+//var ggggkoaws=require('koa-ws');
 var app=koa();
 //var io=new IO();
 //io.attach(app);

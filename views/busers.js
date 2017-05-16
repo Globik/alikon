@@ -138,6 +138,11 @@ overlay:target+.popi{left:0;}
 </div>
 Time: <span id="mer">00:00:00</span><br><br>
 <input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button>
+<br>
+<button onclick="xir();">get xir</button>
+<br>
+<span id="out"></span>
+<br>
 <h5>Userlist</h5>
 <div id="userlist"></div>
 <hr><output id="out"></output>
@@ -638,6 +643,34 @@ pc=null;
 //}
 }
 
+function xir(){
+var ident="rony";
+var secret="ff6a4897-e05c-4a19-9d2d-f555857a024a";
+var domain="alikon.herokuapp.com";
+//var domain="localhost:5000";
+var application="default";
+var room="default";
+var secure=1;
+var xhr=new XMLHttpRequest();
+    xhr.open("POST","https://api.xirsys.com/getIceServers",true);//getIceServers
+	var params='ident='+encodeURIComponent(ident)+'&secret='+encodeURIComponent(secret)
+	+'&domain='+encodeURIComponent(domain)+
+	'&application='+encodeURIComponent(application)+
+	'&room='+encodeURIComponent(room)+
+	'&secure='+encodeURIComponent(secure);
+	 xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+	 
+	 xhr.onload=function(e,data,status){
+	 if(this.status==200){
+	 var data=JSON.parse(this.response);
+	 out.innerHTML=data;
+	 //customConfig=data.d;
+	 alert(data+' : '+data.d);
+	 }
+	 else{out.innerHTML=this.response;
+	 }}
+	 xhr.send(params);
+}
 
 function gid(id){return document.getElementById(id);}
 </script>
