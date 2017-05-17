@@ -139,7 +139,7 @@ overlay:target+.popi{left:0;}
 Time: <span id="mer">00:00:00</span><br><br>
 <input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button>
 <br>
-<button onclick="xir();">get xir</button>
+<button onclick="xir();">get xir</button><button onclick="bonfigu();">bonfig</button>
 <br>
 <span id="fuckingout"></span>
 <br>
@@ -491,7 +491,10 @@ subscribe.appendChild(messageelement);
 /* var config = {'iceServers': [{'urls': 'stun:stun.services.mozilla.com'},{'urls': 'stun:stun.l.google.com:19302'},
 {'urls':'turn:numb.viagenie.ca','username':'gru5@yandex.ru','credential':'bischt'}
 ]};*/
-//var config={"iceServers":[{"urls":"stun:stun.l.google.com:19302"}]};
+var bonfig={"iceServers":[{"url":"stun:stun.l.google.com:19302"}
+,{"username":"gru5@yandex.ru","credential":"bischt","url":"turn:numb.viagenie.ca?transport=udp"},
+{"username":"gru5@yandex.ru","credential":"bischt","url":"turn:numb.viagenie.ca?transport=tcp"}
+]};
 var config;
 function callrtc(el){
 if(myusername==el.textContent){return;}
@@ -546,6 +549,7 @@ sendtoserver({type:'candidate',candidate:event.candidate})
 }
 
 pc.oniceconnectionstatechange=function(ev){
+if(pc)
 console.log('ice connection state changed to: '+pc.iceConnectionState);
 rtcerror.innerHTML+='ice connect state: '+pc.iceConnectionState+'<br>';
 }
@@ -677,7 +681,10 @@ config=wedata.d;
 xhr.onerror=function(e){alert(e);}
 	 xhr.send(params);
 }
-
+function bonfigu(){
+//alert(1);
+config=bonfig;
+}
 function gid(id){return document.getElementById(id);}
 </script>
 </main><footer id="footer">${footer.footer({})}</footer>

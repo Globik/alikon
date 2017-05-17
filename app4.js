@@ -38,7 +38,7 @@ var locals={
 
 */
 var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-//var database_url=configDB.pg_url;// for home development
+//var database_url=configDB.pg_url;// for home development nnn
 
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
