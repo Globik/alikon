@@ -33,7 +33,8 @@
 "bitpay-rest":"0.3.1",
 "bitauth":"0.3.2",
 "wallet-address-validator":"0.1.0",
-"ws":"2.3.1"
+"ws":"2.3.1",
+"mediasoup":"1.2.0"
 },
   
 "engines": {

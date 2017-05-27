@@ -383,6 +383,15 @@ yield db.query(`insert into converts(us_id, amt_tok) values('${useremail}', ${am
 	this.body={info:"OK",body:this.request.body}
 })
 
+/* DEMO */
+pub.get('/demo/videostream',function *(){
+this.body=this.render('demo_videostream',{buser:this.req.user})
+})
+
+pub.get('/demo/webrtc',function *(){
+this.body=this.render('demo_webrtc',{buser:this.req.user})
+})
+
 function readStr(n){
 return new Promise((res,rej)=>{
 let resu=[];let resul='';

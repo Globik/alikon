@@ -48,6 +48,9 @@ ${users_list(lusers)}
 <h6>In a test mode</h6>
 <a href='/tipping/purchase_tokens'>Purchase tokens</a>
 <output id="wso"></output>
+<br><br>
+<a href="/demo/videostream">test videostream</a><br><br>
+<a href="/demo/webrtc">test webrtc</a><br><br>
 <script>
 /*
 var socket=new WebSocket('ws://'+location.hostname+':'+location.port);
