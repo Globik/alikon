@@ -35,7 +35,7 @@ const boom=new EventEmitter();
 const server = mediasoup.Server({logLevel:"debug",
 								rtcIP4:true,
 								rtcIP6:false,
-								rtcAnnouncedIPv4:null,
+								rtcAnnouncedIPv4:'54.159.161.180',
 								rtcAnnouncedIPv6:null,
 								rtcMinPort:40000,
 								rtcMaxPort:49999});
