@@ -38,7 +38,9 @@ const server = mediasoup.Server({logLevel:"debug",
 								rtcAnnouncedIPv4:'54.159.161.180',
 								rtcAnnouncedIPv6:null,
 								rtcMinPort:40000,
-								rtcMaxPort:49999});
+								rtcMaxPort:49999,
+								dtlsCertificateFile:"data/mycert.pem",
+								dtlsPrivateKeyFile:"data/mykey.pem"});
 /* **************** */
 const configDB=require('./config/database.js');
 const {msg_handler} = require('./libs/mailer.js');
