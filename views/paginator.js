@@ -1,6 +1,6 @@
 //paginator.js
 'use strict';
-var paginator=n=> `
+const paginator=n=> `
 page: ${n.locals.page}<br>
 pages: ${n.locals.total_pages}<br>
 total: ${n.locals.total_articles}<br>

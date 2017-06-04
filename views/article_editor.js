@@ -1,7 +1,7 @@
 const sub_title=false, slogan=false, leader=false,tags=false,category=false,rubrik=false;
-var article_editor= n =>{
+const article_editor= n =>{
 let s="";
-var {buser,post}=n;
+var {post}=n;const buser=n.user;
 s+=`<!-- article_editor.js -->
 <a href="#" class="overlay" id="popredaktor"></a>
 <section class="popup">

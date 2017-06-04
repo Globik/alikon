@@ -10,8 +10,9 @@ const footer=require('./footer');
 var warnig=false;	  
 var haupt_ban=false;
 
-var adm_photo_gal=n=>{
-let {buser,post, showmodule:{mainmenu,profiler}}=n;
+const adm_photo_gal=n=>{
+let {post, showmodule:{mainmenu,profiler}}=n;
+const buser=n.user;
 return`<!DOCTYPE html><html lang="en">
 <head>${head.head({title:"Add photos", cssl:["/css/main2.css","/css/popup.css","/css/loader.css"]})}</head>
 <body>

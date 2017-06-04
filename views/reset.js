@@ -1,9 +1,9 @@
-var head=require('./head');
-var dev_pwd=process.env.DEV_PWD;
-var login_css=require('./login_css.js');
+const head=require('./head');
+const dev_pwd=process.env.DEV_PWD;
+const login_css=require('./login_css.js');
 var glocal_style=true;
 
-var reset= n =>{
+const reset= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
 ${head.head({title:"Reset Password", 

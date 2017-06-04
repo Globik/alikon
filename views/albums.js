@@ -8,8 +8,8 @@ const admin_main_menu=require('./admin_main_menu');
 const footer=require('./footer');
 var warnig=false;	  
 var haupt_ban=false;
-var albums= n =>{
-let {buser, albums, showmodule:{mainmenu,profiler}}=n;
+const albums= n =>{
+let { albums, showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return `<!DOCTYPE html><html lang="en">
 <head>${head.head({title:"Photo Albums",cssl:["/css/main2.css"],/*csshelper:`${login_css.login_css({})}`*/})}</head>
 <body>

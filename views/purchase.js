@@ -1,9 +1,9 @@
 //purchase.js
-var head=require('./head'),
+const head=require('./head'),
     header_menu=require('./header_menu');
 
-var purchase = n=>{
-var {buser}=n;
+const purchase = n=>{
+ const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
 <head>${head.head({title:"Purchase Tokens", js:["https://bitpay.com/bitpay.min.js"]})}</head>
 <body>

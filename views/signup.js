@@ -6,7 +6,7 @@ var login_css=require('./login_css.js');
 var head=require('./head.js');
 //var glocal_style=true;
 
-var signup = n =>{
+const signup = n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
 ${head.head({title:"sign up",cssl:["/css/login2.css"]})};

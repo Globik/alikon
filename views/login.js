@@ -6,8 +6,8 @@ const dev_pwd=process.env.DEV_PWD;
 const timeout_login=5000;
 //var dev_pwd="kuku";
 const dev_email=process.env.DEV_EMAIL;
-var login= n =>{
-	let {buser,showmodule:{mainmenu,profiler}}=n;
+const login= n =>{
+	let {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",cssl:["css/login2.css"]})}</head>
 <body>
 <main id="pagewrap">

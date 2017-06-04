@@ -1,6 +1,6 @@
 //vidget_tokens.js
 const dolpertok=0.05;
-var vidget_tokens=n=>{
+const vidget_tokens=n=>{
 return `
 <b>Token balance:</b> <span id="tokens">${n.buser ? n.buser.items: '0'}</span> 
 <h5>Transfer tokens</h5>

@@ -1,8 +1,8 @@
-var head=require('./head.js');
-var login_css=require('./login_css.js');
+const head=require('./head.js');
+const login_css=require('./login_css.js');
 var glocal_style=true;
 
-var forgot= n =>{
+const forgot= n =>{
 return `<!DOCTYPE html><html lang="en">
 <head>
 ${head.head({title:"Reset Password",cssl:["/css/login2.css"] })}

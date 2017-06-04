@@ -1,14 +1,15 @@
 //haupt_page.js
-var head=require('./head'),
+const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
     footer=require('./footer');
 var warnig=false;	  
 var haupt_ban=false;
 
-var haupt_page= n=>{
-	var {buser,lusers,showmodule:{mainmenu,profiler}}=n;
+const haupt_page= n=>{
+const {lusers,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
+const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
 <head>${head.head({title:"Videochat Alikon", meta:`${get_meta()}`,csslink:"/css/main2.css"})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}

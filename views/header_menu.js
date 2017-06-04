@@ -1,6 +1,7 @@
 //header_menu.js
 var sign_up=false;
-var header_menu=n=>{
+const header_menu=n=>{
+n.buser=n.user;
 	return `<!-- header_menu.js -->
 	<!-- <ul id="menu"> 
 	<li><a href="/">home</a>

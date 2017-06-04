@@ -3,7 +3,7 @@
 var moment=require('moment');  
 var zagl=true;
 var metatagsector=false;  
-var articles_block=n=>`${n.posts ? getArt(n) : ``}${zagl ? getZaglushkaPost(n) : ``}`;
+const articles_block=n=>`${n.posts ? getArt(n) : ``}${zagl ? getZaglushkaPost(n) : ``}`;
 module.exports={articles_block};
   
 function getArt(n){ 

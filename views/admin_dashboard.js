@@ -8,7 +8,7 @@ var haupt_ban=false;
 
 
 let admin_dashboard=n=>{
-var {buser,showmodule:{mainmenu,profiler}}=n;
+var {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Dashboard", csslink:"/css/main2.css"})}</head><body>
 ${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>

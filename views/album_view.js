@@ -8,8 +8,8 @@ const footer=require('./footer');
 var warnig=false;	  
 var haupt_ban=false;
 var photos2=null;
-var album_view=n=>{
-let {buser, photos, showmodule:{mainmenu,profiler}}=n;
+const album_view=n=>{
+let {photos, showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return`<!DOCTYPE html><html lang="en">
 <head>${head.head({title:"Image uploader", cssl:["/css/main2.css","/css/popup.css"]})}</head>
 <body>

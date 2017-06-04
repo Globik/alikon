@@ -9,8 +9,8 @@ const paginator=require('./paginator.js');
 const article_editor=require('./article_editor.js');
 const footer=require('./footer.js'); 
 
-var articles_page=n=>{ 
-let {buser,showmodule:{mainmenu,profiler}}=n;
+const articles_page=n=>{ 
+let {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 
 return `<!DOCTYPE html>
 <!-- articles_page.js -->

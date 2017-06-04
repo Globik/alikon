@@ -22,36 +22,35 @@ const pub=new Router();
 
 //bpclient.on('ready',()=>{console.log('bitpay ready')})
 const limit=3;
-pub.get('/',function *(){
+pub.get('/',async ctx=>{
 let result=null;
-let db=this.db;
+let db=ctx.db;
 try{
-var us=yield db.query(`select nick from busers`);
-	result=us.rows;
+var us=await db.query(`select nick from busers`);
+result=us.rows;
 }catch(e){console.log(e)}
-this.session.dorthin=this.path;
-this.body=this.render('haupt_page',{buser:this.req.user,lusers:result});
+ctx.session.dorthin=this.path;
+ctx.body=ctx.render('haupt_page',{lusers:result});
 });
 
 // bitpay callback's webhook
-pub.post("/bp/cb",function*(){
-console.log("FROM BITPAY? :", this.request.body);
-let db=this.db;
+pub.post("/bp/cb", async ctx=>{
+console.log("FROM BITPAY? :", ctx.request.body);
+let db=ctx.db;
 try{
-//yield db.query(`insert into bitpayers(infbp) values('${JSON.stringify(this.request.body)}')`);
-yield db.query(`insert into bitpayers(infbp) values('${JSON.stringify(this.request.body)}') 
-on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"${this.request.body.status}"') 
+await db.query(`insert into bitpayers(infbp) values('${JSON.stringify(ctx.request.body)}') 
+on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"${ctx.request.body.status}"') 
 where bitpayers.infbp->>'status' not like '%complete%'`);
-	}catch(e){console.log(e.message);this.throw(400,e.message);}
-	this.status=200;
-this.body={info:"OK"}
+}catch(e){console.log(e.message);ctx.throw(400,e.message);}
+ctx.status=200;
+ctx.body={info:"OK"}
 });
 
-pub.post('/api/dummy_set_bitpay',function*(){
+pub.post('/api/dummy_set_bitpay', async ctx=>{
 //console.log('DUMMY: ',this.request.body);
-	let locs=this.request.body;
+	let locs=ctx.request.body;
 	var mummy={},zomby={};
-	let boss=this.boss;
+	let boss=ctx.boss;
 	mummy.id=locs.id;
 	mummy.status="paid";
 	mummy.posData=locs.posData;
@@ -71,12 +70,12 @@ pub.post('/api/dummy_set_bitpay',function*(){
 	try{
 // '{"id":"a","status":"complete","posData":"{\"items\":10}","buyerFields":"{\"buyerEmail\":\"gru5@yandex.ru\"}"}'
 	console.log('mummy: ',mummy);
-let jobid=yield boss.publish('bitpay_paid',{message:mummy},{startIn:'35 seconds'});
+let jobid=await boss.publish('bitpay_paid',{message:mummy},{startIn:'35 seconds'});
 	console.log('jobid: ',jobid);
-let jobidu=yield boss.publish('bitpay_complete',{message:zomby},{startIn:'1 minute'});
+let jobidu=await boss.publish('bitpay_complete',{message:zomby},{startIn:'1 minute'});
 	console.log('jobidu: ',jobidu);
-	}catch(e){console.log(e);this.throw(400,e.message);}
-	this.body={info:"OK"};
+	}catch(e){console.log(e);ctx.throw(400,e.message);}
+	ctx.body={info:"OK"};
 	
 	/*DUMMY:  { url: 'https://test.bitpay.com/invoice?id=3da5psPieZE2H4TJkiKwwo',
   posData: '{"items":100}',
@@ -112,19 +111,19 @@ let jobidu=yield boss.publish('bitpay_complete',{message:zomby},{startIn:'1 minu
 */
 })
 
-pub.get('/login',function *(){
-var m=this.session.messaga;
-	this.body=this.render('login',{message:m});
-this.session.messaga=null;
+pub.get('/login', async ctx=>{
+let m=ctx.session.bmessage;
+ctx.body=ctx.render('login',{message:m});
+delete ctx.session.bmessage;
 });
 
-pub.get('/signup',function *(){
-	if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
-var m=this.session.messaga;
-	console.log('isRequest is Authenticated?: => ',this.req.isAuthenticated());
-	this.body=this.render('signup',{message:'signing up: '+m});
-this.session.messaga=null;
+pub.get('/signup', async ctx=>{
+if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
+let m=ctx.session.bmessage;
+ctx.body=ctx.render('signup',{message:'signing up: '+m});
+delete ctx.session.bmessage;
 });
+/*
 pub.post('/login', function*(next) {
 var ctx = this;yield* passport.authenticate('local',function*(err, user,info) {
 	if (err) throw err;
@@ -134,7 +133,42 @@ if (!user) {ctx.session.messaga=[info.message];
 		ctx.session.messaga=null;
 		yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)}
 		);
+*/
+pub.post('/login', (ctx,next)=>{
+if(ctx.isAuthenticated()){
+if(ctx.state.xhr){
+ctx.throw(409, 'Schon authenticated!')
+}else{
+return ctx.redirect('/')
+}
+}
+return passport.authenticate('local', (err,user,info,status)=>{
+if(ctx.state.xhr){
+if(err){ctx.body={success:false,info:err.message}; ctx.throw(500,err.message);}
+if(user===false){
+ctx.body={success:false,info:info.message}
+ctx.throw(401,info.message)
+}else{
+ctx.body={success:true,info:info.message}
+return ctx.login(user)
+}
+}else{
+if(err){
+ctx.session.bmessage={success:false,error:err.message}; return ctx.redirect('/login');
+}
+if(user===false){
+ctx.session.bmessage={success:false, error:info.message};
+ctx.redirect('/login')
+}else{
+ctx.redirect('/')
+return ctx.login(user)
+}
+}
+}
+)(ctx,next)
+})
 
+/*
 pub.post('/signup', function*(next){
 var ctx = this;yield* passport.authenticate('local-signup',function*(err, user,info) {
 	//console.log('ERR, USER, INFO: ',err.message,user,info);
@@ -142,9 +176,7 @@ var ctx = this;yield* passport.authenticate('local-signup',function*(err, user,i
 	if (err) {
 		// 23514: new row for relation "busers" violates check constraint "busers_email_check"
 		// 23505: email is already in use
-		/*if(err.code==23505){ctx.throw(420,"Another user with this email already exists.");}
-		else if(err.code==23514){ctx.throw(421,"The email address you entered is not valid. Please try again.");}
-		else{ctx.throw(409,err.message);}*/
+		
 		ctx.throw(409,err);
 	}
 if (!user) {ctx.session.messaga=[info.message];
@@ -161,84 +193,111 @@ Head over to your inbox and click on the "Activate My Account" button to validat
 		 }}).call(this, next)}
 		
 		)
-//pub.post('/login',passport.authenticate('local',{successRedirect:'/',failureRedirect:'/'}));
-pub.get('/logout', function*() {this.logout();this.redirect(this.session.dorthin || '/');});
-pub.get('/forgot', function*(){
-//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
-this.body=this.render('forgot',{});	
+		*/
 
+
+pub.post('/signup', (ctx,next)=>{
+if(ctx.isAuthenticated()){
+if(ctx.state.xhr){
+ctx.throw(409, 'Schon authenticated!')
+}else{
+return ctx.redirect('/')
+}}
+return passport.authenticate('local-signup', (err,user,info,status)=>{
+console.log(err,user,info,status)
+if(ctx.state.xhr){
+	//23505 name already in use
+if(err){ctx.body={success:false, info:err.message,code:err.code, detail:err.detail}; ctx.throw(500, err.message);}
+if(!user){
+ctx.body={success:false,info:info.message}
+}else{
+ctx.body={success:true,info:info.message}
+return ctx.login(user)
+}
+}else{
+if(err){
+ctx.session.bmessage={success:false,error:err.message,code:err.code,detail:err.detail}; return ctx.redirect('/signup');
+}
+if(!user){
+ctx.session.bmessage={success:false,error:info.message}
+ctx.redirect('/signup')
+}else{	
+ctx.redirect('/signup')
+ctx.session.bmessage={success:true, msg: info.message}
+return ctx.login(user)
+}
+}})(ctx,next)
+})
+
+pub.get('/logout', ctx=>{ctx.logout();ctx.redirect(ctx.session.dorthin || '/');});
+pub.get('/forgot', ctx=>{
+//if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
+ctx.body=ctx.render('forgot',{});	
 });
-pub.post('/forgot',function*(){
-	if(!this.request.body.email) this.throw(400,"Please, provide your email!");
-	let db=this.db;
+
+pub.post('/forgot', async ctx=>{
+if(!ctx.request.body.email) ctx.throw(400,"Please, provide your email!");
+let db=ctx.db;
 	//fordert LISTEN reset
 	//notif-antwort:{email,token,toke_type='reset'}
-	try{
-var mid=yield db.query(`select request_password_reset('${this.request.body.email}')`);
-	}catch(e){
+try{
+var mid=await db.query(`select request_password_reset('${ctx.request.body.email}')`);
+}catch(e){
 		//console.log('err in post forgot!!!: ',e.message);
-			  this.throw(409, e.message);}
-this.body={"message": `We have sent a password reset email to your email address: ${this.request.body.email}.<br> Please check your inbox to continue.`};
+ctx.throw(409, e.message);}
+ctx.body={"message": `We have sent a password reset email to your email address: ${ctx.request.body.email}.<br> Please check your inbox to continue.`};
 });
 
-pub.get('/reset/:token',function*(){
-if(!valuid(this.params.token)) {
-//return; 
-	return this.redirect('/error');
+pub.get('/reset/:token', async ctx=>{
+if(!valuid(ctx.params.token)) {
+return ctx.redirect('/error');
 }
-	//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
-console.log('this.params.token: ', this.params.token);
-let db=this.db;var error=null;
+//if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
+console.log('this.params.token: ', ctx.params.token);
+let db=ctx.db;var error=null;
 try{
-var resu=yield db.query(`select*from tokens where token='${this.params.token}' and created_at > now() - interval '2 days'`);
-	}catch(e){this.body={"error":e};error=e;}
+var resu=await db.query(`select*from tokens where token='${ctx.params.token}' and created_at > now() - interval '2 days'`);
+}catch(e){
+ctx.body={"error":e};error=e;
+}
 if(resu && resu.rows[0]){
-this.body=this.render('reset',{"reset-token":this.params.token});
-	}else{
-		
-		this.session.error="Link expired.";
-		this.redirect('/error');
-
-	
-	}
-	});
-pub.get('/error', function(){
-	this.session.dorthin=this.path;
-this.body=this.render('error',{message:this.message, error:this.session.error});
+ctx.body=ctx.render('reset',{"reset-token":ctx.params.token});
+}else{
+ctx.session.error="Link expired.";
+ctx.redirect('/error');
+}
+})
+pub.get('/error', ctx=>{
+ctx.session.dorthin=ctx.path;
+ctx.body=ctx.render('error',{message:ctx.message, error:ctx.session.error});
 })
 // heroku pg:psql --app alikon
-pub.post('/reset/:token', function*(token){
-	if(!this.request.body.email && !this.request.body.token && !this.request.body.password) this.throw(400,"Please fill in folders");
-	let db=this.db;
+pub.post('/reset/:token', async ctx=>{
+if(!ctx.request.body.email && !ctx.request.body.token && !ctx.request.body.password) ctx.throw(400,"Please fill in folders");
+let db=ctx.db;
 try{
 //select reset_password(email,token,pwd)
-yield db.query(`select reset_password('${this.request.body.email}','${this.request.body.token}','${this.request.body.password}')`);
-	}catch(e){
-		//console.log('ERRRORRR IN RESETING!!!!!!!!!!!!!!!!!!!: ', e.message);
-			 this.throw(404, e.message);
-			 }
-		 console.log('token: ', token);
-		 this.body={"message":`Your password has been changed! You may log into your account <a href='/login'>log in</a> 
+await db.query(`select reset_password('${ctx.request.body.email}','${ctx.request.body.token}','${ctx.request.body.password}')`);
+}catch(e){
+ctx.throw(404, e.message);
+}
+ctx.body={"message":`Your password has been changed! You may log into your account <a href='/login'>log in</a> 
 					or go direct to <a href='/'>home</a>`};
-		 });
+})
 
 
-pub.get('/email_validation/:token',function*(){
-	if(!valuid(this.params.token)) {
-		return; //this.redirect('/');
-	}
-	//if(this.req.isAuthenticated()) this.redirect(this.session.dorthin || '/');
-	console.log('this.params.token: ', this.params.token);
-	let db=this.db;var pmail;var error=null;
-	
-	try{yield db.query(`select say_yes_email('${this.params.token}')`);}catch(e){
-		//console.log('ERROR!!!:', e);
-	error=e.message;
-	};
-	
-	this.body=this.render('email_validation',{"message":"<h1>Your email address validated!</h1>", "redirect":"/", error:error});
-	
-});
+pub.get('/email_validation/:token', async ctx=>{
+if(!valuid(ctx.params.token)) {
+return; //this.redirect('/');
+}
+//if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
+console.log('this.params.token: ', ctx.params.token);
+let db=ctx.db;var pmail;var error=null;
+try{await db.query(`select say_yes_email('${ctx.params.token}')`);}catch(e){
+error=e.message;
+}
+ctx.body=ctx.render('email_validation',{"message":"<h1>Your email address validated!</h1>", "redirect":"/", error:error});
+})
 /*
 ======================================================
 Social authentication
@@ -254,8 +313,8 @@ pub.get('/auth/vkontakte/cb', passport.authenticate('vkontakte', {successRedirec
 xhr_failed_login
 ===========================
 */
-pub.post('/xhr_failed_login', function*(){
-this.body={body:this.request.body};
+pub.post('/xhr_failed_login', ctx=>{
+ctx.body={body:ctx.request.body};
 })
 /* 
 ========
@@ -268,63 +327,62 @@ pub.get('/articles', pagination, get_all_articles);
 pub.param('page', param_page).get('/articles/p/:page', pagination, get_all_articles_page);
 pub.get('/articles/:slug', article_slug);
 
-function* param_page(page,next){
-if(isNumb(page)==false){this.redirect('/articles')}
-else
-	if(page==0 || page==1){this.redirect('/articles');}else{yield next;}
+async function param_page(page,ctx,next){
+if(isNumb(page)==false){ctx.redirect('/articles')}
+else if(page==0 || page==1){ctx.redirect('/articles')}else{await next()}
 }
 /* end of articles */
 
-pub.post('/photo_failure',function *(){
+pub.post('/photo_failure', async ctx=>{
 console.log("PHOTO FAILURE OCCured");
-let {dob, bid}=this, b=this.request.body, docs=dob.collection('posts');
-try{let a=yield docs.updateOne({_id:bid(b._id)},{$addToSet:{'meta.fail':b.fail_src}});console.log('a :',a.result);}
+let {dob, bid}=ctx, b=ctx.request.body, docs=dob.collection('posts');
+try{let a=await docs.updateOne({_id:bid(b._id)},{$addToSet:{'meta.fail':b.fail_src}});console.log('a :',a.result);}
 catch(e){this.throw(404,`not found ${e}`)}
-this.body={info:this.request.body,somels:"OK - accepted!"}
+ctx.body={info:ctx.request.body,somels:"OK - accepted!"}
 });
-pub.post('/module_cache',function *(){this.body={body:this.request.body};});
-pub.get('/labs',function *(){this.body='str';});
+pub.post('/module_cache', ctx=>{ctx.body={body: ctx.request.body};});
+pub.get('/labs',ctx=>{ctx.body='str';});
 
-pub.get('/tipping/purchase_tokens',function*(){
-this.session.dorthin=this.path;
-this.body=this.render('purchase',{buser:this.req.user});
+pub.get('/tipping/purchase_tokens',ctx=>{
+ctx.session.dorthin=ctx.path;
+ctx.body=ctx.render('purchase',{/*buser:this.req.user*/});
 });
 /* *************************************************************************
 WEBRTC STUFF /:models
 *************************************************************************** */
 
-pub.get('/webrtc/:buser',function*(){
-let db=this.db;
-this.session.dorthin=this.path;
+pub.get('/webrtc/:buser', async ctx=>{
+let db=ctx.db;
+ctx.session.dorthin=ctx.path;
 var us=null;
 var owner=false;
 try{
-var result=yield db.query(`select*from busers where nick='${this.params.buser}'`);
-	us=result.rows[0];
-	if(this.req.user && this.req.user.nick===this.params.buser){owner=true;}
+var result=await db.query(`select*from busers where nick='${ctx.params.buser}'`);
+us=result.rows[0];
+if(ctx.state.user && ctx.state.user.nick===ctx.params.buser){owner=true;}
 }catch(e){console.log(e)}
-this.body=this.render('busers',{buser:this.req.user,model: us,owner:owner});
+ctx.body=ctx.render('busers',{model: us,owner:owner});
 });
 
-pub.post('/api/set_transfer', function*(){
-if(!this.req.isAuthenticated()){
-	this.throw(400,"Not Authorizied from me");
+pub.post('/api/set_transfer', async ctx=>{
+if(!ctx.isAuthenticated()){
+ctx.throw(400,"Not Authorizied from me");
 }
-let db=this.db;
-let {from,to,amount,type,pid}=this.request.body;
+let db=ctx.db;
+let {from,to,amount,type,pid}=ctx.request.body;
 try{
-yield db.query(`insert into transfer(tfrom, tos, amount,type,pid) values('${from}','${to}',${amount},${type},'${pid}')`)
-}catch(e){this.throw(400,e.message);}
-this.body={info:this.request.body}
+await db.query(`insert into transfer(tfrom, tos, amount,type,pid) values('${from}','${to}',${amount},${type},'${pid}')`)
+}catch(e){ctx.throw(400,e.message);}
+ctx.body={info: ctx.request.body}
 })
 
-pub.post('/api/set_seat',function*(){
-let db=this.db;
-var {pid,who,status}=this.request.body;
-	try{
-	yield db.query(`insert into seats(pid,us_id,status) values('${pid}','${who}','${status}')`);
-	}catch(e){console.log(e);}
-this.body={info:"OK",body:this.request.body}
+pub.post('/api/set_seat', async ctx=>{
+let db=ctx.db;
+const {pid,who,status}=ctx.request.body;
+try{
+await db.query(`insert into seats(pid,us_id,status) values('${pid}','${who}','${status}')`);
+}catch(e){console.log(e);}
+ctx.body={info:"OK",body: ctx.request.body}
 });
 
 /* *************************************************************************
@@ -333,63 +391,56 @@ END OF WEBRTC STUFF
 /*******************************************
 CABINET
 ********************************************** */
-pub.get('/home/profile', authent, function*(){
-	let db=this.db;
-	this.session.dorthin=this.path;
-	//var result=null;
-	try{
-	var cards=yield db.query(`select addr from cards where us_id='${this.req.user.email}'`);
-		//result=cards.rows[0];
-		//console.log('cards.rows[0]: ',cards.rows[0]);
-	}catch(e){console.log(e);}
-//this.set('Access-Control-Allow-Origin','*');
-//this.set('Access-Control-Allow-Methods','GET','HEAD','POST');
-//this.set('Access-Control-Allow-Headers','*')
-this.body=this.render('cabinet',{buser:this.req.user,cards:cards.rows[0]});
+pub.get('/home/profile', authent, async ctx=>{
+let db=ctx.db;
+ctx.session.dorthin=ctx.path;
+try{
+var cards=await db.query(`select addr from cards where us_id='${ctx.state.user.email}'`);
+}catch(e){console.log(e);}
+ctx.body=ctx.render('cabinet',{cards:cards.rows[0]});
 })
 
-pub.post('/api/set_bitcoin_address',auth,function*(){
-let db=this.db;
-	var {addr,useremail}=this.request.body;
-	var vali=walletValidator.validate(addr,'bitcoin','testnet');
-	if(!vali){this.throw(400,'not valid bitcoin address!');}
-	try{
-yield db.query(`insert into cards(addr,us_id) values('${addr}','${useremail}') on conflict(us_id) do update set addr='${addr}',lmod=now()`);
-	}catch(e){this.throw(400,e.message);}
-	this.body={info:"OK",body:this.request.body};
+pub.post('/api/set_bitcoin_address',auth, async ctx=>{
+let db=ctx.db;
+const {addr,useremail}=ctx.request.body;
+const vali=walletValidator.validate(addr,'bitcoin','testnet');
+if(!vali){ctx.throw(400,'not valid bitcoin address!');}
+try{
+await db.query(`insert into cards(addr,us_id) values('${addr}','${useremail}') on conflict(us_id) do update set addr='${addr}',lmod=now()`);
+}catch(e){ctx.throw(400,e.message)}
+ctx.body={info:"OK",body:ctx.request.body}
 })
 
-pub.post('/api/get_tokens', auth,function*(){
-	let mont=this.render('vidget_tokens',{buser:this.req.user});
-		 //console.log('mont: ',mont);
-this.body={content:mont,body:this.request.body};
+pub.post('/api/get_tokens', auth, ctx=>{
+let mont=ctx.render('vidget_tokens',{})
+ctx.body={content:mont,body: ctx.request.body}
 })
 
-pub.post('/api/get_bcaddress', auth, function*(){
-let db=this.db;
-	try{
-	var cards=yield db.query(`select addr from cards where us_id='${this.request.body.useremail}'`);
-	}catch(e){this.throw(400,e.message);}
-	let mont=this.render('vidget_card',{cards:cards.rows[0]});
-	this.body={info:"OK",content:mont};
+pub.post('/api/get_bcaddress', auth, async ctx=>{
+let db=ctx.db;
+try{
+var cards=await db.query(`select addr from cards where us_id='${ctx.request.body.useremail}'`);
+}catch(e){ctx.throw(400,e.message);}
+let mont=ctx.render('vidget_card',{cards:cards.rows[0]});
+ctx.body={info:"OK",content:mont};
 })
 
-pub.post('/api/set_convert',auth,function*(){
-let db=this.db;
-	var {useremail, amt_tok}=this.request.body;
-	try{
-yield db.query(`insert into converts(us_id, amt_tok) values('${useremail}', ${amt_tok})`)
-	}catch(e){this.throw(400,e.message);}
-	this.body={info:"OK",body:this.request.body}
+pub.post('/api/set_convert', auth, async ctx=>{
+let db=ctx.db;
+const {useremail, amt_tok}=ctx.request.body;
+try{
+await db.query(`insert into converts(us_id, amt_tok) values('${useremail}', ${amt_tok})`)
+}catch(e){ctx.throw(400,e.message)}
+ctx.body={info:"OK",body: ctx.request.body}
 })
 
 /* DEMO */
-pub.get('/demo/videostream',function *(){
-this.body=this.render('demo_videostream',{buser:this.req.user})
+pub.get('/demo/videostream', ctx=>{
+ctx.body=ctx.render('demo_videostream',{})
 })
 
-pub.get('/demo/webrtc',function *(){
-this.body=this.render('demo_webrtc',{buser:this.req.user})
+pub.get('/demo/webrtc', ctx=>{
+ctx.body=ctx.render('demo_webrtc',{})
 })
 
 function readStr(n){
@@ -400,28 +451,24 @@ n.on('data',dat=>{console.log('data :',dat);resu.push(dat);resul+=dat;})
 })
 }
 function readStr2(n){return new Promise((res,rej)=>{
-	let resu=[];
-	n.on('readable',()=>{
-	var buf;while((buf=n.read()) !==null) resu.push(buf);
-		}).once('end',()=>{res(resu)}).once('error',err=>{rej(err)})
-	})
+let resu=[];
+n.on('readable',()=>{
+var buf;while((buf=n.read()) !==null) resu.push(buf);
+}).once('end',()=>{res(resu)}).once('error',err=>{rej(err)})
+})
 }
-
-
-
-
 module.exports=pub;
 
-function *pagination(next){
-this.locals={};
-var qu=parseInt(this.params.page) || 1;
+async function pagination(ctx, next){
+ctx.locals={};
+var qu=parseInt(ctx.params.page) || 1;
 var page=qu;
 var num=page*limit;
 var w=5,ab=[],deg=2;var map=new Map();
 
-let db=this.db;
-try{var total_articles=yield db.query('select from articles');
-}catch(e){console.log(e);return next(e);}
+let db=ctx.db;
+try{var total_articles=await db.query('select from articles');
+}catch(e){console.log(e);return await next(e);}
 var total_pages=Math.ceil(Number(total_articles.rowCount)/limit);
 for(var i=1;i<=total_pages;i++){ab.push(i);}
 ab.forEach(y=>{
@@ -433,26 +480,20 @@ if(y>=total_pages-w){map.set(y,ab.slice(total_pages-w,total_pages));}
 map.set(y,ab.slice(0,total_pages))
 }
 });
-this.locals.total_articles=total_articles.rowCount;
-this.locals.total_pages=total_pages;
-this.locals.page=page;
-this.locals.rang_page=map;
-if(num<total_articles) {this.locals.next=true;}
-if(num>limit) {this.locals.prev=true;}
-yield next;
+ctx.locals.total_articles=total_articles.rowCount;
+ctx.locals.total_pages=total_pages;
+ctx.locals.page=page;
+ctx.locals.rang_page=map;
+if(num<total_articles) {ctx.locals.next=true;}
+if(num>limit) {ctx.locals.prev=true;}
+await next()
 }
-/*
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
-}
-*/
-function *auth(next){
-if(this.req.isAuthenticated()){yield next;}else{ 
-	//this.redirect('/login');
-this.throw(401,"Please, log in.");
+
+function auth(ctx, next){
+if(ctx.isAuthenticated()){return next()}else{ 
+ctx.throw(401,"Please, log in.");
 }}
-function *authent(next){
-if(this.req.isAuthenticated()){yield next;}else{this.redirect('/login');}
+function authent(ctx, next){
+if(ctx.isAuthenticated()){return next()}else{ctx.redirect('/login');}
 }
 function isNumb(str){var numstr=/^\d+$/;return numstr.test(str);}

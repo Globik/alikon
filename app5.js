@@ -1,25 +1,19 @@
-'use strict';
+
+
+
 const EventEmitter=require('events');
-const koa=require('koa');
-const http=require('http');
-//const https=require('https');
-const co=require('co');
-const render=require('./libs/render.js');
-const path=require('path');
-const url=require('url');
-const Pool=require('pg-pool');
-const serve=require('koa-static');
-//var flash=require('koa-flash');
-//r PS=require('pg-pubsub');
-//var favicon=require('koa-favicon');
-const PS=require('./libs/pg-subpub.js');
-const bodyParser=require('koa-body');
-const session=require('koa-generic-session');
-//var PgStore=require('koa-pg-session');
-const PgStore=require('./pg-sess.js');
-const passport=require('koa-passport');
+const Koa=require('koa')
+const passport=require('koa-passport')
+const url=require('url')
+const koaBody=require('koa-body')
 const fs=require('co-fs');
 const fss=require('fs');
+const session=require('koa-generic-session')
+
+const render=require('./libs/render.js')
+const serve=require('koa-static');
+const PS=require('./libs/pg-subpub.js');
+const Pool=require('pg-pool')
 const PgBoss=require('pg-boss');
 const pubrouter=require('./routes/pubrouter2.js');
 const adminrouter=require('./routes/admin.js');
@@ -35,27 +29,18 @@ const boom=new EventEmitter();
 const server = mediasoup.Server({logLevel:"debug",
 								rtcIP4:true,
 								rtcIP6:false,
-								rtcAnnouncedIPv4:'54.159.161.180',
+								rtcAnnouncedIPv4:null,
 								rtcAnnouncedIPv6:null,
 								rtcMinPort:40000,
 								rtcMaxPort:49999,
 								dtlsCertificateFile:"data/mycert.pem",
 								dtlsPrivateKeyFile:"data/mykey.pem"});
-const configDB=require('./config/database.js');
 const {msg_handler} = require('./libs/mailer.js');
-var {script}=require('./libs/filter_script');
-/*
-
-var locals={
-* showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
-	return mn;}catch(e){console.log(e);return e;}},
-* show_banners(){try{let m=yield this.db.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
-};
-
-*/
-var database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-//const database_url=configDB.pg_url;// for home development nnn
-
+const {script}=require('./libs/filter_script');
+const PgStore=require('./pg-sess.js')
+const configDB=require('./config/database.js')
+//const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+const database_url=configDB.pg_url;
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
@@ -63,115 +48,108 @@ if(process.env.DEVELOPMENT ==="yes"){
 }else{dop_ssl="?ssl=true"}
 const pgtypes=require('pg').types;
 pgtypes.setTypeParser(1114, str=>str);
-var boss=new PgBoss(database_url+dop_ssl);
+const boss=new PgBoss(database_url+dop_ssl);
 
-console.log('database_url: ',database_url);
+const app = new Koa();
+const pars=url.parse(database_url)
+const cauth=pars.auth.split(':')
 
-var pars=url.parse(database_url);
-var cauth=pars.auth.split(':');
-console.log('user auth[0] ', cauth[0]);
-console.log('pwd auth[1] ', cauth[1]);
-console.log('host: ',pars.hostname);
-console.log('port: ',pars.port);
-console.log('db name: ',pars.pathname.split('/')[1]);
-console.log('me');
-var pconfig={
+const pconfig={
 user:cauth[0],
 password:cauth[1],
 host:pars.hostname,
 port:pars.port,
-database: pars.pathname.split('/')[1],
-ssl:true};//local_host=false heroku=true nn
+database:pars.pathname.split('/')[1],
+ssl:false
+}
 
+const pool=new Pool(pconfig)
+const pg_store=new PgStore(pool)
 
-
-var app=koa();
-
-var pool=module.exports=new Pool(pconfig);
-
-require('./config/passport2.js')(pool, passport);
-
-var pg_store=new PgStore(pool);
-
-
-var locals={
-* showmodule(){try{var mn=yield fs.readFile('app.json','utf-8');
-	return mn;}catch(e){console.log(e);return e;}},
-* show_banners(){try{let m=yield pool.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
-};
-
-render(app,{})
+app.keys=['your-secret']
 app.use(serve(__dirname+'/public'));
-//app.use(favicon());
+app.use(session({store:pg_store}))
 
+render(app,{root:'views', development: configDB.deva})
 
+app.use(koaBody())
+require('./config/auth2.js')(pool,passport)
 
-app.keys=['fg'];
-app.use(session({store:pg_store}));
-app.use(passport.initialize());
-app.use(passport.session());
-//app.use(flash());
+app.use(passport.initialize())
+app.use(passport.session())
+
+function xhr(){
+return async function xhr(ctx,next){
+ctx.state.xhr=(ctx.request.get('X-Requested-With')==='XMLHttpRequest')
+await next();
+}
+}
+app.use(xhr());
+
+function readf(n){
+return new Promise((res,rej)=>{
+fss.readFile(n,'utf-8',(err,data)=>{
+if(err)rej(err)
+res(data)
+})
+})
+}
+/*
+(async()=>{
+try{var ww=await readf('app.json');
+	console.log('file ww: ',ww)
+   }catch(e){console.log(e)}
+})()
+*/
 var lasha=true;
-app.use(bodyParser());
-
-var wops={
-	serveClientFile:true,
-	clientFilePath:'/koaws.js',
-heartbeat:true,
-hearbeatInterval:5000
-}
-
-
-
-app.use(function*(next){
-if(this.method ==='POST'){
-//this.flash={error:'flash err'};
-}else if(this.method==='GET'){
-//this.flash.woane=this.path;
-	//this.session.dorthin=this.path;
-	console.log('this.session.dorthin: ',this.session.dorthin);
-}
-yield next;});
 var mobject={};
-app.use(function*(next){
-this.state.filter_script=script;
-	this.db=pool;
-	this.boss=boss;
+var locals={
+async showmodule(){try{var mn=await readf('app.json');
+	return mn;}catch(e){console.log('eeeeri: ',e);return e;}},
+async  show_banners(){try{let m=await pool.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
+};
+app.use(async (ctx, next)=>{
+ctx.state.filter_script=script;
+ctx.db=pool;
+ctx.boss=boss;
 var sa;
-if(lasha){sa=yield locals.showmodule();
+if(lasha){sa=await locals.showmodule();
 sa=JSON.parse(sa);
 mobject.showmodule=sa;
 lasha=false;
 }
 
-this.state.showmodule=mobject.showmodule;
-this.state.showmodulecache=lasha;
-this.state.banner=yield locals.show_banners();
-if(this.path=='/module_cache'){
+ctx.state.showmodule=mobject.showmodule;
+ctx.state.showmodulecache=lasha;
+ctx.state.banner=await locals.show_banners();
+if(ctx.path=='/module_cache'){
 lasha=true;}
-yield next;
+await next();
 });
-app.use(pubrouter.routes())
 
-//  \i /home/globik/alikon/sql/del.sql
-app.use(adminrouter.routes());
-
-
-app.use(function*(next){
-	try{
-		
-		yield next;
-	console.log('THIS.STATUS!!!!: ', this.status);
-		if(this.status === 404) this.throw(404,"fuck not found",{user:"fuck userss"});
-	}catch(err){
-	this.status=err.status || 500;
-		console.log('THIS>STATUS: ',this.status);
-		if(this.status=== 404){
-			this.session.error='';
-			this.redirect('/error');}
-			//this.body=this.render('error',{message:err.message, error:err.status});
-	}
-
+app.use(pubrouter.routes()).use(pubrouter.allowedMethods())
+app.use(adminrouter.routes()).use(adminrouter.allowedMethods());
+/*app.use(async (ctx, next) => {
+  try {
+    await next(); // next is now a function
+  } catch (err) {
+    ctx.body = { message: err.message };
+    ctx.status = err.status || 500;
+  }
+});*/
+app.use(async (ctx, next)=>{
+try{
+await next();
+console.log('THIS.STATUS!!!!: ', ctx.status);
+if(ctx.status === 404) ctx.throw(404,"fuck not found",{user:"fuck userss"});
+}catch(err){
+ctx.status=err.status || 500;
+console.log('THIS>STATUS: ', ctx.status);
+if(ctx.status=== 404){
+ctx.session.error='';
+ctx.redirect('/error');}
+//this.body=this.render('error',{message:err.message, error:err.status});
+}
 });
 
 app.on('error',(err, ctx)=>{
@@ -215,7 +193,6 @@ res('ok');
 console.error('server.createRoom() ERROR', err.name,' : ',err.message);
 rej(err);
 });})}	
-	
 	
 function sendtooneuser(bs,target,mstring){
 var bi=0;
@@ -554,7 +531,7 @@ Connections[id] = pc;
 }
 
 function getPeerConnection(id) {
-const pc = Connections[id];
+const pc = Connections[id];const EventEmitter=require('events');
 return pc
 }
 
@@ -607,26 +584,26 @@ var mail=bp_msg.data.infbp.buyerFields.buyerEmail;
 	console.log('mail: ',bp_msg.data.infbp.buyerFields.buyerEmail);
 var items=JSON.parse(bp_msg.data.infbp.posData).items;
 if(bp_msg.data.infbp.status==="paid"){
-co(function*(){
+(async()=>{
 try{
 //console.log('Durak: ',JSON.parse(bp_msg.data.infbp.buyerFields).buyerEmail);
 	//console.log('email: ',bp_msg.data.infbp.buyerFields.buyerEamil);
 //console.log('items: ',JSON.parse(bp_msg.data.infbp.posData).items);
-yield pool.query(`update busers set w_items=${items} where email='${mail}'`);
+await pool.query(`update busers set w_items=${items} where email='${mail}'`);
 }catch(e){console.log('err in evs bitpay status paid: ', e);}
-})
+})()
 }else if(bp_msg.data.infbp.status==="complete"){
-co(function*(){
+(async()=>{
 try{
-yield pool.query(`update busers set items=items+${items}, w_items=w_items-${items} where email='${mail}'`);
+await pool.query(`update busers set items=items+${items}, w_items=w_items-${items} where email='${mail}'`);
 }catch(e){console.log('err in evs bitpay status complete: ', e);}
-})
+})()
 }else if(bp_msg.data.infbp.status==="invalid"){
-co(function*(){
+(async()=>{
 try{
-yield pool.query(`update busers set w_items=w_items-${items} where email='${mail}'`);
+await pool.query(`update busers set w_items=w_items-${items} where email='${mail}'`);
 }catch(e){console.log('err in ev bitpay status invalid: ',e);}
-})
+})()
 }else{}
 })
 //--trace-warnings
@@ -637,51 +614,48 @@ function ready(){
 	
 boss.subscribe('banner_enable', (job,done)=>{
 console.log(job.name,job.id,job.data);
-co(function*(){
+(async()=>{
 try{
-yield pool.query(`insert into ban_act(ban_id,href,src,title,type) values('${job.data.ban_id}',
+await pool.query(`insert into ban_act(ban_id,href,src,title,type) values('${job.data.ban_id}',
 '${job.data.href}','${job.data.src}','${job.data.title}','${job.data.type}')`);
 }catch(e){console.log(e)}
-})
+})()
 done().then(()=>console.log('confirmed done'))
 })
 
 boss.subscribe('banner_disable', (job,done)=>{
 console.log(job.name,job.id,job.data);
-co(function*(){
+(async()=>{
 try{
-yield pool.query(`delete from ban_act where ban_id='${job.data.ban_id}'`);
+await pool.query(`delete from ban_act where ban_id='${job.data.ban_id}'`);
 }catch(e){console.log(e)}
-})
+})()
 done().then(()=>console.log('confirmed done'))
 })
 //dummy bitpay webhooks
 boss.subscribe('bitpay_paid', (job,done)=>{
 console.log(job.name,job.id,job.data);
-co(function*(){
+(async()=>{
 try{
-yield pool.query(`insert into bitpayers(infbp) values('${JSON.stringify(job.data.message)}') 
+await pool.query(`insert into bitpayers(infbp) values('${JSON.stringify(job.data.message)}') 
 on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"${job.data.message.status}"') 
 where bitpayers.infbp->>'status' not like '%complete%'`);
 }catch(e){console.log(e)}
-})
+})()
 done().then(()=>console.log('confirmed done'))
 })
 
 boss.subscribe('bitpay_complete', (job,done)=>{
 console.log(job.name,job.id,job.data);
-co(function*(){
+(async()=>{
 try{
-yield pool.query(`insert into bitpayers(infbp) values('${JSON.stringify(job.data.message)}') 
+await pool.query(`insert into bitpayers(infbp) values('${JSON.stringify(job.data.message)}') 
 on conflict((infbp->>'id'::text)) do update set infbp=jsonb_set(bitpayers.infbp,'{status}','"${job.data.message.status}"') 
 where bitpayers.infbp->>'status' not like '%complete%'`);
 }catch(e){console.log(e)}
-})
+})()
 done().then(()=>console.log('confirmed done'))
 })
-
-
-
 }	
 
 server.on('newroom',(r)=>{
@@ -700,6 +674,6 @@ process.exit();
 })
 
 process.on('unhundledRejection',(reason, p)=>{
-	console.log('Unhandled Rejection at: Promise', p, 'reason: ', reason);
+console.log('Unhandled Rejection at: Promise', p, 'reason: ', reason);
 });
 	//var database_url='postgres://globik:null@localhost:5432/postgres';	

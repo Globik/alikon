@@ -1,13 +1,13 @@
 //demo_webrtc.js
-var head=require('./head'),
+const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
     footer=require('./footer');
 var warnig=false;	  
 var haupt_ban=false;
 
-var demo_webrtc = n=>{
-	var {buser,model,showmodule:{mainmenu,profiler}}=n;
+const demo_webrtc = n=>{
+	let {model,showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:"demo_webrtc", csslink:"/css/main2.css"})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}

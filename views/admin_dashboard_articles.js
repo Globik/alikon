@@ -1,7 +1,9 @@
 ﻿//admin_dashboard_articles.js
 'use strict';
-var admin_main_menu=require('./admin_main_menu.js');
-var admin_dashboard_articles=n=>{return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Articles Manager</title>
+const  admin_main_menu=require('./admin_main_menu.js');
+const admin_dashboard_articles=n=>{
+n.buser=n.user;
+return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Articles Manager</title>
 </head><body>
 <!-- admin_dashboard_articles.js -->
 ${(n.buser ? `${admin_main_menu.admin_main_menu({})}`:``)}

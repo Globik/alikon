@@ -1,5 +1,5 @@
 //cabinet.js
-var head=require('./head'),
+const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
     footer=require('./footer'),
@@ -7,8 +7,8 @@ var head=require('./head'),
 var warnig=false;	  
 var haupt_ban=false;
 
-var cabinet = n=>{
-var {buser,model,showmodule:{mainmenu,profiler}}=n;
+const cabinet = n=>{
+let {model,showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:"Profile", csslink:"/css/main2.css"})}</head>

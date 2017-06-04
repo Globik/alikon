@@ -12,7 +12,8 @@ var warnig=false;
 var haupt_ban=false;
 
 var adm_dsh_banners=n=>{
-let {buser,post, showmodule:{mainmenu,profiler}}=n;
+let {post, showmodule:{mainmenu,profiler}}=n;
+const buser=n.user;
 return`<!DOCTYPE html><html lang="en">
 <head>${head.head({title:"Banners", cssl:["/css/main2.css","/css/popup.css","/css/loader.css"]})}</head>
 <body>

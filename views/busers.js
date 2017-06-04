@@ -6,8 +6,8 @@ var head=require('./head'),
 var warnig=false;	  
 var haupt_ban=false;
 
-var busers = n=>{
-var {buser,model,showmodule:{mainmenu,profiler}}=n;
+const busers = n=>{
+let {model,showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:"User", csslink:"/css/main2.css"/*,js:["/js/socket.io.min.js"]*/})}</head>

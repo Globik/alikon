@@ -1,5 +1,5 @@
 /* admin_dashboard_head.js */
-var admin_dashboard_head =n =>{
+const admin_dashboard_head =n =>{
 let s='';
 s+=`<meta charset="utf-8">
 <title>${n.title}</title>

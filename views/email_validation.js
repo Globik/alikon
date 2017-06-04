@@ -1,5 +1,5 @@
 const head=require('./head.js');
-var email_validation=n=>{
+const email_validation=n=>{
 return `<!DOCTYPE html><html lang="en"><head>
 ${head.head({title:"email validation"})}
 </head>

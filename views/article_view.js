@@ -11,7 +11,7 @@ const moment=require('moment');
 var linki="/css/main2.css";
 
 let article_view= n=>{
-let {buser,showmodule:{mainmenu,profiler}}=n;
+let {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 let str='';
 str+= `<!DOCTYPE html>
 <html lang="en">

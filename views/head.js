@@ -1,5 +1,5 @@
 // head.js
-var head=(n)=>
+const head=n=>
 `<!-- head.js -->
 <meta charset="utf-8">
 <title>${n.title ? n.title : "Simple title"}</title>

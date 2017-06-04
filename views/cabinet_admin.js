@@ -1,4 +1,4 @@
-var head=require('./head'),
+const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
     footer=require('./footer');
@@ -6,8 +6,8 @@ const moment=require('moment');
 var warnig=false;	  
 var haupt_ban=false;
 
-var cabinet_admin = n=>{
-var {buser,model,showmodule:{mainmenu,profiler}}=n;
+const cabinet_admin = n=>{
+let  {model,showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 	//console.log('BUSER: ',buser);
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:"Payments", csslink:"/css/main2.css"})}</head>
