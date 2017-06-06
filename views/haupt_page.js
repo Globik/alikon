@@ -17,6 +17,7 @@ return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
 <main id="pagewrap"> 
+${n.m ? n.m.msg : ''}<br><br>
 <h1>Сайт в разработке!</h1>
 	${(buser ? buser.name : "Guest<br>")}
 	${(buser ? `<a href="/logout">logout</a>` :`<a href="/login">login</a>`)}

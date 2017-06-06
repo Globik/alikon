@@ -4,7 +4,7 @@ const bodyParser=require('koa-body');
 const Router=require('koa-router');
 const co=require('co');
 const fs=require('fs');
-const cfs=require('co-fs');
+const cfs=require('../libs/await-fs.js');
 const path=require('path');
 const moment=require('moment');
 //var pool=require('../app4.js');
@@ -27,15 +27,15 @@ bpclient.on('error',err=>console.log(err));
 bpclient.on('ready',()=>{console.log('bitpay ready')})
 
 var admin=new Router();
-admin.get('/dashboard', authed, function*(){
-this.body=this.render('admin_dashboard',{buser:this.req.user});
+admin.get('/dashboard', authed, ctx=>{
+ctx.body=ctx.render('admin_dashboard',{});
 })
 
 /* **************************************************
    BITPAY PART
  *************************************************** */
-admin.post('/create_invoice', authed,bodyParser({multipart:true,formidable:{}}), function*(){
-var mata=this.request.body.fields;
+admin.post('/create_invoice', authed,bodyParser({multipart:true,formidable:{}}), async ctx=>{
+var mata=ctx.request.body.fields;
 //console.log('mata: ',mata);
 	mata.posData=`{"items":${mata.items}}`;
 	//mata.posData.ref="referal-123456"; mata.posData.affiliate="some affiliate fucker";
@@ -58,14 +58,14 @@ var mata=this.request.body.fields;
 	}
 	var binv=null;
 	try{
-	var invoice=yield bitp(mata);
+	var invoice=await bitp(mata);
 		console.log('invoice resultat: ',invoice);
 		console.log('posData: ', JSON.parse(invoice.posData).items);
 		//console.log('posData: ',invoice.posData.items);
 		console.log('buyeremail: ',invoice.buyer.email);
-	}catch(e){console.log(e);this.throw(400,e.message);}
+	}catch(e){console.log(e);ctx.throw(400,e.message);}
 	if(process.env.DEVELOPMENT=="yes"){binv=invoice;}
-	this.body={id:invoice.id, messy:binv};
+ctx.body={id:invoice.id, messy:binv};
 })
 
 /* ***********************************
@@ -76,39 +76,38 @@ END BITPAY PART
 
 //boss
 
-admin.get('/dashboard/banners', authed, function*(){
-let db=this.db;
+admin.get('/dashboard/banners', authed, async ctx=>{
+let db=ctx.db;
 var result=null;
 try{
-var banners=yield db.query(`select*from banners`);
+var banners=await db.query(`select*from banners`);
 if(banners.rows.length){result=banners.rows;
 console.log('result: ',result);			   
 					   }
 }catch(e){console.log(e);}
-this.body=this.render('adm_dsh_banners',{buser:this.req.user,banners:result});
+ctx.body=ctx.render('adm_dsh_banners',{banners:result});
 })
 
 
-admin.post('/banner/set_banner', authed, function*(){
-	let boss=this.boss;
-var jobid_en=yield boss.publish('banner_enable',{message:{ban_id:ban_id,href,src,title,type}},{startIn:this.request.body.start});
+admin.post('/banner/set_banner', authed, async ctx=>{
+let boss=ctx.boss;
+var jobid_en=await boss.publish('banner_enable',{message:{ban_id:ban_id,href,src,title,type}},{startIn:ctx.request.body.start});
 	//.then(jobid=>{
-	console.log(jobid_en);
-
-this.body={info:this.request.body}
+console.log(jobid_en);
+ctx.body={info: ctx.request.body}
 })
 
-admin.get('/dashboard/articles',authed,function *(){
-let db=this.db;
+admin.get('/dashboard/articles',authed, async ctx=>{
+let db=ctx.db;
 	try{
-	var posts=yield db.query('select*from articles order by id desc limit 10');
+	var posts=await db.query('select*from articles order by id desc limit 10');
 	}catch(e){console.log('err in dashboard articles: ',e)}
-this.body=this.render('admin_dashboard_articles'/*'articles_manager'*/,{buser:this.req.user, posts:posts.rows});
+ctx.body=ctx.render('admin_dashboard_articles',{posts:posts.rows});
 });
 
-admin.post('/dashboard/article_create', authed, bodyParser({multipart:true,formidable:{}}), function *(){
-let db=this.db;
-let locs=this.request.body.fields;
+admin.post('/dashboard/article_create', authed, bodyParser({multipart:true,formidable:{}}), async ctx=>{
+let db=ctx.db;
+let locs=ctx.request.body.fields;
 locs.slug=sluger(locs.title);
 let date=new Date();
 locs.created_on=date;
@@ -123,42 +122,42 @@ done().then(()=>console.log('confirmed done'))
 locs.date_url=date.getTime().toString().slice(0,8);
 try{
 //insert into articles(title, slug, author, body) values('Mama-3', 'mama-3', 'Globik', 'Hello, Sister!');
-var post=yield db.query(`insert into articles(title, slug, author,body) values('${locs.title}','${locs.slug}','${locs.author}','${locs.body}')`);
-}catch(e){console.log('error :',e);this.throw(404,e);}
-	
-this.body=JSON.stringify(locs,post,null,2);
+var post=await db.query(`insert into articles(title, slug, author,body) values('${locs.title}','${locs.slug}','${locs.author}','${locs.body}')`);
+}catch(e){console.log('error :',e);ctx.throw(404,e);}
+ctx.body=JSON.stringify(locs,post,null,2);
 });
-admin.get('/get_an_article/:dataid', authed,function *(){
-let db=this.db;
+admin.get('/get_an_article/:dataid', authed, async ctx=>{
+let db=ctx.db;
 var post;
 try{
-post=yield db.query(`select*from articles where id=${this.params.dataid}`)
+post=await db.query(`select*from articles where id=${ctx.params.dataid}`)
  //console.log('Post: ',post.rows);
 //{_id,title,slogan,sub_title,author,leader,body,tags,category,rubrik,part,description,type,status,slug,
 //created_on,last_modified,date_url}; todo{checked{by,when},pic}
-	}catch(e){ console.log('error find article: ',e);this.throw(404,e);}
-	this.body={post: post.rows[0]};});
+	}catch(e){ console.log('error find article: ',e);ctx.throw(404,e);}
+ctx.body={post: post.rows[0]}
+})
 	
-admin.post('/save_an_edited_post',authed, bodyParser({multipart:true,formidable:{}}), function *(){
-let db=this.db;
-let locs=this.request.body.fields;
+admin.post('/save_an_edited_post',authed, bodyParser({multipart:true,formidable:{}}), async ctx=>{
+let db=ctx.db;
+let locs=ctx.request.body.fields;
 locs.slug=sluger(locs.title);
 locs.last_modified='now()';
 try{
 //title,slug,author,last_modified,description,body,foto_cover,status,part
-var result=yield db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`);
-}catch(e){console.log(e);this.throw(404,e);}
-this.body={locs,result};
+var result=await db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`);
+}catch(e){console.log(e);ctx.throw(404,e);}
+ctx.body={locs,result};
 });
 
-admin.post('/dashboard/save_editable_article', authed, function*(){
-let db=this.db;
-let locs=this.request.body;
+admin.post('/dashboard/save_editable_article', authed, async ctx=>{
+let db=ctx.db;
+let locs=ctx.request.body;
 	console.log('locs: ',locs);
 locs.slug=sluger(locs.title);
 locs.last_modified='now()';
-yield db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`)
-this.body={info:locs,moody:locs.slug}
+await db.query(`update articles set ${bef_upd(locs)} where id=${locs.id}`)
+ctx.body={info:locs,moody:locs.slug}
 })
 function bef_upd(obj){
 let s='';
@@ -169,53 +168,53 @@ s+=`${i==0 ? '': ', '}${el[0]}='${el[1]}'`;
 return s;
 }
 
-admin.post('/dashboard/save_img_content',authed,function*(){
+admin.post('/dashboard/save_img_content',authed, async ctx=>{
 //save jsonb images within table articles ["content","quelle"]
-let db=this.db;
-var order=this.request.body.order;
-var art_id=this.request.body.art_id;
-var key=this.request.body.key;
-var value=this.request.body.value;
+let db=ctx.db;
+var order=ctx.request.body.order;
+var art_id=ctx.request.body.art_id;
+var key=ctx.request.body.key;
+var value=ctx.request.body.value;
 
 try{
-yield db.query(`update articles set images=jsonb_set(images,'{${order},${key}}','"${value}"') where id=${art_id}`);
-}catch(e){this.throw(400,e.message);}
-this.body={info:"ok",body:this.request.body};
+await db.query(`update articles set images=jsonb_set(images,'{${order},${key}}','"${value}"') where id=${art_id}`);
+}catch(e){ctx.throw(400,e.message);}
+ctx.body={info:"ok",body:ctx.request.body};
 })
 
-admin.get('/remove_an_article/:dataid',authed,function*(){
-let db=this.db;
-console.log('dataid: ', this.params.dataid);
+admin.get('/remove_an_article/:dataid',authed, async ctx=>{
+let db=ctx.db;
+console.log('dataid: ', ctx.params.dataid);
 try{
-yield db.query(`delete from articles where id=${this.params.dataid}`);
-}catch(e){console.log('error find article: ',e);this.throw(404,e);}
-this.body={info:'OK. '+this.params.dataid+' is deleted'};
+await db.query(`delete from articles where id=${ctx.params.dataid}`);
+}catch(e){console.log('error find article: ',e);ctx.throw(404,e);}
+ctx.body={info:'OK. '+ctx.params.dataid+' is deleted'};
 })
 
-admin.get('/dashboard/articles/edit_photo/:article_id', authed, function*(){
-let db=this.db;
+admin.get('/dashboard/articles/edit_photo/:article_id', authed, async ctx=>{
+let db=ctx.db;
 let post=null;
 
 try{
-var resultat=yield db.query(`select*from articles where id=${this.params.article_id}`);
+var resultat=await db.query(`select*from articles where id=${ctx.params.article_id}`);
 if(resultat.rows && resultat.rows[0]){
 	post=resultat.rows[0];
 
 }
 }catch(e){
-
+console.log(e)
 }
-this.body=this.render("adm_photo_gal",{buser:this.req.user,post});
+ctx.body=ctx.render("adm_photo_gal",{});
 })
 
 //pics to the articles
-admin.post('/dashboard/pics_to_post',authed,function*(){
-let db=this.db;
+admin.post('/dashboard/pics_to_post',authed, async ctx=>{
+let db=ctx.db;
 var result=null;
 var resp={};
 try{
-var res=yield db.query(`update articles set images='${JSON.stringify(this.request.body.images)}'
- where id=${this.request.body.article_id} returning id, slug, date_url`);
+var res=await db.query(`update articles set images='${JSON.stringify(ctx.request.body.images)}'
+ where id=${ctx.request.body.article_id} returning id, slug, date_url`);
 //console.log('resultat in dashb/piccs_to_post: ', result);
 	//moment(date_url).format('YYYY-MM-DD')
 	if(res && res.rows.length){
@@ -226,72 +225,70 @@ var res=yield db.query(`update articles set images='${JSON.stringify(this.reques
 		
 	}
 }catch(e){
-this.throw(400,e.message);
+ctx.throw(400,e.message);
 }
-this.body={info:this.request.body,result:result}
+ctx.body={info: ctx.request.body,result:result}
 })
 
-admin.post('/dashboard/albums_list', authed, function*(){
-let db=this.db;
+admin.post('/dashboard/albums_list', authed, async ctx=>{
+let db=ctx.db;
 var albums=null;
-var user_email=this.request.body.user_email;
+var user_email=ctx.request.body.user_email;
 try{
-var resultat=yield db.query(`select*from albums where us_id='${user_email}'`)
+var resultat=await db.query(`select*from albums where us_id='${user_email}'`)
 if(resultat.rows){albums=resultat.rows;console.log('resultat: ',albums[0]);}
-}catch(e){throw(400,e.message);}
-this.body={albums:albums}
-
+}catch(e){ctx.throw(400,e.message);}
+ctx.body={albums:albums}
 })
 
-admin.post('/dashboard/albums_list/images',authed, function*(){
-let db=this.db;
+admin.post('/dashboard/albums_list/images',authed, async ctx=>{
+let db=ctx.db;
 var images=null;
-var alb_id=this.request.body.alb_id;
+var alb_id=ctx.request.body.alb_id;
 try{
-var resultat=yield db.query(`select*from images where alb_id='${alb_id}'`);
+var resultat=await db.query(`select*from images where alb_id='${alb_id}'`);
 if(resultat.rows && resultat.rows.length){images=resultat.rows;}
-}catch(e){this.throw(400,e.message);}
-this.body={images};
+}catch(e){ctx.throw(400,e.message)}
+ctx.body={images}
 })
 /* ************************  Albums  */
 var parse=require('co-busboy');
 var shortid=require('shortid');
 
-admin.get('/dashboard/albums', authed, function *(){
-let db=this.db;
-var albums=null;
+admin.get('/dashboard/albums', authed, async ctx=>{
+let db=ctx.db;
+const albums=null;
 try{
-var result=yield db.query(`select*from albums`)
+var result=await db.query(`select*from albums`)
 if(result.rows && result.rows[0]){albums=result.rows;}
 }catch(e){console.log(e)}
-this.body=this.render('albums',{buser:this.req.user,albums});
+ctx.body=ctx.render('albums',{albums});
 });
 
-admin.get('/dashboard/albums/:alb_id/:alb_title', function*(){
-var photos=null;
-	
-let db=this.db;
+admin.get('/dashboard/albums/:alb_id/:alb_title', async ctx=>{
+let photos=null;
+let db=ctx.db;
 try{
-var result=yield db.query(`select*from images where alb_id='${this.params.alb_id}'`);
+var result=await db.query(`select*from images where alb_id='${ctx.params.alb_id}'`);
 //var result=yield db.query(`select*from images inner join albums on alb_id=albums.id where alb_id='${this.params.alb_id}'`);
 if(result.rows && result.rows[0]){photos=result.rows;console.log('resultat: ',result.rows);}
 }catch(e){console.log(e)}
-this.body=this.render('album_view',{buser:this.req.user,photos,alb_id:this.params.alb_id,alb_title:this.params.alb_title});
+ctx.body=ctx.render('album_view',{photos,alb_id:ctx.params.alb_id,alb_title:ctx.params.alb_title});
 })
 
-admin.get('/dashboard/articles_manager', authed, function *(){
+admin.get('/dashboard/articles_manager', authed, async ctx=>{
 	
-this.body=this.render('articles_manager',{buser:this.req.user});
+ctx.body=ctx.render('articles_manager',{});
 });
 
-admin.post('/create_album',authed,function *(){
-	let db=this.db;
+admin.post('/create_album',authed, async ctx=>{
+	let db=ctx.db;
 	//var docs=wrap(db.get('fotoalbums'));
 	let id=shortid.generate();
-	let title=this.request.body.title;
-	let userId=this.request.body.userId;
-	let userEmail=this.request.body.userEmail;
-	var multi=this.request.body.multi;
+	let title=ctx.request.body.title;
+	let userId=ctx.request.body.userId;
+	let userEmail=ctx.request.body.userEmail;
+	var multi=ctx.request.body.multi;
 	console.log('title: ',title,userId,multi);
 	var album;
 	//var multi=4;
@@ -312,7 +309,7 @@ admin.post('/create_album',authed,function *(){
 	 //console.log('ensure index :',ind);
 try{
 		// insert into albums(id,alb_title, us_id) values ('brother','gru5@yandex.ru');
-album=yield db.query(`insert into albums(id, alb_title, us_id) values('${id}','${title}', '${userEmail}') returning *`);
+album=await db.query(`insert into albums(id, alb_title, us_id) values('${id}','${title}', '${userEmail}') returning *`);
 	 
 	/*
 	catch(er){
@@ -324,32 +321,32 @@ album=yield db.query(`insert into albums(id, alb_title, us_id) values('${id}','$
 		 */
 	 if(album.rows && album.rows.length){
 		try{
-		if(yield cfs.exists('./public/uploads/'+userId)){
+		if(await cfs.exists('./public/uploads/'+userId)){
 		console.log('exist!');folderexist="schon";}
         else{console.log('doesnt exist - moment mal');
-        yield cfs.mkdir('./public/uploads/'+userId);
+        await cfs.mkdir('./public/uploads/'+userId);
 	    folderexist=true;
      }
-	}catch(e){this.throw(400,e.message)}
+	}catch(e){ctx.throw(400,e.message)}
 	}
-	 }catch(e){console.log(e);this.throw(400,e.message);}
-	yield this.body={info:"OK",flagexist:folderexist,folderexist:folderexist,album:album.rows[0]};
+	 }catch(e){console.log(e);ctx.throw(400,e.message);}
+	ctx.body={info:"OK",flagexist:folderexist,folderexist:folderexist,album:album.rows[0]};
 	 
 });
 
 
-admin.post('/multipics', authed,function *(next){
-if ('POST' != this.method) return yield next;
-var parts=parse(this,{autoFields:true});
+admin.post('/multipics', authed, async (ctx)=>{
+//if ('POST' != this.method) return yield next;
+var parts=parse(ctx,{autoFields:true});
 var part,stream;
 var picsSammler={};
-let db=this.db;
+let db=ctx.db;
 var i=0;
 picsSammler.pics=[];
 
 var fu={};
 
-while(part=yield parts){
+while(part=await parts){
 i+=1;
 var user_email=parts.field.useremail;
 var user_id=parts.field.user_id;
@@ -386,11 +383,11 @@ for(var k=0;k<4;k+=1){
 Object.assign(rama,chy[i][k]);
 }
 console.log('rama src1: ',rama.src1);
-var inod1=yield cfs.stat('./public/uploads/'+rama.src1);
+var inod1=await cfs.stat('./public/uploads/'+rama.src1);
 console.log('inod: ',inod1.ino);
-var inod2=yield cfs.stat('./public/uploads/'+rama.src2);
-var inod3=yield cfs.stat('./public/uploads/'+rama.src3);
-var inod4=yield cfs.stat('./public/uploads/'+rama.src4);
+var inod2=await cfs.stat('./public/uploads/'+rama.src2);
+var inod3=await cfs.stat('./public/uploads/'+rama.src3);
+var inod4=await cfs.stat('./public/uploads/'+rama.src4);
 	
 rama.id=shortid.generate();
 rama.title="some title";
@@ -414,11 +411,11 @@ var jsdama=JSON.stringify(dama);
 console.log('rama: ',JSON.stringify(dama));
 try{
 //insert into images(alb_id,alb_title,us_id,src1,src2,src3,src4) values('fed0','mama','gru5@yandex.ru',
-yield db.query(`insert into images select * from json_populate_recordset(null::images,'${jsdama}') 
+await db.query(`insert into images select * from json_populate_recordset(null::images,'${jsdama}') 
 on conflict(src1) do update set srama=jsonb_set(images.srama,'{alb_title}',images.srama->'alb_title' || '${JSON.stringify(huirama.alb_title)}')`)
 //srama=jsonb_set(srama,'{alb_ids}','[${JSON.stringify(alb_ids)}]')`)
 }catch(e){console.log('err in db picssammler: ',e);}
-yield this.body={inf:'ok',picssammler:picsSammler,dama:dama}
+ctx.body={inf:'ok',picssammler:picsSammler,dama:dama}
 });
 
 function chunk(arr, size){
@@ -428,73 +425,73 @@ R.push(arr.slice(i,i+size));}
 return R;
 }
 
-admin.get('/getalbumlist',authed,function *(){
-var db=this.fuck;
+admin.get('/getalbumlist',authed, async ctx=>{
+var db=ctx.fuck;
 try{
 var albums=wrap(db.get('fotoalbums'));
 var folders;
 var falschf
-var album=yield albums.find({});
+var album=await albums.find({});
 	
-	 try{folders=yield fs.readdir('public/images/upload/'+album[0].user);
+	 try{folders=await fs.readdir('public/images/upload/'+album[0].user);
 	 console.log('folders :',folders);}catch(err){console.log(err);}
 	for(var i=0;i<album.length;i++){
-	try{falschf=yield fs.readdir('public/images/upload/'+album[0].user+'/'+album[i]._id)}
+	try{falschf=await fs.readdir('public/images/upload/'+album[0].user+'/'+album[i]._id)}
 	catch(err){console.log(err);
 	console.log('falsch file :',falschf);
-	try{var sa=yield albums.remove({_id:album[i]._id});console.log('sa :',sa);
+	try{var sa=await albums.remove({_id:album[i]._id});console.log('sa :',sa);
 	//yield doc.remove({_id:this.params.dataid});
 	}catch(err){console.log('err in try of remove  :',err)}
 	}}
-	album=yield albums.find({});
-	yield this.body={album:album,folders:folders}  
+	album=await albums.find({});
+	ctx.body={album:album,folders:folders}  
 	}
-	catch(err){yield this.body={err:err}}
+	catch(err){ctx.body={err:err}}
 })
 /* ************************************************************************
    CABINET_ADMIN
    *********************************************************************** */
-admin.get('/dashboard/cabinet_admin', authed, function*(){
-	let db=this.db;
+admin.get('/dashboard/cabinet_admin', authed, async ctx=>{
+	let db=ctx.db;
 	var result=null;
-	this.session.dorthin=this.path;
+	ctx.session.dorthin=ctx.path;
 	try{
-	var ob=yield db.query(`select popa()`);
+	var ob=await db.query(`select popa()`);
 		if(ob.rows.length !==0){
 		console.log('result: ',ob.rows[0].popa);
 			result=ob.rows[0].popa;
 		}
 	}catch(e){console.log(e);}
 	//select sum(amt_tok) as total from conv
-this.body=this.render('cabinet_admin',{buser:this.req.user, ledge:result})
+ctx.body=ctx.render('cabinet_admin',{ledge:result})
 })
-admin.get('/dashboard/get_to_payments_list',auth,function*(){
-let db=this.db;
+admin.get('/dashboard/get_to_payments_list',auth, async ctx=>{
+let db=ctx.db;
 var result=null;
 try{
-var pa=yield db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
+var pa=await db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
 from conv inner join cardi on conv.us_id=cardi.us_id where status='waiting' order by at desc limit 4`)
 if(pa.rows){
 result=pa.rows;
 console.log('result: ',result);
 		}
-}catch(e){this.throw(400,e.message);}	
-this.body={content:this.render('vidget_admin_topayments',{data:result})};
+}catch(e){ctx.throw(400,e.message);}	
+ctx.body={content:ctx.render('vidget_admin_topayments',{data:result})};
 })
-admin.post('/dashboard/cabinet_admin/page',auth, function*(){
-	let db=this.db;
+admin.post('/dashboard/cabinet_admin/page',auth, async ctx=>{
+	let db=ctx.db;
 	var result=null;
-	var {next}=this.request.body;
-try{var pa=yield db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
+	var {next}=ctx.request.body;
+try{var pa=await db.query(`select conv.us_id, conv.amt_tok, conv.proz, conv.status, conv.at, conv.lmod, cardi.addr
 from conv inner join cardi on conv.us_id=cardi.us_id where conv.status='waiting' and conv.at < '${next}'::timestamp 
 order by at desc limit 4`);
    if(pa.rows){result=pa.rows;console.log('results: ',result);}
-   }catch(e){this.throw(400,e.message)}
-this.body={body:this.request.body,content:this.render('vidget_admin_topayments',{data:result})}
+   }catch(e){ctx.throw(400,e.message)}
+this.body={body:ctx.request.body,content:ctx.render('vidget_admin_topayments',{data:result})}
 })
 
-admin.post('/dashboard/cabinet_admin/set_payment',auth,function*(){
-let db=this.db;
+admin.post('/dashboard/cabinet_admin/set_payment',auth, async ctx=>{
+let db=ctx.db;
 	/*var amttok=el.getAttribute('data-amttok'),
     var usd=el.getAttribute('data-usd'),
     sumbc=el.getAttribute('data-sumbc');
@@ -503,20 +500,20 @@ let db=this.db;
     //status=el.getAttribute('data-status'),
     //us_id=el.getAttribute('data-usid'),
     //addr=el.getAttribute('data-addr');*/
-var {usid, status, amttok, usd, sumbc, proz, addr}=this.request.body;
+let {usid, status, amttok, usd, sumbc, proz, addr}=ctx.request.body;
 	//busers convi payouts
 	try{
-	yield db.query('begin');
-	yield db.query(`update conv set status='complete' where us_id='${usid}'`);
+	await db.query('begin');
+	await db.query(`update conv set status='complete' where us_id='${usid}'`);
 		//us_id, status,amt_tok,amt_usd,amt_bc,proz,adr
-	yield db.query(`insert into payouts(us_id, status, amt_tok, amt_usd, amt_bc, proz, adr) 
+	await db.query(`insert into payouts(us_id, status, amt_tok, amt_usd, amt_bc, proz, adr) 
     values('${usid}', '${status}', ${amttok}, ${usd}, ${sumbc}, ${proz}, '${addr}')`);
-    yield db.query(`update busers set items=items-${amttok} where name='globik'`);
-    yield db.query('commit');
+    await db.query(`update busers set items=items-${amttok} where name='globik'`);
+    await db.query('commit');
 	}catch(e){
-		yield db.query('rollback');
-		this.throw(400,e.message);}
-this.body={body:this.request.body}
+		await db.query('rollback');
+		ctx.throw(400,e.message);}
+ctx.body={body:ctx.request.body}
 })
 /*
 ==============================================================
@@ -583,7 +580,7 @@ try{var a=yield shlag(dob);data=a.data;}catch(e){error=e;}
 	});
 /* ==================================================================== */
 module.exports=admin;
-function *auth(next){
-if(this.isAuthenticated() && this.req.user.role=="superadmin"){yield next;}else{this.throw(401, "Please log in.")}}
-function *authed(next){
-if(this.req.isAuthenticated() && this.req.user.role == "superadmin"){yield next;}else{ this.redirect('/');}}
+function auth(ctx,next){
+if(ctx.isAuthenticated() && ctx.state.user.role=="superadmin"){return next()}else{ctx.throw(401, "Please log in.")}}
+function authed(ctx, next){
+if(ctx.isAuthenticated() && ctx.state.user.role == "superadmin"){return next()}else{ ctx.redirect('/');}}

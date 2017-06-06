@@ -30,15 +30,25 @@ return done(null,user.rows[0],{message:'Erfolgreich loged in!!!'})
 const nicky=email=>{return email.substring(0,email.indexOf("@"))}
 const get_str=n=>`insert into busers(email,pwd,name,nick) values('${n.email}',crypt('${n.password}',gen_salt('bf',8)),'${n.username}','${n.nick}') 
 returning name,role,mjoind,email,verif`
+
 passport.use('local-signup',new LocalStrategy({usernameField:'email',passReqToCallback:true},(req,email,password,done)=>{
-if(!req.body.username){return done(null,false,{message:"missing username"})}	
+if(!req.body.username){return done(null,false,{message:"missing username",code:'1'})}	
 process.nextTick(async()=>{
 try{
 var useri=await db.query(get_str({email:email,password:password,username:req.body.username,nick:(`${nicky(email)}` ? `${nicky(email)}`:'none')}))				 
 return done(null,useri.rows[0],{message: `You're almost finished.<br><br>
 We've sent an account activation email to you at <strong>${email}</strong>.
 Head over to your inbox and click on the "Activate My Account" button to validate your email address.`})
-}catch(err){return done(err)}				 
+}catch(err){
+	//custom error handling
+	if(err.code==='23505'){
+	return done(null,false,{message:'Email already in use', code:err.code})
+	}else if(err.code==='23514'){
+	return done(null,false,{message:'Email validation failed', code:err.code})
+	}else{
+		return done(err)
+	}
+}				 
 })
 }))
 

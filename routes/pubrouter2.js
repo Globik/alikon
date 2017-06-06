@@ -5,7 +5,7 @@ const bodyParser=require('koa-body');
 const Router=require('koa-router');
 const walletValidator=require('wallet-address-validator');//0.1.0
 //var moment=require('moment');
-const cofs=require('co-fs');
+const cofs=require('../libs/await-fs.js');
 const fs=require('fs');
 /*
 var bitpay=require('bitpay-rest');
@@ -25,12 +25,15 @@ const limit=3;
 pub.get('/',async ctx=>{
 let result=null;
 let db=ctx.db;
+let m=null;
 try{
 var us=await db.query(`select nick from busers`);
 result=us.rows;
 }catch(e){console.log(e)}
 ctx.session.dorthin=this.path;
-ctx.body=ctx.render('haupt_page',{lusers:result});
+if(ctx.session.bmessage){m=ctx.session.bmessage;}
+ctx.body=ctx.render('haupt_page',{lusers:result,m:m});
+if(ctx.session.bmessage){delete ctx.session.bmessage}
 });
 
 // bitpay callback's webhook
@@ -113,14 +116,14 @@ let jobidu=await boss.publish('bitpay_complete',{message:zomby},{startIn:'1 minu
 
 pub.get('/login', async ctx=>{
 let m=ctx.session.bmessage;
-ctx.body=ctx.render('login',{message:m});
+ctx.body=ctx.render('login',{errmsg:m});
 delete ctx.session.bmessage;
 });
 
 pub.get('/signup', async ctx=>{
 if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
 let m=ctx.session.bmessage;
-ctx.body=ctx.render('signup',{message:'signing up: '+m});
+ctx.body=ctx.render('signup',{errmsg: m});
 delete ctx.session.bmessage;
 });
 /*
@@ -149,7 +152,7 @@ if(user===false){
 ctx.body={success:false,info:info.message}
 ctx.throw(401,info.message)
 }else{
-ctx.body={success:true,info:info.message}
+ctx.body={success:true,info:info.message, redirect:ctx.session.dorthin || '/'}
 return ctx.login(user)
 }
 }else{
@@ -207,11 +210,14 @@ return passport.authenticate('local-signup', (err,user,info,status)=>{
 console.log(err,user,info,status)
 if(ctx.state.xhr){
 	//23505 name already in use
-if(err){ctx.body={success:false, info:err.message,code:err.code, detail:err.detail}; ctx.throw(500, err.message);}
+if(err){
+ctx.throw(409,err.message)
+}
+
 if(!user){
-ctx.body={success:false,info:info.message}
+ctx.body={success:false, message:info.message,code:info.code}
 }else{
-ctx.body={success:true,info:info.message}
+ctx.body={success:true, message:info.message}
 return ctx.login(user)
 }
 }else{
@@ -222,8 +228,8 @@ if(!user){
 ctx.session.bmessage={success:false,error:info.message}
 ctx.redirect('/signup')
 }else{	
-ctx.redirect('/signup')
 ctx.session.bmessage={success:true, msg: info.message}
+ctx.redirect('/')
 return ctx.login(user)
 }
 }})(ctx,next)
