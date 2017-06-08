@@ -11,13 +11,14 @@ const {lusers,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
-<head>${head.head({title:"Videochat Alikon", meta:`${get_meta()}`,csslink:"/css/main2.css"})}</head>
-<body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
+<head>${head.head({title:"home", meta:`${get_meta()}`,csslink:"/css/main2.css"})}</head>
+<body>${(warnig ? `<div id="warnig">Warnig</div>`:'')}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
-${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
 <main id="pagewrap"> 
 ${n.m ? n.m.msg : ''}<br><br>
+
 <h1>Сайт в разработке!</h1>
 	${(buser ? buser.name : "Guest<br>")}
 	${(buser ? `<a href="/logout">logout</a>` :`<a href="/login">login</a>`)}
@@ -91,7 +92,7 @@ let s='';
 if(Array.isArray(n)){
  s+='<ul>';
  n.forEach((el,i)=>{
-s+=`<li><a href="/webrtc/${el.nick}">${el.nick}</a>`;
+s+=`<li><a href="/webrtc/${el.id}">${el.name}</a>`;
 });
 	s+='</ul>';
    }

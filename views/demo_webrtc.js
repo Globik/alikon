@@ -7,13 +7,14 @@ var warnig=false;
 var haupt_ban=false;
 
 const demo_webrtc = n=>{
-	let {model,showmodule:{mainmenu,profiler}}=n;const buser=n.user;
+	let {model,showmodule:{mainmenu,profiler}}=n;
+	const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:"demo_webrtc", csslink:"/css/main2.css"})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
-${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
 <main id="pagewrap"> 
 <div class="firstchild" id="camera-container">
 <div class="camera-box">
@@ -65,15 +66,6 @@ RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection |
 RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
 
 function setusername(s){
-/*
-if(owner.textContent==="true"){
-myusername=modelName.textContent;//document.getElementById("name").value;
-modelWebsocketId.textContent=clientId;
-}else{
-document.getElementById("yourWebsocketId").textContent=clientId;
-if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.textContent;}
-}
-*/
 //alert(document.getElementById("name").value);
 myusername=document.getElementById("name").value;
 s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:'bla'/*owner.textContent*/}));
@@ -102,23 +94,12 @@ socket.onclose=function(e){wso.innerHTML="closed";}
 
 function sendtoserver(message){
 if(connecteduser){
+console.log('connected user: ', connecteduser)
 message.target=connecteduser;}
 var msgjson=JSON.stringify(message);
 console.log('msgjson: ',msgjson);
 socket.send(msgjson);
 }
-
-/*
-fuck.onclick=function(){
-//alert('fuck');
-var outm={};
-outm.room=modelName.textContent;
-outm.type="create_room";
-outm.msg="Creating a room";
-socket.send(JSON.stringify(outm));
-}
-*/
-
 
 
 
@@ -127,7 +108,7 @@ var outm={};
 outm.msg=this.message.value;
 outm.id=clientId;
 outm.type="message";
-socket.send(JSON.stringify(outm));
+if(socket)socket.send(JSON.stringify(outm));
 return false;
 }
 
@@ -138,9 +119,9 @@ outm.name=myusername;//"Guest1";
 //outm.id="dima";
 outm.id=clientId;
 outm.type="message";
-outm.target=gid('name').value;//modelName.textContent;
+outm.target=clientId;//gid('name').value;//modelName.textContent;
 
-socket.send(JSON.stringify(outm));
+if(socket)socket.send(JSON.stringify(outm));
 return false
 }
 
@@ -159,12 +140,13 @@ showmessage(event.data);
 console.log("case userlist: "+event.data);
 var si='';
 msg.users.forEach(function(el,i){
-si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
+si+='<li><span data-clid="'+el.clientId+'"onclick="callrtc(this);">'+el.username+'</span></li>|'+el.clientId+'';
 })
 userlist.innerHTML=si;
 
 }else if(msg.type=='offer'){
-handleoffer(msg.offer,msg.name);
+console.warn('type offer: ',msg.from_target);
+handleoffer(msg.offer,msg.from_target);
 }else if(msg.type=='answer'){
 handleanswer(msg.answer);
 }else if(msg.type=='candidate'){
@@ -172,13 +154,15 @@ handlecandidate(msg.candidate);
 }else if(msg.type=='leave'){
 handleleave();
 }else if(msg.type=='call_offer'){
-call_offer(msg.name);
+console.warn('call_offer', event.data);
+//call_offer(msg.name);
+call_offer(msg.from_target);
 }else if(msg.type=='call_answer'){
-call_answer(msg.name,msg.answ);
+call_answer(msg.from_target,msg.answ);
 }else if(msg.type=='reject_call'){
-reject_call(msg.name);
+reject_call(msg.from_target);
 }else{console.warn('uknown msg type',msg.type);}
-showmessage(event.data);
+//showmessage(event.data);
 }
 
 function showmessage(message){
@@ -197,15 +181,16 @@ var bonfig={"iceServers":[{"url":"stun:stun.l.google.com:19302"}
 ]};
 var config={"iceServers":[]};
 function callrtc(el){
-if(myusername==el.textContent){return;}
-socket.send(JSON.stringify({name:myusername,target:el.textContent,type:"call_offer"}));
+if(myusername==el.textContent){alert('you can not from callrtc');
+return;}
+socket.send(JSON.stringify({name:myusername, from_target: clientId,target: Number(el.getAttribute("data-clid"))/*textContent*/,type:"call_offer"}));
 }
 
 function call_offer(name){
 if(confirm('User '+name+' sent you a call. Accept?')){
-socket.send(JSON.stringify({type:"call_answer",answ:true,target:name,name:myusername}));
+socket.send(JSON.stringify({type:"call_answer",answ:true,target:name, from_target:clientId,name:myusername}));
 }else{
-socket.send(JSON.stringify({type:"call_answer",answ:false,target:name,name:myusername}));
+socket.send(JSON.stringify({type:"call_answer",answ:false,target:name,from_target:clientId,name:myusername}));
 }
 }
 
@@ -214,17 +199,18 @@ console.log('call_answer: ',name, isok);
 if(isok){
 go_webrtc(name);
 }else{
-socket.send(JSON.stringify({type:"reject_call",name:myusername,target:name}))
+socket.send(JSON.stringify({type:"reject_call",name:myusername,from_target:clientId,target:name}))
 }
 }
 			
 function reject_call(name){
-console.warn('User '+name+' rejected your call!');
+console.warn('Uccser '+name+' rejected your call!');
 }
 
 function go_webrtc(name){
+//alert(name);
 //if(el.textContent===myname.value){alert('u cant talk to yourself');return;}
-if(name==gid('name').value){alert('u cant talk to yourself');return;}
+if(name==clientId){alert('u cant talk to yourself');return;}
 if(pc !=null){console.error('pc gibt es');console.log('pc: ',pc);return;}  
 //var calltousername=el.textContent;
 var calltousername=name;
@@ -254,18 +240,19 @@ console.log('ice connection state changed to: '+pc.iceConnectionState);
 rtcerror.innerHTML+='ice connect state: '+pc.iceConnectionState+'<br>';
 }
 }
-
-if(calltousername.length>0){
+//alert('fuck calltousername! from go_webrtc '+calltousername);
+//if(calltousername.length>0){
+//alert('connected user '+calltousername);
 connecteduser=calltousername;
 pc.createOffer().then(function(offer){
 //sendtoserver({type:'offer',offer:offer, name:myusername})
  return pc.setLocalDescription(offer);
 }).then(function(){
-sendtoserver({type:'offer',offer:pc.localDescription, name:myusername})
+sendtoserver({type:'offer',offer:pc.localDescription, name:myusername,from_target:clientId})
 }).catch(function(err){console.error(err);
 rtcerror.innerHTML+=err+'<br>';
 })
-}
+//}
 }).catch(function(er){console.error(er);
 rtcerror.innerHTML+=er.name+'<br>';
 })
@@ -273,6 +260,7 @@ rtcerror.innerHTML+=er.name+'<br>';
 
 function handleoffer(offer,name){
 //if(pc){console.error('pc gibt es');return;}  
+alert('Name from handleoffer '+name)
 connecteduser=name;
 			
 navigator.mediaDevices.getUserMedia({video:true,audio:false}).then(function(stream){	
@@ -341,14 +329,15 @@ localvideo.srcObject.getTracks().forEach(function(track){track.stop();})
 }
 remotevideo.src=null;
 localvideo.src=null;
-if(!pc.signalingState=='closed'){
+//if(!pc.signalingState=='closed'){
+
 console.log('pc: ',pc.signalingState);
 pc.close();
 pc.onicecandidate=null;
 pc.onaddstream=null;
 pc.onremovestream=null;
 pc=null;
-}
+//}
 }
 
 function xir(){
@@ -374,7 +363,7 @@ alert(this.response);
 var wedata=JSON.parse(this.response);
 //fuckingout.innerHTML=this.response;
 fuckingout.innerHTML=wedata.d;
-//customConfig=data.d;
+//customConfig=data.d; 
 config=wedata.d;
 	// alert('data.d : '+wedata.s);
 }else{out.innerHTML=this.response;}}

@@ -4,13 +4,13 @@ const FacebookStrategy=require('passport-facebook').Strategy;
 
 module.exports=(db,passport)=>{
 
-passport.serializeUser(function(user,done){
+passport.serializeUser((user,done)=>{
 done(null,user.email)
 })
 
 passport.deserializeUser(async (email,done)=>{
 try{
-const luser=await db.query(`select id,name,role,mjoind,email,verif,items,w_items,model,nick from busers where email='${email}'`)
+const luser=await db.query(`select id, name, role, mjoind,email,verif,items,w_items,model,nick from busers where email='${email}'`)
 done(null,luser.rows[0])
 }catch(e){
 done(e)

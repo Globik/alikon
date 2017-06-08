@@ -195,19 +195,24 @@ rej(err);
 });})}	
 	
 function sendtooneuser(bs,target,mstring){
-var bi=0;
+console.log('SEND TO ONE USER to target: ',target)
+console.log('is target typeof string ?: ',(typeof target==='string'))
 for(let i of wss.clients){
-bi++;
+console.log('i.clientId: ',i.clientId)
+console.log('is i.clientId typeof string? :',(typeof i.clientId==='string'))
 if(i.upgradeReq.url===bs.upgradeReq.url){
+	console.log('UPGRADE URL!!!!!!!!!!!!!!!!!!!!!')
 if(i && i.readyState===WebSocket.OPEN){
-if(i.username===target){
+//if(i.username===target){
+		console.log('OPENED!!!!!!!!!!!!!!!!!!!!!!!!!!')
+if(i.clientId===target){
 console.log('i.username: ',i.username);
 i.send(mstring);
 break;
 }
 }}
 }
-console.log('bi: ',bi)
+
 }
 	
 function getconnectionforid( bs, id){
@@ -228,7 +233,7 @@ var userlistmsg={type:"userlist", users:[]};
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
 if(c && c.readyState===WebSocket.OPEN){
-userlistmsg.users.push({username:c.username,owner:c.owner});
+userlistmsg.users.push({username:c.username,owner:c.owner,clientId:c.clientId});
 }}
 })
 return userlistmsg;
@@ -417,13 +422,12 @@ console.log('ROOM SIZE:',droom.size);
 }
 }
 sendtoclients=false;
-}else{console.log('unknown type: ',msg.type)}
+}else{console.log('unknown type: ',msg.type);sendtoclients=true;}
 
 	
 if(sendtoclients){
 var msgstring=JSON.stringify(msg);
 if(msg.target && msg.target !==undefined && msg.target.length !==0){
-			//ws.send(message);
 sendtooneuser(ws,msg.target, msgstring);
 }else{
 wss.clients.forEach(c=>{

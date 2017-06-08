@@ -7,13 +7,14 @@ var warnig=false;
 var haupt_ban=false;
 
 const demo_videostream = n=>{
-	let {model,showmodule:{mainmenu,profiler}}=n;const buser=n.user;
+	let {model,showmodule:{mainmenu,profiler}}=n;
+	const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:"video_stream", csslink:"/css/main2.css"})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
-${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
 <main id="pagewrap"> 
 
 	<a href="/">home</a><br>
@@ -145,11 +146,13 @@ console.log("case username: "+evt.data);
 out.innerHTML+=evt.data+'<br>';
 }else if(message.type==="userlist"){
 console.log("case userlist: "+evt.data);
-var si='';
+var si='';var roomli=''
 message.users.forEach(function(el,i){
-si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
+si+='<li><span data-clid="'+el.clientId+'" onclick="callrtc(this);">'+el.username+'</span></li>';
+roomli+='<li>'+el.owner+'<br>';
 })
 userlist.innerHTML=si;
+roomslist.innerHTML=roomli;
 
 }else if(message.type==='genaurum'){
 console.warn('On genaurum: ',evt.data);
@@ -208,7 +211,7 @@ outm.msg=this.message.value;
 outm.name=myusername;
 outm.id=clientId;
 outm.type="message";
-outm.target=username.value;
+outm.target=clientId;//username.value;
 ws.send(JSON.stringify(outm));
 return false
 }
@@ -217,7 +220,7 @@ function getUsePlanB() {
 let checkbox = document.getElementById('plan_b_check');
 return (checkbox.checked === true);
 }
-  // ---------------------- media handling ----------------------- 
+  // okokok---------------------- media handling ----------------------- 
   // start local video
 function startVideo() {
 if(owner.textContent==="true"){

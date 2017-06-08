@@ -27,7 +27,7 @@ let result=null;
 let db=ctx.db;
 let m=null;
 try{
-var us=await db.query(`select nick from busers`);
+var us=await db.query(`select*from busers`);
 result=us.rows;
 }catch(e){console.log(e)}
 ctx.session.dorthin=this.path;
@@ -357,15 +357,15 @@ ctx.body=ctx.render('purchase',{/*buser:this.req.user*/});
 WEBRTC STUFF /:models
 *************************************************************************** */
 
-pub.get('/webrtc/:buser', async ctx=>{
+pub.get('/webrtc/:buser_id', async ctx=>{
 let db=ctx.db;
 ctx.session.dorthin=ctx.path;
 var us=null;
 var owner=false;
 try{
-var result=await db.query(`select*from busers where nick='${ctx.params.buser}'`);
+var result=await db.query(`select*from busers where id='${ctx.params.buser_id}'`);
 us=result.rows[0];
-if(ctx.state.user && ctx.state.user.nick===ctx.params.buser){owner=true;}
+if(ctx.state.user && ctx.state.user.id===ctx.params.buser_id){owner=true;}
 }catch(e){console.log(e)}
 ctx.body=ctx.render('busers',{model: us,owner:owner});
 });

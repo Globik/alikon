@@ -24,11 +24,26 @@ var html;
 try{	
 html=ender(v,context);
 } catch(err){
-html=ender('footer',{fuck: err,file:v,stack:err.stack});
+html=errshow({ferr:err,file:v,stack:err.stack})
 }
 return html;}
 }
 function ender(v,ops){
 var fn=map.get(`${v}.js`);
-return fn[v](ops) 
+if(fn){
+	console.log('fn: ',fn)
+//console.log('IS FN[V] typeof FUNCTION ???: ',(typeof fn[v]==='function'))
+return fn[v](ops)}else{throw new Error('not a function fn[v]')} 
+}
+
+function errshow(n){
+let styleIt=()=>{return `<style> 
+.errorstred{background:red;}
+.errorange{background:orange;}
+</style>`}
+return `${styleIt()}<b>Error: </b>
+${n.ferr ? `<div class="errorstred"> ${n.ferr}</div>
+<div class="errorst">In a file: <span class="errorange"> ${n.file}.js</span></div>
+${n.stack.replace(/\s at/g,'<br>at ')}`:``}
+`;
 }

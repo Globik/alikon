@@ -7,18 +7,18 @@ var warnig=false;
 var haupt_ban=false;
 
 const busers = n=>{
-let {model,showmodule:{mainmenu,profiler}}=n;const buser=n.user;
-	//console.log('BUSER: ',buser);
+let {model,showmodule:{mainmenu,profiler}}=n;
+const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:"User", csslink:"/css/main2.css"/*,js:["/js/socket.io.min.js"]*/})}</head>
+<head>${head.head({title:"User", csslink:"/css/main2.css"/*,js:[""]*/})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
-${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
 <style>
 /*#pagewrap{
-background-image:url("/images/vk.png");*/
-}
+background-image:url("/images/vk.png");
+}*/
 </style>
 <main id="pagewrap"> 
 <style>
@@ -105,7 +105,8 @@ overlay:target+.popi{left:0;}
 </div>
 <div class="modrtc">
 <h4>Model</h4>
-<b>As </b> <span id="modelName">${model.nick}</span><br>
+<b>As </b> <span id="modelName">${model.name}</span><br>
+<b>id:</b><span id="modelId">${model.id}</span><br>
 <b>Email:</b> <span id="modelEmail">${model.email}</span><br>
 <b>Owner:</b> <span id="owner">${n.owner}</span><br>
 <b>Tokens: </b> <span id="modelTokens">${model.items}</span><br>
@@ -115,8 +116,9 @@ overlay:target+.popi{left:0;}
 <br>
 <div class="modrtc">
 <h4>You</h4>
-<b>As</b> <span id="yourName">${buser ? buser.nick:'a Guest'}</span><br>
-<b>Email: </b><span id="yourEmail">${buser ? buser.email:""}</span><br>
+<b>As</b> <span id="yourName">${buser ? buser.name:'a Guest'}</span><br>
+<b>id:</b><span id="yourId">${buser ? buser.id : ''}</span><br>
+<b>Email: </b><span id="yourEmail">${buser ? buser.email:''}</span><br>
 <b>Tokens: </b><span id="yourTokens">${buser ? buser.items:''}</span><br>
 <b>your websocket id: </b><span id="yourWebsocketId"></span><br>
 </div><br>
@@ -348,7 +350,7 @@ xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
 }
 //websocket
 var mediaconstraints={audio:true,video:true};
-
+var guestcome=false;
 var clientId=0;
 var myusername=null;
 var name,connecteduser;
@@ -362,7 +364,7 @@ go_socket();
 
 
 function setusername(s){
-/*
+
 if(owner.textContent==="true"){
 myusername=modelName.textContent;//document.getElementById("name").value;
 modelWebsocketId.textContent=clientId;
@@ -370,10 +372,10 @@ modelWebsocketId.textContent=clientId;
 document.getElementById("yourWebsocketId").textContent=clientId;
 if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.textContent;}
 }
-*/
+
 //alert(document.getElementById("name").value);
-myusername=document.getElementById("name").value;
-s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:'bla'/*owner.textContent*/}));
+//myusername=document.getElementById("name").value;
+s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:owner.textContent}));
 }
 
 var loc1=location.hostname+':'+location.port;
@@ -386,9 +388,11 @@ new_uri='wss:';
 }else{
 new_uri='ws:';
 }
+if(yourName.textContent){go_socket()}else{
+guestcome=true;
+}
 function go_socket(){
-
-socket=new WebSocket(new_uri+'//'+loc3+'/'+modelName.textContent);
+socket=new WebSocket(new_uri+'//'+loc3+'/'+modelId.textContent);
 socket.onopen=function(){
 wso.innerHTML='websocket connected';
 }
@@ -427,8 +431,9 @@ outm.name=myusername;//"Guest1";
 //outm.id="dima";
 outm.id=clientId;
 outm.type="message";
-outm.target=gid('name').value;//modelName.textContent;
-
+//outm.target=gid('name').value;//modelName.textContent;
+//outm.target=modelId.textContent;
+outm.target=clientId;
 socket.send(JSON.stringify(outm));
 return false
 }
@@ -467,7 +472,7 @@ call_answer(msg.name,msg.answ);
 }else if(msg.type=='reject_call'){
 reject_call(msg.name);
 }else{console.warn('uknown msg type',msg.type);}
-showmessage(event.data);
+
 }
 
 function showmessage(message){
