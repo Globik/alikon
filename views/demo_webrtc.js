@@ -245,7 +245,7 @@ rtcerror.innerHTML+='ice connect state: '+pc.iceConnectionState+'<br>';
 //alert('connected user '+calltousername);
 connecteduser=calltousername;
 pc.createOffer().then(function(offer){
-//sendtoserver({type:'offer',offer:offer, name:myusername})
+
  return pc.setLocalDescription(offer);
 }).then(function(){
 sendtoserver({type:'offer',offer:pc.localDescription, name:myusername,from_target:clientId})
@@ -278,7 +278,7 @@ console.log('on remove stream');
 }
 pc.onicecandidate=function(event){
 if(event.candidate){
-sendtoserver({type:'candidate',candidate:event.candidate})
+sendtoserver({type:'candidate',candidate: event.candidate})
 }
 }
 pc.oniceconnectionstatechange=function(ev){

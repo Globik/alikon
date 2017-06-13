@@ -164,8 +164,7 @@ roomslist.innerHTML+=sr;
 console.warn('On roomcreated: ',evt.data);
 }else if(message.type==='rooming'){
 console.log('type rooming: '+evt.data);
-}else
-if (message.type === 'offer') {
+}elseif (message.type === 'offer') {
       // -- got offer ---
 console.log('Received offer ...');
 let offer = new RTCSessionDescription(message);
@@ -188,7 +187,7 @@ console.error('on createroom: ',evt.data);
 if(owner.textContent==="false"){
 console.warn('roomremove: ',evt.data);
 }
-}else{console.warn('unknown message type: ',message.type);}
+} else{console.warn('unknown message type: ',message.type);}
 }
 	 
 function setusername(s){

@@ -1,5 +1,5 @@
 //busers.js
-var head=require('./head'),
+const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
     footer=require('./footer');
@@ -458,7 +458,8 @@ si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
 userlist.innerHTML=si;
 
 }else if(msg.type=='offer'){
-handleoffer(msg.offer,msg.name);
+//handleoffer(msg.offer,msg.name);
+handleoffer(msg.offer,msg.from_target);
 }else if(msg.type=='answer'){
 handleanswer(msg.answer);
 }else if(msg.type=='candidate'){
@@ -466,11 +467,49 @@ handlecandidate(msg.candidate);
 }else if(msg.type=='leave'){
 handleleave();
 }else if(msg.type=='call_offer'){
-call_offer(msg.name);
+//call_offer(msg.name);
+call_offer(msg.from_target);
 }else if(msg.type=='call_answer'){
-call_answer(msg.name,msg.answ);
+//call_answer(msg.name,msg.answ);
+call_answer(msg.from_target,msg.answ);
 }else if(msg.type=='reject_call'){
-reject_call(msg.name);
+//reject_call(msg.name);
+reject_call(msg.from_target);
+
+
+}else if(msg.type==='genaurum'){
+//videostreaming
+console.warn('On genaurum: ',evt.data);
+var sr='';
+sr+='<li><span data-pid="'+msg.roomid+'">'+msg.roomname+'</span>';
+roomslist.innerHTML+=sr;
+}else if(msg.type==='roomcreated'){
+console.warn('On roomcreated: ',evt.data);
+}else if(msg.type==='rooming'){
+console.log('type rooming: '+evt.data);
+}else if (msg.type === 'offer') {
+      // -- got offer ---
+console.log('Received offer ...');
+let offer = new RTCSessionDescription(message);
+setOffer(offer);
+}
+else if (msg.type === 'answer') {
+      // --- got answer ---
+console.log('Received answer ...');
+console.warn('NOT USED');
+}else if(msg.type==='goodbyeroom'){
+if(owner.textContent==="true"){
+console.log(evt.data);
+goodbyeroom(message.vid);
+}
+}else if(msg.type==='error'){
+console.error('on error: ',evt.data);
+}else if(msg.type==='createroom'){
+console.error('on createroom: ',evt.data);
+}else if(msg.type==='roomremove'){
+if(owner.textContent==="false"){
+console.warn('roomremove: ',evt.data);
+}
 }else{console.warn('uknown msg type',msg.type);}
 
 }
