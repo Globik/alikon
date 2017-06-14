@@ -1,6 +1,3 @@
-
-
-
 const EventEmitter=require('events');
 const Koa=require('koa')
 const passport=require('koa-passport')
@@ -163,7 +160,7 @@ pg_store.on('connect',()=>console.log('PG_STORE IS CONNECTED!!!'));
 var nextId=Date.now();
 var Connections = new Array();
 var droom=new Map();
-
+//console.log('is srever closed?: ',server.closed)
 pg_store.setup().then(()=>{
 	//console.log('soll listnening port 5000 via setup()');
 var servak=app.listen(process.env.PORT || 5000)
@@ -172,6 +169,7 @@ var servak=app.listen(process.env.PORT || 5000)
 	//if(err)console.log(err)
 	//console.log('listen on port 5000');
 	//});
+console.log('is srever closed?: ',server.closed)
 var wss=new WebSocket.Server({server:servak});
 /*
 var nextId=Date.now();
@@ -360,7 +358,7 @@ senduserlisttoall(ws);
 sendtoclients=false;
 }else if(msg.type=="createroom"){
 console.log('CREATING ROOM');
-	
+	if(!server.closed){
 if(msg.owner=='true'){
 console.log('owner is true');
 if(droom.has(msg.roomname)){
@@ -368,6 +366,7 @@ console.log('Schoo gibts this room by name: ',msg.roomname)
 console.log(' ...skiping');
 }else{
 console.log('creating a room for id=',ws.clientId);
+	
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.owner=msg.roomname;
@@ -379,6 +378,9 @@ delete ws.owner;
 })	
 }	
 }
+                }else{console.log('server is closed!!!!')
+if(ws.readyState===1)ws.send(JSON.stringify({type:"error",ename:"Mediasoup is closed!",emsg:"Are you online?"}))
+					 }
 sendtoclients=false;
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);

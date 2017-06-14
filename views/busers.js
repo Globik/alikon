@@ -99,6 +99,7 @@ overlay:target+.popi{left:0;}
 	
 </style>
 <div>
+<b>buser: </b>${buser ? true : false}<br><br>
 <button id="fuck">broadcast yourself</button>
 <div><b>obid: </b><span id="pid"></span></div>
 <div><b>time: </b><span id="timeinfo"></span></div>
@@ -111,6 +112,8 @@ overlay:target+.popi{left:0;}
 <b>Owner:</b> <span id="owner">${n.owner}</span><br>
 <b>Tokens: </b> <span id="modelTokens">${model.items}</span><br>
 <b>Websocket id:</b> <span id="modelWebsocketId"></span><br>
+<b>Room name(id)</b><span id="roomname">${model.id}</span><br>
+<b>current room:</b><span id="curentroom"></span><br>
 </div><br>
 
 <br>
@@ -124,9 +127,10 @@ overlay:target+.popi{left:0;}
 </div><br>
 <div class="firstchild" id="camera-container">
 <div class="camera-box">
+<!--
 <div><h4>local video</h4><video id="localvideo" autoplay muted style="width:250px;height:250px;border:2px solid green;"></video></div>
 <div><h4>remote video</h4><video id="remotevideo" autoplay style="width:250px;height:250px;border:2px solid red;"></video></div>
-
+-->
 <button id="hangupbtn">Hung Up</button>
 </div>
 </div>
@@ -139,7 +143,7 @@ overlay:target+.popi{left:0;}
 
 </div>
 Time: <span id="mer">00:00:00</span><br><br>
-<input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button>
+<!-- <input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button> -->
 <br>
 <button onclick="xir();">get xir</button><button onclick="bonfigu();">bonfig</button>
 <br>
@@ -147,6 +151,8 @@ Time: <span id="mer">00:00:00</span><br><br>
 <br>
 <h5>Userlist</h5>
 <div id="userlist"></div>
+<h5>room list</h5>
+<div id="roomlist"></div>
 <hr><output id="out"></output>
 
 <a href="#" class="overlay" id="resultativ"></a>
@@ -157,6 +163,24 @@ Time: <span id="mer">00:00:00</span><br><br>
 <p><input id="tokTosend" type="number" value="1" placeholder="1"/></p>
 <button onclick="send_tokens();">send</button>
 </output>
+${n.owner ? `
+<div id="localcontainer">
+<button id="start_video_button" onclick="startVideo();">Start Video</button>
+<button id="stop_video_button" onclick="stopVideo();">Stop Video</button>
+</div> ` : ''}
+<button id="connect_button"  onclick="connect();">Connect</button>
+<button id="disconnect_button"  onclick="dissconnect();">Disconnect</button> 
+<input type="checkbox" id="plan_b_check" >planB<br>
+
+local video<br>
+<video id="local_video" autoplay style="width: 160px; height: 120px; border: 1px solid black;"></video>
+<span id="state_span"></span>
+</div>
+remote video<br>
+<div id="remote_container"></div>	
+
+
+
 <form name="publish">
 <input type="text" name="message">
 <input type="submit" value="send">
@@ -357,6 +381,7 @@ var name,connecteduser;
 var targetusername=null;
 var pc=null;
 var socket=null;
+var roomcreated=false;
 function do_socket(){
 go_socket();
 //return false;
@@ -388,9 +413,12 @@ new_uri='wss:';
 }else{
 new_uri='ws:';
 }
-if(yourName.textContent){go_socket()}else{
-guestcome=true;
-}
+//if(yourName.textContent){go_socket()}else{
+//guestcome=true;
+//}
+
+${buser ? 'go_socket();' : ''}
+
 function go_socket(){
 socket=new WebSocket(new_uri+'//'+loc3+'/'+modelId.textContent);
 socket.onopen=function(){
@@ -457,12 +485,12 @@ si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
 })
 userlist.innerHTML=si;
 
-}else if(msg.type=='offer'){
+}else if(msg.type=='Doffer'){
 //handleoffer(msg.offer,msg.name);
 handleoffer(msg.offer,msg.from_target);
-}else if(msg.type=='answer'){
+}else if(msg.type=='Danswer'){
 handleanswer(msg.answer);
-}else if(msg.type=='candidate'){
+}else if(msg.type=='Dcandidate'){
 handlecandidate(msg.candidate);
 }else if(msg.type=='leave'){
 handleleave();
@@ -476,17 +504,21 @@ call_answer(msg.from_target,msg.answ);
 //reject_call(msg.name);
 reject_call(msg.from_target);
 
+//mediasoup stuff
 
 }else if(msg.type==='genaurum'){
 //videostreaming
-console.warn('On genaurum: ',evt.data);
+console.warn('On genaurum: ', event.data);
 var sr='';
 sr+='<li><span data-pid="'+msg.roomid+'">'+msg.roomname+'</span>';
 roomslist.innerHTML+=sr;
+roomcreated=true;
+connect();
 }else if(msg.type==='roomcreated'){
-console.warn('On roomcreated: ',evt.data);
+console.warn('On roomcreated: ',event.data);
+roomcreated=true;
 }else if(msg.type==='rooming'){
-console.log('type rooming: '+evt.data);
+console.log('type rooming: '+event.data);
 }else if (msg.type === 'offer') {
       // -- got offer ---
 console.log('Received offer ...');
@@ -499,16 +531,18 @@ console.log('Received answer ...');
 console.warn('NOT USED');
 }else if(msg.type==='goodbyeroom'){
 if(owner.textContent==="true"){
-console.log(evt.data);
-goodbyeroom(message.vid);
+console.log(event.data);
+//goodbyeroom(message.vid);
+goodbyeroom(msg.vid);
 }
 }else if(msg.type==='error'){
-console.error('on error: ',evt.data);
+console.error('on error: ',event.data);
+if(peerConnection)console.log(peerConnection.signalingState)
 }else if(msg.type==='createroom'){
-console.error('on createroom: ',evt.data);
+console.warn('on createroom: ',event.data);
 }else if(msg.type==='roomremove'){
 if(owner.textContent==="false"){
-console.warn('roomremove: ',evt.data);
+console.warn('roomremove: ',event.data);
 }
 }else{console.warn('uknown msg type',msg.type);}
 
@@ -520,8 +554,414 @@ messageelement.appendChild(document.createTextNode(message));
 subscribe.appendChild(messageelement);
 }
 
+const useTrickleICE = false;
+  let localVideo = document.getElementById('local_video');
+  let stateSpan = document.getElementById('state_span');
+  let localStream = null;
+  let peerConnection = null;
+  
+  // --- prefix -----
+  navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
+                            navigator.mozGetUserMedia || navigator.msGetUserMedia;
+  RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+  RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
+  // init checkbox
+  if (window.window.webkitRTCPeerConnection) {
+    document.getElementById('plan_b_check').checked = true;
+  }
+  // -------- websocket ----  
+var clientId=0;
+var ws;
+var myusername=null;
+var name,connecteduser;
+var targetusername=null;
+var remoteContainer = document.getElementById('remote_container');
 
+function getUsePlanB() {
+let checkbox = document.getElementById('plan_b_check');
+return (checkbox.checked === true);
+}
+  // okokok---------------------- media handling ----------------------- 
+  // start local video
+function startVideo() {
+if(owner.textContent==="true"){
+getDeviceStream({video: true, audio: true})
+.then(function (stream) { // success
+localStream = stream;
+logStream('localstream', stream);
+playVideo(localVideo, stream);
+updateButtons();
+}).catch(function (error) { // error
+console.error('getUserMedia error:', error);
+rtcerror.innerHTML=error;
+return;
+});
+}
+}
+  // stop local video
+function stopVideo() {
+if(owner.textContent==="true"){
+pauseVideo(localVideo);
+stopLocalStream(localStream);
+localStream = null;
+updateButtons();
+}
+}
+function stopLocalStream(stream) {
+let tracks = stream.getTracks();
+if (! tracks) {
+console.warn('NO tracks');
+return;
+}
+for (let track of tracks) {
+track.stop();
+}
+}
+  
+function getDeviceStream(option) {
+if ('getUserMedia' in navigator.mediaDevices) {
+console.log('navigator.mediaDevices.getUserMadia');
+return navigator.mediaDevices.getUserMedia(option);
+}else {
+console.log('wrap navigator.getUserMadia with Promise');
+return new Promise(function(resolve, reject){    
+navigator.getUserMedia(option,resolve,reject);
+});      
+}
+}
+function playVideo(element, stream) {
+if ('srcObject' in element) {
+element.srcObject = stream;
+}else {
+element.src = window.URL.createObjectURL(stream);
+}
+element.play();
+element.volume = 0;
+createroom();
+}
 
+function pauseVideo(element) {
+element.pause();
+if ('srcObject' in element) {
+element.srcObject = null;
+}else {
+if (element.src && (element.src !== '') ) {
+window.URL.revokeObjectURL(element.src);
+}
+element.src = '';
+}
+}
+  // -----  signaling ----
+function sendSdp(sessionDescription) {
+console.log('---sending sdp ---');
+const jsonSDP = sessionDescription.toJSON();
+jsonSDP.planb = getUsePlanB();
+jsonSDP.roomname=roomname.value;
+console.log('sending SDP:', jsonSDP);
+sendJson(jsonSDP);
+}
+function sendJson(json) {
+const message = JSON.stringify(json);
+if(socket) socket.send(message);  
+}
+  // ----------------------
+function prepareNewConnection() {
+let pc_config = {"iceServers":[]};
+let peer = new RTCPeerConnection(pc_config);
+    // --- on get remote stream ---
+if ('ontrack' in peer) {
+peer.ontrack = function(event) {
+console.log('-- peer.ontrack()');
+let stream = event.streams[0];
+logStream('remotestream of ontrack()', stream);
+if ( (stream.getVideoTracks().length > 0) && (stream.getAudioTracks().length > 0) ) {
+if(owner.textContent==="false"){addRemoteVideo(stream.id, stream);}else{console.warn('IGNORE remote track');}
+}
+};
+}else {
+peer.onaddstream = function(event) {
+console.log('-- peer.onaddstream()');
+let stream = event.stream;
+logStream('remotestream of onaddstream()', stream);
+if(owner.textContent==="false"){
+addRemoteVideo(stream.id, stream);
+}else{
+console.warn('IGNORE remote stream');
+}
+};
+}
+    // --- on get local ICE candidate
+peer.onicecandidate = function (evt) {
+if (evt.candidate) {
+console.log(evt.candidate);
+if (useTrickleICE) {
+          // Trickle ICE の場合は、ICE candidateを相手に送る
+          // send ICE candidate when using Trickle ICE
+console.warn('NOT SUPPORTED YET');
+}else {
+          // Vanilla ICE の場合には、何もしない
+          // do NOTHING for Vanilla ICE
+}
+} else {
+console.log('empty ice event');
+if (useTrickleICE) {
+          // Trickle ICE の場合は、何もしない
+          // do NOTHING for Trickle ICE
+}else {
+          // Vanilla ICE の場合には、ICE candidateを含んだSDPを相手に送る
+          // send SDP with ICE candidtes when using Vanilla ICE
+sendSdp(peer.localDescription);
+}
+}
+};
+    // --- when need to exchange SDP ---
+peer.onnegotiationneeded = function(evt) {
+console.log('-- onnegotiationneeded() ---');
+console.warn('--- IGNORE ---');
+};
+    // --- other events ----
+peer.onicecandidateerror = function (evt) {
+console.error('ICE candidate ERROR:', evt);
+};
+peer.onsignalingstatechange = function() {
+console.log('== signaling state=' + peer.signalingState);
+};
+peer.oniceconnectionstatechange = function() {
+console.log('== ice connection state=' + peer.iceConnectionState);
+showState('ice connection state=' + peer.iceConnectionState);
+if (peer.iceConnectionState === 'disconnected') {
+console.log('-- disconnected --');
+dissconnect();
+}
+};
+peer.onicegatheringstatechange = function() {
+console.log('==***== ice gathering state=' + peer.iceGatheringState);
+};
+peer.onconnectionstatechange = function() {
+console.log('==***== connection state=' + peer.connectionState);
+};
+peer.onremovestream = function(event) {
+console.log('-- peer.onremovestream()');
+let stream = event.stream;
+if(owner.textContent==="false"){
+removeRemoteVideo(stream.id, stream);
+}else{console.log('ignoring remove stream');}
+};
+// -- add local stream --
+if (localStream) {
+console.log('Adding local stream...');
+peer.addStream(localStream);
+}else {
+console.warn('no local stream, but continue.');
+}
+return peer;
+}
+function setOffer(sessionDescription) {
+let waitForCandidates = true;
+if (peerConnection) {
+console.log('peerConnection alreay exist, reuse it');
+if (peerConnection.remoteDescription && (peerConnection.remoteDescription.type === 'offer')) {
+        // got re-offer, so DO NOT wait for candidates even using Vanilla ICE
+waitForCandidates = false;
+}
+}else {
+console.log('prepare new PeerConnection');
+peerConnection = prepareNewConnection();
+}
+peerConnection.setRemoteDescription(sessionDescription).then(function() {
+console.log('setRemoteDescription(offer) succsess in promise');
+makeAnswer(waitForCandidates);
+}).catch(function(err) {
+console.error('setRemoteDescription(offer) ERROR: ', err);
+});
+}
+  
+function makeAnswer(waitForCandidates) {
+console.log('sending Answer. Creating remote session description...' );
+if (! peerConnection) {
+console.error('peerConnection NOT exist!');
+return;
+}
+peerConnection.createAnswer().then(function (sessionDescription) {
+console.log('createAnswer() succsess in promise');
+return peerConnection.setLocalDescription(sessionDescription);
+}).then(function() {
+console.log('setLocalDescription() succsess in promise');
+if (useTrickleICE) {
+        // -- Trickle ICE の場合は、初期SDPを相手に送る --
+        // send initial SDP when using Trickle ICE
+console.warn('NOT SUPPORTED YET');
+}else {
+        // -- Vanilla ICE の場合には、まだSDPは送らない --
+        // wait for ICE candidates for Vanilla ICE
+        //sendSdp(peerConnection.localDescription);
+        // if got re-offer, then NO MORE ice candidates will come, so send SDP right now
+if (! waitForCandidates) {
+sendSdp(peerConnection.localDescription);
+}
+}
+}).catch(function(err) {
+console.error(err);
+});
+}
+  // start PeerConnection
+function connect() {
+${!buser ? 'go_socket();' : ''}
+
+if(roomcreated){
+callWithCapabilitySDP();
+updateButtons();
+}else{console.warn('todo roomcreated to true if !buser check:808. Are you online?');}
+}
+function callWithCapabilitySDP() {
+peerConnection = prepareNewConnection();
+var vopt={ offerToReceiveAudio: false, offerToReceiveVideo: false};
+if(owner.textContent==="false"){
+vopt.offerToReceiveAudio=true;
+vopt.offerToReceiveVideo=true;
+}
+peerConnection.createOffer(vopt).then(function(sessionDescription){
+console.log('createOffer() succsess in callWithCapabilitySDP()');
+console.log('calling with Capalibity SDP ..');
+var whatsend={type: "call", planb: getUsePlanB(), capability: sessionDescription.sdp,roomname:roomname.textContent};
+if(owner.textContent==="false"){
+whatsend.type="call_downstream";
+}
+sendJson(whatsend);
+}).catch(function(err) {
+console.error('ERROR in callWithCapabilitySDP():', err);
+});
+}
+	
+function createroom(){
+console.log('create room');
+if(owner.textContent=='true'){
+console.log('sending create room');
+sendJson({type:"createroom",roomname:roomname.textContent,owner:owner.textContent,id:clientId});
+curentroom.textContent=roomname.value;
+}
+}
+	
+function deleteroom(){
+if(curentroom.textContent){
+sendJson({type:'removeroom',roomname:curentroom.textContent,owner:owner.textContent,id:clientId})
+}else{alert('what a room to delete?');}
+}
+function goodbyeroom(vid){
+if(vid){
+curentroom.textContent='';
+var bud=document.querySelector('[data-pid="'+vid+'"]');
+//alert(bud.textContent);
+bud.remove();
+}
+}
+  // close PeerConnection
+function dissconnect() {
+sendJson({type: "bye",roomname:roomname.value});
+if (peerConnection) {
+console.log('Hang up.');
+peerConnection.close();
+peerConnection = null;
+if(owner.textContent==="false"){removeAllRemoteVideo();}
+}else {
+console.warn('peer NOT exist.');
+}
+updateButtons();
+}
+  
+function showState(state) {
+stateSpan.innerText = state;
+}
+function logStream(msg, stream) {
+console.log(msg + ': id=' + stream.id);
+let videoTracks = stream.getVideoTracks();
+if (videoTracks) {
+console.log('videoTracks.length=' + videoTracks.length);
+videoTracks.forEach(function(track) {
+console.log(' track.id=' + track.id);
+});
+}
+let audioTracks = stream.getAudioTracks();
+if (audioTracks) {
+console.log('audioTracks.length=' + audioTracks.length);
+audioTracks.forEach(function(track) {
+console.log(' track.id=' + track.id);
+});
+}}
+function updateButtons() {
+if(owner.textContent==="true"){
+if (peerConnection) {
+disableElement('start_video_button');//true
+disableElement('stop_video_button');//true
+disableElement('connect_button');
+enabelElement('disconnect_button');
+disableElement('plan_b_check');
+}else {
+if (localStream) {
+disableElement('start_video_button');
+enabelElement('stop_video_button');
+enabelElement('connect_button');
+}else {
+enabelElement('start_video_button');
+disableElement('stop_video_button');
+disableElement('connect_button');        
+}
+disableElement('disconnect_button');
+enabelElement('plan_b_check');
+}
+}else if(owner.textContent==="false"){
+if(peerConnection){
+disableElement('connect_button');
+enabelElement('disconnect_button');
+disableElement('plan_b_check');
+}else{
+enabelElement('connect_button');
+disableElement('disconnect_button');
+enabelElement('plan_b_check');
+}
+}else{console.log('nothing in else update button');}
+}
+function enabelElement(id) {
+let element = document.getElementById(id);
+if (element) {element.removeAttribute('disabled');}
+}
+
+function disableElement(id) {
+let element = document.getElementById(id);
+if (element) {element.setAttribute('disabled', '1');}    
+}
+updateButtons();
+
+function addRemoteVideo(id, stream) {
+let element = document.createElement('video');
+remoteContainer.appendChild(element);
+element.id = 'remote_' + id;
+element.width = 320;
+element.height = 240;
+element.srcObject = stream;
+element.play();
+element.volume = 0;
+element.controls = true;
+}
+  
+function removeRemoteVideo(id, stream) {
+console.log(' ---- removeRemoteVideo() id=' + id);
+let element = document.getElementById('remote_' + id);
+if (element) {
+element.pause();
+element.srcObject = null;
+remoteContainer.removeChild(element);
+}else {
+console.log('child element NOT FOUND');
+}
+}
+function removeAllRemoteVideo() {
+while (remoteContainer.firstChild) {
+remoteContainer.firstChild.pause();
+remoteContainer.firstChild.srcObject = null;
+remoteContainer.removeChild(remoteContainer.firstChild);
+}
+}
 
 
 function gid(id){return document.getElementById(id);}
