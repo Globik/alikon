@@ -2,8 +2,8 @@
   "name": "koa-js-getting-started",
   "version": "0.1.2",
   "description": "A sample Node.js app using koa",
-  "main": "app4.js",
-  "scripts": {"start":"node app4" },
+  "main": "app5.js",
+  "scripts": {"start":"node app5" },
   
 
 "dependencies": {
@@ -12,6 +12,7 @@
 "koa-static":"3.0.0",
 "koa-body":"2.0.1",
 "koa-generic-session":"1.11.4",
+"koa-rend":"0.2.8",
 "koa-passport":"^3.0",
 "passport-local":"1.0.0",
 "koa-router":"7.2.0",

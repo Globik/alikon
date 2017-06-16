@@ -21,24 +21,26 @@ module.exports=(app,settings={})=>{
 if(app.context.render){return;}
 if (!settings || !settings.root) {throw new Error('settings.root required');}
 vov(settings.root, settings.development)
-app.context.render=function(v,_context){
+app.context.render=async function(v,_context){
 var context = {};
 Object.assign(context,this.state,_context);
 var html;
-try{	
-html=ender(v,context);
-} catch(err){
-html=errshow({ferr:err,file:v,stack:err.stack})
+html=await guru(v,context);
+return html;
 }
-return html;}
+
 }
+
 function ender(v,ops){
 var fn=map.get(`${v}.js`);
-//if(fn){
-	console.log('fn: ',fn)
-//console.log('IS FN[V] typeof FUNCTION ???: ',(typeof fn[v]==='function'))
 return fn[v](ops)
-//}else{throw new Error('not a function fn[v]')} 
+
+}
+
+function guru(v,context){
+return new Promise((res,rej)=>{
+try{res(ender(v,context))}catch(err){res(errshow({ferr:err,file:v,stack:err.stack}))}
+})
 }
 
 function errshow(n){let styleIt=()=>{return `<style> 

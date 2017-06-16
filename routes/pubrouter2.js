@@ -32,7 +32,7 @@ result=us.rows;
 }catch(e){console.log(e)}
 ctx.session.dorthin=this.path;
 if(ctx.session.bmessage){m=ctx.session.bmessage;}
-ctx.body=ctx.render('haupt_page',{lusers:result,m:m});
+ctx.body=await ctx.render('haupt_page',{lusers:result,m:m});
 if(ctx.session.bmessage){delete ctx.session.bmessage}
 });
 
@@ -116,14 +116,14 @@ let jobidu=await boss.publish('bitpay_complete',{message:zomby},{startIn:'1 minu
 
 pub.get('/login', async ctx=>{
 let m=ctx.session.bmessage;
-ctx.body=ctx.render('login',{errmsg:m});
+ctx.body=await ctx.render('login',{errmsg:m});
 delete ctx.session.bmessage;
 });
 
 pub.get('/signup', async ctx=>{
 if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
 let m=ctx.session.bmessage;
-ctx.body=ctx.render('signup',{errmsg: m});
+ctx.body=await ctx.render('signup',{errmsg: m});
 delete ctx.session.bmessage;
 });
 /*
@@ -236,9 +236,9 @@ return ctx.login(user)
 })
 
 pub.get('/logout', ctx=>{ctx.logout();ctx.redirect(ctx.session.dorthin || '/');});
-pub.get('/forgot', ctx=>{
+pub.get('/forgot', async ctx=>{
 //if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
-ctx.body=ctx.render('forgot',{});	
+ctx.body=await ctx.render('forgot',{});	
 });
 
 pub.post('/forgot', async ctx=>{
@@ -267,15 +267,15 @@ var resu=await db.query(`select*from tokens where token='${ctx.params.token}' an
 ctx.body={"error":e};error=e;
 }
 if(resu && resu.rows[0]){
-ctx.body=ctx.render('reset',{"reset-token":ctx.params.token});
+ctx.body=await ctx.render('reset',{"reset-token":ctx.params.token});
 }else{
 ctx.session.error="Link expired.";
 ctx.redirect('/error');
 }
 })
-pub.get('/error', ctx=>{
+pub.get('/error', async ctx=>{
 ctx.session.dorthin=ctx.path;
-ctx.body=ctx.render('error',{message:ctx.message, error:ctx.session.error});
+ctx.body=await ctx.render('error',{message:ctx.message, error:ctx.session.error});
 })
 // heroku pg:psql --app alikon
 pub.post('/reset/:token', async ctx=>{
@@ -302,7 +302,7 @@ let db=ctx.db;var pmail;var error=null;
 try{await db.query(`select say_yes_email('${ctx.params.token}')`);}catch(e){
 error=e.message;
 }
-ctx.body=ctx.render('email_validation',{"message":"<h1>Your email address validated!</h1>", "redirect":"/", error:error});
+ctx.body=await ctx.render('email_validation',{"message":"<h1>Your email address validated!</h1>", "redirect":"/", error:error});
 })
 /*
 ======================================================
@@ -367,7 +367,7 @@ var result=await db.query(`select*from busers where id='${ctx.params.buser_id}'`
 us=result.rows[0];
 if(ctx.state.user && ctx.state.user.id===ctx.params.buser_id){owner=true;}
 }catch(e){console.log(e)}
-ctx.body=ctx.render('busers',{model: us,owner:owner});
+ctx.body=await ctx.render('busers',{model: us,owner:owner});
 });
 
 pub.post('/api/set_transfer', async ctx=>{
@@ -403,7 +403,7 @@ ctx.session.dorthin=ctx.path;
 try{
 var cards=await db.query(`select addr from cards where us_id='${ctx.state.user.email}'`);
 }catch(e){console.log(e);}
-ctx.body=ctx.render('cabinet',{cards:cards.rows[0]});
+ctx.body=await ctx.render('cabinet',{cards:cards.rows[0]});
 })
 
 pub.post('/api/set_bitcoin_address',auth, async ctx=>{
@@ -441,12 +441,12 @@ ctx.body={info:"OK",body: ctx.request.body}
 })
 
 /* DEMO */
-pub.get('/demo/videostream', ctx=>{
-ctx.body=ctx.render('demo_videostream',{})
+pub.get('/demo/videostream', async ctx=>{
+ctx.body=await ctx.render('demo_videostream',{})
 })
 
-pub.get('/demo/webrtc', ctx=>{
-ctx.body=ctx.render('demo_webrtc',{})
+pub.get('/demo/webrtc', async ctx=>{
+ctx.body=await ctx.render('demo_webrtc',{})
 })
 
 function readStr(n){

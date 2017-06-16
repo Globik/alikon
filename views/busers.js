@@ -21,6 +21,7 @@ background-image:url("/images/vk.png");
 }*/
 </style>
 <main id="pagewrap"> 
+k
 <style>
 .modrtc{width:30%;display:inline-block;background:green;padding:10px;}
 .overlay {
@@ -152,7 +153,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 <h5>Userlist</h5>
 <div id="userlist"></div>
 <h5>room list</h5>
-<div id="roomlist"></div>
+<div id="roomslist"></div>
 <hr><output id="out"></output>
 
 <a href="#" class="overlay" id="resultativ"></a>
@@ -437,12 +438,6 @@ console.log('msgjson: ',msgjson);
 socket.send(msgjson);
 }
 
-
-
-
-
-
-
 document.forms.publish.onsubmit=function(){
 var outm={};
 outm.msg=this.message.value;
@@ -513,6 +508,7 @@ var sr='';
 sr+='<li><span data-pid="'+msg.roomid+'">'+msg.roomname+'</span>';
 roomslist.innerHTML+=sr;
 roomcreated=true;
+curentroom.textContent=msg.roomname;
 connect();
 }else if(msg.type==='roomcreated'){
 console.warn('On roomcreated: ',event.data);
@@ -522,7 +518,7 @@ console.log('type rooming: '+event.data);
 }else if (msg.type === 'offer') {
       // -- got offer ---
 console.log('Received offer ...');
-let offer = new RTCSessionDescription(message);
+let offer = new RTCSessionDescription(msg);
 setOffer(offer);
 }
 else if (msg.type === 'answer') {
@@ -629,6 +625,7 @@ navigator.getUserMedia(option,resolve,reject);
 });      
 }
 }
+
 function playVideo(element, stream) {
 if ('srcObject' in element) {
 element.srcObject = stream;
@@ -811,7 +808,10 @@ ${!buser ? 'go_socket();' : ''}
 if(roomcreated){
 callWithCapabilitySDP();
 updateButtons();
-}else{console.warn('todo roomcreated to true if !buser check:808. Are you online?');}
+}else{
+console.warn('todo roomcreated to true if !buser check:808. Are you online?');
+if(owner.textContent==='true'){createroom();}
+}
 }
 function callWithCapabilitySDP() {
 peerConnection = prepareNewConnection();
@@ -844,15 +844,17 @@ curentroom.textContent=roomname.value;
 	
 function deleteroom(){
 if(curentroom.textContent){
-sendJson({type:'removeroom',roomname:curentroom.textContent,owner:owner.textContent,id:clientId})
+sendJson({type:'removeroom', roomname:curentroom.textContent,owner:owner.textContent,id:clientId})
 }else{alert('what a room to delete?');}
 }
+
 function goodbyeroom(vid){
 if(vid){
 curentroom.textContent='';
 var bud=document.querySelector('[data-pid="'+vid+'"]');
 //alert(bud.textContent);
 bud.remove();
+roomcreated=false;
 }
 }
   // close PeerConnection
@@ -866,6 +868,8 @@ if(owner.textContent==="false"){removeAllRemoteVideo();}
 }else {
 console.warn('peer NOT exist.');
 }
+if(owner.textContent==="true"){deleteroom();}
+
 updateButtons();
 }
   

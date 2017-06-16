@@ -7,7 +7,8 @@ const fs=require('co-fs');
 const fss=require('fs');
 const session=require('koa-generic-session')
 
-const render=require('./libs/render.js')
+//const render=require('./libs/render.js')
+const render=require('koa-rend');
 const serve=require('koa-static');
 const PS=require('./libs/pg-subpub.js');
 const Pool=require('pg-pool')
@@ -304,20 +305,20 @@ boom.removeListener('genauroom', ongenauroom);
 boom.removeListener('fuck', oncreateroom);
 boom.removeListener('roomremove', onroomremove);
 
-if(ws.owner){
+if((ws.owner=="true") && ws.roomid){
 console.log('OWNER!!!!!');
-var wes=droom.get(ws.owner);
+var wes=droom.get(ws.roomid);
 if(wes){
-console.log('WES!!!!!for a room named: ',ws.owner)
-droom.get(ws.owner).on('close',e=>{
-droom.delete(ws.owner);
+console.log('WES!!!!!for a room named: ',ws.roomid)
+droom.get(ws.roomid).on('close',e=>{
+droom.delete(ws.roomid);
 console.log('ROOM CLOSED');
 console.log('ROOM SIZE:',droom.size);
 if(e){
 console.log('error closing the room: ',e);
 }
 })
-droom.get(ws.owner).close();
+droom.get(ws.roomid).close();
 }				  
 }
 				  
@@ -369,12 +370,12 @@ console.log('creating a room for id=',ws.clientId);
 	
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
-ws.owner=msg.roomname;
+ws.roomid=msg.roomname;
 
 }).catch(e=>{
 console.log('error room creating: ',e);
 if(ws.readyState===1)ws.send(JSON.stringify({type:"error", ename:e.name,emsg:e.message}))
-delete ws.owner;
+delete ws.roomid;
 })	
 }	
 }
