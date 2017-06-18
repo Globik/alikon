@@ -255,8 +255,8 @@ this.isAlive=true;
 const interval=setInterval(function ping(){
 wss.clients.forEach(function each(ws){
 if(ws.isAlive===false)return ws.terminate();
-	ws.isAlive=false;
-	ws.ping(JSON.stringify({type:"ping"}),false,true)
+ws.isAlive=false;
+ws.ping(JSON.stringify({type:"ping"}),false,true)
 })
 },6000);
 	
@@ -359,14 +359,14 @@ senduserlisttoall(ws);
 sendtoclients=false;
 }else if(msg.type=="createroom"){
 console.log('CREATING ROOM');
-	if(!server.closed){
+if(!server.closed){
 if(msg.owner=='true'){
 console.log('owner is true');
 if(droom.has(msg.roomname)){
 console.log('Schoo gibts this room by name: ',msg.roomname)
 console.log(' ...skiping');
 }else{
-console.log('creating a room for id=',ws.clientId);
+console.log('creating a room for id=', ws.clientId);
 	
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
@@ -379,9 +379,10 @@ delete ws.roomid;
 })	
 }	
 }
-                }else{console.log('server is closed!!!!')
+}else{
+console.log('server is closed!!!!')
 if(ws.readyState===1)ws.send(JSON.stringify({type:"error",ename:"Mediasoup is closed!",emsg:"Are you online?"}))
-					 }
+}
 sendtoclients=false;
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);

@@ -528,7 +528,6 @@ console.warn('NOT USED');
 }else if(msg.type==='goodbyeroom'){
 if(owner.textContent==="true"){
 console.log(event.data);
-//goodbyeroom(message.vid);
 goodbyeroom(msg.vid);
 }
 }else if(msg.type==='error'){
