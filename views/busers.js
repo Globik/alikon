@@ -381,7 +381,7 @@ var myusername=null;
 var name,connecteduser;
 var targetusername=null;
 var pc=null;
-var socket=null;
+var socket;//=null;
 var roomcreated=false;
 function do_socket(){
 go_socket();
@@ -480,6 +480,8 @@ si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
 })
 userlist.innerHTML=si;
 
+}else if(msg.type=='joined_user'){
+console.warn('onJoinedUser: ',event.data);
 }else if(msg.type=='Doffer'){
 //handleoffer(msg.offer,msg.name);
 handleoffer(msg.offer,msg.from_target);
@@ -526,6 +528,7 @@ else if (msg.type === 'answer') {
 console.log('Received answer ...');
 console.warn('NOT USED');
 }else if(msg.type==='goodbyeroom'){
+console.log('type goodbye room came')
 if(owner.textContent==="true"){
 console.log(event.data);
 goodbyeroom(msg.vid);
@@ -652,13 +655,17 @@ function sendSdp(sessionDescription) {
 console.log('---sending sdp ---');
 const jsonSDP = sessionDescription.toJSON();
 jsonSDP.planb = getUsePlanB();
-jsonSDP.roomname=roomname.value;
-console.log('sending SDP:', jsonSDP);
+jsonSDP.roomname=roomname.textContent;//roomname.value;
+//console.log('sending SDP:');
 sendJson(jsonSDP);
 }
 function sendJson(json) {
-const message = JSON.stringify(json);
-if(socket) socket.send(message);  
+var mess = JSON.stringify(json);
+if(socket){console.log('sending json');
+//console.log('json: ',json)
+//console.warn('MESS: ',mess)
+} 
+socket.send(mess);  
 }
   // ----------------------
 function prepareNewConnection() {
@@ -804,13 +811,15 @@ console.error(err);
 function connect() {
 ${!buser ? 'go_socket();' : ''}
 
-if(roomcreated){
+//if(roomcreated){
+setTimeout(function(){
 callWithCapabilitySDP();
 updateButtons();
-}else{
-console.warn('todo roomcreated to true if !buser check:808. Are you online?');
-if(owner.textContent==='true'){createroom();}
-}
+},2000)
+//}else{
+//console.warn('todo roomcreated to true if !buser check:808. Are you online?');
+//if(owner.textContent==='true'){createroom();}
+//}
 }
 function callWithCapabilitySDP() {
 peerConnection = prepareNewConnection();
@@ -826,7 +835,11 @@ var whatsend={type: "call", planb: getUsePlanB(), capability: sessionDescription
 if(owner.textContent==="false"){
 whatsend.type="call_downstream";
 }
+console.log('getUsePlanB: ',getUsePlanB())
+console.log('whatsend: ',whatsend);
+console.log('roomname: ',roomname.textContent)
 sendJson(whatsend);
+//socket.send('whatsend');
 }).catch(function(err) {
 console.error('ERROR in callWithCapabilitySDP():', err);
 });
@@ -858,7 +871,7 @@ roomcreated=false;
 }
   // close PeerConnection
 function dissconnect() {
-sendJson({type: "bye",roomname:roomname.value});
+sendJson({type: "bye",roomname:roomname.textContent});
 if (peerConnection) {
 console.log('Hang up.');
 peerConnection.close();

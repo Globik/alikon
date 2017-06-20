@@ -248,6 +248,28 @@ c.send(userlistmsgstr)
 }}
 });
 }
+function make_user_message(bs){
+let usermsg={type:"joined_user"};
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+usermsg.username=c.username;//.push({username:c.username,owner:c.owner,clientId:c.clientId});
+usermsg.clientId=c.clientId;
+}}
+})
+return usermsg;
+}
+function send_new_user_to_all(bs){
+let usermsg=make_user_message(bs);
+var usermsgstr=JSON.stringify(usermsg);
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+c.send(usermsgstr)
+}}
+});
+}	
+	
 function heartbeat(){
 this.isAlive=true;
 //console.log('pong')
@@ -326,7 +348,7 @@ droom.get(ws.roomid).close();
 
 ws.on('message', message=>{
 //console.log('wss.clients.length: ',ws.clients.size());
-console.log('Message: ', message);
+//console.log('Message: ', message);
 var sendtoclients=true;
 try{
 msg=JSON.parse(message)}catch(e){console.log('error json to parse');}
@@ -355,6 +377,7 @@ msg.text=msg.text;
 connect.username=msg.name;
 connect.owner=msg.owner;
 senduserlisttoall(ws);
+//send_new_user_to_all(ws);
 	
 sendtoclients=false;
 }else if(msg.type=="createroom"){
@@ -412,7 +435,7 @@ if(vid){
 droom.get(msg.roomname).on('close',e=>{
 droom.delete(msg.roomname);
 console.log('ROOM CLOSED');
-console.log('ROOM SIZE:',droom.size);
+console.log('ROOM SIZE:', droom.size);
 //sendback(ws,{type:'goodbyeroom',roomname:msg.roomname,vid:vid.id});
 ws.send(JSON.stringify({type:'goodbyeroom',roomname:msg.roomname,vid:vid.id}));
 boom.emit('roomremove',{type:'roomremove',roomname:msg.roomname,vid:vid.id})
@@ -470,7 +493,7 @@ if(vid){
 let peer=/*droom.get(message.roomname)*/vid.Peer(id.toString());
 let peerconnection=new RTCPeerConnection({peer:peer,usePlanB:planb});
 console.log('--- create rtcpeerconnection --');
-console.log('-- peers in the room = ',/*soupRoom*/droom.get(message.roomname).peers.length);
+console.log('-- peers in the room from PREPAREPEER = ',droom.get(message.roomname).peers.length);
 peerconnection.on('close', err=>{console.log('peerconnection closed ');
 if(err)console.log(err);});
 peerconnection.on('signalingstatechange',()=>console.log('sate ',peerconnection.signalingState));
@@ -519,7 +542,10 @@ let desc = new RTCSessionDescription({type : "answer", sdp  : message.sdp});
   
 peerconnection.setRemoteDescription(desc).then( function() {
 console.log('setRemoteDescription for Answer OK id=' + id);
-console.log('-- peers in the room = ' + soupRoom.peers.length);
+	console.log('MESSAGE.ROOMNAME from handle answer: ',message.roomname)
+	if(droom.get(message.roomname)){
+console.log('-- PEERS in the room FROM handleAnswer = ' + droom.get(message.roomname).peers.length);
+	}
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
 }).catch( (err) => {
 console.eror('setRemoteDescription for Answer ERROR:', err)
@@ -539,7 +565,7 @@ Connections[id] = pc;
 }
 
 function getPeerConnection(id) {
-const pc = Connections[id];const EventEmitter=require('events');
+const pc = Connections[id];
 return pc
 }
 
@@ -557,7 +583,8 @@ return;
 console.log('PeerConnection close. id=' + id);
 peerconnection.close();
 deletePeerConnection(id);
-if(droom.get(name)){ console.log('-- peers in the room = ' + droom.get(name).peers.length);}
+	console.log('NAME in Clean UP Peer: ',name);
+if(droom.get(name)){ console.log('-- peers in the room  from CLEENUPEER= ' + droom.get(name).peers.length);}
 }
 
 function sendSDP(ws, sessionDescription) {
