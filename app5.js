@@ -507,7 +507,7 @@ sendOffer(ws,peerconnection);
 console.log('peer.setcapabilities() err: ',err);
 peerconnection.close();
 })
-}else{sendback(ws,{type:"error",ename:"No room found by name: "+message.roomname})}
+}else{sendback(ws,{type:"error",ename:"No room found by name: "+message.roomname,num:"101"})}
 }
 
 function sendOffer(ws,peerconnection,downOnly){

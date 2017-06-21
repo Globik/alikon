@@ -381,7 +381,7 @@ var myusername=null;
 var name,connecteduser;
 var targetusername=null;
 var pc=null;
-var socket;//=null;
+var socket=null;
 var roomcreated=false;
 function do_socket(){
 go_socket();
@@ -427,7 +427,7 @@ wso.innerHTML='websocket connected';
 }
 socket.onmessage=go_message;
 socket.onerror=function(e){wso.innerHTML="error: "+e;}
-socket.onclose=function(e){wso.innerHTML="closed";}
+socket.onclose=function(e){wso.innerHTML="closed";socket=null;}
 }
 
 function sendtoserver(message){
@@ -511,7 +511,7 @@ sr+='<li><span data-pid="'+msg.roomid+'">'+msg.roomname+'</span>';
 roomslist.innerHTML+=sr;
 roomcreated=true;
 curentroom.textContent=msg.roomname;
-connect();
+//connect();
 }else if(msg.type==='roomcreated'){
 console.warn('On roomcreated: ',event.data);
 roomcreated=true;
@@ -535,6 +535,9 @@ goodbyeroom(msg.vid);
 }
 }else if(msg.type==='error'){
 console.error('on error: ',event.data);
+if(msg.num=="101"){
+${!buser ? 'socket.close();dissconnect();' : ''}
+}
 if(peerConnection)console.log(peerConnection.signalingState)
 }else if(msg.type==='createroom'){
 console.warn('on createroom: ',event.data);
@@ -649,6 +652,7 @@ window.URL.revokeObjectURL(element.src);
 }
 element.src = '';
 }
+deleteroom();
 }
   // -----  signaling ----
 function sendSdp(sessionDescription) {
