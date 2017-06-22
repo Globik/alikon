@@ -5,6 +5,10 @@ const url=require('url')
 const koaBody=require('koa-body')
 const fs=require('co-fs');
 const fss=require('fs');
+
+const redis=require('./examples/redis-promis.js')();
+const cl=redis.createClient();
+
 const session=require('koa-generic-session')
 
 //const render=require('./libs/render.js')
@@ -182,6 +186,7 @@ return new Promise(function(res,rej){
 server.createRoom(roomOptions)
 .then((room) => {
 console.log('room.roomId: ',room.id);
+console.log('ROOM: ',room)
 droom.set(mn,room);
 console.log('server.createRoom() succeeded');
 //room.dump().then(f=>{console.log('room dump: ',f)}).catch(e=>{console.log(e)})
@@ -300,7 +305,12 @@ function ongenauroom(bob){
 console.log('BOB: ',bob);
 console.log('wss.clients: ',wss.clients.size);
 bob.toclient=ws.clientId;
-if(ws.readyState===1)ws.send(JSON.stringify(bob));
+if(ws.readyState===1){
+ws.send(JSON.stringify(bob));
+cl.hmset(bob.roomname,["quan", 0]).then((res)=>{console.log('res: ',res);
+cl.sadd('rooms',[bob.roomname]).then(resi=>{console.log('resi: ',resi)}).catch(e=>{console.log(e)})										   
+											   }).catch(e=>{console.log(e)})				 
+}
 }
 	
 function onroomremove(dib){
@@ -543,9 +553,13 @@ let desc = new RTCSessionDescription({type : "answer", sdp  : message.sdp});
 peerconnection.setRemoteDescription(desc).then( function() {
 console.log('setRemoteDescription for Answer OK id=' + id);
 	console.log('MESSAGE.ROOMNAME from handle answer: ',message.roomname)
-	if(droom.get(message.roomname)){
+if(droom.get(message.roomname)){
 console.log('-- PEERS in the room FROM handleAnswer = ' + droom.get(message.roomname).peers.length);
-	}
+//cl.hmset(message.roome,[]
+cl.hmset(message.roomname,["quan",droom.get(message.roomname).peers.length]).then(res=>{
+console.log('res2: ',res);
+}).catch(e=>console.log(e))	
+}
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
 }).catch( (err) => {
 console.eror('setRemoteDescription for Answer ERROR:', err)
