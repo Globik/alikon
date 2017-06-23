@@ -624,6 +624,7 @@ var ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);
+ps.addChannel('log_rooms',mess=>{console.log('mess: ',mess)})
 
 ps.addChannel('events_bitpay', bp_msg=>{
 	console.log('bpmsg: ', bp_msg);
