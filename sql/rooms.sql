@@ -3,24 +3,26 @@ create table rooms(id text not null,
 				  email text not null references busers(email),
 				  status text not null default 'm',
 				  view int not null default 0,
+				  name text not null,
 				  src text not null default 'no');
-create or replace function log_rooms() returns trigger as $$
-declare 
+				  
+CREATE OR REPLACE FUNCTION log_rooms() RETURNS TRIGGER AS $$
+DECLARE 
 data json;
 notification json;
-begin
-if(tg_op='delete') then
-data=row_to_json(old);
-else
-data=row_to_json(new);
-end if;
-notification = json_build_object('table',tg_table_name,'action',tg_op,'data',data);
-perform pg_notify('log_rooms',notification::text);
-return null;
-end;
-$$ language plpgsql;
-drop trigger if exists l_log_rooms on rooms;
-create trigger l_log_rooms after insert or update or delete on rooms for each row execute procedure log_rooms();
+BEGIN
+IF(TG_OP='DELETE') THEN
+  data=row_to_json(OLD);
+ELSE
+data=row_to_json(NEW);
+END IF;
+notification = json_build_object('table',TG_TABLE_NAME,'action',TG_OP,'data',data);
+PERFORM pg_notify('log_rooms',notification::text);
+RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+--drop trigger if exists l_log_rooms on rooms;
+CREATE TRIGGER l_log_rooms AFTER INSERT OR UPDATE OR DELETE ON rooms FOR EACH ROW EXECUTE PROCEDURE log_rooms();
 -- 58ea81aa5204c81bb9113e6a dima@yandex.ru
 -- 58eae2c641bc970a67ee4acc  ag1@yandex.ru
 -- select*from busers inner join rooms on busers.email=rooms.email;

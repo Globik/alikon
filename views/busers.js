@@ -401,7 +401,7 @@ if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.
 
 //alert(document.getElementById("name").value);
 //myusername=document.getElementById("name").value;
-s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:owner.textContent}));
+s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:owner.textContent,wroomid:modelId.textContent}));
 }
 
 var loc1=location.hostname+':'+location.port;
@@ -853,14 +853,14 @@ function createroom(){
 console.log('create room');
 if(owner.textContent=='true'){
 console.log('sending create room');
-sendJson({type:"createroom",roomname:roomname.textContent,owner:owner.textContent,id:clientId});
+sendJson({type:"createroom",roomname:roomname.textContent,owner:owner.textContent,id:clientId,email:modelEmail.textContent, name:modelName.textContent});
 curentroom.textContent=roomname.value;
 }
 }
 	
 function deleteroom(){
 if(curentroom.textContent){
-sendJson({type:'removeroom', roomname:curentroom.textContent,owner:owner.textContent,id:clientId})
+sendJson({type:'removeroom', roomname:curentroom.textContent,owner:owner.textContent,id:clientId,email:modelEmail.textContent})
 }else{alert('what a room to delete?');}
 }
 
@@ -884,7 +884,9 @@ if(owner.textContent==="false"){removeAllRemoteVideo();}
 }else {
 console.warn('peer NOT exist.');
 }
-if(owner.textContent==="true"){deleteroom();}
+if(owner.textContent==="true"){
+//deleteroom();
+}
 
 updateButtons();
 }

@@ -9,7 +9,8 @@ const fss=require('fs');
 const redis=require('./examples/redis-promis.js')();
 const cl=redis.createClient();
 
-const session=require('koa-generic-session')
+const session=require('koa-generic-session');
+const sse=require('sse-broadcast')();
 
 //const render=require('./libs/render.js')
 const render=require('koa-rend');
@@ -19,6 +20,7 @@ const Pool=require('pg-pool')
 const PgBoss=require('pg-boss');
 const pubrouter=require('./routes/pubrouter2.js');
 const adminrouter=require('./routes/admin.js');
+const Router=require('koa-router');
 
 const WebSocket=require('ws');
 
@@ -67,6 +69,7 @@ ssl:false
 
 const pool=new Pool(pconfig)
 const pg_store=new PgStore(pool)
+const subrouter=new Router();
 
 app.keys=['your-secret']
 app.use(serve(__dirname+'/public'));
@@ -129,6 +132,14 @@ lasha=true;}
 await next();
 });
 
+subrouter.get('/log_rooms', async (ctx,next)=>{
+sse.subscribe('ch_log_rooms',ctx.res)
+//console.log('header: ',ctx.request)
+ctx.response=false;
+await next();
+})
+
+app.use(subrouter.routes()).use(subrouter.allowedMethods())
 app.use(pubrouter.routes()).use(pubrouter.allowedMethods())
 app.use(adminrouter.routes()).use(adminrouter.allowedMethods());
 /*app.use(async (ctx, next) => {
@@ -168,6 +179,9 @@ var droom=new Map();
 //console.log('is srever closed?: ',server.closed)
 pg_store.setup().then(()=>{
 	//console.log('soll listnening port 5000 via setup()');
+pool.query(`delete from rooms`).then(r=>{
+console.log('OK, deleteng all rooms!')
+}).catch(err=>console.log('Error in deleteng all rooms: ',err))
 var servak=app.listen(process.env.PORT || 5000)
 	//var server=http.createServer(app.callback());
 	//server.listen(process.env.PORT || 5000,err=>{
@@ -186,7 +200,7 @@ return new Promise(function(res,rej){
 server.createRoom(roomOptions)
 .then((room) => {
 console.log('room.roomId: ',room.id);
-console.log('ROOM: ',room)
+//console.log('ROOM: ',room)
 droom.set(mn,room);
 console.log('server.createRoom() succeeded');
 //room.dump().then(f=>{console.log('room dump: ',f)}).catch(e=>{console.log(e)})
@@ -331,7 +345,7 @@ ws.on('error',e=>console.log('err: ',err))
 ws.on('close',()=>{
 console.log('websocket closed')
 console.log('client closed. id=' + ws.clientId + '  , total clients=' + wss.clients.size);
-cleanUpPeer(ws);
+cleanUpPeer(ws,ws.wroomid);
 
 boom.removeListener('genauroom', ongenauroom);
 boom.removeListener('fuck', oncreateroom);
@@ -346,6 +360,9 @@ droom.get(ws.roomid).on('close',e=>{
 droom.delete(ws.roomid);
 console.log('ROOM CLOSED');
 console.log('ROOM SIZE:',droom.size);
+pool.query(`delete from rooms where id='${ws.roomid}'`).then(result=>{
+console.log('result delete room by id: ',result.rowCount);
+}).catch(err=>{console.log('err delete room by id: ',err);})
 if(e){
 console.log('error closing the room: ',e);
 }
@@ -386,6 +403,7 @@ msg.text=msg.text;
 }else if(msg.type=="username"){
 connect.username=msg.name;
 connect.owner=msg.owner;
+if(msg.wroomid){connect.wroomid=msg.wroomid;}
 senduserlisttoall(ws);
 //send_new_user_to_all(ws);
 	
@@ -404,6 +422,9 @@ console.log('creating a room for id=', ws.clientId);
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
+pool.query(`insert into rooms(id,email,name) values('${ws.roomid}','${msg.email}','${msg.name}')`).then(result=>{
+console.log('result insert rooms: ',result.rowCount)
+}).catch(err=>{console.log('err insert rooms: ',err)})
 
 }).catch(e=>{
 console.log('error room creating: ',e);
@@ -430,7 +451,7 @@ sendtoclients=false;
 		console.log('got Offer from id=');
 		console.log('must not got offer.');
 }else if(msg.type=="answer"){
-	console.log('got Answer from id=' + ws.clientId);
+console.log('got Answer from id=' + ws.clientId);
 handleAnswer(ws, msg);
 }else if(msg.type=="bye"){
 cleanUpPeer(ws, msg.roomname);
@@ -447,8 +468,11 @@ droom.delete(msg.roomname);
 console.log('ROOM CLOSED');
 console.log('ROOM SIZE:', droom.size);
 //sendback(ws,{type:'goodbyeroom',roomname:msg.roomname,vid:vid.id});
+pool.query(`delete from rooms where id='${msg.roomname}'`).then(result=>{
+console.log('result2 delete room by id: ',result.rowCount)}).catch(err=>{console.log('err2 delete room by id: ',err)})
 ws.send(JSON.stringify({type:'goodbyeroom',roomname:msg.roomname,vid:vid.id}));
 boom.emit('roomremove',{type:'roomremove',roomname:msg.roomname,vid:vid.id})
+
 if(e){
 console.log(e);
 sendback(ws,{type:'error',error:e,roomname:msg.roomname})
@@ -504,6 +528,11 @@ let peer=/*droom.get(message.roomname)*/vid.Peer(id.toString());
 let peerconnection=new RTCPeerConnection({peer:peer,usePlanB:planb});
 console.log('--- create rtcpeerconnection --');
 console.log('-- peers in the room from PREPAREPEER = ',droom.get(message.roomname).peers.length);
+let peerlength=droom.get(message.roomname).peers.length;
+pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
+console.log('ok update rooms view in preparepeer')
+}).catch(err=>{console.log('err update rooms view in preparepeer: ',err)})
+
 peerconnection.on('close', err=>{console.log('peerconnection closed ');
 if(err)console.log(err);});
 peerconnection.on('signalingstatechange',()=>console.log('sate ',peerconnection.signalingState));
@@ -552,17 +581,23 @@ let desc = new RTCSessionDescription({type : "answer", sdp  : message.sdp});
   
 peerconnection.setRemoteDescription(desc).then( function() {
 console.log('setRemoteDescription for Answer OK id=' + id);
-	console.log('MESSAGE.ROOMNAME from handle answer: ',message.roomname)
+console.log('MESSAGE.ROOMNAME from handle answer: ',message.roomname)
 if(droom.get(message.roomname)){
 console.log('-- PEERS in the room FROM handleAnswer = ' + droom.get(message.roomname).peers.length);
+	let peerlength=droom.get(message.roomname).peers.length;
 //cl.hmset(message.roome,[]
-cl.hmset(message.roomname,["quan",droom.get(message.roomname).peers.length]).then(res=>{
-console.log('res2: ',res);
-}).catch(e=>console.log(e))	
+
+//cl.hmset(message.roomname,["quan",droom.get(message.roomname).peers.length]).then(res=>{
+//console.log('res2: ',res);
+//}).catch(e=>console.log(e))	
+
+pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
+console.log('ok update rooms view handleanswer')
+}).catch(err=>{console.log('err update rooms view handleanswer: ',err)})
 }
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
 }).catch( (err) => {
-console.eror('setRemoteDescription for Answer ERROR:', err)
+console.log('setRemoteDescription for Answer ERROR:', err)
 });
 }
 
@@ -597,9 +632,17 @@ return;
 console.log('PeerConnection close. id=' + id);
 peerconnection.close();
 deletePeerConnection(id);
-	console.log('NAME in Clean UP Peer: ',name);
-if(droom.get(name)){ console.log('-- peers in the room  from CLEENUPEER= ' + droom.get(name).peers.length);}
+console.log('NAME in Clean UP Peer: ',name);
+if(droom.get(name)){ 
+console.log('-- peers in the room  from CLEENUPEER= ' + droom.get(name).peers.length);
+let peerlength=droom.get(name).peers.length;
+pool.query(`update rooms set view=${peerlength} where id='${name}'`).then(r=>{
+console.log('ok update rooms view cleenupperr')
+}).catch(err=>{console.log('err update rooms view in cleenuppeer: ',err)})
+}				   
+				   
 }
+//}
 
 function sendSDP(ws, sessionDescription) {
 const id = ws.clientId;
@@ -624,7 +667,15 @@ var ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);
-ps.addChannel('log_rooms',mess=>{console.log('mess: ',mess)})
+ps.addChannel('log_rooms',mess=>{
+console.log('mess: ',mess)
+if(mess.action==='DELETE'){
+console.log('DELETE')
+sse.publish('ch_log_rooms','remove_room', mess.data)
+}else if(mess.action==='INSERT'){
+sse.publish('ch_log_rooms','add_room',mess.data)
+}else{}
+})
 
 ps.addChannel('events_bitpay', bp_msg=>{
 	console.log('bpmsg: ', bp_msg);
@@ -720,7 +771,10 @@ if(er){console.log(er);}
 process.on('SIGINT',()=>{
 console.log(' sigint fired');
 server.close();
+pool.query(`delete from rooms`).then(result=>{
+console.log('result delete rooms: ',result)
 process.exit();
+}).catch(err=>{console.log('err delete rooms: ',err);process.exit();})
 })
 
 process.on('unhundledRejection',(reason, p)=>{

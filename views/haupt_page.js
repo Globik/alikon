@@ -10,6 +10,7 @@ const haupt_page= n=>{
 const {lusers,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 const buser=n.user;
+const roomers=n.roomers;
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
 <head>${head.head({title:"home", meta:`${get_meta()}`,csslink:"/css/main2.css"})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:'')}
@@ -47,6 +48,11 @@ ${n.banner[0].src}
 <h4>Users: </h4>
 ${users_list(lusers)}
 <hr>
+<h4>Roomers:</h4>
+<div id="roomContainer">
+${roomers && roomers.length >0 ? roomers_list(roomers) : '<b>No rooms at the moment</b>'}
+</div>
+<hr>
 <h1>Buy Tokens for Bitcoins!</h1>
 <h6>In a test mode</h6>
 <a href='/tipping/purchase_tokens'>Purchase tokens</a>
@@ -68,6 +74,40 @@ wso.innerHTML+='<br>message: '+ev.data;
 socket.send("Here is websocket client to server");
 }
 */
+var s=new EventSource('/log_rooms');
+s.onopen=function(e){console.log('event source is opened! ')}
+s.onmessage=function(e){
+console.log('event data:',e.data);
+var mata=JSON.parse(e.data);
+//if(mata.type==='leave'){
+//var l=document.querySelector('[data-id="'+mata.id+'"]');
+//if(l){
+//console.log('ok');
+//l.remove();
+//}
+//}
+
+}
+s.onerror=function(e){console.error("event source error: ");}
+s.addEventListener('remove_room',remove_room,false);
+s.addEventListener('add_room',add_room,false);
+
+function remove_room(e){
+console.log('on remove_room : '+e.data);
+var mata=JSON.parse(e.data);
+var l=document.querySelector('[data-divroomid="'+mata.id+'"]');
+if(l){l.remove()}
+}
+function add_room(e){
+let m=JSON.parse(e.data);
+let div=document.createElement('div');
+div.setAttribute("data-divroomid", m.id);
+div.innerHTML='<a href="/webrtc/'+m.id+'">'+m.name+'</a><br><br>'+
+'<b>img src: </b>'+m.src+'<br><br>'+
+'<b>status: </b><span class="rstatus" data-rstatus="'+m.id+'">'+m.status+'</span><br><br>'+
+'<b>viewers: </b><span class="rviewers" data-rviewers="'+m.id+'">'+m.view+'</span><br><br>';
+roomContainer.appendChild(div);
+}
 </script>
 </main>
 <footer id="footer">${footer.footer({})}</footer></body></html>`;}
@@ -93,6 +133,23 @@ if(Array.isArray(n)){
  s+='<ul>';
  n.forEach((el,i)=>{
 s+=`<li><a href="/webrtc/${el.id}">${el.name}</a>`;
+});
+	s+='</ul>';
+   }
+return s;
+}
+
+function roomers_list(n){
+let s='';
+if(Array.isArray(n)){
+ s+='<ul>';
+ n.forEach((el,i)=>{
+s+=`<hr><div data-divroomid="${el.id}">
+<a href="/webrtc/${el.id}">${el.name}</a><br><br>
+<b>img src: </b>${el.src}<br><br>
+<b>status: </b><span class="rstatus" data-rstatus="${el.id}">${el.status}</span><br><br>
+<b>viewers: </b><span class="rviewers" data-rviewers="${el.id}">${el.view}</span><br><br>
+</div><hr>`;
 });
 	s+='</ul>';
    }

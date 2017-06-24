@@ -24,15 +24,23 @@ const pub=new Router();
 const limit=3;
 pub.get('/',async ctx=>{
 let result=null;
+let bresult=null;
 let db=ctx.db;
 let m=null;
 try{
 var us=await db.query(`select*from busers`);
 result=us.rows;
 }catch(e){console.log(e)}
+	
+try{
+let bus=await db.query(`select*from busers inner join rooms on busers.email=rooms.email`/*where view>=1`*/)
+bresult=bus.rows;
+console.log('bresult: ',bresult)
+}catch(e){console.log(e)}	
+	
 ctx.session.dorthin=this.path;
 if(ctx.session.bmessage){m=ctx.session.bmessage;}
-ctx.body=await ctx.render('haupt_page',{lusers:result,m:m});
+ctx.body=await ctx.render('haupt_page',{lusers:result,m:m,roomers:bresult});
 if(ctx.session.bmessage){delete ctx.session.bmessage}
 });
 

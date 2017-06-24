@@ -7,6 +7,7 @@ const webport=5000;
 const app=new Koa()
 app.use(koaBody())
 render(app,{root:'views',development:true})
+
 router.get('/',async ctx=>{
 ctx.body=await ctx.render('sse',{})
 })

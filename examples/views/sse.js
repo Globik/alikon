@@ -1,4 +1,4 @@
-const sse=n=>{return `<html><body><h1>sse</h1>
+const sse=n=>{return `<html><body onload="init_sse();"><h1>sse</h1>
 <form name="messager" method="post" action="/send">
 
 <input type="text" name="name" value="Alice"/><br>
@@ -39,6 +39,7 @@ xhr.send(mid);
 ev.preventDefault();
 }
 //['110','130','160','170']
+function init_sse(){
 var s=new EventSource('/subscribe',{withCredentials:true});
 s.onopen=function(e){console.warn('event source is opened! ')}
 s.onmessage=function(e){
@@ -57,6 +58,7 @@ s.onerror=function(e){out2.innerHTML="event source error: ";}
 s.addEventListener('fuck',function(e){
 console.log('fuck event came : '+e.data);
 },false)
+}
 </script>
 </body></html>`}
 module.exports={sse}
