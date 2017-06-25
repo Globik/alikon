@@ -5,6 +5,7 @@ const url=require('url')
 const koaBody=require('koa-body')
 const fs=require('co-fs');
 const fss=require('fs');
+const debug=require('debug')('k');
 
 const redis=require('./examples/redis-promis.js')();
 const cl=redis.createClient();
@@ -246,6 +247,18 @@ break;
 return connect;
 }
 	
+function pupkin_ready(bs){
+let pupkin=false;
+for(let i of wss.clients){
+if(i.upgradeReq.url===bs.upgradeReq.url){	
+if(i.ready===true){
+pupkin=true;
+break;
+}
+}}
+return pupkin;	
+}	
+	
 function makeuserlistmessage(bs){
 var userlistmsg={type:"userlist", users:[]};
 wss.clients.forEach(c=>{
@@ -257,8 +270,9 @@ userlistmsg.users.push({username:c.username,owner:c.owner,clientId:c.clientId});
 return userlistmsg;
 }
 		
-function senduserlisttoall(bs){
+function senduserlisttoall(bs,bool){
 var userlistmsg=makeuserlistmessage(bs);
+	userlistmsg.ready=bool;
 var userlistmsgstr=JSON.stringify(userlistmsg);
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
@@ -289,6 +303,40 @@ c.send(usermsgstr)
 });
 }	
 	
+function emergency_to_all(bs,obj){
+let b=JSON.stringify(obj);
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+c.send(b)
+}}
+});
+}	
+	function make_channel_online_message(bs){
+	let usermsg={type:"roomer_online"};
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+usermsg.username=c.username;//.push({username:c.username,owner:c.owner,clientId:c.clientId});
+usermsg.clientId=c.clientId;
+usermsg.roomname=bs.upgradeReq.url.substring(1);
+}}
+})
+return usermsg;
+	
+	}
+	
+function send_channel_online(bs){
+let usermsg=make_channel_online_message(bs);
+var usermsgstr=JSON.stringify(usermsg);
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+c.send(usermsgstr)
+}}
+});
+}	
+	
 function heartbeat(){
 this.isAlive=true;
 //console.log('pong')
@@ -300,9 +348,15 @@ ws.isAlive=false;
 ws.ping(JSON.stringify({type:"ping"}),false,true)
 })
 },6000);
+
+	
 	
 wss.on('connection', ws=>{
 console.log('websocket connected: ', ws.upgradeReq.url);
+//var bready=false;
+var blin=ws.upgradeReq.url;
+var blin2=blin.trim();
+var blin3=blin2.substring(1);
 ws.isAlive=true;
 ws.on('pong',heartbeat);
 	
@@ -336,16 +390,18 @@ if(ws.readyState==1)ws.send(JSON.stringify(dib))
 boom.on('fuck', oncreateroom)
 boom.on('genauroom', ongenauroom)
 boom.on('roomremove', onroomremove)
-
+debug('listenerCount genauroom: ',EventEmitter.listenerCount(boom,'genauroom'))
+debug('eventNames: ', boom.eventNames())
 ws.clientId=nextId;
 nextId++;
 var msg={type:"id",id:ws.clientId};
 ws.send(JSON.stringify(msg));
 ws.on('error',e=>console.log('err: ',err))
+
 ws.on('close',()=>{
 console.log('websocket closed')
 console.log('client closed. id=' + ws.clientId + '  , total clients=' + wss.clients.size);
-cleanUpPeer(ws,ws.wroomid);
+cleanUpPeer(ws,blin3);
 
 boom.removeListener('genauroom', ongenauroom);
 boom.removeListener('fuck', oncreateroom);
@@ -380,6 +436,8 @@ var sendtoclients=true;
 try{
 msg=JSON.parse(message)}catch(e){console.log('error json to parse');}
 var connect=getconnectionforid(ws,msg.id);
+var sifa=pupkin_ready(ws);
+//var sonnect=getconnectionforid(ws,blin3
 //console.log('connect: ',connect);
 /*	
 switch(msg.type){
@@ -403,8 +461,9 @@ msg.text=msg.text;
 }else if(msg.type=="username"){
 connect.username=msg.name;
 connect.owner=msg.owner;
-if(msg.wroomid){connect.wroomid=msg.wroomid;}
-senduserlisttoall(ws);
+connect.ready=false;
+
+senduserlisttoall(ws,sifa);
 //send_new_user_to_all(ws);
 	
 sendtoclients=false;
@@ -422,6 +481,7 @@ console.log('creating a room for id=', ws.clientId);
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
+//ws.ready=true;
 pool.query(`insert into rooms(id,email,name) values('${ws.roomid}','${msg.email}','${msg.name}')`).then(result=>{
 console.log('result insert rooms: ',result.rowCount)
 }).catch(err=>{console.log('err insert rooms: ',err)})
@@ -438,6 +498,18 @@ console.log('server is closed!!!!')
 if(ws.readyState===1)ws.send(JSON.stringify({type:"error",ename:"Mediasoup is closed!",emsg:"Are you online?"}))
 }
 sendtoclients=false;
+}else if(msg.type=="online"){
+// iceConnectionState=='completed'
+debug('ONLINE roomer_online event');
+ws.ready=true;
+//ws.send(JSON.stringify({type:'buldozer'}))
+emergency_to_all(ws,{type:'roomer_online',ready:true})
+sendtoclients=false;
+}else if(msg.type=="offline"){
+ws.ready=false;
+//ws.send(JSON.stringify({type:'exavator'}))
+emergency_to_all(ws,{type:'roomer_offline',ready:false})
+sendtoclients=false;
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);
 const downOnlyRequested=false;
@@ -448,12 +520,13 @@ const downOnlyRequested=true;
 preparePeer(ws, msg,downOnlyRequested);
 sendtoclients=false;
 }else if(msg.type=="offer"){
-		console.log('got Offer from id=');
-		console.log('must not got offer.');
+console.log('got Offer from id=');
+console.log('must not got offer.');
 }else if(msg.type=="answer"){
 console.log('got Answer from id=' + ws.clientId);
 handleAnswer(ws, msg);
 }else if(msg.type=="bye"){
+debug('TYPE "BYE" came. Clearing peerconnection!')
 cleanUpPeer(ws, msg.roomname);
 sendtoclients=false;
 }else if(msg.type=="candidate"){
@@ -533,8 +606,20 @@ pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`)
 console.log('ok update rooms view in preparepeer')
 }).catch(err=>{console.log('err update rooms view in preparepeer: ',err)})
 
-peerconnection.on('close', err=>{console.log('peerconnection closed ');
-if(err)console.log(err);});
+peerconnection.on('close', err=>{
+console.log('peerconnection closed ');
+debug('PEER_CONNECTION CLOSED');
+debug('PC closed for room message.roomname', message.roomname)
+debug('PC closed for ws id: ',ws.clientId);
+if(droom.get(message.roomname)){
+let peerlength=droom.get(message.roomname).peers.length;
+pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
+console.log('ok update rooms view pc.onclose')
+}).catch(err=>{console.log('err update rooms pconclose: ',err)})
+}
+	
+if(err)console.log(err);
+});
 peerconnection.on('signalingstatechange',()=>console.log('sate ',peerconnection.signalingState));
 peerconnection.on('negotiationneeded',()=>{console.log('negotiationneeded id: ',id);
 sendOffer(ws,peerconnection,downOnly);});
@@ -615,6 +700,7 @@ Connections[id] = pc;
 
 function getPeerConnection(id) {
 const pc = Connections[id];
+//console.log('pc: ',pc)
 return pc
 }
 
@@ -635,10 +721,12 @@ deletePeerConnection(id);
 console.log('NAME in Clean UP Peer: ',name);
 if(droom.get(name)){ 
 console.log('-- peers in the room  from CLEENUPEER= ' + droom.get(name).peers.length);
+	/*
 let peerlength=droom.get(name).peers.length;
 pool.query(`update rooms set view=${peerlength} where id='${name}'`).then(r=>{
 console.log('ok update rooms view cleenupperr')
 }).catch(err=>{console.log('err update rooms view in cleenuppeer: ',err)})
+*/
 }				   
 				   
 }

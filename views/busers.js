@@ -121,6 +121,7 @@ overlay:target+.popi{left:0;}
 <div class="modrtc">
 <h4>You</h4>
 <b>As</b> <span id="yourName">${buser ? buser.name:'a Guest'}</span><br>
+
 <b>id:</b><span id="yourId">${buser ? buser.id : ''}</span><br>
 <b>Email: </b><span id="yourEmail">${buser ? buser.email:''}</span><br>
 <b>Tokens: </b><span id="yourTokens">${buser ? buser.items:''}</span><br>
@@ -401,7 +402,7 @@ if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.
 
 //alert(document.getElementById("name").value);
 //myusername=document.getElementById("name").value;
-s.send(JSON.stringify({name:myusername,id:clientId,type:"username",owner:owner.textContent,wroomid:modelId.textContent}));
+s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner.textContent}));
 }
 
 var loc1=location.hostname+':'+location.port;
@@ -421,6 +422,7 @@ new_uri='ws:';
 ${buser ? 'go_socket();' : ''}
 
 function go_socket(){
+if(socket){alert('scho gibts socket!');return;}
 socket=new WebSocket(new_uri+'//'+loc3+'/'+modelId.textContent);
 socket.onopen=function(){
 wso.innerHTML='websocket connected';
@@ -517,7 +519,18 @@ console.warn('On roomcreated: ',event.data);
 roomcreated=true;
 }else if(msg.type==='rooming'){
 console.log('type rooming: '+event.data);
-}else if (msg.type === 'offer') {
+}else if(msg.type==='roomer_online'){
+console.warn('on roomer_online: ',event.data);
+}else if(msg.type==='roomer_offline'){
+console.warn('on roomer_offline: ',event.data);
+if(peerConnection){
+console.log('signaling state: ',peerConnection.signalingState)
+console.log('ice connection state: ',peerConnection.iceConnectionState);
+//var e="
+${buser ? '' : 'dissconnect();if(socket)socket.close();'}
+}
+
+}else if(msg.type === 'offer') {
       // -- got offer ---
 console.log('Received offer ...');
 let offer = new RTCSessionDescription(msg);
@@ -735,9 +748,21 @@ console.log('== signaling state=' + peer.signalingState);
 };
 peer.oniceconnectionstatechange = function() {
 console.log('== ice connection state=' + peer.iceConnectionState);
+//bla bla bla
 showState('ice connection state=' + peer.iceConnectionState);
-if (peer.iceConnectionState === 'disconnected') {
-console.log('-- disconnected --');
+if(peer.iceConnectionState==='completed'){
+if(owner.textContent==='true'){
+sendJson({type:'online',roomname:roomname.textContent});
+}
+}else if(peer.iceConnectionState==='closed'){
+if(owner.textContent==='true')sendJson({type:'offline',roomname:roomname.textContent});
+}else if(peer.iceConnectionState==='failed'){
+if(yourName.textContent==="a Guest"){
+dissconnect();
+if(socket)socket.close();
+}
+}else if (peer.iceConnectionState === 'disconnected') {
+console.warn('-- disconnected --');
 dissconnect();
 }
 };
