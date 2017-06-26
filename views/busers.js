@@ -116,7 +116,7 @@ overlay:target+.popi{left:0;}
 <b>Room name(id)</b><span id="roomname">${model.id}</span><br>
 <b>current room:</b><span id="curentroom"></span><br>
 </div><br>
-
+<input type="hidden" id="mamamia" value="Mamamia"/>
 <br>
 <div class="modrtc">
 <h4>You</h4>
@@ -198,6 +198,7 @@ remote video<br>
 <span id="rtcerror"></span><br>
 <br><span id="wso"></span>
 <script>
+//alert(mamamia.value);
 var seat=0;
 var init=0;
 var startDate,clocker,mlocker, startingDate;
@@ -652,7 +653,7 @@ element.src = window.URL.createObjectURL(stream);
 }
 element.play();
 element.volume = 0;
-createroom();
+//createroom();
 }
 
 function pauseVideo(element) {
@@ -874,11 +875,11 @@ console.error('ERROR in callWithCapabilitySDP():', err);
 });
 }
 	
-function createroom(){
+function createroom(src){
 console.log('create room');
 if(owner.textContent=='true'){
 console.log('sending create room');
-sendJson({type:"createroom",roomname:roomname.textContent,owner:owner.textContent,id:clientId,email:modelEmail.textContent, name:modelName.textContent});
+sendJson({type:"createroom",roomname:roomname.textContent,owner:owner.textContent,id:clientId,email:modelEmail.textContent, name:modelName.textContent,src:src});
 curentroom.textContent=roomname.value;
 }
 }
@@ -1009,8 +1010,39 @@ remoteContainer.firstChild.srcObject = null;
 remoteContainer.removeChild(remoteContainer.firstChild);
 }
 }
+function get_image(){
+var cnv=document.createElement('canvas');
+cnv.width=cnv.height=130;
+local_video.width=130;
+local_video.height=130;
+var c=cnv.getContext("2d");
+//local_video.onplay=function(e){
+//var img=new Image();
+//img.src=local_video.srcObject;
+//let v=local_video.play();
+//image.onload=function(){
+c.drawImage(local_video,0,0,130,130);
+//pagewrap.appendChild(cnv);
+//}
+//}
+setTimeout(function(){
+var li=cnv.toDataURL('image/png',0.1);
+//alert('li'+li);
+var emg=document.createElement('img');
+emg.src=li;
+pagewrap.appendChild(emg);
+//socket.send(JSON.stringify({type:'image',roomname:roomname.textContent, src:li}))
+createroom(li);
+},1000)
 
-
+}
+//get_image();
+local_video.onloadedmetadata=function(e){
+//alert('metadata');
+setTimeout(function(){
+get_image();
+},1000)
+}
 function gid(id){return document.getElementById(id);}
 </script>
 </main><footer id="footer">${footer.footer({})}</footer>

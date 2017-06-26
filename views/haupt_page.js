@@ -102,8 +102,14 @@ function add_room(e){
 let m=JSON.parse(e.data);
 let div=document.createElement('div');
 div.setAttribute("data-divroomid", m.id);
+var bsrc;
+if(m.src !=="no"){
+bsrc='<img src="'+m.src+'"/>';
+}else{
+bsrc='no image at the moment';
+}
 div.innerHTML='<a href="/webrtc/'+m.id+'">'+m.name+'</a><br><br>'+
-'<b>img src: </b>'+m.src+'<br><br>'+
+'<b>img src: </b>'+bsrc+'<br><br>'+
 '<b>status: </b><span class="rstatus" data-rstatus="'+m.id+'">'+m.status+'</span><br><br>'+
 '<b>viewers: </b><span class="rviewers" data-rviewers="'+m.id+'">'+m.view+'</span><br><br>';
 roomContainer.appendChild(div);
@@ -146,7 +152,7 @@ if(Array.isArray(n)){
  n.forEach((el,i)=>{
 s+=`<hr><div data-divroomid="${el.id}">
 <a href="/webrtc/${el.id}">${el.name}</a><br><br>
-<b>img src: </b>${el.src}<br><br>
+<b>img src: </b>${el.src !=="no" ? `<img src="${el.src}"/>`:'no image'}<br><br>
 <b>status: </b><span class="rstatus" data-rstatus="${el.id}">${el.status}</span><br><br>
 <b>viewers: </b><span class="rviewers" data-rviewers="${el.id}">${el.view}</span><br><br>
 </div><hr>`;

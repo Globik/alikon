@@ -482,8 +482,11 @@ croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
 //ws.ready=true;
-pool.query(`insert into rooms(id,email,name) values('${ws.roomid}','${msg.email}','${msg.name}')`).then(result=>{
-console.log('result insert rooms: ',result.rowCount)
+pool.query(`insert into rooms(id,email,name,src) values('${ws.roomid}','${msg.email}','${msg.name}','${msg.src}') 
+returning id,status, view,name,src`).then(result=>{
+console.log('result insert rooms: ',result.rowCount);
+//debug('image string:',result.rows[0]);
+sse.publish('ch_log_rooms','add_room', result.rows[0])
 }).catch(err=>{console.log('err insert rooms: ',err)})
 
 }).catch(e=>{
@@ -510,6 +513,13 @@ ws.ready=false;
 //ws.send(JSON.stringify({type:'exavator'}))
 emergency_to_all(ws,{type:'roomer_offline',ready:false})
 sendtoclients=false;
+}else if(msg.type=="image"){
+debug('IMAGE');
+pool.query(`update rooms set src='${msg.src}' where id='${msg.roomname}'`).then(r=>{
+debug('OK saving image string!')
+}).catch(err=>{
+console.log('err in saving image string: ',err)
+})
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);
 const downOnlyRequested=false;
