@@ -50,7 +50,7 @@ ${users_list(lusers)}
 <hr>
 <h4>Roomers:</h4>
 <div id="roomContainer">
-${roomers && roomers.length >0 ? roomers_list(roomers) : '<b>No rooms at the moment</b>'}
+${roomers && roomers.length >0 ? roomers_list(roomers) : '<b id="noroomer">No rooms at the moment</b>'}
 </div>
 <hr>
 <h1>Buy Tokens for Bitcoins!</h1>
@@ -98,6 +98,7 @@ var mata=JSON.parse(e.data);
 var l=document.querySelector('[data-divroomid="'+mata.id+'"]');
 if(l){l.remove()}
 }
+
 function add_room(e){
 let m=JSON.parse(e.data);
 let div=document.createElement('div');
@@ -112,6 +113,7 @@ div.innerHTML='<a href="/webrtc/'+m.id+'">'+m.name+'</a><br><br>'+
 '<b>img src: </b>'+bsrc+'<br><br>'+
 '<b>status: </b><span class="rstatus" data-rstatus="'+m.id+'">'+m.status+'</span><br><br>'+
 '<b>viewers: </b><span class="rviewers" data-rviewers="'+m.id+'">'+m.view+'</span><br><br>';
+//noroomer.remove();
 roomContainer.appendChild(div);
 }
 </script>

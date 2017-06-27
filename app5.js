@@ -154,7 +154,6 @@ app.use(adminrouter.routes()).use(adminrouter.allowedMethods());
 app.use(async (ctx, next)=>{
 try{
 await next();
-console.log('THIS.STATUS!!!!: ', ctx.status);
 if(ctx.status === 404) ctx.throw(404,"fuck not found",{user:"fuck userss"});
 }catch(err){
 ctx.status=err.status || 500;
@@ -177,25 +176,17 @@ pg_store.on('connect',()=>console.log('PG_STORE IS CONNECTED!!!'));
 var nextId=Date.now();
 var Connections = new Array();
 var droom=new Map();
-//console.log('is srever closed?: ',server.closed)
+
 pg_store.setup().then(()=>{
-	//console.log('soll listnening port 5000 via setup()');
+
 pool.query(`delete from rooms`).then(r=>{
 console.log('OK, deleteng all rooms!')
 }).catch(err=>console.log('Error in deleteng all rooms: ',err))
 var servak=app.listen(process.env.PORT || 5000)
-	//var server=http.createServer(app.callback());
-	//server.listen(process.env.PORT || 5000,err=>{
-	//if(err)console.log(err)
-	//console.log('listen on port 5000');
-	//});
-console.log('is srever closed?: ',server.closed)
+	
+console.log('is Mediasoup server closed?: ',server.closed)
 var wss=new WebSocket.Server({server:servak});
-/*
-var nextId=Date.now();
-var Connections = new Array();
-var droom=new Map();
-*/	
+
 function croom(mn){
 return new Promise(function(res,rej){
 server.createRoom(roomOptions)
@@ -203,9 +194,7 @@ server.createRoom(roomOptions)
 console.log('room.roomId: ',room.id);
 //console.log('ROOM: ',room)
 droom.set(mn,room);
-console.log('server.createRoom() succeeded');
 //room.dump().then(f=>{console.log('room dump: ',f)}).catch(e=>{console.log(e)})
-boom.emit('genauroom',{roomid:room.id,roomname:mn,type:'genaurum'});
 res('ok');
 })
 .catch((err) => {
@@ -286,7 +275,7 @@ let usermsg={type:"joined_user"};
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
 if(c && c.readyState===WebSocket.OPEN){
-usermsg.username=c.username;//.push({username:c.username,owner:c.owner,clientId:c.clientId});
+usermsg.username=c.username;
 usermsg.clientId=c.clientId;
 }}
 })
@@ -349,49 +338,38 @@ ws.ping(JSON.stringify({type:"ping"}),false,true)
 })
 },6000);
 
-	
+function close_room(ws, name){
+console.log('CLOSING THE ROOM!!!: ',name);
+let vid=droom.get(name)
+if(vid){
+vid.on('close', on_close_room)
+vid.close();
+console.log('ROOM SIZE:',droom.size);
+}
+function on_close_room(err){
+droom.delete(name)
+pool.query(`delete from rooms where id='${name}' RETURNING id`).then(result=>{
+console.log('DELETE RETURNING ID: ',result.rows[0]);
+sse.publish('ch_log_rooms','remove_room', result.rows[0])
+sendback(ws,{type:'goodbyeroom',roomname: name});
+}).catch(err=>{console.log('err delete room by id: ',err);})
+if(err){
+console.log('error closing the room: ',err);
+sendback(ws,{type:'error',error:e,roomname: name})
+}
+}
+}	
 	
 wss.on('connection', ws=>{
 console.log('websocket connected: ', ws.upgradeReq.url);
-//var bready=false;
 var blin=ws.upgradeReq.url;
 var blin2=blin.trim();
 var blin3=blin2.substring(1);
 ws.isAlive=true;
-ws.on('pong',heartbeat);
+ws.on('pong', heartbeat);
+
+
 	
-function oncreateroom(dob){
-console.log('DOB: ',dob);
-console.log('FUCK FUCK FUCK');
-console.log('CLIENT SEND1 to:', ws.clientId);
-dob.type="roomcreated";
-dob.toclient=ws.clientId;
-if(ws.readyState===1)ws.send(JSON.stringify(dob));
-}
-	
-function ongenauroom(bob){
-console.log('BOB: ',bob);
-console.log('wss.clients: ',wss.clients.size);
-bob.toclient=ws.clientId;
-if(ws.readyState===1){
-ws.send(JSON.stringify(bob));
-cl.hmset(bob.roomname,["quan", 0]).then((res)=>{console.log('res: ',res);
-cl.sadd('rooms',[bob.roomname]).then(resi=>{console.log('resi: ',resi)}).catch(e=>{console.log(e)})										   
-											   }).catch(e=>{console.log(e)})				 
-}
-}
-	
-function onroomremove(dib){
-console.log('onroomremove: ',dib);
-dib.toclient=ws.clientId;
-if(ws.readyState==1)ws.send(JSON.stringify(dib))
-}
-	
-boom.on('fuck', oncreateroom)
-boom.on('genauroom', ongenauroom)
-boom.on('roomremove', onroomremove)
-debug('listenerCount genauroom: ',EventEmitter.listenerCount(boom,'genauroom'))
-debug('eventNames: ', boom.eventNames())
 ws.clientId=nextId;
 nextId++;
 var msg={type:"id",id:ws.clientId};
@@ -401,58 +379,23 @@ ws.on('error',e=>console.log('err: ',err))
 ws.on('close',()=>{
 console.log('websocket closed')
 console.log('client closed. id=' + ws.clientId + '  , total clients=' + wss.clients.size);
-cleanUpPeer(ws,blin3);
+cleanUpPeer(ws, blin3);
 
-boom.removeListener('genauroom', ongenauroom);
-boom.removeListener('fuck', oncreateroom);
-boom.removeListener('roomremove', onroomremove);
-
-if((ws.owner=="true") && ws.roomid){
+if(ws.owner=="true"){
 console.log('OWNER!!!!!');
-var wes=droom.get(ws.roomid);
-if(wes){
-console.log('WES!!!!!for a room named: ',ws.roomid)
-droom.get(ws.roomid).on('close',e=>{
-droom.delete(ws.roomid);
-console.log('ROOM CLOSED');
-console.log('ROOM SIZE:',droom.size);
-pool.query(`delete from rooms where id='${ws.roomid}'`).then(result=>{
-console.log('result delete room by id: ',result.rowCount);
-}).catch(err=>{console.log('err delete room by id: ',err);})
-if(e){
-console.log('error closing the room: ',e);
+close_room(ws, blin3);
 }
-})
-droom.get(ws.roomid).close();
-}				  
-}
-				  
 })
 
 ws.on('message', message=>{
-//console.log('wss.clients.length: ',ws.clients.size());
-//console.log('Message: ', message);
+
 var sendtoclients=true;
 try{
-msg=JSON.parse(message)}catch(e){console.log('error json to parse');}
+msg=JSON.parse(message)}catch(e){console.log('error json in websocket to parse');}
 var connect=getconnectionforid(ws,msg.id);
 var sifa=pupkin_ready(ws);
-//var sonnect=getconnectionforid(ws,blin3
-//console.log('connect: ',connect);
-/*	
-switch(msg.type){
-case "message":
-if(connect){msg.name=connect.username;}
-msg.text=msg.text;
-break;
-case "username":
-connect.username=msg.name;
-connect.owner=msg.owner;
-senduserlisttoall(ws);
-sendtoclients=false;
-break;
-}
-*/
+
+
 if(msg.type=="message"){
 if(connect){
 msg.name=connect.username;
@@ -464,7 +407,7 @@ connect.owner=msg.owner;
 connect.ready=false;
 
 senduserlisttoall(ws,sifa);
-//send_new_user_to_all(ws);
+send_new_user_to_all(ws);
 	
 sendtoclients=false;
 }else if(msg.type=="createroom"){
@@ -481,13 +424,17 @@ console.log('creating a room for id=', ws.clientId);
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
-//ws.ready=true;
+
 pool.query(`insert into rooms(id,email,name,src) values('${ws.roomid}','${msg.email}','${msg.name}','${msg.src}') 
 returning id,status, view,name,src`).then(result=>{
 console.log('result insert rooms: ',result.rowCount);
-//debug('image string:',result.rows[0]);
+
+sendback(ws,{roomname:msg.roomname,type:'onroom'})
+	
 sse.publish('ch_log_rooms','add_room', result.rows[0])
 }).catch(err=>{console.log('err insert rooms: ',err)})
+
+
 
 }).catch(e=>{
 console.log('error room creating: ',e);
@@ -513,13 +460,6 @@ ws.ready=false;
 //ws.send(JSON.stringify({type:'exavator'}))
 emergency_to_all(ws,{type:'roomer_offline',ready:false})
 sendtoclients=false;
-}else if(msg.type=="image"){
-debug('IMAGE');
-pool.query(`update rooms set src='${msg.src}' where id='${msg.roomname}'`).then(r=>{
-debug('OK saving image string!')
-}).catch(err=>{
-console.log('err in saving image string: ',err)
-})
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);
 const downOnlyRequested=false;
@@ -536,6 +476,7 @@ console.log('must not got offer.');
 console.log('got Answer from id=' + ws.clientId);
 handleAnswer(ws, msg);
 }else if(msg.type=="bye"){
+//dissconnect button
 debug('TYPE "BYE" came. Clearing peerconnection!')
 cleanUpPeer(ws, msg.roomname);
 sendtoclients=false;
@@ -543,27 +484,9 @@ sendtoclients=false;
 console.log('MUST NOT got candidate');
 }else if(msg.type=="removeroom"){
 if(msg.owner==='true'){
+// pauseVideo 'stop video' button
 console.log('closing a room: ',msg.roomname);
-let vid=droom.get(msg.roomname);
-if(vid){
-droom.get(msg.roomname).on('close',e=>{
-droom.delete(msg.roomname);
-console.log('ROOM CLOSED');
-console.log('ROOM SIZE:', droom.size);
-//sendback(ws,{type:'goodbyeroom',roomname:msg.roomname,vid:vid.id});
-pool.query(`delete from rooms where id='${msg.roomname}'`).then(result=>{
-console.log('result2 delete room by id: ',result.rowCount)}).catch(err=>{console.log('err2 delete room by id: ',err)})
-ws.send(JSON.stringify({type:'goodbyeroom',roomname:msg.roomname,vid:vid.id}));
-boom.emit('roomremove',{type:'roomremove',roomname:msg.roomname,vid:vid.id})
-
-if(e){
-console.log(e);
-sendback(ws,{type:'error',error:e,roomname:msg.roomname})
-}
-})
-droom.get(msg.roomname).close();
-console.log('ROOM SIZE:',droom.size);
-}
+close_room(ws, msg.roomname)
 }
 sendtoclients=false;
 }else{console.log('unknown type: ',msg.type);sendtoclients=true;}
@@ -595,7 +518,7 @@ console.log('soll on port 5000');
 
 function sendback(ws, message) {
 let str = JSON.stringify(message);
-ws.send(str);
+if(ws.readyState===1)ws.send(str);
 }
 
 function preparePeer(ws, message, downOnly){
@@ -680,11 +603,6 @@ console.log('MESSAGE.ROOMNAME from handle answer: ',message.roomname)
 if(droom.get(message.roomname)){
 console.log('-- PEERS in the room FROM handleAnswer = ' + droom.get(message.roomname).peers.length);
 	let peerlength=droom.get(message.roomname).peers.length;
-//cl.hmset(message.roome,[]
-
-//cl.hmset(message.roomname,["quan",droom.get(message.roomname).peers.length]).then(res=>{
-//console.log('res2: ',res);
-//}).catch(e=>console.log(e))	
 
 pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
 console.log('ok update rooms view handleanswer')
@@ -765,15 +683,6 @@ var ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);
-ps.addChannel('log_rooms',mess=>{
-console.log('mess: ',mess)
-if(mess.action==='DELETE'){
-console.log('DELETE')
-sse.publish('ch_log_rooms','remove_room', mess.data)
-}else if(mess.action==='INSERT'){
-sse.publish('ch_log_rooms','add_room',mess.data)
-}else{}
-})
 
 ps.addChannel('events_bitpay', bp_msg=>{
 	console.log('bpmsg: ', bp_msg);
@@ -858,8 +767,7 @@ done().then(()=>console.log('confirmed done'))
 }	
 
 server.on('newroom',(r)=>{
-console.log('new room: ',r.id);
-boom.emit('fuck',{room_id:r.id});
+//console.log('new room: ', r.id);
 });
 server.on('close',(er)=>{
 console.log('closing the mediasoup server');

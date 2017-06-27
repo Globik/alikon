@@ -151,10 +151,6 @@ Time: <span id="mer">00:00:00</span><br><br>
 <br>
 <span id="fuckingout"></span>
 <br>
-<h5>Userlist</h5>
-<div id="userlist"></div>
-<h5>room list</h5>
-<div id="roomslist"></div>
 <hr><output id="out"></output>
 
 <a href="#" class="overlay" id="resultativ"></a>
@@ -385,10 +381,7 @@ var targetusername=null;
 var pc=null;
 var socket=null;
 var roomcreated=false;
-function do_socket(){
-go_socket();
-//return false;
-}
+
 
 
 function setusername(s){
@@ -438,7 +431,7 @@ if(connecteduser){
 message.target=connecteduser;}
 var msgjson=JSON.stringify(message);
 console.log('msgjson: ',msgjson);
-socket.send(msgjson);
+if(socket)socket.send(msgjson);
 }
 
 document.forms.publish.onsubmit=function(){
@@ -446,7 +439,7 @@ var outm={};
 outm.msg=this.message.value;
 outm.id=clientId;
 outm.type="message";
-socket.send(JSON.stringify(outm));
+if(socket)socket.send(JSON.stringify(outm));
 return false;
 }
 
@@ -460,7 +453,7 @@ outm.type="message";
 //outm.target=gid('name').value;//modelName.textContent;
 //outm.target=modelId.textContent;
 outm.target=clientId;
-socket.send(JSON.stringify(outm));
+if(socket)socket.send(JSON.stringify(outm));
 return false
 }
 
@@ -477,12 +470,19 @@ console.log("case username: "+event.data);
 showmessage(event.data);
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
+if(owner.textContent==="false"){
+//console.log('roomcreated: ',roomcreated)
+if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated)}
+}
+/*
 var si='';
 msg.users.forEach(function(el,i){
 si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
-})
-userlist.innerHTML=si;
 
+})
+
+userlist.innerHTML=si;
+*/
 }else if(msg.type=='joined_user'){
 console.warn('onJoinedUser: ',event.data);
 }else if(msg.type=='Doffer'){
@@ -506,20 +506,10 @@ reject_call(msg.from_target);
 
 //mediasoup stuff
 
-}else if(msg.type==='genaurum'){
-//videostreaming
-console.warn('On genaurum: ', event.data);
-var sr='';
-sr+='<li><span data-pid="'+msg.roomid+'">'+msg.roomname+'</span>';
-roomslist.innerHTML+=sr;
+}else if(msg.type==='onroom'){
+console.warn('On created room: ', event.data);
 roomcreated=true;
 curentroom.textContent=msg.roomname;
-//connect();
-}else if(msg.type==='roomcreated'){
-console.warn('On roomcreated: ',event.data);
-roomcreated=true;
-}else if(msg.type==='rooming'){
-console.log('type rooming: '+event.data);
 }else if(msg.type==='roomer_online'){
 console.warn('on roomer_online: ',event.data);
 }else if(msg.type==='roomer_offline'){
@@ -553,9 +543,9 @@ if(msg.num=="101"){
 ${!buser ? 'socket.close();dissconnect();' : ''}
 }
 if(peerConnection)console.log(peerConnection.signalingState)
-}else if(msg.type==='createroom'){
+}/*else if(msg.type==='createroom'){
 console.warn('on createroom: ',event.data);
-}else if(msg.type==='roomremove'){
+}*/else if(msg.type==='roomremove'){
 if(owner.textContent==="false"){
 console.warn('roomremove: ',event.data);
 }
@@ -653,7 +643,7 @@ element.src = window.URL.createObjectURL(stream);
 }
 element.play();
 element.volume = 0;
-//createroom();
+
 }
 
 function pauseVideo(element) {
@@ -764,6 +754,9 @@ if(socket)socket.close();
 }
 }else if (peer.iceConnectionState === 'disconnected') {
 console.warn('-- disconnected --');
+if(owner.textContent==="false"){roomcreated=false;
+${!buser ? 'if(socket)socket.close();':''}
+}
 dissconnect();
 }
 };
@@ -838,18 +831,20 @@ console.error(err);
 });
 }
   // start PeerConnection
+//go_socket();
 function connect() {
 ${!buser ? 'go_socket();' : ''}
 
-//if(roomcreated){
 setTimeout(function(){
+if(roomcreated){
+//alert('is room created? '+roomcreated)
 callWithCapabilitySDP();
 updateButtons();
-},2000)
-//}else{
-//console.warn('todo roomcreated to true if !buser check:808. Are you online?');
-//if(owner.textContent==='true'){createroom();}
-//}
+}else{
+${!buser ? 'if(socket){socket.close();}':''}
+}
+},1000)
+
 }
 function callWithCapabilitySDP() {
 peerConnection = prepareNewConnection();
@@ -879,8 +874,16 @@ function createroom(src){
 console.log('create room');
 if(owner.textContent=='true'){
 console.log('sending create room');
-sendJson({type:"createroom",roomname:roomname.textContent,owner:owner.textContent,id:clientId,email:modelEmail.textContent, name:modelName.textContent,src:src});
-curentroom.textContent=roomname.value;
+var vobj={};
+vobj.roomname=roomname.textContent;
+vobj.owner=owner.textContent;
+vobj.id=clientId;
+vobj.email=modelEmail.textContent;
+vobj.name=modelName.textContent;
+vobj.src=src;
+vobj.type="createroom";
+sendJson(vobj);
+curentroom.textContent=roomname.textContent;
 }
 }
 	
@@ -906,14 +909,12 @@ if (peerConnection) {
 console.log('Hang up.');
 peerConnection.close();
 peerConnection = null;
-if(owner.textContent==="false"){removeAllRemoteVideo();}
-}else {
+if(owner.textContent==="false"){removeAllRemoteVideo();
+${!buser ? 'if(socket)socket.close();':''}
+}
+}else{
 console.warn('peer NOT exist.');
 }
-if(owner.textContent==="true"){
-//deleteroom();
-}
-
 updateButtons();
 }
   
@@ -1016,32 +1017,22 @@ cnv.width=cnv.height=130;
 local_video.width=130;
 local_video.height=130;
 var c=cnv.getContext("2d");
-//local_video.onplay=function(e){
-//var img=new Image();
-//img.src=local_video.srcObject;
-//let v=local_video.play();
-//image.onload=function(){
 c.drawImage(local_video,0,0,130,130);
-//pagewrap.appendChild(cnv);
-//}
-//}
 setTimeout(function(){
 var li=cnv.toDataURL('image/png',0.1);
-//alert('li'+li);
 var emg=document.createElement('img');
 emg.src=li;
 pagewrap.appendChild(emg);
-//socket.send(JSON.stringify({type:'image',roomname:roomname.textContent, src:li}))
 createroom(li);
-},1000)
+},10)
 
 }
-//get_image();
+
 local_video.onloadedmetadata=function(e){
 //alert('metadata');
-setTimeout(function(){
+//setTimeout(function(){
 get_image();
-},1000)
+//},1000)
 }
 function gid(id){return document.getElementById(id);}
 </script>
