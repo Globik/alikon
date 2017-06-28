@@ -33,9 +33,10 @@ result=us.rows;
 }catch(e){console.log(e)}
 	
 try{
-let bus=await db.query(`select*from busers inner join rooms on busers.email=rooms.email`/*where view>=1`*/)
+	//rooms.status.view.src busers.id.name
+let bus=await db.query(`select busers.id, busers.name,rooms.status,rooms.view,rooms.src from busers inner join rooms on busers.email=rooms.email`/*where view>=1`*/)
 bresult=bus.rows;
-console.log('bresult: ',bresult)
+//console.log('bresult: ',bresult)
 }catch(e){console.log(e)}	
 	
 ctx.session.dorthin=this.path;

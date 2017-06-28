@@ -1,3 +1,4 @@
+const CircularJson=require('circular-json');
 const EventEmitter=require('events');
 const Koa=require('koa')
 const passport=require('koa-passport')
@@ -536,7 +537,8 @@ console.log('--- create rtcpeerconnection --');
 console.log('-- peers in the room from PREPAREPEER = ',droom.get(message.roomname).peers.length);
 let peerlength=droom.get(message.roomname).peers.length;
 pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
-console.log('ok update rooms view in preparepeer')
+console.log('ok update rooms view in preparepeer');
+sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:message.roomname})
 }).catch(err=>{console.log('err update rooms view in preparepeer: ',err)})
 
 peerconnection.on('close', err=>{
@@ -548,12 +550,13 @@ if(droom.get(message.roomname)){
 let peerlength=droom.get(message.roomname).peers.length;
 pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
 console.log('ok update rooms view pc.onclose')
+sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:message.roomname})
 }).catch(err=>{console.log('err update rooms pconclose: ',err)})
 }
 	
 if(err)console.log(err);
 });
-peerconnection.on('signalingstatechange',()=>console.log('sate ',peerconnection.signalingState));
+peerconnection.on('signalingstatechange',()=>console.log('state ',peerconnection.signalingState));
 peerconnection.on('negotiationneeded',()=>{console.log('negotiationneeded id: ',id);
 sendOffer(ws,peerconnection,downOnly);});
 peerconnection.setCapabilities(capabilitySDP).then(()=>{
@@ -602,10 +605,11 @@ console.log('setRemoteDescription for Answer OK id=' + id);
 console.log('MESSAGE.ROOMNAME from handle answer: ',message.roomname)
 if(droom.get(message.roomname)){
 console.log('-- PEERS in the room FROM handleAnswer = ' + droom.get(message.roomname).peers.length);
-	let peerlength=droom.get(message.roomname).peers.length;
+let peerlength=droom.get(message.roomname).peers.length;
 
 pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
 console.log('ok update rooms view handleanswer')
+sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:message.roomname})
 }).catch(err=>{console.log('err update rooms view handleanswer: ',err)})
 }
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
@@ -623,11 +627,19 @@ peer.transports.length, peer.rtpReceivers.length, peer.rtpSenders.length
 
 
 function addPeerConnection(id, pc) {
+	try{let b=CircularJson.stringify(pc);console.log('B: ',b);
+		console.log('pc: ',pc)
+	   cl.set('pc',b,(er,r)=>{
+	   console.log('result of redis: ',r);
+		   if(er)console.log('redis error: ',er)
+	   })
+	   }catch(e){console.log('error: ',e)}
 Connections[id] = pc;
 }
 
 function getPeerConnection(id) {
 const pc = Connections[id];
+
 //console.log('pc: ',pc)
 return pc
 }
@@ -670,9 +682,9 @@ sendback(ws, message);
 
 
 /* END OF MEDIASOUP */
-pool.on('connect', client=>console.log('pool connected'));
-pool.on('error', (err, client)=>console.log('error in pool: ', err.message));
-pool.on('acquire', client=>console.log('pool acquired '));
+pool.on('connect', client=>{setImmediate(()=>{console.log('pool connected')})});
+pool.on('error', (err, client)=>{setImmediate(()=>{console.log('error in pool: ', err.message)})});
+pool.on('acquire', client=>{setImmediate(()=>{console.log('pool acquired ')})})
 /*var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";

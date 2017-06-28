@@ -91,6 +91,7 @@ var mata=JSON.parse(e.data);
 s.onerror=function(e){console.error("event source error: ");}
 s.addEventListener('remove_room',remove_room,false);
 s.addEventListener('add_room',add_room,false);
+s.addEventListener('room_view',room_view,false);
 
 function remove_room(e){
 console.log('on remove_room : '+e.data);
@@ -115,6 +116,11 @@ div.innerHTML='<a href="/webrtc/'+m.id+'">'+m.name+'</a><br><br>'+
 '<b>viewers: </b><span class="rviewers" data-rviewers="'+m.id+'">'+m.view+'</span><br><br>';
 //noroomer.remove();
 roomContainer.appendChild(div);
+}
+function room_view(e){
+let d=JSON.parse(e.data);
+let m=document.querySelector('[data-rviewers="'+d.id+'"]');
+if(m){m.textContent=d.peers;}
 }
 </script>
 </main>
