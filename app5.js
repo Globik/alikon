@@ -627,13 +627,16 @@ peer.transports.length, peer.rtpReceivers.length, peer.rtpSenders.length
 
 
 function addPeerConnection(id, pc) {
-	try{let b=CircularJson.stringify(pc);console.log('B: ',b);
-		console.log('pc: ',pc)
-	   cl.set('pc',b,(er,r)=>{
+/* try{let b=CircularJson.stringify(pc);console.log('B: ',b);
+		console.log('pc: ',pc);
+		let a=CircularJson.parse(b);
+		console.log('a: ',a);
+		cl.set('pc',b,(er,r)=>{
 	   console.log('result of redis: ',r);
 		   if(er)console.log('redis error: ',er)
 	   })
 	   }catch(e){console.log('error: ',e)}
+*/
 Connections[id] = pc;
 }
 

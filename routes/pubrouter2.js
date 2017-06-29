@@ -1,5 +1,6 @@
 'use strict';
 const valuid=require('uuid-validate');
+const shortid=require('shortid');
 const passport=require('koa-passport');
 const bodyParser=require('koa-body');
 const Router=require('koa-router');
@@ -376,7 +377,7 @@ var result=await db.query(`select*from busers where id='${ctx.params.buser_id}'`
 us=result.rows[0];
 if(ctx.state.user && ctx.state.user.id===ctx.params.buser_id){owner=true;}
 }catch(e){console.log(e)}
-ctx.body=await ctx.render('busers',{model: us,owner:owner});
+ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate()});
 });
 
 pub.post('/api/set_transfer', async ctx=>{

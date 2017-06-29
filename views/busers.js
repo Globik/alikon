@@ -101,28 +101,24 @@ overlay:target+.popi{left:0;}
 </style>
 <div>
 <b>buser: </b>${buser ? true : false}<br><br>
-<button id="fuck">broadcast yourself</button>
+
 <div><b>obid: </b><span id="pid"></span></div>
 <div><b>time: </b><span id="timeinfo"></span></div>
 </div>
-<div class="modrtc">
-<h4>Model</h4>
-<b>As </b> <span id="modelName">${model.name}</span><br>
-<b>id:</b><span id="modelId">${model.id}</span><br>
-<b>Email:</b> <span id="modelEmail">${model.email}</span><br>
-<b>Owner:</b> <span id="owner">${n.owner}</span><br>
-<b>Tokens: </b> <span id="modelTokens">${model.items}</span><br>
-<b>Websocket id:</b> <span id="modelWebsocketId"></span><br>
-<b>Room name(id)</b><span id="roomname">${model.id}</span><br>
-<b>current room:</b><span id="curentroom"></span><br>
-</div><br>
-<input type="hidden" id="mamamia" value="Mamamia"/>
-<br>
-<div class="modrtc">
-<h4>You</h4>
-<b>As</b> <span id="yourName">${buser ? buser.name:'a Guest'}</span><br>
 
-<b>id:</b><span id="yourId">${buser ? buser.id : ''}</span><br>
+<!-- model -->
+<input type="hidden" id="modelName" value="${model.name}"/>
+<input type="hidden" id="modelId" value="${model.id}"/>
+<input type="hidden" id="modelEmail" value="${model.email}"/>
+<input type="hidden" id="owner" value='${n.owner}'/>
+<input type="hidden" id="modelTokens" value="${model.items}"/>
+
+<!-- You -->
+<input type="hidden" id="buser" value='${buser ? true : false}'/>
+<input type="hidden" id="shortid" value="${n.shortid}"/>
+<input type="hidden" id="yourName" value="${buser ? buser.name : ''}"/>
+
+<input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
 <b>Email: </b><span id="yourEmail">${buser ? buser.email:''}</span><br>
 <b>Tokens: </b><span id="yourTokens">${buser ? buser.items:''}</span><br>
 <b>your websocket id: </b><span id="yourWebsocketId"></span><br>
@@ -194,7 +190,7 @@ remote video<br>
 <span id="rtcerror"></span><br>
 <br><span id="wso"></span>
 <script>
-//alert(mamamia.value);
+
 var seat=0;
 var init=0;
 var startDate,clocker,mlocker, startingDate;
@@ -373,7 +369,7 @@ xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
 }
 //websocket
 var mediaconstraints={audio:true,video:true};
-var guestcome=false;
+
 var clientId=0;
 var myusername=null;
 var name,connecteduser;
@@ -385,18 +381,16 @@ var roomcreated=false;
 
 
 function setusername(s){
-
-if(owner.textContent==="true"){
-myusername=modelName.textContent;//document.getElementById("name").value;
-modelWebsocketId.textContent=clientId;
+//if(owner2.value==='true'){console.log('owner2: ',owner2.value)}else{console.log('owner2.value: ',owner2.value)}
+if(owner.value==="true"){
+myusername=modelName.value;
+//modelWebsocketId.textContent=clientId;
 }else{
-document.getElementById("yourWebsocketId").textContent=clientId;
-if(yourName.textConent==="a Guest"){myusername="Guest"}else{myusername=yourName.textContent;}
+//document.getElementById("yourWebsocketId").textContent=clientId;
+if(yourName2.value){myusername=yourName2.value}else{myusername='Guest_'+shortid.value;}
 }
 
-//alert(document.getElementById("name").value);
-//myusername=document.getElementById("name").value;
-s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner.textContent}));
+if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner.value}));
 }
 
 var loc1=location.hostname+':'+location.port;
@@ -446,12 +440,9 @@ return false;
 document.forms.mepublish.onsubmit=function(){
 var outm={};
 outm.msg=this.message.value;
-outm.name=myusername;//"Guest1";
-//outm.id="dima";
+outm.name=myusername;
 outm.id=clientId;
 outm.type="message";
-//outm.target=gid('name').value;//modelName.textContent;
-//outm.target=modelId.textContent;
 outm.target=clientId;
 if(socket)socket.send(JSON.stringify(outm));
 return false
@@ -670,10 +661,10 @@ sendJson(jsonSDP);
 function sendJson(json) {
 var mess = JSON.stringify(json);
 if(socket){console.log('sending json');
-//console.log('json: ',json)
-//console.warn('MESS: ',mess)
-} 
-socket.send(mess);  
+
+
+socket.send(mess); 
+}
 }
   // ----------------------
 function prepareNewConnection() {
@@ -871,25 +862,22 @@ console.error('ERROR in callWithCapabilitySDP():', err);
 }
 	
 function createroom(src){
-console.log('create room');
-if(owner.textContent=='true'){
-console.log('sending create room');
+if(owner.value=='true'){
 var vobj={};
-vobj.roomname=roomname.textContent;
-vobj.owner=owner.textContent;
+vobj.roomname=modelId.value;
+vobj.owner=owner.value;
 vobj.id=clientId;
-vobj.email=modelEmail.textContent;
-vobj.name=modelName.textContent;
+vobj.email=modelEmail.value;
+vobj.name=modelName.value;
 vobj.src=src;
 vobj.type="createroom";
 sendJson(vobj);
-curentroom.textContent=roomname.textContent;
 }
 }
 	
 function deleteroom(){
 if(curentroom.textContent){
-sendJson({type:'removeroom', roomname:curentroom.textContent,owner:owner.textContent,id:clientId,email:modelEmail.textContent})
+sendJson({type:'removeroom', roomname:modelId.value,owner:owner.value,id:clientId,email:modelEmail.value})
 }else{alert('what a room to delete?');}
 }
 

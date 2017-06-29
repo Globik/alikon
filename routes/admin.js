@@ -85,7 +85,7 @@ if(banners.rows.length){result=banners.rows;
 console.log('result: ',result);			   
 					   }
 }catch(e){console.log(e);}
-ctx.body=ctx.render('adm_dsh_banners',{banners:result});
+ctx.body=await ctx.render('adm_dsh_banners',{banners:result});
 })
 
 
@@ -102,7 +102,7 @@ let db=ctx.db;
 	try{
 	var posts=await db.query('select*from articles order by id desc limit 10');
 	}catch(e){console.log('err in dashboard articles: ',e)}
-ctx.body=ctx.render('admin_dashboard_articles',{posts:posts.rows});
+ctx.body=await ctx.render('admin_dashboard_articles',{posts:posts.rows});
 });
 
 admin.post('/dashboard/article_create', authed, bodyParser({multipart:true,formidable:{}}), async ctx=>{
@@ -253,7 +253,7 @@ ctx.body={images}
 })
 /* ************************  Albums  */
 var parse=require('co-busboy');
-var shortid=require('shortid');
+const shortid=require('shortid');
 
 admin.get('/dashboard/albums', authed, async ctx=>{
 let db=ctx.db;
@@ -262,7 +262,7 @@ try{
 var result=await db.query(`select*from albums`)
 if(result.rows && result.rows[0]){albums=result.rows;}
 }catch(e){console.log(e)}
-ctx.body=ctx.render('albums',{albums});
+ctx.body=await ctx.render('albums',{albums});
 });
 
 admin.get('/dashboard/albums/:alb_id/:alb_title', async ctx=>{
@@ -273,7 +273,7 @@ var result=await db.query(`select*from images where alb_id='${ctx.params.alb_id}
 //var result=yield db.query(`select*from images inner join albums on alb_id=albums.id where alb_id='${this.params.alb_id}'`);
 if(result.rows && result.rows[0]){photos=result.rows;console.log('resultat: ',result.rows);}
 }catch(e){console.log(e)}
-ctx.body=ctx.render('album_view',{photos,alb_id:ctx.params.alb_id,alb_title:ctx.params.alb_title});
+ctx.body=await ctx.render('album_view',{photos,alb_id:ctx.params.alb_id,alb_title:ctx.params.alb_title});
 })
 
 admin.get('/dashboard/articles_manager', authed, async ctx=>{
