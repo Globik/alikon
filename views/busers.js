@@ -114,15 +114,15 @@ overlay:target+.popi{left:0;}
 <input type="hidden" id="modelTokens" value="${model.items}"/>
 
 <!-- You -->
-<input type="hidden" id="buser" value='${buser ? true : false}'/>
+<input type="hidden" id="buser" value="${buser ? true : false}"/>
 <input type="hidden" id="shortid" value="${n.shortid}"/>
 <input type="hidden" id="yourName" value="${buser ? buser.name : ''}"/>
 
 <input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
-<b>Email: </b><span id="yourEmail">${buser ? buser.email:''}</span><br>
-<b>Tokens: </b><span id="yourTokens">${buser ? buser.items:''}</span><br>
-<b>your websocket id: </b><span id="yourWebsocketId"></span><br>
-</div><br>
+<input type="hidden" id="yourEmail" value="${buser ? buser.email:''}"/>
+<input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
+
+
 <div class="firstchild" id="camera-container">
 <div class="camera-box">
 <!--
@@ -189,12 +189,19 @@ remote video<br>
 <br><b>WebRTC errors:</b><br>
 <span id="rtcerror"></span><br>
 <br><span id="wso"></span>
+
 <script>
 
 var seat=0;
 var init=0;
 var startDate,clocker,mlocker, startingDate;
-yourTokens2.textContent=yourTokens.textContent;
+yourTokens2.textContent=gid('yourTokens').value;
+function buser(){
+if(gid('buser').value==='true'){return true;}else{return false;}
+}
+function owner(){
+if(gid('owner').value==='true'){return true;}else{return false;}
+}
 
 function send_tokens(){
 if(yourName.textContent !=="a Guest"){
@@ -367,7 +374,7 @@ xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
 //xhr.send(JSON.stringify(data));
 }
 }
-//websocket
+
 var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
@@ -378,40 +385,61 @@ var pc=null;
 var socket=null;
 var roomcreated=false;
 
+var modelName=gid('modelName').value;
+var modelEmail=gid('modelEmail').value;
+var modelId=gid('modelId').value;
+var modelTokens=gid('modelTokens').value;
 
+var yourName=gid('yourName').value;
+var yourId=gid('yourId').value;
+var yourEmail=gid('yourEmail').value;
+var yourTokens=gid('yourTokens').value;
+
+/*
+<!-- model -->
+<input type="hidden" id="modelName" value="${model.name}"/>
+<input type="hidden" id="modelId" value="${model.id}"/>
+<input type="hidden" id="modelEmail" value="${model.email}"/>
+<input type="hidden" id="owner" value='${n.owner}'/>
+<input type="hidden" id="modelTokens" value="${model.items}"/>
+
+<!-- You -->
+<input type="hidden" id="buser" value='${buser ? true : false}'/>
+<input type="hidden" id="shortid" value="${n.shortid}"/>
+<input type="hidden" id="yourName" value="${buser ? buser.name : ''}"/>
+
+<input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
+<input type="hidden" id="yourEmail" value="${buser ? buser.email:''}"/>
+<input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
+*/
 
 function setusername(s){
-//if(owner2.value==='true'){console.log('owner2: ',owner2.value)}else{console.log('owner2.value: ',owner2.value)}
-if(owner.value==="true"){
-myusername=modelName.value;
-//modelWebsocketId.textContent=clientId;
+if(owner()){
+myusername=modelName;
 }else{
-//document.getElementById("yourWebsocketId").textContent=clientId;
-if(yourName2.value){myusername=yourName2.value}else{myusername='Guest_'+shortid.value;}
+if(yourName){myusername=yourName}else{myusername='Guest_'+shortid.value;}
 }
-
-if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner.value}));
+if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner()}));
 }
 
 var loc1=location.hostname+':'+location.port;
 var loc2='alikon.herokuapp.com';
 var loc3=loc1 || loc2;
 var new_uri;
-//alert(window.location.protocol);
 if(window.location.protocol==="https:"){
 new_uri='wss:';
 }else{
 new_uri='ws:';
 }
-//if(yourName.textContent){go_socket()}else{
-//guestcome=true;
-//}
 
-${buser ? 'go_socket();' : ''}
+//{buser ? 'go_socket();' : ''}
+
+if(buser()){go_socket();}
+console.warn('buser: '+buser());
 
 function go_socket(){
-if(socket){alert('scho gibts socket!');return;}
-socket=new WebSocket(new_uri+'//'+loc3+'/'+modelId.textContent);
+if(socket){console.log('scho gibts socket!');return;}
+socket=new WebSocket(new_uri+'//'+loc3+'/'+modelId);
 socket.onopen=function(){
 wso.innerHTML='websocket connected';
 }
@@ -461,23 +489,13 @@ console.log("case username: "+event.data);
 showmessage(event.data);
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
-if(owner.textContent==="false"){
-//console.log('roomcreated: ',roomcreated)
+if(!owner()){
 if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated)}
 }
-/*
-var si='';
-msg.users.forEach(function(el,i){
-si+='<li><span onclick="callrtc(this);">'+el.username+'</span></li>';
 
-})
-
-userlist.innerHTML=si;
-*/
 }else if(msg.type=='joined_user'){
 console.warn('onJoinedUser: ',event.data);
 }else if(msg.type=='Doffer'){
-//handleoffer(msg.offer,msg.name);
 handleoffer(msg.offer,msg.from_target);
 }else if(msg.type=='Danswer'){
 handleanswer(msg.answer);
@@ -500,7 +518,6 @@ reject_call(msg.from_target);
 }else if(msg.type==='onroom'){
 console.warn('On created room: ', event.data);
 roomcreated=true;
-curentroom.textContent=msg.roomname;
 }else if(msg.type==='roomer_online'){
 console.warn('on roomer_online: ',event.data);
 }else if(msg.type==='roomer_offline'){
@@ -508,36 +525,37 @@ console.warn('on roomer_offline: ',event.data);
 if(peerConnection){
 console.log('signaling state: ',peerConnection.signalingState)
 console.log('ice connection state: ',peerConnection.iceConnectionState);
-//var e="
-${buser ? '' : 'dissconnect();if(socket)socket.close();'}
+
+//{buser ? '' : 'dissconnect();if(socket)socket.close();'}
+
+if(!buser()){dissconnect();if(socket)socket.close();}
 }
 
 }else if(msg.type === 'offer') {
-      // -- got offer ---
 console.log('Received offer ...');
 let offer = new RTCSessionDescription(msg);
 setOffer(offer);
 }
 else if (msg.type === 'answer') {
-      // --- got answer ---
 console.log('Received answer ...');
 console.warn('NOT USED');
 }else if(msg.type==='goodbyeroom'){
 console.log('type goodbye room came')
-if(owner.textContent==="true"){
+if(owner()){
 console.log(event.data);
 goodbyeroom(msg.vid);
 }
 }else if(msg.type==='error'){
 console.error('on error: ',event.data);
 if(msg.num=="101"){
-${!buser ? 'socket.close();dissconnect();' : ''}
+
+//{!buser ? 'socket.close();dissconnect();' : ''}
+
+if(!buser()){dissconnect();if(socket)socket.close();}
 }
 if(peerConnection)console.log(peerConnection.signalingState)
-}/*else if(msg.type==='createroom'){
-console.warn('on createroom: ',event.data);
-}*/else if(msg.type==='roomremove'){
-if(owner.textContent==="false"){
+}else if(msg.type==='roomremove'){
+if(!owner()){
 console.warn('roomremove: ',event.data);
 }
 }else{console.warn('uknown msg type',msg.type);}
@@ -551,38 +569,36 @@ subscribe.appendChild(messageelement);
 }
 
 const useTrickleICE = false;
-  let localVideo = document.getElementById('local_video');
-  let stateSpan = document.getElementById('state_span');
+  let localVideo = gid('local_video');
+  let stateSpan = gid('state_span');
   let localStream = null;
   let peerConnection = null;
   
-  // --- prefix -----
   navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
                             navigator.mozGetUserMedia || navigator.msGetUserMedia;
   RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
   RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
   // init checkbox
   if (window.window.webkitRTCPeerConnection) {
-    document.getElementById('plan_b_check').checked = true;
+    gid('plan_b_check').checked = true;
   }
-  // -------- websocket ----  
+
 var clientId=0;
 var ws;
 var myusername=null;
 var name,connecteduser;
 var targetusername=null;
-var remoteContainer = document.getElementById('remote_container');
+var remoteContainer = gid('remote_container');
 
 function getUsePlanB() {
-let checkbox = document.getElementById('plan_b_check');
+let checkbox = gid('plan_b_check');
 return (checkbox.checked === true);
 }
-  // okokok---------------------- media handling ----------------------- 
-  // start local video
+
 function startVideo() {
-if(owner.textContent==="true"){
+if(owner()){
 getDeviceStream({video: true, audio: true})
-.then(function (stream) { // success
+.then(function (stream) {
 localStream = stream;
 logStream('localstream', stream);
 playVideo(localVideo, stream);
@@ -596,7 +612,7 @@ return;
 }
   // stop local video
 function stopVideo() {
-if(owner.textContent==="true"){
+if(owner()){
 pauseVideo(localVideo);
 stopLocalStream(localStream);
 localStream = null;
@@ -649,24 +665,20 @@ element.src = '';
 }
 deleteroom();
 }
-  // -----  signaling ----
+ 
 function sendSdp(sessionDescription) {
 console.log('---sending sdp ---');
 const jsonSDP = sessionDescription.toJSON();
 jsonSDP.planb = getUsePlanB();
-jsonSDP.roomname=roomname.textContent;//roomname.value;
-//console.log('sending SDP:');
+jsonSDP.roomname=modelId;
 sendJson(jsonSDP);
 }
+
 function sendJson(json) {
 var mess = JSON.stringify(json);
-if(socket){console.log('sending json');
-
-
-socket.send(mess); 
+if(socket)socket.send(mess);
 }
-}
-  // ----------------------
+
 function prepareNewConnection() {
 let pc_config = {"iceServers":[]};
 let peer = new RTCPeerConnection(pc_config);
@@ -677,7 +689,7 @@ console.log('-- peer.ontrack()');
 let stream = event.streams[0];
 logStream('remotestream of ontrack()', stream);
 if ( (stream.getVideoTracks().length > 0) && (stream.getAudioTracks().length > 0) ) {
-if(owner.textContent==="false"){addRemoteVideo(stream.id, stream);}else{console.warn('IGNORE remote track');}
+if(!owner()){addRemoteVideo(stream.id, stream);}else{console.warn('IGNORE remote track');}
 }
 };
 }else {
@@ -685,43 +697,40 @@ peer.onaddstream = function(event) {
 console.log('-- peer.onaddstream()');
 let stream = event.stream;
 logStream('remotestream of onaddstream()', stream);
-if(owner.textContent==="false"){
+if(!owner()){
 addRemoteVideo(stream.id, stream);
 }else{
 console.warn('IGNORE remote stream');
 }
 };
 }
-    // --- on get local ICE candidate
+
 peer.onicecandidate = function (evt) {
 if (evt.candidate) {
 console.log(evt.candidate);
 if (useTrickleICE) {
-          // Trickle ICE の場合は、ICE candidateを相手に送る
-          // send ICE candidate when using Trickle ICE
 console.warn('NOT SUPPORTED YET');
 }else {
-          // Vanilla ICE の場合には、何もしない
-          // do NOTHING for Vanilla ICE
+// Vanilla ICEしない
+// do NOTHING for Vanilla ICE
 }
 } else {
 console.log('empty ice event');
 if (useTrickleICE) {
-          // Trickle ICE の場合は、何もしない
-          // do NOTHING for Trickle ICE
+// Trickle ICEしない
+// do NOTHING for Trickle ICE
 }else {
-          // Vanilla ICE の場合には、ICE candidateを含んだSDPを相手に送る
-          // send SDP with ICE candidtes when using Vanilla ICE
+// Vanilla ICE
+// send SDP with ICE candidtes when using Vanilla ICE
 sendSdp(peer.localDescription);
 }
 }
 };
-    // --- when need to exchange SDP ---
+
 peer.onnegotiationneeded = function(evt) {
 console.log('-- onnegotiationneeded() ---');
 console.warn('--- IGNORE ---');
 };
-    // --- other events ----
 peer.onicecandidateerror = function (evt) {
 console.error('ICE candidate ERROR:', evt);
 };
@@ -730,23 +739,24 @@ console.log('== signaling state=' + peer.signalingState);
 };
 peer.oniceconnectionstatechange = function() {
 console.log('== ice connection state=' + peer.iceConnectionState);
-//bla bla bla
 showState('ice connection state=' + peer.iceConnectionState);
 if(peer.iceConnectionState==='completed'){
-if(owner.textContent==='true'){
-sendJson({type:'online',roomname:roomname.textContent});
+if(owner()){
+sendJson({type:'online',roomname:modelId});
 }
 }else if(peer.iceConnectionState==='closed'){
-if(owner.textContent==='true')sendJson({type:'offline',roomname:roomname.textContent});
+if(owner())sendJson({type:'offline', roomname:modelId});
 }else if(peer.iceConnectionState==='failed'){
-if(yourName.textContent==="a Guest"){
+if(!buser()){
 dissconnect();
 if(socket)socket.close();
 }
 }else if (peer.iceConnectionState === 'disconnected') {
 console.warn('-- disconnected --');
-if(owner.textContent==="false"){roomcreated=false;
-${!buser ? 'if(socket)socket.close();':''}
+if(!owner()){roomcreated=false;
+//{!buser ? 'if(socket)socket.close();':''}
+
+if(!buser()){if(socket)socket.close();}
 }
 dissconnect();
 }
@@ -760,11 +770,10 @@ console.log('==***== connection state=' + peer.connectionState);
 peer.onremovestream = function(event) {
 console.log('-- peer.onremovestream()');
 let stream = event.stream;
-if(owner.textContent==="false"){
+if(owner()){
 removeRemoteVideo(stream.id, stream);
 }else{console.log('ignoring remove stream');}
 };
-// -- add local stream --
 if (localStream) {
 console.log('Adding local stream...');
 peer.addStream(localStream);
@@ -773,12 +782,13 @@ console.warn('no local stream, but continue.');
 }
 return peer;
 }
+
 function setOffer(sessionDescription) {
 let waitForCandidates = true;
 if (peerConnection) {
 console.log('peerConnection alreay exist, reuse it');
 if (peerConnection.remoteDescription && (peerConnection.remoteDescription.type === 'offer')) {
-        // got re-offer, so DO NOT wait for candidates even using Vanilla ICE
+// got re-offer, so DO NOT wait for candidates even using Vanilla ICE
 waitForCandidates = false;
 }
 }else {
@@ -805,14 +815,14 @@ return peerConnection.setLocalDescription(sessionDescription);
 }).then(function() {
 console.log('setLocalDescription() succsess in promise');
 if (useTrickleICE) {
-        // -- Trickle ICE の場合は、初期SDPを相手に送る --
-        // send initial SDP when using Trickle ICE
+// Trickle ICE
+// send initial SDP when using Trickle ICE
 console.warn('NOT SUPPORTED YET');
 }else {
-        // -- Vanilla ICE の場合には、まだSDPは送らない --
-        // wait for ICE candidates for Vanilla ICE
-        //sendSdp(peerConnection.localDescription);
-        // if got re-offer, then NO MORE ice candidates will come, so send SDP right now
+//Vanilla ICE
+// wait for ICE candidates for Vanilla ICE
+//sendSdp(peerConnection.localDescription);
+// if got re-offer, then NO MORE ice candidates will come, so send SDP right now
 if (! waitForCandidates) {
 sendSdp(peerConnection.localDescription);
 }
@@ -821,18 +831,23 @@ sendSdp(peerConnection.localDescription);
 console.error(err);
 });
 }
-  // start PeerConnection
+ 
 //go_socket();
 function connect() {
-${!buser ? 'go_socket();' : ''}
 
+//{!buser ? 'go_socket();' : ''}
+
+if(!buser()){go_socket();}
 setTimeout(function(){
 if(roomcreated){
-//alert('is room created? '+roomcreated)
+alert('is room created? '+roomcreated)
 callWithCapabilitySDP();
 updateButtons();
 }else{
-${!buser ? 'if(socket){socket.close();}':''}
+
+//{!buser ? 'if(socket){socket.close();}':''}
+
+if(!buser()){if(socket)socket.close();}
 }
 },1000)
 
@@ -840,35 +855,32 @@ ${!buser ? 'if(socket){socket.close();}':''}
 function callWithCapabilitySDP() {
 peerConnection = prepareNewConnection();
 var vopt={ offerToReceiveAudio: false, offerToReceiveVideo: false};
-if(owner.textContent==="false"){
+if(!owner()){
 vopt.offerToReceiveAudio=true;
 vopt.offerToReceiveVideo=true;
 }
 peerConnection.createOffer(vopt).then(function(sessionDescription){
 console.log('createOffer() succsess in callWithCapabilitySDP()');
 console.log('calling with Capalibity SDP ..');
-var whatsend={type: "call", planb: getUsePlanB(), capability: sessionDescription.sdp,roomname:roomname.textContent};
-if(owner.textContent==="false"){
+var whatsend={type: "call", planb: getUsePlanB(), capability: sessionDescription.sdp,roomname:modelId};
+if(!owner()){
 whatsend.type="call_downstream";
 }
-console.log('getUsePlanB: ',getUsePlanB())
-console.log('whatsend: ',whatsend);
-console.log('roomname: ',roomname.textContent)
+
 sendJson(whatsend);
-//socket.send('whatsend');
 }).catch(function(err) {
 console.error('ERROR in callWithCapabilitySDP():', err);
 });
 }
 	
 function createroom(src){
-if(owner.value=='true'){
+if(owner()){
 var vobj={};
-vobj.roomname=modelId.value;
-vobj.owner=owner.value;
+vobj.roomname=modelId;
+vobj.owner=owner();
 vobj.id=clientId;
-vobj.email=modelEmail.value;
-vobj.name=modelName.value;
+vobj.email=modelEmail;
+vobj.name=modelName;
 vobj.src=src;
 vobj.type="createroom";
 sendJson(vobj);
@@ -876,29 +888,30 @@ sendJson(vobj);
 }
 	
 function deleteroom(){
-if(curentroom.textContent){
-sendJson({type:'removeroom', roomname:modelId.value,owner:owner.value,id:clientId,email:modelEmail.value})
-}else{alert('what a room to delete?');}
+if(roomcreated){
+sendJson({type:'removeroom', roomname:modelId,owner:owner(),id:clientId,email:modelEmail})
+}else{console.warn('roomcreated: ',roomcreated);}
 }
 
 function goodbyeroom(vid){
 if(vid){
-curentroom.textContent='';
 var bud=document.querySelector('[data-pid="'+vid+'"]');
-//alert(bud.textContent);
 bud.remove();
 roomcreated=false;
 }
 }
-  // close PeerConnection
+  
 function dissconnect() {
-sendJson({type: "bye",roomname:roomname.textContent});
+sendJson({type: "bye",roomname: modelId});
 if (peerConnection) {
 console.log('Hang up.');
 peerConnection.close();
 peerConnection = null;
-if(owner.textContent==="false"){removeAllRemoteVideo();
-${!buser ? 'if(socket)socket.close();':''}
+if(!owner()){removeAllRemoteVideo();
+
+//{!buser ? 'if(socket)socket.close();':''}
+
+if(!buser()){if(socket)socket.close();}
 }
 }else{
 console.warn('peer NOT exist.');
@@ -926,10 +939,10 @@ console.log(' track.id=' + track.id);
 });
 }}
 function updateButtons() {
-if(owner.textContent==="true"){
+if(owner()){
 if (peerConnection) {
-disableElement('start_video_button');//true
-disableElement('stop_video_button');//true
+disableElement('start_video_button');
+disableElement('stop_video_button');
 disableElement('connect_button');
 enabelElement('disconnect_button');
 disableElement('plan_b_check');
@@ -946,7 +959,7 @@ disableElement('connect_button');
 disableElement('disconnect_button');
 enabelElement('plan_b_check');
 }
-}else if(owner.textContent==="false"){
+}else if(!owner()){
 if(peerConnection){
 disableElement('connect_button');
 enabelElement('disconnect_button');
@@ -964,7 +977,7 @@ if (element) {element.removeAttribute('disabled');}
 }
 
 function disableElement(id) {
-let element = document.getElementById(id);
+let element = gid(id);
 if (element) {element.setAttribute('disabled', '1');}    
 }
 updateButtons();
@@ -983,7 +996,7 @@ element.controls = true;
   
 function removeRemoteVideo(id, stream) {
 console.log(' ---- removeRemoteVideo() id=' + id);
-let element = document.getElementById('remote_' + id);
+let element = gid('remote_' + id);
 if (element) {
 element.pause();
 element.srcObject = null;
@@ -992,6 +1005,7 @@ remoteContainer.removeChild(element);
 console.log('child element NOT FOUND');
 }
 }
+
 function removeAllRemoteVideo() {
 while (remoteContainer.firstChild) {
 remoteContainer.firstChild.pause();
@@ -999,6 +1013,7 @@ remoteContainer.firstChild.srcObject = null;
 remoteContainer.removeChild(remoteContainer.firstChild);
 }
 }
+
 function get_image(){
 var cnv=document.createElement('canvas');
 cnv.width=cnv.height=130;
@@ -1013,14 +1028,10 @@ emg.src=li;
 pagewrap.appendChild(emg);
 createroom(li);
 },10)
-
 }
 
 local_video.onloadedmetadata=function(e){
-//alert('metadata');
-//setTimeout(function(){
 get_image();
-//},1000)
 }
 function gid(id){return document.getElementById(id);}
 </script>

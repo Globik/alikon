@@ -1,7 +1,7 @@
 //header_menu.js
 var sign_up=false;
 const header_menu=n=>{
-n.buser=n.user;
+//console.log('N.USER: ',n.buser)
 	return `<!-- header_menu.js -->
 	<!-- <ul id="menu"> 
 	<li><a href="/">home</a>
@@ -75,6 +75,7 @@ function getMenu(n){
 }
 function getProfileMenu(n){
 	var {buser,mainmenu,profiler}=n;
+//console.log('BUSERttttttttttttttttt: ',n.buser,profiler)
 	var {loginname,loginpath,logoutname,logoutpath,profilername,profilerpath,signupname,signupshow}=profiler;
 	var su="";
 	su+=`<ul id="miniMenu" class="">`;
@@ -86,25 +87,10 @@ ${signupshow ? `${fuckme(n)}`:''}`;
 
 function fuckme(n){
 	let s=``;
-	console.log('BUSERRRRRR: ',n.buser);
+	//console.log('BUSERRRRRR: ',n.buser);
 	if(n.buser){s+=``;}else{
 s+=`<li><div class="znak-svg">pic</div>
 <a href="/signup">sign up</a>`;
 	}
 	return s;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

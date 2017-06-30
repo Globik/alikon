@@ -382,7 +382,7 @@ console.log('websocket closed')
 console.log('client closed. id=' + ws.clientId + '  , total clients=' + wss.clients.size);
 cleanUpPeer(ws, blin3);
 
-if(ws.owner=="true"){
+if(ws.owner){
 console.log('OWNER!!!!!');
 close_room(ws, blin3);
 }
@@ -414,7 +414,8 @@ sendtoclients=false;
 }else if(msg.type=="createroom"){
 console.log('CREATING ROOM');
 if(!server.closed){
-if(msg.owner=='true'){
+	console.log('MSG.OWNER: ',msg.owner)
+if(msg.owner){
 console.log('owner is true');
 if(droom.has(msg.roomname)){
 console.log('Schoo gibts this room by name: ',msg.roomname)
@@ -453,12 +454,12 @@ sendtoclients=false;
 // iceConnectionState=='completed'
 debug('ONLINE roomer_online event');
 ws.ready=true;
-//ws.send(JSON.stringify({type:'buldozer'}))
+
 emergency_to_all(ws,{type:'roomer_online',ready:true})
 sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
-//ws.send(JSON.stringify({type:'exavator'}))
+
 emergency_to_all(ws,{type:'roomer_offline',ready:false})
 sendtoclients=false;
 }else if(msg.type=="call"){
@@ -484,7 +485,7 @@ sendtoclients=false;
 }else if(msg.type=="candidate"){
 console.log('MUST NOT got candidate');
 }else if(msg.type=="removeroom"){
-if(msg.owner==='true'){
+if(msg.owner){
 // pauseVideo 'stop video' button
 console.log('closing a room: ',msg.roomname);
 close_room(ws, msg.roomname)
@@ -591,7 +592,7 @@ deletePeerConnection(id);
 }
 
 function handleAnswer(ws, message) {
-const id = ws.clientId;//getId(ws);
+const id = ws.clientId;
 let peerconnection = getPeerConnection(id);
 if (! peerconnection) {
 console.warn('WARN: connection not found. id=', id);

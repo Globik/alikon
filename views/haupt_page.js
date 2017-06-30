@@ -10,6 +10,7 @@ const haupt_page= n=>{
 const {lusers,showmodule:{mainmenu,profiler}}=n;
 	//console.log('BUSER: ',buser);
 const buser=n.user;
+	//console.log('N>USER: ',n.user)
 const roomers=n.roomers;
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
 <head>${head.head({title:"home", meta:`${get_meta()}`,csslink:"/css/main2.css"})}</head>
