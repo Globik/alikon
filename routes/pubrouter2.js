@@ -8,6 +8,7 @@ const walletValidator=require('wallet-address-validator');//0.1.0
 //var moment=require('moment');
 const cofs=require('../libs/await-fs.js');
 const fs=require('fs');
+const email_enc=require('../libs/email_enc.js');
 /*
 var bitpay=require('bitpay-rest');
 var bitauth=require('bitauth');
@@ -372,24 +373,26 @@ let db=ctx.db;
 ctx.session.dorthin=ctx.path;
 var us=null;
 var owner=false;
+var mich={}
 try{
-var result=await db.query(`select*from busers where id='${ctx.params.buser_id}'`);
+var result=await db.query(`select id, email,name,role,verif,model,items from busers where id='${ctx.params.buser_id}'`);
+result.rows[0].email=email_enc.encrypt(result.rows[0].email);
 us=result.rows[0];
 if(ctx.state.user && ctx.state.user.id===ctx.params.buser_id){owner=true;}
 }catch(e){console.log(e)}
 ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate()});
 });
 
-pub.post('/api/set_transfer', async ctx=>{
-if(!ctx.isAuthenticated()){
-ctx.throw(400,"Not Authorizied from me");
-}
+pub.post('/api/set_transfer', auth, async ctx=>{
 let db=ctx.db;
 let {from,to,amount,type,pid}=ctx.request.body;
+let mail_to=email_enc.decrypt(to);
+var lamount=0;
 try{
-await db.query(`insert into transfer(tfrom, tos, amount,type,pid) values('${from}','${to}',${amount},${type},'${pid}')`)
+await db.query(`insert into transfer(tfrom, tos, amount,type,pid) values('${from}','${mail_to}',${amount},${type},'${pid}')`)
+lamount=amount;
 }catch(e){ctx.throw(400,e.message);}
-ctx.body={info: ctx.request.body}
+ctx.body={info: {amount:lamount}}
 })
 
 pub.post('/api/set_seat', async ctx=>{

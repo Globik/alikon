@@ -191,11 +191,24 @@ remote video<br>
 <br><span id="wso"></span>
 
 <script>
-
 var seat=0;
 var init=0;
+var pidi=0;
+
 var startDate,clocker,mlocker, startingDate;
-yourTokens2.textContent=gid('yourTokens').value;
+var modelName=gid('modelName').value;
+var modelEmail=gid('modelEmail').value;
+var modelId=gid('modelId').value;
+var modelTokens=gid('modelTokens');//.value;
+
+var yourName=gid('yourName').value;
+var yourId=gid('yourId').value;
+var yourEmail=gid('yourEmail').value;
+var yourTokens=gid('yourTokens');//.value;
+
+var tokTosend=gid('tokTosend');
+
+yourTokens2.textContent=yourTokens.value;
 function buser(){
 if(gid('buser').value==='true'){return true;}else{return false;}
 }
@@ -204,36 +217,36 @@ if(gid('owner').value==='true'){return true;}else{return false;}
 }
 
 function send_tokens(){
-if(yourName.textContent !=="a Guest"){
-if(yourEmail.textContent!=modelEmail.textContent){
-if(yourTokens.textContent !=0){
+if(pidi==0)return;
+if(buser()){
+console.log('buser!')
+if(owner()){
+console.log('not owner!')
+if(yourTokens.value !="0"){
+console.log('tokens not 0');
 var data={};
-data.from=yourEmail.textContent;
-data.to=modelEmail.textContent;
-data.amount=tokTosend.value;
+data.from=yourEmail;
+data.to=modelEmail;
+data.amount=Number(tokTosend.value);
 data.type=1;
 data.pid=pid.textContent;
-
-if(tokTosend.value<=Number(yourTokens.textContent)){
+console.log('data: ',data)
+if(Number(tokTosend.value)<=Number(yourTokens.value)){
+console.log('send xhr')
 to_xhr(JSON.stringify(data),true);
 }else{out.innerHTML="Not enouth tokens!";}
 }else{out.innerHTML="Not enough tokens!";}
 }else{
+console.log('you are an owner!');
 out.innerHTML='not selbst!';
 }}else{out.innerHTML='Please <a href="/login">log in</a>';}
 }
 
 function rechnet(n){
-	var mata=JSON.parse(n);
-	//modelTokens.textContent=Number(modelTokens.textContent)+mata.info.amount;
-    modelTokens.textContent=Number(modelTokens.textContent)+Number(mata.info.amount);
-    yourTokens.textContent-=mata.info.amount;
-	yourTokens2.textContent-=mata.info.amount;
-    //out.innerHTML=this.response;
-//from rechnet2
-        //modelTokens.textContent=Number(modelTokens.textContent)+Number(mata.info.amount);//(tokpermin.textContent);
-		//yourTokens.textContent-=tokpermin.textContent;
-		//yourTokens2.textContent=yourTokens.textContent;
+var mata=JSON.parse(n);
+modelTokens.value=Number(modelTokens.value)+Number(mata.info.amount);
+yourTokens.value-=mata.info.amount;
+yourTokens2.textContent-=mata.info.amount;
 	}
 	
 function get_room(){
@@ -305,12 +318,14 @@ if(bool) rechnet(this.response);
 out.innerHTML=this.response+this.status;
 }}
 xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
+console.log('sending xhr: ',n);
 xhr.send(n);
 }
 
 function get_one(){
 window.location.href="#resultativ";
 }
+
 var obid=function(){
 var tst=(new Date().getTime()/1000 | 0).toString(16);
 return tst+'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(){
@@ -384,7 +399,7 @@ var targetusername=null;
 var pc=null;
 var socket=null;
 var roomcreated=false;
-
+/*
 var modelName=gid('modelName').value;
 var modelEmail=gid('modelEmail').value;
 var modelId=gid('modelId').value;
@@ -394,7 +409,7 @@ var yourName=gid('yourName').value;
 var yourId=gid('yourId').value;
 var yourEmail=gid('yourEmail').value;
 var yourTokens=gid('yourTokens').value;
-
+*/
 /*
 <!-- model -->
 <input type="hidden" id="modelName" value="${model.name}"/>
@@ -490,7 +505,13 @@ showmessage(event.data);
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
 if(!owner()){
-if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated)}
+if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated);
+if(msg.pidi && msg.pidi !==0 && msg.pidi !==undefined){
+pidi=msg.pidi;
+pid.textContent=pidi;
+}
+
+}
 }
 
 }else if(msg.type=='joined_user'){
@@ -522,11 +543,10 @@ roomcreated=true;
 console.warn('on roomer_online: ',event.data);
 }else if(msg.type==='roomer_offline'){
 console.warn('on roomer_offline: ',event.data);
+pidi=0;
 if(peerConnection){
 console.log('signaling state: ',peerConnection.signalingState)
 console.log('ice connection state: ',peerConnection.iceConnectionState);
-
-//{buser ? '' : 'dissconnect();if(socket)socket.close();'}
 
 if(!buser()){dissconnect();if(socket)socket.close();}
 }
@@ -548,8 +568,6 @@ goodbyeroom(msg.vid);
 }else if(msg.type==='error'){
 console.error('on error: ',event.data);
 if(msg.num=="101"){
-
-//{!buser ? 'socket.close();dissconnect();' : ''}
 
 if(!buser()){dissconnect();if(socket)socket.close();}
 }
@@ -742,18 +760,21 @@ console.log('== ice connection state=' + peer.iceConnectionState);
 showState('ice connection state=' + peer.iceConnectionState);
 if(peer.iceConnectionState==='completed'){
 if(owner()){
-sendJson({type:'online',roomname:modelId});
+pidi=obid();
+pid.textContent=pidi;
+sendJson({type:'online',roomname:modelId,pidi:pidi});
 }
 }else if(peer.iceConnectionState==='closed'){
-if(owner())sendJson({type:'offline', roomname:modelId});
+if(owner()){sendJson({type:'offline', roomname:modelId});pidi=0;pid.textContent=pidi;}
 }else if(peer.iceConnectionState==='failed'){
+pidi=0;pid.textContent=pidi;
 if(!buser()){
 dissconnect();
 if(socket)socket.close();
 }
 }else if (peer.iceConnectionState === 'disconnected') {
 console.warn('-- disconnected --');
-if(!owner()){roomcreated=false;
+if(!owner()){roomcreated=false;pidi=0;pid.textContent=pidi;
 //{!buser ? 'if(socket)socket.close();':''}
 
 if(!buser()){if(socket)socket.close();}
@@ -834,24 +855,18 @@ console.error(err);
  
 //go_socket();
 function connect() {
-
-//{!buser ? 'go_socket();' : ''}
-
 if(!buser()){go_socket();}
 setTimeout(function(){
 if(roomcreated){
-alert('is room created? '+roomcreated)
+//alert('is room created? '+roomcreated)
 callWithCapabilitySDP();
 updateButtons();
 }else{
-
-//{!buser ? 'if(socket){socket.close();}':''}
-
 if(!buser()){if(socket)socket.close();}
 }
 },1000)
-
 }
+
 function callWithCapabilitySDP() {
 peerConnection = prepareNewConnection();
 var vopt={ offerToReceiveAudio: false, offerToReceiveVideo: false};
@@ -908,9 +923,7 @@ console.log('Hang up.');
 peerConnection.close();
 peerConnection = null;
 if(!owner()){removeAllRemoteVideo();
-
-//{!buser ? 'if(socket)socket.close();':''}
-
+pidi=0;pid.textContent=pidi;
 if(!buser()){if(socket)socket.close();}
 }
 }else{

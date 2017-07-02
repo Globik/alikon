@@ -1,4 +1,5 @@
-const CircularJson=require('circular-json');
+//const CircularJson=require('circular-json');
+const mail_enc=require('./libs/email_enc.js');
 const EventEmitter=require('events');
 const Koa=require('koa')
 const passport=require('koa-passport')
@@ -239,14 +240,16 @@ return connect;
 	
 function pupkin_ready(bs){
 let pupkin=false;
+let pidi=0;
 for(let i of wss.clients){
 if(i.upgradeReq.url===bs.upgradeReq.url){	
 if(i.ready===true){
 pupkin=true;
+pidi=i.pidi;
 break;
 }
 }}
-return pupkin;	
+return {pupkin:pupkin,pidi:pidi};	
 }	
 	
 function makeuserlistmessage(bs){
@@ -260,9 +263,10 @@ userlistmsg.users.push({username:c.username,owner:c.owner,clientId:c.clientId});
 return userlistmsg;
 }
 		
-function senduserlisttoall(bs,bool){
+function senduserlisttoall(bs,bool,pidi){
 var userlistmsg=makeuserlistmessage(bs);
 	userlistmsg.ready=bool;
+	userlistmsg.pidi=pidi;
 var userlistmsgstr=JSON.stringify(userlistmsg);
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
@@ -360,7 +364,12 @@ sendback(ws,{type:'error',error:e,roomname: name})
 }
 }
 }	
-	
+let obid=function(){
+let tst=(new Date().getTime()/1000 | 0).toString(16);
+return tst+'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(){
+return (Math.random()*16 | 0).toString(16);
+}).toLowerCase();
+}
 wss.on('connection', ws=>{
 console.log('websocket connected: ', ws.upgradeReq.url);
 var blin=ws.upgradeReq.url;
@@ -371,7 +380,7 @@ ws.on('pong', heartbeat);
 
 
 	
-ws.clientId=nextId;
+ws.clientId=obid();//nextId;
 nextId++;
 var msg={type:"id",id:ws.clientId};
 ws.send(JSON.stringify(msg));
@@ -407,7 +416,7 @@ connect.username=msg.name;
 connect.owner=msg.owner;
 connect.ready=false;
 
-senduserlisttoall(ws,sifa);
+senduserlisttoall(ws,sifa.pupkin,sifa.pidi);
 send_new_user_to_all(ws);
 	
 sendtoclients=false;
@@ -426,8 +435,8 @@ console.log('creating a room for id=', ws.clientId);
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
-
-pool.query(`insert into rooms(id,email,name,src) values('${ws.roomid}','${msg.email}','${msg.name}','${msg.src}') 
+let mail=mail_enc.decrypt(msg.email)
+pool.query(`insert into rooms(id,email,name,src) values('${ws.roomid}','${mail}','${msg.name}','${msg.src}') 
 returning id,status, view,name,src`).then(result=>{
 console.log('result insert rooms: ',result.rowCount);
 
@@ -454,13 +463,14 @@ sendtoclients=false;
 // iceConnectionState=='completed'
 debug('ONLINE roomer_online event');
 ws.ready=true;
+ws.pidi=msg.pidi;
 
-emergency_to_all(ws,{type:'roomer_online',ready:true})
+emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi})
 sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
 
-emergency_to_all(ws,{type:'roomer_offline',ready:false})
+emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
 sendtoclients=false;
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);
