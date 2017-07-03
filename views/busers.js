@@ -194,6 +194,7 @@ remote video<br>
 var seat=0;
 var init=0;
 var pidi=0;
+var btype=0;
 
 var startDate,clocker,mlocker, startingDate;
 var modelName=gid('modelName').value;
@@ -220,7 +221,7 @@ function send_tokens(){
 if(pidi==0)return;
 if(buser()){
 console.log('buser!')
-if(owner()){
+if(!owner()){
 console.log('not owner!')
 if(yourTokens.value !="0"){
 console.log('tokens not 0');
@@ -247,7 +248,7 @@ var mata=JSON.parse(n);
 modelTokens.value=Number(modelTokens.value)+Number(mata.info.amount);
 yourTokens.value-=mata.info.amount;
 yourTokens2.textContent-=mata.info.amount;
-	}
+}
 	
 function get_room(){
 	if(init==0){
@@ -333,17 +334,11 @@ return (Math.random()*16 | 0).toString(16);
 }).toLowerCase();
 }
 function broadcast(){
-//alert(obid());
 seat=1;
-pid.textContent=obid();
 setTimeout(showTime, 1000);
 }
-broadcast();
+//broadcast();
 function showTime(){
-//var tt=setInterval(function(){
-//var d=new Date();
-//timeinfo.textContent=d;
-//},1000);
 startingDate=new Date();
 marttime();
 sendxhr();
@@ -369,24 +364,25 @@ function marttime(){
 		mlocker=setTimeout("marttime()",1000);
 		}
 function sendxhr(){
-if(modelEmail.textContent){
+if(owner()){
 var data={};
-data.pid=pid.textContent;
-data.status="active";
-data.who=modelEmail.textContent;
+data.pid=pidi;
+data.type=btype;
+data.who=modelEmail;
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/set_seat');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
-out.innerHTML=this.response;
-//<input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button>
+//out.innerHTML=this.response;
+console.warn('xhr from server: ',this.response);
 }else{
-out.innerHTML=this.response+this.status;
+//out.innerHTML=this.response+this.status;
+console.error('xhr from server: ',this.response);
 }}
 xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
-//alert(JSON.stringify(data));
-//xhr.send(JSON.stringify(data));
+console.log(JSON.stringify(data));
+xhr.send(JSON.stringify(data));
 }
 }
 
@@ -399,34 +395,8 @@ var targetusername=null;
 var pc=null;
 var socket=null;
 var roomcreated=false;
-/*
-var modelName=gid('modelName').value;
-var modelEmail=gid('modelEmail').value;
-var modelId=gid('modelId').value;
-var modelTokens=gid('modelTokens').value;
 
-var yourName=gid('yourName').value;
-var yourId=gid('yourId').value;
-var yourEmail=gid('yourEmail').value;
-var yourTokens=gid('yourTokens').value;
-*/
-/*
-<!-- model -->
-<input type="hidden" id="modelName" value="${model.name}"/>
-<input type="hidden" id="modelId" value="${model.id}"/>
-<input type="hidden" id="modelEmail" value="${model.email}"/>
-<input type="hidden" id="owner" value='${n.owner}'/>
-<input type="hidden" id="modelTokens" value="${model.items}"/>
 
-<!-- You -->
-<input type="hidden" id="buser" value='${buser ? true : false}'/>
-<input type="hidden" id="shortid" value="${n.shortid}"/>
-<input type="hidden" id="yourName" value="${buser ? buser.name : ''}"/>
-
-<input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
-<input type="hidden" id="yourEmail" value="${buser ? buser.email:''}"/>
-<input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
-*/
 
 function setusername(s){
 if(owner()){
@@ -541,9 +511,10 @@ console.warn('On created room: ', event.data);
 roomcreated=true;
 }else if(msg.type==='roomer_online'){
 console.warn('on roomer_online: ',event.data);
+if(owner()){broadcast();}
 }else if(msg.type==='roomer_offline'){
 console.warn('on roomer_offline: ',event.data);
-pidi=0;
+pidi=0;seat=0;
 if(peerConnection){
 console.log('signaling state: ',peerConnection.signalingState)
 console.log('ice connection state: ',peerConnection.iceConnectionState);
@@ -598,6 +569,7 @@ const useTrickleICE = false;
   RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
   // init checkbox
   if (window.window.webkitRTCPeerConnection) {
+//alert('check true');
     gid('plan_b_check').checked = true;
   }
 
@@ -765,7 +737,7 @@ pid.textContent=pidi;
 sendJson({type:'online',roomname:modelId,pidi:pidi});
 }
 }else if(peer.iceConnectionState==='closed'){
-if(owner()){sendJson({type:'offline', roomname:modelId});pidi=0;pid.textContent=pidi;}
+if(owner()){sendJson({type:'offline', roomname:modelId,pidi:pidi});pidi=0;pid.textContent=pidi;}
 }else if(peer.iceConnectionState==='failed'){
 pidi=0;pid.textContent=pidi;
 if(!buser()){
@@ -775,8 +747,6 @@ if(socket)socket.close();
 }else if (peer.iceConnectionState === 'disconnected') {
 console.warn('-- disconnected --');
 if(!owner()){roomcreated=false;pidi=0;pid.textContent=pidi;
-//{!buser ? 'if(socket)socket.close();':''}
-
 if(!buser()){if(socket)socket.close();}
 }
 dissconnect();

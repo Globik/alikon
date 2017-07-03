@@ -370,6 +370,15 @@ return tst+'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(){
 return (Math.random()*16 | 0).toString(16);
 }).toLowerCase();
 }
+
+function update_end(pidi){
+pool.query(`update seats set vend=now() where pid='${pidi}'`).then(result=>{
+console.log('result ok update seats vend')
+}).catch(err=>{console.log('error update seat vend: ',err)})
+}
+
+
+	
 wss.on('connection', ws=>{
 console.log('websocket connected: ', ws.upgradeReq.url);
 var blin=ws.upgradeReq.url;
@@ -393,6 +402,10 @@ cleanUpPeer(ws, blin3);
 
 if(ws.owner){
 console.log('OWNER!!!!!');
+if(ws.pidi && ws.pidi.length>0){
+console.log('WS.PIDY!!!!!!!!!: ',ws.pidi);
+	update_end(ws.pidi);
+}
 close_room(ws, blin3);
 }
 })
@@ -469,7 +482,8 @@ emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi})
 sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
-
+console.log('PIDI: ',msg.pidi)
+update_end(msg.pidi)
 emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
 sendtoclients=false;
 }else if(msg.type=="call"){
@@ -538,38 +552,35 @@ const id=ws.clientId;
 console.log('ID: ',id.toString())
 const planb=message.planb;
 const capabilitySDP=message.capability;
-//let peer=soupRoom.Peer(id);
 console.log('MESSAGE.ROOMNAME: ',message.roomname);
 let vid=droom.get(message.roomname);
 if(vid){
-let peer=/*droom.get(message.roomname)*/vid.Peer(id.toString());
+let peer=vid.Peer(id.toString());
 let peerconnection=new RTCPeerConnection({peer:peer,usePlanB:planb});
 console.log('--- create rtcpeerconnection --');
-console.log('-- peers in the room from PREPAREPEER = ',droom.get(message.roomname).peers.length);
-let peerlength=droom.get(message.roomname).peers.length;
-pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
-console.log('ok update rooms view in preparepeer');
-sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:message.roomname})
-}).catch(err=>{console.log('err update rooms view in preparepeer: ',err)})
+let peerlength=vid.peers.length;
+console.log('-- peers in the room from PREPAREPEER = ',peerlength);
+update_view(peerlength,message.roomname)
+
+
 
 peerconnection.on('close', err=>{
 console.log('peerconnection closed ');
 debug('PEER_CONNECTION CLOSED');
 debug('PC closed for room message.roomname', message.roomname)
 debug('PC closed for ws id: ',ws.clientId);
-if(droom.get(message.roomname)){
-let peerlength=droom.get(message.roomname).peers.length;
-pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
-console.log('ok update rooms view pc.onclose')
-sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:message.roomname})
-}).catch(err=>{console.log('err update rooms pconclose: ',err)})
+let vidi=droom.get(message.roomname);
+if(vidi){
+let peerlength=vidi.peers.length;
+update_view(peerlength,message.roomname);
 }
 	
 if(err)console.log(err);
 });
 peerconnection.on('signalingstatechange',()=>console.log('state ',peerconnection.signalingState));
-peerconnection.on('negotiationneeded',()=>{console.log('negotiationneeded id: ',id);
-sendOffer(ws,peerconnection,downOnly);});
+peerconnection.on('negotiationneeded',()=>{
+console.log('negotiationneeded id: ', id);
+sendOffer(ws,peerconnection,downOnly)})
 peerconnection.setCapabilities(capabilitySDP).then(()=>{
 console.log('peer.setcapabilities() ok');
 addPeerConnection(id,peerconnection);
@@ -614,14 +625,11 @@ let desc = new RTCSessionDescription({type : "answer", sdp  : message.sdp});
 peerconnection.setRemoteDescription(desc).then( function() {
 console.log('setRemoteDescription for Answer OK id=' + id);
 console.log('MESSAGE.ROOMNAME from handle answer: ',message.roomname)
-if(droom.get(message.roomname)){
-console.log('-- PEERS in the room FROM handleAnswer = ' + droom.get(message.roomname).peers.length);
-let peerlength=droom.get(message.roomname).peers.length;
-
-pool.query(`update rooms set view=${peerlength} where id='${message.roomname}'`).then(r=>{
-console.log('ok update rooms view handleanswer')
-sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:message.roomname})
-}).catch(err=>{console.log('err update rooms view handleanswer: ',err)})
+let vid=droom.get(message.roomname);
+if(vid){
+let peerlength=vid.peers.length;
+console.log('-- PEERS in the room FROM handleAnswer = ', peerlength);
+update_view(peerlength,message.roomname)
 }
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
 }).catch( (err) => {
@@ -629,6 +637,12 @@ console.log('setRemoteDescription for Answer ERROR:', err)
 });
 }
 
+function update_view(peerlength,roomname){
+pool.query(`update rooms set view=${peerlength} where id='${roomname}'`).then(r=>{
+console.log('ok update rooms view handleanswer')
+sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:roomname})
+}).catch(err=>{console.log('err update rooms view handleanswer: ',err)})
+}
 
 function dumpPeer(peer, caption) {
 console.log(caption + ' transports=%d receivers=%d senders=%d',
@@ -653,7 +667,6 @@ Connections[id] = pc;
 
 function getPeerConnection(id) {
 const pc = Connections[id];
-
 //console.log('pc: ',pc)
 return pc
 }
@@ -675,16 +688,7 @@ deletePeerConnection(id);
 console.log('NAME in Clean UP Peer: ',name);
 if(droom.get(name)){ 
 console.log('-- peers in the room  from CLEENUPEER= ' + droom.get(name).peers.length);
-	/*
-let peerlength=droom.get(name).peers.length;
-pool.query(`update rooms set view=${peerlength} where id='${name}'`).then(r=>{
-console.log('ok update rooms view cleenupperr')
-}).catch(err=>{console.log('err update rooms view in cleenuppeer: ',err)})
-*/
-}				   
-				   
-}
-//}
+}}
 
 function sendSDP(ws, sessionDescription) {
 const id = ws.clientId;
@@ -797,16 +801,16 @@ server.on('newroom',(r)=>{
 });
 server.on('close',(er)=>{
 console.log('closing the mediasoup server');
+	pool.query(`delete from rooms`).then(result=>{
+console.log('result delete rooms: ',result)
+}).catch(err=>{console.log('err delete rooms: ',err)})
 if(er){console.log(er);}
 })
 
 process.on('SIGINT',()=>{
 console.log(' sigint fired');
 server.close();
-pool.query(`delete from rooms`).then(result=>{
-console.log('result delete rooms: ',result)
 process.exit();
-}).catch(err=>{console.log('err delete rooms: ',err);process.exit();})
 })
 
 process.on('unhundledRejection',(reason, p)=>{

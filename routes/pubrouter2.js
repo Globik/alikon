@@ -397,9 +397,12 @@ ctx.body={info: {amount:lamount}}
 
 pub.post('/api/set_seat', async ctx=>{
 let db=ctx.db;
-const {pid,who,status}=ctx.request.body;
+const {pid,who,type}=ctx.request.body;
+	//console.log(ctx.request.body)
+	let mail=email_enc.decrypt(who)
+	//console.log('mail: ',mail)
 try{
-await db.query(`insert into seats(pid,us_id,status) values('${pid}','${who}','${status}')`);
+await db.query(`insert into seats(pid,us_id,type) values('${pid}','${mail}',${type})`);
 }catch(e){console.log(e);}
 ctx.body={info:"OK",body: ctx.request.body}
 });

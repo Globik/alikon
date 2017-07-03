@@ -3,4 +3,4 @@ create table seats(pid text not null,
 				   us_id text not null references busers(email) on delete cascade on update cascade,
 				   start timestamp not null default now(),
 				   vend timestamp,
-				   status text not null)
+				   type int not null default 0)
