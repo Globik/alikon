@@ -8,6 +8,8 @@ const koaBody=require('koa-body')
 const fs=require('co-fs');
 const fss=require('fs');
 const debug=require('debug')('k');
+const ROOM=100;
+const PEER=100;
 
 const redis=require('./examples/redis-promis.js')();
 const cl=redis.createClient();
@@ -390,7 +392,7 @@ ws.on('pong', heartbeat);
 
 	
 ws.clientId=obid();//nextId;
-nextId++;
+//nextId++;
 var msg={type:"id",id:ws.clientId};
 ws.send(JSON.stringify(msg));
 ws.on('error',e=>console.log('err: ',err))
@@ -404,7 +406,7 @@ if(ws.owner){
 console.log('OWNER!!!!!');
 if(ws.pidi && ws.pidi.length>0){
 console.log('WS.PIDY!!!!!!!!!: ',ws.pidi);
-	update_end(ws.pidi);
+update_end(ws.pidi);
 }
 close_room(ws, blin3);
 }
@@ -438,6 +440,7 @@ console.log('CREATING ROOM');
 if(!server.closed){
 	console.log('MSG.OWNER: ',msg.owner)
 if(msg.owner){
+if(droom.size > ROOM) return;
 console.log('owner is true');
 if(droom.has(msg.roomname)){
 console.log('Schoo gibts this room by name: ',msg.roomname)
@@ -489,6 +492,7 @@ sendtoclients=false;
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);
 const downOnlyRequested=false;
+
 preparePeer(ws, msg, downOnlyRequested);
 sendtoclients=false;
 }else if(msg.type=="call_downstream"){
@@ -555,6 +559,7 @@ const capabilitySDP=message.capability;
 console.log('MESSAGE.ROOMNAME: ',message.roomname);
 let vid=droom.get(message.roomname);
 if(vid){
+if(vid.peers.length > PEER){console.log('peers great than ',PEER,' Skip creating a peer...');return;}
 let peer=vid.Peer(id.toString());
 let peerconnection=new RTCPeerConnection({peer:peer,usePlanB:planb});
 console.log('--- create rtcpeerconnection --');

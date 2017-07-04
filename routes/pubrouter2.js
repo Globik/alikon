@@ -36,7 +36,8 @@ result=us.rows;
 	
 try{
 	//rooms.status.view.src busers.id.name
-let bus=await db.query(`select busers.id, busers.name,rooms.status,rooms.view,rooms.src from busers inner join rooms on busers.email=rooms.email`/*where view>=1`*/)
+let bus=await db.query(`select busers.id, busers.name,rooms.status,rooms.view,rooms.src 
+from busers inner join rooms on busers.email=rooms.email`/*where view>=1`*/)
 bresult=bus.rows;
 //console.log('bresult: ',bresult)
 }catch(e){console.log(e)}	
@@ -374,13 +375,17 @@ ctx.session.dorthin=ctx.path;
 var us=null;
 var owner=false;
 var mich={}
+var imgsrc=undefined;
 try{
 var result=await db.query(`select id, email,name,role,verif,model,items from busers where id='${ctx.params.buser_id}'`);
+var result2=await db.query(`select src from rooms where email='${result.rows[0].email}'`)
+//console.log('result2: ',result2.rows[0])
+if(result2.rows[0]){imgsrc=result2.rows[0].src}
 result.rows[0].email=email_enc.encrypt(result.rows[0].email);
 us=result.rows[0];
 if(ctx.state.user && ctx.state.user.id===ctx.params.buser_id){owner=true;}
 }catch(e){console.log(e)}
-ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate()});
+ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),imgsrc:imgsrc});
 });
 
 pub.post('/api/set_transfer', auth, async ctx=>{

@@ -93,9 +93,24 @@ visibility: visible;
 .close:hover {
  background-color: rgba(64, 128, 128, 0.8);
 }
+
+#mainwrap{display:block;position:relative;background:pink;width:100%;}
+#videowrap{width:50%;height:18em;background:lightgreen;float:left;psition:relative;display:block;}
+#chatwrap{width:50%; height:18em;background:red;display:block;postion:relative;float:right;}
+
+#local_video{width:100%;height:90%;background:black;}
+.fuckvideo::after{content: "The member you are trying to view is currently offline. Please wait or choose another member to view.";
+background:rgba(200,0,0,0.1);color:red;left:0;top:0;padding:10px;width:50%;height:auto;position:absolute;
+transform:translate(0%,20%);
+display:block;}
+
 @media screen and (max-width: 650px) {
 .popup{color:red;left:50%;top:50%;width:91%;height:70vmin;}
 overlay:target+.popi{left:0;}
+#chatwrap{background:lightblue;}
+#chatwrap,#videowrap{float:none;width:100%;}
+.fuckvideo::after{width:100%;}
+#clearwrap{display:none;}
 }
 	
 </style>
@@ -104,7 +119,18 @@ overlay:target+.popi{left:0;}
 
 <div><b>obid: </b><span id="pid"></span></div>
 <div><b>time: </b><span id="timeinfo"></span></div>
+
 </div>
+
+<sector id="mainwrap">
+<div id="videowrap" class="fuckvideo">
+<video id="local_video" class="" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls volume='0'>
+
+</video>
+</div>
+<div id="chatwrap">chatwrap</div>
+<div id="clearwrap" style="clear:both;background:brown;">.</div>
+</sector>
 
 <!-- model -->
 <input type="hidden" id="modelName" value="${model.name}"/>
@@ -141,9 +167,9 @@ overlay:target+.popi{left:0;}
 
 </div>
 Time: <span id="mer">00:00:00</span><br><br>
-<!-- <input type="text" id="name" value="" placeholder="your name"><button onclick="do_socket();">connect websocket</button> -->
+
 <br>
-<button onclick="xir();">get xir</button><button onclick="bonfigu();">bonfig</button>
+
 <br>
 <span id="fuckingout"></span>
 <br>
@@ -166,8 +192,8 @@ ${n.owner ? `
 <button id="disconnect_button"  onclick="dissconnect();">Disconnect</button> 
 <input type="checkbox" id="plan_b_check" >planB<br>
 
-local video<br>
-<video id="local_video" autoplay style="width: 160px; height: 120px; border: 1px solid black;"></video>
+<!-- local video<br>
+<video id="local_video2" autoplay style="width: 160px; height: 120px; border: 1px solid black;"></video> -->
 <span id="state_span"></span>
 </div>
 remote video<br>
@@ -200,12 +226,12 @@ var startDate,clocker,mlocker, startingDate;
 var modelName=gid('modelName').value;
 var modelEmail=gid('modelEmail').value;
 var modelId=gid('modelId').value;
-var modelTokens=gid('modelTokens');//.value;
+var modelTokens=gid('modelTokens');
 
 var yourName=gid('yourName').value;
 var yourId=gid('yourId').value;
 var yourEmail=gid('yourEmail').value;
-var yourTokens=gid('yourTokens');//.value;
+var yourTokens=gid('yourTokens');
 
 var tokTosend=gid('tokTosend');
 
@@ -327,22 +353,25 @@ function get_one(){
 window.location.href="#resultativ";
 }
 
+
 var obid=function(){
 var tst=(new Date().getTime()/1000 | 0).toString(16);
 return tst+'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(){
 return (Math.random()*16 | 0).toString(16);
 }).toLowerCase();
 }
+
 function broadcast(){
 seat=1;
 setTimeout(showTime, 1000);
 }
-//broadcast();
+
 function showTime(){
 startingDate=new Date();
 marttime();
 sendxhr();
 }
+
 function marttime(){
 	var thisdu=new Date();
 	var t=thisdu.getTime()-startingDate.getTime();
@@ -416,8 +445,6 @@ new_uri='wss:';
 }else{
 new_uri='ws:';
 }
-
-//{buser ? 'go_socket();' : ''}
 
 if(buser()){go_socket();}
 console.warn('buser: '+buser());
@@ -731,6 +758,13 @@ peer.oniceconnectionstatechange = function() {
 console.log('== ice connection state=' + peer.iceConnectionState);
 showState('ice connection state=' + peer.iceConnectionState);
 if(peer.iceConnectionState==='completed'){
+//alert('completed!')
+if(owner()){
+pidi=obid();
+pid.textContent=pidi;
+sendJson({type:'online',roomname:modelId,pidi:pidi});
+}
+}else if(peer.iceConnectionState==='connected'){
 if(owner()){
 pidi=obid();
 pid.textContent=pidi;
@@ -834,7 +868,7 @@ updateButtons();
 }else{
 if(!buser()){if(socket)socket.close();}
 }
-},1000)
+},2000)
 }
 
 function callWithCapabilitySDP() {
@@ -963,22 +997,26 @@ function disableElement(id) {
 let element = gid(id);
 if (element) {element.setAttribute('disabled', '1');}    
 }
+
 updateButtons();
 
 function addRemoteVideo(id, stream) {
-let element = document.createElement('video');
+/*let element = document.createElement('video');
 remoteContainer.appendChild(element);
 element.id = 'remote_' + id;
 element.width = 320;
 element.height = 240;
 element.srcObject = stream;
+console.warn('addremotevideo');
 element.play();
 element.volume = 0;
 element.controls = true;
+*/
+localVideo.srcObject=stream;
 }
   
 function removeRemoteVideo(id, stream) {
-console.log(' ---- removeRemoteVideo() id=' + id);
+/*console.log(' ---- removeRemoteVideo() id=' + id);
 let element = gid('remote_' + id);
 if (element) {
 element.pause();
@@ -986,7 +1024,10 @@ element.srcObject = null;
 remoteContainer.removeChild(element);
 }else {
 console.log('child element NOT FOUND');
-}
+}*/
+localVideo.pause();
+localVideo.srcObject=null;
+localVideo.src='';
 }
 
 function removeAllRemoteVideo() {
@@ -999,13 +1040,17 @@ remoteContainer.removeChild(remoteContainer.firstChild);
 
 function get_image(){
 var cnv=document.createElement('canvas');
-cnv.width=cnv.height=130;
-local_video.width=130;
-local_video.height=130;
+let w=300;
+let h=200;
+cnv.width=w;
+cnv.height=h;
+//local_video.width=130;
+//local_video.height=130;
+//alert(cnv.width+' '+cnv.height+' '+local_video.width+', '+local_video.height)
 var c=cnv.getContext("2d");
-c.drawImage(local_video,0,0,130,130);
+c.drawImage(local_video,0,0,w,h);
 setTimeout(function(){
-var li=cnv.toDataURL('image/png',0.1);
+var li=cnv.toDataURL('image/png',1.0);
 var emg=document.createElement('img');
 emg.src=li;
 pagewrap.appendChild(emg);
@@ -1014,7 +1059,7 @@ createroom(li);
 }
 
 local_video.onloadedmetadata=function(e){
-get_image();
+if(owner())get_image();
 }
 function gid(id){return document.getElementById(id);}
 </script>
