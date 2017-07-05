@@ -125,11 +125,11 @@ overlay:target+.popi{left:0;}
 <sector id="mainwrap">
 <div id="videowrap" class="fuckvideo">
 <video id="local_video" class="" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls volume='0'>
-
 </video>
+<button onclick="do_conn(this);">connect</button>
 </div>
 <div id="chatwrap">chatwrap</div>
-<div id="clearwrap" style="clear:both;background:brown;">.</div>
+<div id="clearwrap" style="clear:both;background:brown;"><button onclick="do_conn(this);">connect</button></div>
 </sector>
 
 <!-- model -->
@@ -185,11 +185,14 @@ Time: <span id="mer">00:00:00</span><br><br>
 </output>
 ${n.owner ? `
 <div id="localcontainer">
-<button id="start_video_button" onclick="startVideo();">Start Video</button>
-<button id="stop_video_button" onclick="stopVideo();">Stop Video</button>
+<!-- <button id="start_video_button" onclick="startVideo();">Start Video</button>
+<button id="stop_video_button" onclick="stopVideo();">Stop Video</button><br><br> -->
+<button id="get_video" onclick="get_vid(this);">start video</button>
 </div> ` : ''}
 <button id="connect_button"  onclick="connect();">Connect</button>
 <button id="disconnect_button"  onclick="dissconnect();">Disconnect</button> 
+<br><br>
+<br>
 <input type="checkbox" id="plan_b_check" >planB<br>
 
 <!-- local video<br>
@@ -403,10 +406,8 @@ xhr.open('post','/api/set_seat');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
-//out.innerHTML=this.response;
 console.warn('xhr from server: ',this.response);
 }else{
-//out.innerHTML=this.response+this.status;
 console.error('xhr from server: ',this.response);
 }}
 xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
@@ -594,9 +595,8 @@ const useTrickleICE = false;
                             navigator.mozGetUserMedia || navigator.msGetUserMedia;
   RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
   RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
-  // init checkbox
+  
   if (window.window.webkitRTCPeerConnection) {
-//alert('check true');
     gid('plan_b_check').checked = true;
   }
 
@@ -611,23 +611,44 @@ function getUsePlanB() {
 let checkbox = gid('plan_b_check');
 return (checkbox.checked === true);
 }
-
-function startVideo() {
+var fl=false;
+function get_vid(el){
+if(!fl){
+startVideo(el);
+//fl=true;
+//el.textContent='stop video';
+}else{
+stopVideo();
+el.textContent='start video';
+fl=false;
+}
+}
+function startVideo(el) {
 if(owner()){
 getDeviceStream({video: true, audio: true})
 .then(function (stream) {
 localStream = stream;
+let videoTracks = stream.getVideoTracks();
+if (videoTracks) {
+console.log('videoTracks.length=' + videoTracks.length);
+if(videoTracks.length==0) throw 'Have you enabled your web camera?';
+}
 logStream('localstream', stream);
 playVideo(localVideo, stream);
 updateButtons();
-}).catch(function (error) { // error
+fl=true;
+el.textContent='stop video';
+}).catch(function (error) { 
+//alert('get user media error: '+error);
 console.error('getUserMedia error:', error);
+fl=false;
+el.textContent='start video';
 rtcerror.innerHTML=error;
 return;
 });
 }
 }
-  // stop local video
+ 
 function stopVideo() {
 if(owner()){
 pauseVideo(localVideo);
@@ -636,6 +657,7 @@ localStream = null;
 updateButtons();
 }
 }
+
 function stopLocalStream(stream) {
 let tracks = stream.getTracks();
 if (! tracks) {
@@ -858,6 +880,18 @@ console.error(err);
 }
  
 //go_socket();
+var con_fl=false;
+function do_conn(el){
+if(!con_fl){
+connect();
+con_fl=true;
+el.textContent='disconnect';
+}else{
+dissconnect();
+con_fl=false;
+el.textContent='connect';
+}
+}
 function connect() {
 if(!buser()){go_socket();}
 setTimeout(function(){

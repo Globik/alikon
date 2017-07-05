@@ -476,7 +476,7 @@ if(ws.readyState===1)ws.send(JSON.stringify({type:"error",ename:"Mediasoup is cl
 }
 sendtoclients=false;
 }else if(msg.type=="online"){
-// iceConnectionState=='completed'
+// iceConnectionState=='completed' or 'connected'
 debug('ONLINE roomer_online event');
 ws.ready=true;
 ws.pidi=msg.pidi;
