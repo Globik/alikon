@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<style>
+			*{box-sizing:border-box;}
+			
+			video{background:lack;height:100%;obect-fit:cover;width:100%;}
+			#vid::after{content:"fuck";color:red;position:absolute;top:0;left:0;background:black;}
+			#wrap{width:100%;height:60vh;background:violet;display:block;position:relative;}
+			#container{height:100%;background:red;width:50%;display:inline-block;}
+			#vid{height:80%;background:brown;display:block;}
+			#undervideo{background:yellow;width:100%;height:20%;}
+			#containera{background:green;height:100%;width:50%;
+			display:inline-block;float:right;
+			margin-top:0;
+			}
+			#chat{width:100%;height:80%;display:block;overflow:scroll;}
+			#underchat{width:100%;display:block;position:relative;height:20%;background:yellow;}
+			form{width:100%;}
+			input[type=text]{width:100%;}
+			#video::-webkit-media-controls-panel{color:green;background:lightgreen;}
+			#video::-webkit-media-controls-play-button{background:rgba(255,0,0,0.2);}
+			#video::-webkit-media-controls-volume-slider-container{background:red;}
+			volume-slider{}
+			mute-button{}
+			#video::-webkit-media-controls-timeline{background:red;-webkit-filter:grayscale(50%);filter:grayscale(50%);}
+			#video::-webkit-media-controls-current-time-display{background:orange;}
+			timeline-container{}
+			time-remaining-display{}
+			seek-back-button{}
+			seek-forward-button{}
+			fullscreen-button{}
+			rewind-button{}
+			return-to-realtime-button{}
+			toggle-closed-captions-button{}
+			@media screen and (max-width: 650px) {
+				
+				#container,#containera{width:100%;}
+				#containera{float:none;}
+			}
+		</style>
+	</head>
+	<body>
+		<sector id="wrap">
+		<sector id="container">
+			<div id="vid"><video id="video" controls></video></div>
+			<div id="undervideo"><button>start</button></div>
+		</sector>
+			<sector id="containera">
+				<div id="chat">mich</div>
+				<div id="underchat"><form name="publish"><input type="text" name="huissage"/><input type="submit" value="send"/></form></div>
+			</sector>
+		</sector>
+		<span id="out"></span>
+		<script>
+			var li=document.getElementById('chat').contentDocument;
+			//alert(li);
+document.forms.publish.onsubmit=function(){
+try{
+let msg=this.huissage.value;
+showmessage(msg);
+}catch(e){alert(e);}
+return false;
+}
+function showmessage(message){
+var messageelement=document.createElement('div');
+var baba=messageelement.appendChild(document.createTextNode(message));
+chat.appendChild(messageelement);
+	//li.write(message);
+	//document.getElementById('chat');
+	//chat.scrollByPages(1);
+	var t=chat.scrollTop+chat.clientHeight;
+	out.innerHTML=t;
+}
+			setInterval(showmessages,100);
+		</script>
+	</body>
+</html>

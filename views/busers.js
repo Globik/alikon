@@ -94,13 +94,16 @@ visibility: visible;
  background-color: rgba(64, 128, 128, 0.8);
 }
 
-#mainwrap{display:block;position:relative;background:pink;width:100%;}
-#videowrap{width:50%;height:18em;background:lightgreen;float:left;psition:relative;display:block;}
-#chatwrap{width:50%; height:18em;background:red;display:block;postion:relative;float:right;}
+#mainwrap{display:block;position:relative;background:pink;width:100%;height:12em;margin:0;padding:0;}
+#videowrap{width:50%;height:12em;background:lightgreen;float:left;psition:relative;display:block;margin:0;padding:0;}
+#chatwrap{width:50%; height:12em;background:red;display:block;postion:relative;float:right;}
 
-#local_video{width:100%;height:90%;background:black;}
-.fuckvideo::after{content: "The member you are trying to view is currently offline. Please wait or choose another member to view.";
-background:rgba(200,0,0,0.1);color:red;left:0;top:0;padding:10px;width:50%;height:auto;position:absolute;
+#local_video{width:100%;height:auto;background:black;margin-bottom:-0.4em;padding:0;}
+#chater{background:brown;height:100%;}
+#underchat{background:lightblue;}
+#undervideo{background:yellow;height:2em;display:block;position:relative;}
+.uckvideo::after{content: "The member you are trying to view is currently offline. Please wait or choose another member to view.";
+background:rgba(200,0,0,0.1);color:red;left:0;top:0;padding:1px;width:50%;height:auto;position:absolute;
 transform:translate(0%,20%);
 display:block;}
 
@@ -110,7 +113,7 @@ overlay:target+.popi{left:0;}
 #chatwrap{background:lightblue;}
 #chatwrap,#videowrap{float:none;width:100%;}
 .fuckvideo::after{width:100%;}
-#clearwrap{display:none;}
+/*#clearwrap{display:none;}*/
 }
 	
 </style>
@@ -126,10 +129,15 @@ overlay:target+.popi{left:0;}
 <div id="videowrap" class="fuckvideo">
 <video id="local_video" class="" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls volume='0'>
 </video>
+<div id="undervideo">
+${n.owner ? '<button id="get_video" onclick="get_vid(this);">start video</button>':''}
 <button onclick="do_conn(this);">connect</button>
 </div>
-<div id="chatwrap">chatwrap</div>
-<div id="clearwrap" style="clear:both;background:brown;"><button onclick="do_conn(this);">connect</button></div>
+</div>
+<div id="chatwrap"><div id="chater">chatter</div>
+<div id="underchat"><input type="text" style="width:80%;"/><button style="width:20%;">send</button></div>
+</div>
+<div id="clearwrap" style="clear:both;background:brown;">.</div>
 </sector>
 
 <!-- model -->
@@ -187,7 +195,7 @@ ${n.owner ? `
 <div id="localcontainer">
 <!-- <button id="start_video_button" onclick="startVideo();">Start Video</button>
 <button id="stop_video_button" onclick="stopVideo();">Stop Video</button><br><br> -->
-<button id="get_video" onclick="get_vid(this);">start video</button>
+<button id="get_video2" onclick="get_vid(this);">start video</button>
 </div> ` : ''}
 <button id="connect_button"  onclick="connect();">Connect</button>
 <button id="disconnect_button"  onclick="dissconnect();">Disconnect</button> 

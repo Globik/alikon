@@ -1,4 +1,5 @@
 # Simple photo blog based on [Koa](http://koajs.com/) and [mongoDB](https://www.mongodb.org)
+# Herbert Sager widmet.
 
 With no template engine. The view pages formatted as a es6.0 tagged template strings in modules.
 With purpose of better perfomance by html rendering on server side. In developing mode you may need something
@@ -150,34 +151,6 @@ $ heroku create
 $ git push heroku master
 $ heroku open
 ```
-
-## Documentation
-
-For more information about using Node.js on Heroku, see these Dev Center articles:
-
-- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
-- [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
-
-https://oauth.vk.com/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Fvkontakte%2Fcb&scope=email&client_id=5848291
-
-https://oauth.vk.com/authorize?client_id=5848291&redirect_uri=
-http%3A%2F%2Flocalhost%3A5000%2Fauth%2Fvkontakte%2Fcb&response_type=code&scope=4194304&v=&state=&display=page&m=4&email=89634623542
-
-_json: 
-   { id: 16**41250,
-     first_name: 'С****',
-     last_name: 'Ша****',
-     sex: 2,
-     screen_name: 'id160441250',
-     photo: 'https://pp.vk.me/c10416/u16***1250/e_0***c35a5.jpg' } }
-params!:  { access_token: '4ee7403ab27b36222b1f5**8dc080370d9ae28f44a917603a5a17e3b*13a55e4794daf5d8be7772aafce3',
-  expires_in: 86399,
-  user_id: 16**41250,
-  email: 'petrov.ag412@yandex.ru' }
-
 
 
 
