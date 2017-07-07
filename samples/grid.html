@@ -1,0 +1,30 @@
+<html><head><style>
+	.sidebar{grid-area:sidebar;}
+	.content{grid-area:content;}
+	.header{grid-area:header;}
+	.footer{grid-area:footer}
+	.wrapper{display:grid;
+		width:50%;margin:0 auto;
+		grid-gap:10px;
+		grid-template-columns:120px 120px 120px;
+		grid-template-areas:"....... header header"
+			"sidebar content content"
+			"footer footer footer";
+		background-color:violet;
+	}
+	.box{
+		background-color:#444;
+		padding:10px;
+		font-size:150%;
+	}
+	.header,.footer{background:red;}
+	</style>
+	</head>
+	<body>
+	<div class="wrapper">
+		<div class="box header">header</div>
+		<div class="box sidebar">sidebar</div>
+		<div class="box content">content<br>one more content. hfhf dhuh duhuhuhuhuhuhu dhuhuhuhuhuhu</div>
+		<div class="box footer">footer</div>
+		 </div>
+	</body></html>

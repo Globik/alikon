@@ -2,21 +2,49 @@
 	<head>
 		<style>
 			*{box-sizing:border-box;}
+			html{background:red;}
+			video{background:lack;height:100%;object-fit:inherit;width:100%;}
+			#vid::before{content:"Offline";font-size:2rem;padding:0 auto;box-sizing:border-box;
+				padding-left:1.3rem;padding-top:2.3rem;
+				line-height:1;color:red;position:absolute;display:flex;top:0;left:2rem;
+			letter-spacing:0.1em;}
+			#vid::after{content:"The member you are trying to view is currently offline. Please wait or choose another member to view.";
+			color:rgba(255,255,255,0.7);position:absolute;top:2.2rem;left:2rem;background:rgba(0,0,0,0.1);
+			width:calc(50% - 4rem);word-wrap:break-word;display:block;
+				padding-left:1.3rem;
+				padding-right:1.3rem;
+				padding-top:3rem;
+				line-height:1.5;
+			box-sizing:border-box;
+				height:auto;
+				min-height:calc(70% - 4rem);
+				overflow:hidden;
+				letter-spacing:1px;
 			
-			video{background:lack;height:100%;obect-fit:cover;width:100%;}
-			#vid::after{content:"fuck";color:red;position:absolute;top:0;left:0;background:black;}
-			#wrap{width:100%;height:60vh;background:violet;display:block;position:relative;}
+			}
+			#wrap{width:100%;height:80vh;background:violet;display:block;position:relative;
+			/*max-width:500px;*/margin:0 auto;
+			}
 			#container{height:100%;background:red;width:50%;display:inline-block;}
-			#vid{height:80%;background:brown;display:block;}
+			#vid{height:80%;background:brown;/*display:flex;justify-content:center;align-items:flex-end;*/}
 			#undervideo{background:yellow;width:100%;height:20%;}
 			#containera{background:green;height:100%;width:50%;
 			display:inline-block;float:right;
-			margin-top:0;
+			margin-top:0;overflow:hidden;
 			}
-			#chat{width:100%;height:80%;display:block;overflow:scroll;}
+			#chat{width:100%;height:80%;display:block;overflow-y:auto;}
 			#underchat{width:100%;display:block;position:relative;height:20%;background:yellow;}
 			form{width:100%;}
 			input[type=text]{width:100%;}
+			.chatstring{
+			display:block;
+			width:100%;
+			position:relative;
+			white-space:pre-line;
+				word-wrap:break-word;
+				overflow-wrap:break-word;
+				color:blue;
+			}
 			#video::-webkit-media-controls-panel{color:green;background:lightgreen;}
 			#video::-webkit-media-controls-play-button{background:rgba(255,0,0,0.2);}
 			#video::-webkit-media-controls-volume-slider-container{background:red;}
@@ -32,10 +60,23 @@
 			rewind-button{}
 			return-to-realtime-button{}
 			toggle-closed-captions-button{}
+			
+			@supports (display:grid){
+				#ku{background:red;}
+				#ku{
+					display:grid;
+					grid-gap:2rem;
+					grid-template-columns: /*repeat(3,fr)*/ 1em 1rem 1rem;
+					width:100%;
+				}
+				#ku > div{background:violet;}
+			}
 			@media screen and (max-width: 650px) {
 				
 				#container,#containera{width:100%;}
 				#containera{float:none;}
+				#vid::before{left:0;}
+				#vid::after{top:2rem;left:0;width:100%;}
 			}
 		</style>
 	</head>
@@ -51,9 +92,15 @@
 			</sector>
 		</sector>
 		<span id="out"></span>
+		<div id="ku">
+			<div>one</div>
+			<div>two</div>
+			<div>three</div>
+			<div>4</div>
+			<div>5</div>
+			<div>6</div>
+		</div>
 		<script>
-			var li=document.getElementById('chat').contentDocument;
-			//alert(li);
 document.forms.publish.onsubmit=function(){
 try{
 let msg=this.huissage.value;
@@ -63,15 +110,21 @@ return false;
 }
 function showmessage(message){
 var messageelement=document.createElement('div');
+	messageelement.className="chatstring";
 var baba=messageelement.appendChild(document.createTextNode(message));
 chat.appendChild(messageelement);
-	//li.write(message);
-	//document.getElementById('chat');
-	//chat.scrollByPages(1);
-	var t=chat.scrollTop+chat.clientHeight;
-	out.innerHTML=t;
+	
+	var t=chat.scrollTop+chat.scrollHeight;
+	out.textContent=t;
+	//chat.scrollTop=chat.clientHeight;
+	chat.lastChild.scrollIntoView(false);
+	
+	//out.innerHTML+='scrollTop '+chat.scrollTop+' clientHeight= '+chat.clientHeight+' '+t+'<br>';
 }
-			setInterval(showmessages,100);
+			chat.onscroll=function(e){
+			//out.innerHTML+='scrolling';
+			}
+			
 		</script>
 	</body>
 </html>
