@@ -23,7 +23,7 @@ background-image:url("/images/vk.png");
 <main id="pagewrap"> 
 k
 <style>
-.modrtc{width:30%;display:inline-block;background:green;padding:10px;}
+
 .overlay {
     background-color: rgba(0, 0, 0, 0.2);
     bottom: 0;
