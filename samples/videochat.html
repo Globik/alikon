@@ -166,9 +166,27 @@ visibility: visible;
 			.box::-webkit-selection{background:none;}
 			.box::-moz-selection{background:none;}
 			.box:hover{background:rgba(255,0,0,0.1);}
-			#pop button{background:brown;width:100%;height:25px;font-size:1.2em;line-height:0;padding:1em;}
+			#pop button{background:brown;
+				ackground:linear-gradient(red,yellow 10%,brown 20%);
+				width:100%;height:25px;font-size:1.2em;line-height:0;padding:1em;display:block;position:relative;}
 			#tokTosend{color:yellow;letter-spacing:0.3em;}
 			#pop p{margin-top:1.5rem;}
+			
+			@keyframes example2{
+				from{background-color:brown;}
+				to{background-color:green;}
+			}
+			
+			@keyframes example{
+				from{background:linear-gradient(to right,yellow 100%,brown 10%);}
+				to{background:linear-gradient(to right, yellow 10%, brown 100%);}
+			}
+			.btnajx{
+			animation-name:example;
+				animation-duration:4s;
+				animation-iteration-count:infinite;
+			}
+			
 			@media screen and (max-width: 650px) {
 				#wrap{height:auto;display:block;position:relative;min-height:none;}
 				#container,#containera{float:none;width:100%;height:auto;}
@@ -202,7 +220,7 @@ visibility: visible;
 		<div id="container">
 			<div id="vid" class=""><video id="video" controls></video></div>
 			<div id="undervideo">
-<button class="start">start video</button><button class="start">connect</button><button class="start">send tip</button><button class="start">fuck</button><button class="start">dak</button>
+<button class="start">start video</button><button class="start">connect</button><button class="start" onclick="get_one();">send tip</button><button class="start">fuck</button><button class="start">dak</button>
 			</div>
 			</div>
 		    
@@ -216,16 +234,16 @@ visibility: visible;
 		</div>
 		<div><div>
 			<button onclick="get_offline();">get_offline</button><br>
-			<button onclick="get_one();">get_one</button>
+			
 		
 			</div></div>
-		<video controls></video>
+<video controls></video>
 <a href="#" class="overlay" id="resultativ"></a>
 <output id="pop" class="popi">
 <a href="#" class="close"></a>
-<p>Output <a href="/tipping/purchase_tokens">purchase tokens</a></p>
+<p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
 <p>You have <span id="yourTokens2"></span> tokens.</p>
-	<p>Tokens to send:&nbsp;<span id="tokTosend"></span></p>
+<p>Tokens to send:&nbsp;<span id="tokTosend"></span></p>
 <div id="container_ziffer">
 	<div class="box" style=""><span>0</span></div>
 	<div class="box">1</div>
@@ -240,8 +258,12 @@ visibility: visible;
 	<div class="box back" style="flex-grow:4;">backspace</div>
 	<div style="clear:both"></div>
 </div>
-	<p><button onclick="send_tokens();"><span>send</span></button></p>
-</output>
+	
+	<p>
+	<button onclick="send_tokens();" class="btnajx">send&nbsp;<span>6</span></button>
+	</p>
+	
+	</output>
 		
 		<script>
 document.forms.publish.onsubmit=function(){
