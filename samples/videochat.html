@@ -1,5 +1,8 @@
+
 <html>
 	<head>
+		<meta charset="UTF-8">
+		<title>as</title>
 		<style>
 			*{box-sizing:border-box;}
 			html{}
@@ -73,7 +76,7 @@ visibility: visible;
 
 			
 			#video{background:brown;height:100%;width:100%;}
-			#vid.offline::before{content:"Offline";font-size:2rem;adding:0 auto;box-sizing:border-box;
+#vid.offline::before{content:"Offline";font-size:2rem;adding:0 auto;box-sizing:border-box;
 				padding-left:1.3rem;padding-top:2.3rem;
 				line-height:1;color: red;position:absolute;top:0;left:2rem;
 			letter-spacing:0.1em;}
@@ -144,9 +147,10 @@ visibility: visible;
 				display:flex;
 				flex-direction:row;
 				flex-wrap:wrap;
+				padding:1em;mrgin:1em;
 				
 			}
-			#cntainer_ziffer::after{clear:both;content:""}
+			#cntainer_ziffer::after{clear:both;content:"";box-sizing:border-box;}
 			.box{
 				display:block;
 				float:left;
@@ -166,11 +170,16 @@ visibility: visible;
 			.box::-webkit-selection{background:none;}
 			.box::-moz-selection{background:none;}
 			.box:hover{background:rgba(255,0,0,0.1);}
-			#pop button{background:brown;
-				ackground:linear-gradient(red,yellow 10%,brown 20%);
-				width:100%;height:25px;font-size:1.2em;line-height:0;padding:1em;display:block;position:relative;}
+			#pop button{
+				display:block;
+				border:none;
+				background: brown;
+				width:100%;height:55px;font-size:1.2em;line-height:0;
+				
+				position:relative;}
 			#tokTosend{color:yellow;letter-spacing:0.3em;}
-			#pop p{margin-top:1.5rem;}
+			#pop p{mrgin:1em;ackground:green;font-size:1em;padding:1em;line-height:1;}
+			
 			
 			@keyframes example2{
 				from{background-color:brown;}
@@ -178,18 +187,67 @@ visibility: visible;
 			}
 			
 			@keyframes example{
-				from{background:linear-gradient(to right,yellow 100%,brown 10%);}
-				to{background:linear-gradient(to right, yellow 10%, brown 100%);}
+				from{
+				background-position:0% 100%;
+				ackground-image:linear-gradient(to right, rgba(255,0,0,0.1) 20%,red 100%);
+				
+				}
+				to{
+				background-position:100% 100%;
+				
+				ackground-image:linear-gradient(to right, rgba(255,0,0,0.1) 20%,red 100%);
+					
+				}
 			}
-			.btnajx{
+			#pop .btnajx{
+				
+				background-image:linear-gradient(to right, lavender 50%, lightgreen 50%);
+				background-position: 0% 100%;
+				background-size:15% 100%;
+				ackground-repeat:no-repeat;
+				border:1px solid red;
 			animation-name:example;
-				animation-duration:4s;
+				animation-duration:1s;
+				animation-direction: alternate;
 				animation-iteration-count:infinite;
+				animation-fill-mode:backwards;
 			}
+			#pid{display:block;position:relative;background:yellow;width:100%;height:60px;}
+			#pid::after{position:absolute;left:20px;top:0;width:100px;height:100px;
+			
+				content: "\00d7";
+				font-size:3rem;
+				ontent:"\2190";
+				/* \e601 */
+				background:blue;z-index:100;}
+			#pid::before{background:red;content:"\2713";
+				font-family: Gadget;
+			width:50px;height:50px;position:absolute;right:0;top:0;text-align:center;vertical-align:middle;
+				line-height:1;font-size:4rem;
+			}
+			#tokTosend.ok::after{content:"\2713";
+				ackground:blue;
+				color:brown;
+				display:inline;
+			
+				font-size:2.4em;
+				visibility:hidden;
+			padding-left:0.1em;
+				padding-top:0.1em;
+				margin-left:0.1em;
+				
+				box-sizing:border-box;
+	
+				
+				line-height:0;
+			}
+			#tokTosend.ok.extra::after{visibility:visible;}
 			
 			@media screen and (max-width: 650px) {
 				#wrap{height:auto;display:block;position:relative;min-height:none;}
-				#container,#containera{float:none;width:100%;height:auto;}
+				#container,#containera{float:none;width:100%;height:auto;
+				
+				}
 				
 				#undervideo{height:auto;ackground:violet;}
 	
@@ -216,6 +274,7 @@ visibility: visible;
 		</style>
 	</head>
 	<body>
+		&#9827;
 		<div id="wrap"><div id="fuck" style="background:red;">dgdg</div>
 		<div id="container">
 			<div id="vid" class=""><video id="video" controls></video></div>
@@ -243,7 +302,7 @@ visibility: visible;
 <a href="#" class="close"></a>
 <p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
 <p>You have <span id="yourTokens2"></span> tokens.</p>
-<p>Tokens to send:&nbsp;<span id="tokTosend"></span></p>
+<p class="ptokenstosend">Tokens to send:&nbsp;<span class="ok" id="tokTosend"></span></p>
 <div id="container_ziffer">
 	<div class="box" style=""><span>0</span></div>
 	<div class="box">1</div>
@@ -260,10 +319,11 @@ visibility: visible;
 </div>
 	
 	<p>
-	<button onclick="send_tokens();" class="btnajx">send&nbsp;<span>6</span></button>
+	<button onclick="send_tokens();" class="">send&nbsp;<span>6</span></button>
 	</p>
 	
 	</output>
+		<div id="pid">\e601</div>
 		
 		<script>
 document.forms.publish.onsubmit=function(){
@@ -330,8 +390,18 @@ function baba(ev){
 			
 			function send_tokens(){
 			let b=tokTosend.textContent;
-				alert(Number(b));
+				//alert(Number(b));
 				balu=true;
+				let r=document.querySelector('#pop button');
+				let ptokenstosend=document.querySelector('.ptokenstosend');
+				if(r)r.classList.toggle('btnajx');
+				ptokenstosend.style.background="black";
+				setTimeout(function(){
+				if(r)r.classList.toggle('btnajx');
+				ptokenstosend.style.background="initial";
+				//tokTosend.classList.toggle('ok');
+					tokTosend.classList.add('extra');;
+				},3000);
 			}
 			var er='100070234';
 			console.log(Number(er))
