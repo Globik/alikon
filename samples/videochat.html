@@ -216,6 +216,7 @@ visibility: visible;
 			#pid::after{position:absolute;left:20px;top:0;width:100px;height:100px;
 			
 				content: "\00d7";
+			
 				font-size:3rem;
 				ontent:"\2190";
 				/* \e601 */
@@ -225,13 +226,15 @@ visibility: visible;
 			width:50px;height:50px;position:absolute;right:0;top:0;text-align:center;vertical-align:middle;
 				line-height:1;font-size:4rem;
 			}
-			#tokTosend.ok::after{content:"\2713";
-				ackground:blue;
+			#tokTosend.ok::after{
+				content:"\2713";
+				background:inherit;
 				color:brown;
 				display:inline;
-			
-				font-size:2.4em;
-				visibility:hidden;
+			text-align:center;
+			vertical-align:-0.1em;
+			font-size:2.4em;
+			visibility: hidden;
 			padding-left:0.1em;
 				padding-top:0.1em;
 				margin-left:0.1em;
@@ -242,7 +245,22 @@ visibility: visible;
 				line-height:0;
 			}
 			#tokTosend.ok.extra::after{visibility:visible;}
-			
+			.btnok{
+			font-size:2em;
+			color:blue;
+			vertical-align:-0.09em;
+			visibility:hidden;
+				display:none;
+			}
+			.btnok.extra{visibility:visible;display:inline;}
+			.btnnotok{
+			font-family:Book;
+			font-size:2em;
+			color:red;
+				vertical-align:-0.1em;
+				display:none;
+			}
+			.btnnotok.notok{display:inline;}
 			@media screen and (max-width: 650px) {
 				#wrap{height:auto;display:block;position:relative;min-height:none;}
 				#container,#containera{float:none;width:100%;height:auto;
@@ -302,7 +320,7 @@ visibility: visible;
 <a href="#" class="close"></a>
 <p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
 <p>You have <span id="yourTokens2"></span> tokens.</p>
-<p class="ptokenstosend">Tokens to send:&nbsp;<span class="ok" id="tokTosend"></span></p>
+<p class="ptokenstosend">Tokens to send:&nbsp;&nbsp;<span class="ok" id="tokTosend"></span></p>
 <div id="container_ziffer">
 	<div class="box" style=""><span>0</span></div>
 	<div class="box">1</div>
@@ -319,7 +337,7 @@ visibility: visible;
 </div>
 	
 	<p>
-	<button onclick="send_tokens();" class="">send&nbsp;<span>6</span></button>
+		<button onclick="send_tokens();" class="">send&nbsp;&nbsp;<span class="btnok">&check;</span><span class="btnnotok">&times;</span></button>
 	</p>
 	
 	</output>
@@ -360,9 +378,17 @@ vid.classList.remove('offline')
 */
 vid.classList.toggle('offline');
 }
+			var btnok=document.querySelector('.btnok');
+			var btnotok=document.querySelector('.btnnotok');
 function get_one(){
 window.location.href="#resultativ";
 tokTosend.textContent='';
+if(tokTosend.classList.contains('extra')){
+tokTosend.classList.remove('extra');
+}
+if(btnok.classList.contains('extra')){
+btnok.classList.remove('exptra');
+}
 }
 var boxis=document.querySelectorAll('.box');
 			for(var i=0;i<boxis.length;i++){
@@ -376,7 +402,7 @@ var boxis=document.querySelectorAll('.box');
 function baba(ev){
 //alert(ev.target.textContent);
 	if(ev.target.textContent !=='backspace'){
-	if(tokTosend.textContent.length > 4)return;
+	if(tokTosend.textContent.length > 2)return;
 	
 	//fi=ev.target.textContent;
 	
@@ -396,13 +422,21 @@ function baba(ev){
 				let ptokenstosend=document.querySelector('.ptokenstosend');
 				if(r)r.classList.toggle('btnajx');
 				ptokenstosend.style.background="black";
+				if(b==0){
+				setTimeout(function(){
+					if(r)r.classList.toggle('btnajx');
+				btnotok.classList.add('notok');
+					ptokenstosend.style.background="initial";
+				},2000)
+				}else{
 				setTimeout(function(){
 				if(r)r.classList.toggle('btnajx');
 				ptokenstosend.style.background="initial";
 				//tokTosend.classList.toggle('ok');
-					tokTosend.classList.add('extra');;
-				},3000);
-			}
+					tokTosend.classList.add('extra');
+					btnok.classList.add('extra');
+				},2000);
+			}}
 			var er='100070234';
 			console.log(Number(er))
 		</script>
