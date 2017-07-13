@@ -98,8 +98,8 @@ visibility: visible;
 			#wrap::after{clear:both;content:"";}
 			
 			
-			#wrap{width:100%;height:400px;background:brown;display:block;position:relative;
-			max-width:1800px;margin:0 auto;in-height:30rem;
+			#wrap{width:100%;height:400px;display:block;position:relative;
+			max-width:1800px;margin:0 auto;
 			}
 			
 			#container{background:brown;width:50%;display:block;position:relative;float:left}
@@ -107,10 +107,10 @@ visibility: visible;
 			#undervideo{background:yellow;width:100%;height:12%;display:block;position:relative;}
 			.start{background:lightblue;width:auto;height:100%;letter-spacing:0.05em;font-size:0.9em;}
 			#containera{
-			background:blue;width:50%;
+			width:50%;
 			float:right;overflow:hidden;}
 			
-			#chat{width:100%;height:88%;display:block;overflow-y:auto;background:green;}
+			#chat{width:100%;height:88%;display:block;overflow-y:auto;}
 			#underchat{width:100%;display:block;position:relative;
 				height:12%;background:orange;}
 			
@@ -121,10 +121,12 @@ visibility: visible;
 			width:100%;
 			position:relative;
 			white-space:pre-line;
-				word-wrap:break-word;
-				overflow-wrap:break-word;
-				color:blue;
+			word-wrap:break-word;
+			overflow-wrap:break-word;
+			padding:0.2em;
 			}
+			.chat-user{color:blue;}
+			.chat-message{}
 			/*
 			#video::-webkit-media-controls-panel{color:green;background:lightgreen;}
 			#video::-webkit-media-controls-play-button{background:rgba(255,0,0,0.2);}
@@ -175,10 +177,9 @@ visibility: visible;
 				border:none;
 				background: brown;
 				width:100%;height:55px;font-size:1.2em;line-height:0;
-				
 				position:relative;}
 			#tokTosend{color:yellow;letter-spacing:0.3em;}
-			#pop p{mrgin:1em;ackground:green;font-size:1em;padding:1em;line-height:1;}
+			#pop p{font-size:1em;padding:1em;line-height:1;}
 			
 			
 			@keyframes example2{
@@ -249,10 +250,9 @@ visibility: visible;
 			font-size:2em;
 			color:blue;
 			vertical-align:-0.09em;
-			visibility:hidden;
-				display:none;
+			display:none;
 			}
-			.btnok.extra{visibility:visible;display:inline;}
+			.btnok.extra{display:inline;}
 			.btnnotok{
 			font-family:Book;
 			font-size:2em;
@@ -261,6 +261,10 @@ visibility: visible;
 				display:none;
 			}
 			.btnnotok.notok{display:inline;}
+			/*input[type=submit]*/
+			.subm-state.waiting{
+				background:green;}
+			}
 			@media screen and (max-width: 650px) {
 				#wrap{height:auto;display:block;position:relative;min-height:none;}
 				#container,#containera{float:none;width:100%;height:auto;
@@ -282,13 +286,15 @@ visibility: visible;
 				#pop{width:100%;height:auto;}
 				
 			}
-			@media only screen and(max-width: 800px) and (orientation:portrait){
+			/*
+			@media only screen and (max-width: 800px) and (orientation:portrait){
 				html{background:black;}
 				
 				#wrap{height:auto;}
 				#container,#containera{width:100%;display:block;position:relative;height:30rem;float:none;}
 				.start{}
 			}
+			*/
 		</style>
 	</head>
 	<body>
@@ -303,15 +309,15 @@ visibility: visible;
 		    
 			
 			<div id="containera">
-			<div id="chat">chat</div>
+			<div id="chat"></div>
 			<div id="underchat">
-<form name="publish"><input type="text" name="huissage" placeholder="Type a message!"/><input type="submit" value="send"/></form>
+<form name="publish"><input type="text" name="huissage" placeholder="Type a message!" maxlength="4"/><input type="submit" class="subm-state" value="send"/></form>
 				</div>
 			</div>
 		</div>
 		<div><div>
 			<button onclick="get_offline();">get_offline</button><br>
-			
+			<br><button onclick="get_green();">get_green</button>
 		
 			</div></div>
 <video controls></video>
@@ -344,6 +350,7 @@ visibility: visible;
 		<div id="pid">\e601</div>
 		
 		<script>
+			var balu=false;
 document.forms.publish.onsubmit=function(){
 try{
 let msg=this.huissage.value;
@@ -354,19 +361,15 @@ return false;
 function showmessage(message){
 var messageelement=document.createElement('div');
 	messageelement.className="chatstring";
-var baba=messageelement.appendChild(document.createTextNode(message));
+	let dressage='<b class="chat-user">User:&nbsp;</b>';
+	messageelement.innerHTML=dressage+'<span class="chat-message">'+message+'</span>';
+	if(message){
 chat.appendChild(messageelement);
-	
-	var t=chat.scrollTop+chat.scrollHeight;
-	//out.textContent=t;
-	chat.scrollTop=chat.clientHeight;
+	}
+chat.scrollTop=chat.clientHeight;
 	//chat.lastChild.scrollIntoView(false);
-	
-	//out.innerHTML+='scrollTop '+chat.scrollTop+' clientHeight= '+chat.clientHeight+' '+t+'<br>';
-}
-			chat.onscroll=function(e){
-			//out.innerHTML+='scrolling';
-			}
+	}
+		
 function get_offline(){
 var vid=document.getElementById('vid');
 	/*
@@ -383,12 +386,17 @@ vid.classList.toggle('offline');
 function get_one(){
 window.location.href="#resultativ";
 tokTosend.textContent='';
+reset_send_tok_style();
+}
+function reset_send_tok_style(){
+
 if(tokTosend.classList.contains('extra')){
 tokTosend.classList.remove('extra');
 }
-if(btnok.classList.contains('extra')){
-btnok.classList.remove('exptra');
+if(btnotok.classList.contains('notok')){
+btnotok.classList.remove('notok');
 }
+if(btnok.classList.contains('extra')){btnok.classList.remove('extra');}
 }
 var boxis=document.querySelectorAll('.box');
 			for(var i=0;i<boxis.length;i++){
@@ -396,15 +404,13 @@ var boxis=document.querySelectorAll('.box');
 				boxi.addEventListener('click',baba);
 				
 			}
-		//var ct=0;
-		//	var fi='';
-			var balu=false;
+		
 function baba(ev){
-//alert(ev.target.textContent);
+
 	if(ev.target.textContent !=='backspace'){
 	if(tokTosend.textContent.length > 2)return;
-	
-	//fi=ev.target.textContent;
+	if(balu){tokTosend.textContent='';balu=false;}
+		reset_send_tok_style();
 	
 	tokTosend.textContent+=ev.target.textContent;
 	}else{
@@ -424,9 +430,9 @@ function baba(ev){
 				ptokenstosend.style.background="black";
 				if(b==0){
 				setTimeout(function(){
-					if(r)r.classList.toggle('btnajx');
+				if(r)r.classList.toggle('btnajx');
 				btnotok.classList.add('notok');
-					ptokenstosend.style.background="initial";
+				ptokenstosend.style.background="initial";
 				},2000)
 				}else{
 				setTimeout(function(){
@@ -435,10 +441,15 @@ function baba(ev){
 				//tokTosend.classList.toggle('ok');
 					tokTosend.classList.add('extra');
 					btnok.classList.add('extra');
+					balu=true;
 				},2000);
 			}}
 			var er='100070234';
 			console.log(Number(er))
+			function get_green(){
+			let l=document.querySelector('input[type=submit].subm-state');
+				l.classList.toggle('waiting');
+			}
 		</script>
 	</body>
 </html>
