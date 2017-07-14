@@ -10,113 +10,12 @@ const busers = n=>{
 let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:"User", csslink:"/css/main2.css"/*,js:[""]*/})}</head>
+<head>${head.head({title:`${model.name}.&nbrsp;Live video.`, csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css"]})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
-<style>
-/*#pagewrap{
-background-image:url("/images/vk.png");
-}*/
-</style>
-<main id="pagewrap"> 
-k
-<style>
 
-.overlay {
-    background-color: rgba(0, 0, 0, 0.2);
-    bottom: 0;
-	left:0;
-	right: 0;
-    top: 0;
-    cursor: default;
-    opacity: 1.0;
-    position: fixed;
-    visibility: hidden;
-    z-index: 1;
-    transition: opacity .5s;
-}
-
-.overlay:target {
-visibility: visible;
-opacity: 1;
-}
-
-.popi {
-color:gray;
-background-color: rgba(0,0,0,.7);
-border: 3px solid rgba(255,255,255,0.4);
-left: 50%;
-top: 50%;
-width:50%;
-opacity:0;
-padding: 15px;
-position: fixed;
-text-align: justify;
-height:50%;
-
-min-height:50px;
-visibility: hidden;
-z-index: 30;
--o-transform: translate(-50%,-50%);
--ms-transform: translate(-50%,-50%);
--moz-transform: translate(-50%,-50%);
--webkit-transform: translate(-50%,-50%);
-transform: translate(-50%, -50%);
-border-radius: 10px;
-	/*box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;*/
-transition: opacity .5s, top .5s;
-}
-.overlay:target+.popi {
-opacity: 1;
-visibility: visible;
-	}
-.close {
-    background-color: rgba(0, 0, 0, 0.8);
-    height: 30px;
-    line-height: 30px;
-    position: absolute;
-    right: 0;
-    text-align: center;
-    text-decoration: none;
-    top: 15px;
-    width: 30px;
- border-radius: 15px;
-}
-.close:before {
-    color: rgba(255, 255, 255, 0.9);
-    content: "X";
-    font-size: 24px;
-    text-shadow: 0 -1px rgba(0, 0, 0, 0.9);
-}
-.close:hover {
- background-color: rgba(64, 128, 128, 0.8);
-}
-
-#mainwrap{display:block;position:relative;background:pink;width:100%;height:12em;margin:0;padding:0;}
-#videowrap{width:50%;height:12em;background:lightgreen;float:left;psition:relative;display:block;margin:0;padding:0;}
-#chatwrap{width:50%; height:12em;background:red;display:block;postion:relative;float:right;}
-
-#local_video{width:100%;height:auto;background:black;margin-bottom:-0.4em;padding:0;}
-#chater{background:brown;height:100%;}
-#underchat{background:lightblue;}
-#undervideo{background:yellow;height:2em;display:block;position:relative;}
-.uckvideo::after{content: "The member you are trying to view is currently offline. Please wait or choose another member to view.";
-background:rgba(200,0,0,0.1);color:red;left:0;top:0;padding:1px;width:50%;height:auto;position:absolute;
-transform:translate(0%,20%);
-display:block;}
-
-@media screen and (max-width: 650px) {
-.popup{color:red;left:50%;top:50%;width:91%;height:70vmin;}
-overlay:target+.popi{left:0;}
-#chatwrap{background:lightblue;}
-#chatwrap,#videowrap{float:none;width:100%;}
-.fuckvideo::after{width:100%;}
-/*#clearwrap{display:none;}*/
-}
-	
-</style>
 <div>
 <b>buser: </b>${buser ? true : false}<br><br>
 
@@ -125,6 +24,24 @@ overlay:target+.popi{left:0;}
 
 </div>
 
+
+<div id="media-wrapper"><div id="media-header"></div>
+<div id="video-container">
+<div id="video-wrapper"><video id="local_video" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls></video></div>
+<div id="undervideo">
+${n.owner ? '<button class="start" onclick="get_vid(this);">start video</button>':''}<button class="start" onclick="do_conn(this);">connect</button><button class="start" onclick="get_one();">send tip</button>
+</div>
+</div>
+		    
+<div id="chat-container">
+<div id="chat"></div>
+<div id="underchat">
+<form name="publish"><input type="text" name="message" placeholder="Type a message!" maxlength="140"/><input type="submit" class="subm-state" value="send"/></form>
+</div>
+</div>
+</div>
+
+<!--
 <sector id="mainwrap">
 <div id="videowrap" class="fuckvideo">
 <video id="local_video" class="" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls volume='0'>
@@ -139,6 +56,10 @@ ${n.owner ? '<button id="get_video" onclick="get_vid(this);">start video</button
 </div>
 <div id="clearwrap" style="clear:both;background:brown;">.</div>
 </sector>
+-->
+
+
+
 
 <!-- model -->
 <input type="hidden" id="modelName" value="${model.name}"/>
