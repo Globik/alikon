@@ -10,53 +10,56 @@ const busers = n=>{
 let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:`${model.name}.&nbrsp;Live video.`, csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css"]})}</head>
+<head>${head.head({title:`${model.name}. Live video.`, csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css"]})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
+<main id="pagewrap"> 
 
-<div>
-<b>buser: </b>${buser ? true : false}<br><br>
-
-<div><b>obid: </b><span id="pid"></span></div>
-<div><b>time: </b><span id="timeinfo"></span></div>
-
+<div id="media-wrapper">
+<div id="video-container"><div id="media-header"></div>
+<div id="video-wrapper">
+<video id="local_video" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls>HTML5 video element not supported.</video>
 </div>
-
-
-<div id="media-wrapper"><div id="media-header"></div>
-<div id="video-container">
-<div id="video-wrapper"><video id="local_video" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls></video></div>
 <div id="undervideo">
-${n.owner ? '<button class="start" onclick="get_vid(this);">start video</button>':''}<button class="start" onclick="do_conn(this);">connect</button><button class="start" onclick="get_one();">send tip</button>
+<button class="start" onclick="get_vid(this);">start video</button><button class="start" onclick="do_conn(this);">connect</button><button class="start" onclick="get_one();">send tip</button>
 </div>
 </div>
-		    
 <div id="chat-container">
 <div id="chat"></div>
 <div id="underchat">
-<form name="publish"><input type="text" name="message" placeholder="Type a message!" maxlength="140"/><input type="submit" class="subm-state" value="send"/></form>
+<form name="publish">
+<input type="text" name="message" placeholder="Type a message!" maxlength="190"/><input type="submit" class="subm-state" value="send"/>
+</form>
 </div>
 </div>
 </div>
-
-<!--
-<sector id="mainwrap">
-<div id="videowrap" class="fuckvideo">
-<video id="local_video" class="" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls volume='0'>
-</video>
-<div id="undervideo">
-${n.owner ? '<button id="get_video" onclick="get_vid(this);">start video</button>':''}
-<button onclick="do_conn(this);">connect</button>
+<a href="#" class="overlay" id="resultativ"></a>
+<output id="pop" class="popi">
+<a href="#" class="close"></a>
+<p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
+<p>You have <span id="yourTokens2"></span> tokens.</p>
+<p class="ptokenstosend">Tokens to send:&nbsp;&nbsp;<span class="ok" id="tokTosend"></span></p>
+	<p><span id="outi"></span></p>
+<div id="container_ziffer">
+	<div class="zbox" style=""><span>0</span></div>
+	<div class="zbox"><span>1</span></div>
+	<div class="zbox"><span>2</span></div>
+	<div class="zbox"><span>3</span></div>
+	<div class="zbox"><span>4</span></div>
+	<div class="zbox"><span>5</span></div>
+	<div class="zbox"><span>6</span></div>
+	<div class="zbox"><span>7</span></div>
+	<div class="zbox"><span>8</span></div>
+	<div class="zbox"><span>9</span></div>
+	<div class="zbox back" style="flex-grow:4;width:auto;"><span>backspace</span></div>
+	<div style="clear:both"></div>
 </div>
-</div>
-<div id="chatwrap"><div id="chater">chatter</div>
-<div id="underchat"><input type="text" style="width:80%;"/><button style="width:20%;">send</button></div>
-</div>
-<div id="clearwrap" style="clear:both;background:brown;">.</div>
-</sector>
--->
+<p>
+<button onclick="send_tokens();" class="">send&nbsp;&nbsp;<span class="btnok">&check;</span><span class="btnnotok">&times;</span></button>
+</p>
+</output>
 
 
 
@@ -104,14 +107,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 <br>
 <hr><output id="out"></output>
 
-<a href="#" class="overlay" id="resultativ"></a>
-<output id="pop" class="popi">
-<a href="#" class="close"></a>
-<p>Output <a href="/tipping/purchase_tokens">purchase tokens</a></p>
-<p>You have <span id="yourTokens2"></span> tokens.</p>
-<p><input id="tokTosend" type="number" value="1" placeholder="1"/></p>
-<button onclick="send_tokens();">send</button>
-</output>
+
 ${n.owner ? `
 <div id="localcontainer">
 <!-- <button id="start_video_button" onclick="startVideo();">Start Video</button>
@@ -131,16 +127,6 @@ ${n.owner ? `
 remote video<br>
 <div id="remote_container"></div>	
 
-
-
-<form name="publish">
-<input type="text" name="message">
-<input type="submit" value="send">
-</form>
-<form name="mepublish">
-<input type="text" name="message">
-<input type="submit" value="send to only me">
-</form>
 
 
 <div id="subscribe"></div>
@@ -186,11 +172,11 @@ console.log('tokens not 0');
 var data={};
 data.from=yourEmail;
 data.to=modelEmail;
-data.amount=Number(tokTosend.value);
+data.amount=Number(tokTosend.textContent);
 data.type=1;
 data.pid=pid.textContent;
 console.log('data: ',data)
-if(Number(tokTosend.value)<=Number(yourTokens.value)){
+if(Number(tokTosend.textContent)<=Number(yourTokens.value)){
 console.log('send xhr')
 to_xhr(JSON.stringify(data),true);
 }else{out.innerHTML="Not enouth tokens!";}
@@ -266,25 +252,77 @@ out.innerHTML="Not selbst!";
 		}
 
 function to_xhr(n,bool){
+balu=true;
+let r=document.querySelector('#pop button');
+let ptokenstosend=document.querySelector('.ptokenstosend');
+if(r)r.classList.toggle('btnajx');
+ptokenstosend.style.background="black";
+
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/set_transfer');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
-out.innerHTML=this.response;;
+out.innerHTML=this.response;
+if(r)r.classList.toggle('btnajx');
+ptokenstosend.style.background="initial";
+				//tokTosend.classList.toggle('ok');
+tokTosend.classList.add('extra');
+btnok.classList.add('extra');
+balu=true;
+outi.innerHTML='<b class="ok-info">Thank you!</b>';
 if(bool) rechnet(this.response);
 }else{
 out.innerHTML=this.response+this.status;
+if(r)r.classList.toggle('btnajx');
+btnotok.classList.add('notok');
+ptokenstosend.style.background="initial";
+outi.innerHTML='<b class="er-info">Error occured!</b>';
 }}
-xhr.onerror=function(e){out.innerHTML=this.response + ' '+ e};
+xhr.onerror=function(e){
+r.classList.remove('btnajx');
+out.innerHTML=this.response + ' '+ e};
 console.log('sending xhr: ',n);
 xhr.send(n);
 }
-
+var balu=false;
+var btnok=document.querySelector('.btnok');
+var btnotok=document.querySelector('.btnnotok');
 function get_one(){
 window.location.href="#resultativ";
+tokTosend.textContent='';
+reset_send_tok_style();
 }
 
+function reset_send_tok_style(){
+if(tokTosend.classList.contains('extra')){
+tokTosend.classList.remove('extra');
+}
+if(btnotok.classList.contains('notok')){
+btnotok.classList.remove('notok');
+}
+if(btnok.classList.contains('extra')){btnok.classList.remove('extra');}
+outi.innerHTML='';
+}
+
+var boxis=document.querySelectorAll('.zbox');
+for(var i=0;i<boxis.length;i++){
+var boxi=boxis[i];
+boxi.addEventListener('click', fertig_tok);
+}
+		
+function fertig_tok(ev){
+if(ev.target.textContent !=='backspace'){
+if(tokTosend.textContent.length > 2)return;
+if(balu){tokTosend.textContent='';balu=false;}
+reset_send_tok_style();
+tokTosend.textContent+=ev.target.textContent;
+}else{
+let str=tokTosend.textContent;
+let fi=str.slice(0,-1);
+tokTosend.textContent=fi;
+}
+}
 
 var obid=function(){
 var tst=(new Date().getTime()/1000 | 0).toString(16);
@@ -406,7 +444,7 @@ outm.type="message";
 if(socket)socket.send(JSON.stringify(outm));
 return false;
 }
-
+/*
 document.forms.mepublish.onsubmit=function(){
 var outm={};
 outm.msg=this.message.value;
@@ -417,7 +455,7 @@ outm.target=clientId;
 if(socket)socket.send(JSON.stringify(outm));
 return false
 }
-
+*/
 function go_message(event){
 var msg=JSON.parse(event.data);
 if(msg.type=="id"){
