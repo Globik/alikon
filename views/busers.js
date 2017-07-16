@@ -134,6 +134,9 @@ remote video<br>
 <span id="rtcerror"></span><br>
 <br><span id="wso"></span>
 
+<span id="pid"></span>
+<span id="timeinfo"></span>
+
 <script>
 var seat=0;
 var init=0;
@@ -173,12 +176,13 @@ var data={};
 data.from=yourEmail;
 data.to=modelEmail;
 data.amount=Number(tokTosend.textContent);
-data.type=1;
+data.btype=1;
+data.type="token";
 data.pid=pid.textContent;
 console.log('data: ',data)
 if(Number(tokTosend.textContent)<=Number(yourTokens.value)){
 console.log('send xhr')
-to_xhr(JSON.stringify(data),true);
+to_xhr(data,true);
 }else{out.innerHTML="Not enouth tokens!";}
 }else{out.innerHTML="Not enough tokens!";}
 }else{
@@ -251,6 +255,7 @@ out.innerHTML="Not selbst!";
 		}
 		}
 
+
 function to_xhr(n,bool){
 balu=true;
 let r=document.querySelector('#pop button');
@@ -281,10 +286,13 @@ outi.innerHTML='<b class="er-info">Error occured!</b>';
 }}
 xhr.onerror=function(e){
 r.classList.remove('btnajx');
-out.innerHTML=this.response + ' '+ e};
+out.innerHTML=this.response + ' '+ e;
+};
 console.log('sending xhr: ',n);
-xhr.send(n);
+//xhr.send(n);
+prostotak(n);
 }
+
 var balu=false;
 var btnok=document.querySelector('.btnok');
 var btnotok=document.querySelector('.btnnotok');
@@ -456,6 +464,7 @@ if(socket)socket.send(JSON.stringify(outm));
 return false
 }
 */
+
 function go_message(event){
 var msg=JSON.parse(event.data);
 if(msg.type=="id"){
@@ -531,6 +540,10 @@ if(owner()){
 console.log(event.data);
 goodbyeroom(msg.vid);
 }
+
+
+}else if(msg.type==='token_antwort'){
+console.warn('token_answer ocured!: ',event.data)
 }else if(msg.type==='error'){
 console.error('on error: ',event.data);
 if(msg.num=="101"){
@@ -685,6 +698,11 @@ var mess = JSON.stringify(json);
 if(socket)socket.send(mess);
 }
 
+function prostotak(m){
+let mr=JSON.stringify(m);
+if(socket)socket.send(mr);
+}
+
 function prepareNewConnection() {
 let pc_config = {"iceServers":[]};
 let peer = new RTCPeerConnection(pc_config);
@@ -754,11 +772,13 @@ pid.textContent=pidi;
 sendJson({type:'online',roomname:modelId,pidi:pidi});
 }
 }else if(peer.iceConnectionState==='connected'){
+/*
 if(owner()){
 pidi=obid();
 pid.textContent=pidi;
 sendJson({type:'online',roomname:modelId,pidi:pidi});
 }
+*/
 }else if(peer.iceConnectionState==='closed'){
 if(owner()){sendJson({type:'offline', roomname:modelId,pidi:pidi});pidi=0;pid.textContent=pidi;}
 }else if(peer.iceConnectionState==='failed'){

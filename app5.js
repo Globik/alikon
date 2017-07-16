@@ -477,7 +477,7 @@ if(ws.readyState===1)ws.send(JSON.stringify({type:"error",ename:"Mediasoup is cl
 sendtoclients=false;
 }else if(msg.type=="online"){
 // iceConnectionState=='completed' or 'connected'
-debug('ONLINE roomer_online event');
+debug('ONLINE roomer_online event:',msg);
 ws.ready=true;
 ws.pidi=msg.pidi;
 
@@ -485,9 +485,21 @@ emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi})
 sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
-console.log('PIDI: ',msg.pidi)
+console.log('PIDI: ', msg.pidi)
 update_end(msg.pidi)
 emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
+sendtoclients=false;
+}else if(msg.type=="token"){
+console.log('TOKEN OCCURED: ',msg);
+emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
+/*data.from=yourEmail;
+data.to=modelEmail;
+data.amount=Number(tokTosend.textContent);
+data.btype=1;
+data.type="token";
+data.pid=pid.textContent;
+*/
+
 sendtoclients=false;
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);
