@@ -28,6 +28,7 @@ const adminrouter=require('./routes/admin.js');
 const Router=require('koa-router');
 
 const WebSocket=require('ws');
+const email_enc=require('./libs/email_enc.js');
 
 const mediasoup = require('mediasoup');
 const RTCPeerConnection = mediasoup.webrtc.RTCPeerConnection;
@@ -491,7 +492,20 @@ emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
 sendtoclients=false;
 }else if(msg.type=="token"){
 console.log('TOKEN OCCURED: ',msg);
-emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
+//let {from,to,amount,type,pid}=ctx.request.body;
+let mail_to=email_enc.decrypt(msg.to);
+//var lamount=0;
+pool.query(`insert into transfer(tfrom, tos, amount,type,pid) 
+values('${msg.from}','${mail_to}',${msg.amount},${msg.btype},'${msg.pid}')`).then(res=>{
+console.log('INSERTING A TOKEN: ',res);
+emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid});
+sendback(ws,{type:"success_token_transfer",from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
+}).catch(e=>{
+console.log('error insert token: ',e.message);
+sendback(ws,{type:'error',mess:e.message})
+})
+		 
+
 /*data.from=yourEmail;
 data.to=modelEmail;
 data.amount=Number(tokTosend.textContent);

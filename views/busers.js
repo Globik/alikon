@@ -191,11 +191,11 @@ out.innerHTML='not selbst!';
 }}else{out.innerHTML='Please <a href="/login">log in</a>';}
 }
 
-function rechnet(n){
-var mata=JSON.parse(n);
-modelTokens.value=Number(modelTokens.value)+Number(mata.info.amount);
-yourTokens.value-=mata.info.amount;
-yourTokens2.textContent-=mata.info.amount;
+function rechnet(amount){
+//var mata=JSON.parse(n);
+modelTokens.value=Number(modelTokens.value)+Number(amount);
+yourTokens.value-=amount;
+yourTokens2.textContent-=amount;
 }
 	
 function get_room(){
@@ -255,11 +255,15 @@ out.innerHTML="Not selbst!";
 		}
 		}
 
-
-function to_xhr(n,bool){
-balu=true;
+var balu=false;
+var btnok=document.querySelector('.btnok');
+var btnotok=document.querySelector('.btnnotok');
 let r=document.querySelector('#pop button');
 let ptokenstosend=document.querySelector('.ptokenstosend');
+function to_xhr(n,bool){
+balu=true;
+//let r=document.querySelector('#pop button');
+//let ptokenstosend=document.querySelector('.ptokenstosend');
 if(r)r.classList.toggle('btnajx');
 ptokenstosend.style.background="black";
 
@@ -269,6 +273,7 @@ xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.onload=function(e){
 if(xhr.status==200){
 out.innerHTML=this.response;
+/*
 if(r)r.classList.toggle('btnajx');
 ptokenstosend.style.background="initial";
 				//tokTosend.classList.toggle('ok');
@@ -276,7 +281,10 @@ tokTosend.classList.add('extra');
 btnok.classList.add('extra');
 balu=true;
 outi.innerHTML='<b class="ok-info">Thank you!</b>';
+
 if(bool) rechnet(this.response);
+*/
+
 }else{
 out.innerHTML=this.response+this.status;
 if(r)r.classList.toggle('btnajx');
@@ -293,9 +301,21 @@ console.log('sending xhr: ',n);
 prostotak(n);
 }
 
-var balu=false;
-var btnok=document.querySelector('.btnok');
-var btnotok=document.querySelector('.btnnotok');
+
+function success_token_transfer(amount_token){
+let r=document.querySelector('#pop button');
+if(r)r.classList.toggle('btnajx');
+ptokenstosend.style.background="initial";
+tokTosend.classList.add('extra');
+btnok.classList.add('extra');
+balu=true;
+outi.innerHTML='<b class="ok-info">Thank you!</b>';
+
+//if(bool) 
+rechnet(amount_token);
+
+}
+
 function get_one(){
 window.location.href="#resultativ";
 tokTosend.textContent='';
@@ -543,7 +563,14 @@ goodbyeroom(msg.vid);
 
 
 }else if(msg.type==='token_antwort'){
-console.warn('token_answer ocured!: ',event.data)
+console.warn('token_answer occured!: ',event.data)
+
+}else if(msg.type==="success_token_transfer"){
+console.warn('success_token_transfer: ',event.data);
+success_token_transfer(msg.amount);
+}else if(msg.type==="unsuccess_token_transfer"){
+console.error('unsuccess_token_transfer: ',event.data);
+unsuccess_token_transfer();
 }else if(msg.type==='error'){
 console.error('on error: ',event.data);
 if(msg.num=="101"){
@@ -764,21 +791,25 @@ console.log('== signaling state=' + peer.signalingState);
 peer.oniceconnectionstatechange = function() {
 console.log('== ice connection state=' + peer.iceConnectionState);
 showState('ice connection state=' + peer.iceConnectionState);
+
 if(peer.iceConnectionState==='completed'){
-//alert('completed!')
-if(owner()){
-pidi=obid();
-pid.textContent=pidi;
-sendJson({type:'online',roomname:modelId,pidi:pidi});
-}
-}else if(peer.iceConnectionState==='connected'){
+console.error('completed!');
 /*
 if(owner()){
 pidi=obid();
 pid.textContent=pidi;
 sendJson({type:'online',roomname:modelId,pidi:pidi});
+
+}*/
+}else if(peer.iceConnectionState==='connected'){
+console.error('connected! Or completed')
+
+if(owner()){
+pidi=obid();
+pid.textContent=pidi;
+sendJson({type:'online',roomname:modelId, pidi:pidi});
 }
-*/
+
 }else if(peer.iceConnectionState==='closed'){
 if(owner()){sendJson({type:'offline', roomname:modelId,pidi:pidi});pidi=0;pid.textContent=pidi;}
 }else if(peer.iceConnectionState==='failed'){
