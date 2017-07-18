@@ -422,6 +422,7 @@ if(r)r.classList.toggle('btnajx');
 btnotok.classList.add('notok');
 ptokenstosend.style.background="initial";
 outi.innerHTML='<b class="er-info">Error occured!</b>';
+setTimeout(close_tok,2000);
 },2000)
 }else{
 setTimeout(function(){
@@ -440,4 +441,7 @@ function get_green(){
 let l=document.querySelector('#underchat input[type=submit].subm-state');
 l.classList.toggle('waiting');
 }
+	function close_tok(){
+	window.location.href="#";
+	}
 </script></body></html>

@@ -388,6 +388,7 @@ if(ctx.state.user && ctx.state.user.id===ctx.params.buser_id){owner=true;}
 ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),imgsrc:imgsrc});
 });
 
+/*
 pub.post('/api/set_transfer', auth, async ctx=>{
 let db=ctx.db;
 let {from,to,amount,type,pid}=ctx.request.body;
@@ -399,7 +400,7 @@ lamount=amount;
 }catch(e){ctx.throw(400,e.message);}
 ctx.body={info: {amount:lamount}}
 })
-
+*/
 pub.post('/api/set_seat', async ctx=>{
 let db=ctx.db;
 const {pid,who,type}=ctx.request.body;

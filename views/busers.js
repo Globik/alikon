@@ -19,11 +19,11 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 
 <div id="media-wrapper">
 <div id="video-container"><div id="media-header"></div>
-<div id="video-wrapper">
+<div id="video-wrapper" class="${n.imgsrc && n.imgsrc !=='no' ? '':'offline'}">
 <video id="local_video" poster="${n.imgsrc && n.imgsrc !=='no' ? n.imgsrc : ''}" autoplay controls>HTML5 video element not supported.</video>
 </div>
 <div id="undervideo">
-<button class="start" onclick="get_vid(this);">start video</button><button class="start" onclick="do_conn(this);">connect</button><button class="start" onclick="get_one();">send tip</button>
+${n.owner ? '<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button><button class="start" onclick="get_one();">send tip</button><button class="start">private room</button>
 </div>
 </div>
 <div id="chat-container">
@@ -94,7 +94,7 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 
 
 <div>
-<button onclick="get_one();">send tips</button><br><br>
+
 <button onclick="get_room();">privat</button> <span id="tokpermin">10</span> tokens/min<br><br>
 
 </div>
@@ -107,17 +107,6 @@ Time: <span id="mer">00:00:00</span><br><br>
 <br>
 <hr><output id="out"></output>
 
-
-${n.owner ? `
-<div id="localcontainer">
-<!-- <button id="start_video_button" onclick="startVideo();">Start Video</button>
-<button id="stop_video_button" onclick="stopVideo();">Stop Video</button><br><br> -->
-<button id="get_video2" onclick="get_vid(this);">start video</button>
-</div> ` : ''}
-<button id="connect_button"  onclick="connect();">Connect</button>
-<button id="disconnect_button"  onclick="dissconnect();">Disconnect</button> 
-<br><br>
-<br>
 <input type="checkbox" id="plan_b_check" >planB<br>
 
 <!-- local video<br>
@@ -126,7 +115,7 @@ ${n.owner ? `
 </div>
 remote video<br>
 <div id="remote_container"></div>	
-
+<button onclick='del_poster();'>del_poster</button>
 
 
 <div id="subscribe"></div>
@@ -179,10 +168,10 @@ data.amount=Number(tokTosend.textContent);
 data.btype=1;
 data.type="token";
 data.pid=pid.textContent;
-console.log('data: ',data)
+data.from_nick=yourName;
 if(Number(tokTosend.textContent)<=Number(yourTokens.value)){
-console.log('send xhr')
-to_xhr(data,true);
+console.log('send token via Websoket')
+to_xhr(data);
 }else{out.innerHTML="Not enouth tokens!";}
 }else{out.innerHTML="Not enough tokens!";}
 }else{
@@ -192,7 +181,6 @@ out.innerHTML='not selbst!';
 }
 
 function rechnet(amount){
-//var mata=JSON.parse(n);
 modelTokens.value=Number(modelTokens.value)+Number(amount);
 yourTokens.value-=amount;
 yourTokens2.textContent-=amount;
@@ -260,66 +248,45 @@ var btnok=document.querySelector('.btnok');
 var btnotok=document.querySelector('.btnnotok');
 let r=document.querySelector('#pop button');
 let ptokenstosend=document.querySelector('.ptokenstosend');
-function to_xhr(n,bool){
+
+function to_xhr(n){
 balu=true;
-//let r=document.querySelector('#pop button');
-//let ptokenstosend=document.querySelector('.ptokenstosend');
 if(r)r.classList.toggle('btnajx');
 ptokenstosend.style.background="black";
-
-var xhr=new XMLHttpRequest();
-xhr.open('post','/api/set_transfer');
-xhr.setRequestHeader('Content-Type','application/json','utf-8');
-xhr.onload=function(e){
-if(xhr.status==200){
-out.innerHTML=this.response;
-/*
-if(r)r.classList.toggle('btnajx');
-ptokenstosend.style.background="initial";
-				//tokTosend.classList.toggle('ok');
-tokTosend.classList.add('extra');
-btnok.classList.add('extra');
-balu=true;
-outi.innerHTML='<b class="ok-info">Thank you!</b>';
-
-if(bool) rechnet(this.response);
-*/
-
-}else{
-out.innerHTML=this.response+this.status;
-if(r)r.classList.toggle('btnajx');
-btnotok.classList.add('notok');
-ptokenstosend.style.background="initial";
-outi.innerHTML='<b class="er-info">Error occured!</b>';
-}}
-xhr.onerror=function(e){
-r.classList.remove('btnajx');
-out.innerHTML=this.response + ' '+ e;
-};
-console.log('sending xhr: ',n);
-//xhr.send(n);
-prostotak(n);
+console.log('sending token: ',n);
+sendJson(n);
 }
 
 
 function success_token_transfer(amount_token){
-let r=document.querySelector('#pop button');
 if(r)r.classList.toggle('btnajx');
 ptokenstosend.style.background="initial";
 tokTosend.classList.add('extra');
 btnok.classList.add('extra');
 balu=true;
 outi.innerHTML='<b class="ok-info">Thank you!</b>';
-
-//if(bool) 
 rechnet(amount_token);
+setTimeout(close_tokensblatt,1000);
+}
 
+function unseccess_token_transfer(){
+if(r)r.classList.toggle('btnajx');
+btnotok.classList.add('notok');
+ptokenstosend.style.background="initial";
+outi.innerHTML='<b class="er-info">Error occured!</b>';
+setTimeout(close_tokensblatt,1000);
+}
+
+function close_tokensblatt(){
+window.location.href='#';
 }
 
 function get_one(){
+if(buser()){
+if(pidi==0)return;
 window.location.href="#resultativ";
 tokTosend.textContent='';
-reset_send_tok_style();
+reset_send_tok_style();}else{alert('please log in!');}
 }
 
 function reset_send_tok_style(){
@@ -365,31 +332,10 @@ setTimeout(showTime, 1000);
 }
 
 function showTime(){
-startingDate=new Date();
-marttime();
+//startingDate=new Date();
 sendxhr();
 }
 
-function marttime(){
-	var thisdu=new Date();
-	var t=thisdu.getTime()-startingDate.getTime();
-		var ms=t%1000;
-		t-=ms;
-		ms=Math.floor(ms/10);
-		t=Math.floor(t/1000);
-		var s=t%60;
-		t-=s;
-		t=Math.floor(t/60);
-		var m=t%60;
-		t-=m;
-		t=Math.floor(t/60);
-		var h=t%60;
-		if(h<10) h='0'+h;
-		if(m<10) m='0'+m;
-		if(s<10) s='0'+s;
-		if(seat==1) timeinfo.textContent=h+':'+m+':'+s;
-		mlocker=setTimeout("marttime()",1000);
-		}
 function sendxhr(){
 if(owner()){
 var data={};
@@ -468,9 +414,19 @@ document.forms.publish.onsubmit=function(){
 var outm={};
 outm.msg=this.message.value;
 outm.id=clientId;
+outm.from_nick=myusername;
 outm.type="message";
-if(socket)socket.send(JSON.stringify(outm));
+if(this.message.value){
+try{
+sendJson(outm);
+set_chat_btn_green();
+}catch(e){console.error(e);}
+}
 return false;
+}
+function set_chat_btn_green(){
+let l=document.querySelector('#underchat input[type=submit].subm-state');
+l.classList.toggle('waiting');
 }
 /*
 document.forms.mepublish.onsubmit=function(){
@@ -494,8 +450,8 @@ console.log("case id: "+event.data);
 }else if(msg.type=="username"){
 console.log("case username: "+event.data);
 }else if(msg.type=="message"){
-//console.log("case message: "+event.data);
-showmessage(event.data);
+//showmessage(event.data);
+showmessage(msg);
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
 if(!owner()){
@@ -505,7 +461,7 @@ pidi=msg.pidi;
 pid.textContent=pidi;
 }
 
-}
+}else{roomcreated=false;disableElement('connect_starter');}
 }
 
 }else if(msg.type=='joined_user'){
@@ -535,15 +491,26 @@ console.warn('On created room: ', event.data);
 roomcreated=true;
 }else if(msg.type==='roomer_online'){
 console.warn('on roomer_online: ',event.data);
-if(owner()){broadcast();}
+remove_user_offline();
+if(owner()){disableElement('video_starter');broadcast();}else{
+if(msg.ready){enabelElement('connect_starter');pidi=msg.pidy;roomcreated=true;}
+}
 }else if(msg.type==='roomer_offline'){
 console.warn('on roomer_offline: ',event.data);
 pidi=0;seat=0;
+if(owner()){enabelElement('video_starter');}else{
+disableElement('connect_starter');
+}
 if(peerConnection){
 console.log('signaling state: ',peerConnection.signalingState)
 console.log('ice connection state: ',peerConnection.iceConnectionState);
 
-if(!buser()){dissconnect();if(socket)socket.close();}
+if(!buser()){dissconnect();if(socket)socket.close();}else{
+if(!owner()){
+dissconnect();
+}
+
+}
 }
 
 }else if(msg.type === 'offer') {
@@ -556,19 +523,19 @@ console.log('Received answer ...');
 console.warn('NOT USED');
 }else if(msg.type==='goodbyeroom'){
 console.log('type goodbye room came')
-if(owner()){
-console.log(event.data);
-goodbyeroom(msg.vid);
-}
+if(owner()){console.log('goodbyeroom: ', event.data);roomcreated=false;}
 
 
 }else if(msg.type==='token_antwort'){
+//to all
 console.warn('token_answer occured!: ',event.data)
-
+show_event_token(msg);
 }else if(msg.type==="success_token_transfer"){
+//to sender
 console.warn('success_token_transfer: ',event.data);
 success_token_transfer(msg.amount);
 }else if(msg.type==="unsuccess_token_transfer"){
+//to sender
 console.error('unsuccess_token_transfer: ',event.data);
 unsuccess_token_transfer();
 }else if(msg.type==='error'){
@@ -585,18 +552,19 @@ console.warn('roomremove: ',event.data);
 }else{console.warn('uknown msg type',msg.type);}
 
 }
+var chat=gid('chat');
 
-function showmessage(message){
-var messageelement=document.createElement('div');
-messageelement.appendChild(document.createTextNode(message));
-subscribe.appendChild(messageelement);
+
+function add_user_offline(){
+let v=gid('video-wrapper');
+if(!v.classList.contains('offline'))v.classList.add('offline');
 }
 
 const useTrickleICE = false;
-  let localVideo = gid('local_video');
-  let stateSpan = gid('state_span');
-  let localStream = null;
-  let peerConnection = null;
+let localVideo = gid('local_video');
+let stateSpan = gid('state_span');
+let localStream = null;
+let peerConnection = null;
   
   navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
                             navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -619,17 +587,56 @@ let checkbox = gid('plan_b_check');
 return (checkbox.checked === true);
 }
 var fl=false;
+
 function get_vid(el){
 if(!fl){
 startVideo(el);
-//fl=true;
-//el.textContent='stop video';
 }else{
 stopVideo();
 el.textContent='start video';
 fl=false;
 }
 }
+
+function showmessage(message){
+console.log('message: ',message);
+let d='<b class="chat-user">'+message.from_nick+':&nbsp;</b>';
+let s=d+'<span class="chat-message">'+message.msg+'</span>';
+if(message){
+insert_message(s);
+set_chat_btn_green();
+document.forms.publish.message.value="";
+}
+}
+
+//from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick
+function show_event_token(m){
+console.log('m: ',m);
+let u='<b class="chat-user">'+m.user_nick+':&nbsp;</b>';
+let dc=(m.amount==1 ? '':'s');
+let s=u+'<span class="chat-message">Send&nbsp;'+m.amount+'&nbsp;tip'+dc+'.</span>';
+insert_message(s);
+
+}
+
+function insert_message(div){
+let m=document.createElement('div');
+m.className="chat-div";
+m.innerHTML=div;
+chat.appendChild(m);
+chat.scrollTop=chat.clientHeight;
+}
+
+
+function remove_user_offline(){
+let v=gid('video-wrapper');
+if(v.classList.contains('offline'))v.classList.remove('offline');
+}
+function add_user_offline(){
+let v=gid('video-wrapper');
+if(!v.classList.contains('offline'))v.classList.add('offline');
+}
+
 function startVideo(el) {
 if(owner()){
 getDeviceStream({video: true, audio: true})
@@ -646,8 +653,7 @@ updateButtons();
 fl=true;
 el.textContent='stop video';
 }).catch(function (error) { 
-//alert('get user media error: '+error);
-console.error('getUserMedia error:', error);
+alert('Have you enabled your webcam?');
 fl=false;
 el.textContent='start video';
 rtcerror.innerHTML=error;
@@ -709,7 +715,11 @@ window.URL.revokeObjectURL(element.src);
 }
 element.src = '';
 }
-deleteroom();
+if(pidi==0){
+element.poster='';
+add_user_offline();
+}
+if(owner()){deleteroom();}
 }
  
 function sendSdp(sessionDescription) {
@@ -725,10 +735,6 @@ var mess = JSON.stringify(json);
 if(socket)socket.send(mess);
 }
 
-function prostotak(m){
-let mr=JSON.stringify(m);
-if(socket)socket.send(mr);
-}
 
 function prepareNewConnection() {
 let pc_config = {"iceServers":[]};
@@ -802,8 +808,7 @@ sendJson({type:'online',roomname:modelId,pidi:pidi});
 
 }*/
 }else if(peer.iceConnectionState==='connected'){
-console.error('connected! Or completed')
-
+console.error('connected!')
 if(owner()){
 pidi=obid();
 pid.textContent=pidi;
@@ -817,7 +822,7 @@ pidi=0;pid.textContent=pidi;
 if(!buser()){
 dissconnect();
 if(socket)socket.close();
-}
+}else{if(!owner())dissconnect();}
 }else if (peer.iceConnectionState === 'disconnected') {
 console.warn('-- disconnected --');
 if(!owner()){roomcreated=false;pidi=0;pid.textContent=pidi;
@@ -899,17 +904,30 @@ console.error(err);
  
 //go_socket();
 var con_fl=false;
+
 function do_conn(el){
 if(!con_fl){
+if(owner()){
+if(roomcreated){
 connect();
 con_fl=true;
 el.textContent='disconnect';
+}else{alert('You have to start video first. Then press "connect"');}
+}else{
+if(roomcreated){
+connect();
+con_fl=true;
+el.textContent='disconnect';
+}
+}
+
 }else{
 dissconnect();
 con_fl=false;
 el.textContent='connect';
 }
 }
+
 function connect() {
 if(!buser()){go_socket();}
 setTimeout(function(){
@@ -918,6 +936,9 @@ if(roomcreated){
 callWithCapabilitySDP();
 updateButtons();
 }else{
+//if(owner()){
+//alert('You have to start video first');
+//}
 if(!buser()){if(socket)socket.close();}
 }
 },2000)
@@ -964,23 +985,23 @@ sendJson({type:'removeroom', roomname:modelId,owner:owner(),id:clientId,email:mo
 }else{console.warn('roomcreated: ',roomcreated);}
 }
 
-function goodbyeroom(vid){
-if(vid){
-var bud=document.querySelector('[data-pid="'+vid+'"]');
-bud.remove();
-roomcreated=false;
-}
-}
-  
+
+
 function dissconnect() {
 sendJson({type: "bye",roomname: modelId});
 if (peerConnection) {
 console.log('Hang up.');
 peerConnection.close();
 peerConnection = null;
-if(!owner()){removeAllRemoteVideo();
-pidi=0;pid.textContent=pidi;
+if(!owner()){
+connect_starter.textContent='connect';
+con_fl=false;
+if(pidi==0)disableElement('connect_starter');
+removeRemoteVideo(1,1);
+//pidi=0;
+pid.textContent=pidi;
 if(!buser()){if(socket)socket.close();}
+
 }
 }else{
 console.warn('peer NOT exist.');
@@ -991,6 +1012,8 @@ updateButtons();
 function showState(state) {
 stateSpan.innerText = state;
 }
+
+
 function logStream(msg, stream) {
 console.log(msg + ': id=' + stream.id);
 let videoTracks = stream.getVideoTracks();
@@ -1007,88 +1030,69 @@ audioTracks.forEach(function(track) {
 console.log(' track.id=' + track.id);
 });
 }}
+
+
 function updateButtons() {
 if(owner()){
 if (peerConnection) {
-disableElement('start_video_button');
-disableElement('stop_video_button');
-disableElement('connect_button');
-enabelElement('disconnect_button');
+//disableElement('start_video_button');
+//disableElement('stop_video_button');
+//disableElement('connect_button');
+//enabelElement('disconnect_button');
 disableElement('plan_b_check');
+
+//enabelElement('video_starter');
 }else {
 if (localStream) {
-disableElement('start_video_button');
-enabelElement('stop_video_button');
-enabelElement('connect_button');
+//disableElement('start_video_button');
+//enabelElement('stop_video_button');
+//enabelElement('connect_button');
+
+//disableElement('video_starter');
+enabelElement('connect_starter');
 }else {
-enabelElement('start_video_button');
-disableElement('stop_video_button');
-disableElement('connect_button');        
+//enabelElement('start_video_button');
+//disableElement('stop_video_button');
+//disableElement('connect_button');   
+
+disableElement('connect_starter');
 }
-disableElement('disconnect_button');
+//disableElement('disconnect_button');
 enabelElement('plan_b_check');
 }
 }else if(!owner()){
 if(peerConnection){
-disableElement('connect_button');
-enabelElement('disconnect_button');
+//disableElement('connect_button');
+//enabelElement('disconnect_button');
 disableElement('plan_b_check');
 }else{
-enabelElement('connect_button');
-disableElement('disconnect_button');
+//enabelElement('connect_button');
+//disableElement('disconnect_button');
 enabelElement('plan_b_check');
 }
 }else{console.log('nothing in else update button');}
 }
+
 function enabelElement(id) {
-let element = document.getElementById(id);
-if (element) {element.removeAttribute('disabled');}
+let el = gid(id);
+if (el) {el.removeAttribute('disabled');}
 }
 
 function disableElement(id) {
-let element = gid(id);
-if (element) {element.setAttribute('disabled', '1');}    
+let el= gid(id);
+if (el) {el.setAttribute('disabled', '1');}    
 }
 
 updateButtons();
 
 function addRemoteVideo(id, stream) {
-/*let element = document.createElement('video');
-remoteContainer.appendChild(element);
-element.id = 'remote_' + id;
-element.width = 320;
-element.height = 240;
-element.srcObject = stream;
-console.warn('addremotevideo');
-element.play();
-element.volume = 0;
-element.controls = true;
-*/
 localVideo.srcObject=stream;
 }
   
 function removeRemoteVideo(id, stream) {
-/*console.log(' ---- removeRemoteVideo() id=' + id);
-let element = gid('remote_' + id);
-if (element) {
-element.pause();
-element.srcObject = null;
-remoteContainer.removeChild(element);
-}else {
-console.log('child element NOT FOUND');
-}*/
-localVideo.pause();
-localVideo.srcObject=null;
-localVideo.src='';
+pauseVideo(localVideo);
 }
 
-function removeAllRemoteVideo() {
-while (remoteContainer.firstChild) {
-remoteContainer.firstChild.pause();
-remoteContainer.firstChild.srcObject = null;
-remoteContainer.removeChild(remoteContainer.firstChild);
-}
-}
 
 function get_image(){
 var cnv=document.createElement('canvas');
@@ -1111,7 +1115,7 @@ createroom(li);
 }
 
 local_video.onloadedmetadata=function(e){
-if(owner())get_image();
+if(owner())get_image(roomcreated);
 }
 function gid(id){return document.getElementById(id);}
 </script>

@@ -367,6 +367,7 @@ sendback(ws,{type:'error',error:e,roomname: name})
 }
 }
 }	
+	
 let obid=function(){
 let tst=(new Date().getTime()/1000 | 0).toString(16);
 return tst+'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(){
@@ -384,6 +385,8 @@ console.log('result ok update seats vend')
 	
 wss.on('connection', ws=>{
 console.log('websocket connected: ', ws.upgradeReq.url);
+	console.log('WS: ',ws.upgradeReq);
+	console.log('headers of ws: ',ws.headers,ws.upgradeReq.headers);
 var blin=ws.upgradeReq.url;
 var blin2=blin.trim();
 var blin3=blin2.substring(1);
@@ -498,7 +501,7 @@ let mail_to=email_enc.decrypt(msg.to);
 pool.query(`insert into transfer(tfrom, tos, amount,type,pid) 
 values('${msg.from}','${mail_to}',${msg.amount},${msg.btype},'${msg.pid}')`).then(res=>{
 console.log('INSERTING A TOKEN: ',res);
-emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid});
+emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick});
 sendback(ws,{type:"success_token_transfer",from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
 }).catch(e=>{
 console.log('error insert token: ',e.message);
