@@ -16,7 +16,7 @@ const cl=redis.createClient();
 
 const session=require('koa-generic-session');
 const sse=require('sse-broadcast')();
-
+const shortid=require('shortid');
 //const render=require('./libs/render.js')
 const render=require('koa-rend');
 const serve=require('koa-static');
@@ -385,8 +385,8 @@ console.log('result ok update seats vend')
 	
 wss.on('connection', ws=>{
 console.log('websocket connected: ', ws.upgradeReq.url);
-	console.log('WS: ',ws.upgradeReq);
-	console.log('headers of ws: ',ws.headers,ws.upgradeReq.headers);
+	//console.log('WS: ',ws.upgradeReq);
+	//console.log('headers of ws: ',ws.headers,ws.upgradeReq.headers);
 var blin=ws.upgradeReq.url;
 var blin2=blin.trim();
 var blin3=blin2.substring(1);
@@ -395,7 +395,7 @@ ws.on('pong', heartbeat);
 
 
 	
-ws.clientId=obid();//nextId;
+ws.clientId=shortid.generate();//obid();//nextId;
 //nextId++;
 var msg={type:"id",id:ws.clientId};
 ws.send(JSON.stringify(msg));
@@ -484,8 +484,11 @@ sendtoclients=false;
 debug('ONLINE roomer_online event:',msg);
 ws.ready=true;
 ws.pidi=msg.pidi;
-
-emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi})
+pool.query(`select src from rooms where id='${msg.roomname}'`).then(res=>{
+emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src})
+}).catch(er=>{console.log(er);
+emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:undefined})			 
+})
 sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
