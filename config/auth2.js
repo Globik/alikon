@@ -5,12 +5,12 @@ const FacebookStrategy=require('passport-facebook').Strategy;
 module.exports=(db,passport)=>{
 
 passport.serializeUser((user,done)=>{
-done(null,user.email)
+done(null,user.id)
 })
 
-passport.deserializeUser(async (email,done)=>{
+passport.deserializeUser(async (id,done)=>{
 try{
-const luser=await db.query(`select id, name, role, mjoind,email,verif,items,w_items,model,nick from busers where email='${email}'`)
+const luser=await db.query(`select id,name,role,verif,items, w_items,model from busers where id='${id}'`)
 done(null,luser.rows[0])
 }catch(e){
 done(e)
@@ -28,14 +28,14 @@ return done(null,user.rows[0],{message:'Erfolgreich loged in!!!'})
 }))
 
 const nicky=email=>{return email.substring(0,email.indexOf("@"))}
-const get_str=n=>`insert into busers(email,pwd,name,nick) values('${n.email}',crypt('${n.password}',gen_salt('bf',8)),'${n.username}','${n.nick}') 
-returning name,role,mjoind,email,verif`
+const get_str=n=>`insert into busers(email,pwd,name) values('${n.email}',crypt('${n.password}',gen_salt('bf',8)),'${n.username}') 
+returning name,role,email,verif`
 
 passport.use('local-signup',new LocalStrategy({usernameField:'email',passReqToCallback:true},(req,email,password,done)=>{
 if(!req.body.username){return done(null,false,{message:"missing username",code:'1'})}	
 process.nextTick(async()=>{
 try{
-var useri=await db.query(get_str({email:email,password:password,username:req.body.username,nick:(`${nicky(email)}` ? `${nicky(email)}`:'none')}))				 
+var useri=await db.query(get_str({email:email,password:password,username:req.body.username}))				 
 return done(null,useri.rows[0],{message: `You're almost finished.<br><br>
 We've sent an account activation email to you at <strong>${email}</strong>.
 Head over to your inbox and click on the "Activate My Account" button to validate your email address.`})
@@ -77,7 +77,7 @@ try{
 let user=await db.query(`select*from busers where email='${femail}'`)
 if(user.rows[0]){return done(null,user.rows[0])}else{
 try{
-let useri=await db.query(get_str({email:femail,password:fpassword,username:fname,nick:`${nicky(femail)}`}))
+let useri=await db.query(get_str({email:femail,password:fpassword,username:fname}))
 return done(null,useri.rows[0])
 }catch(err){return done(err)}
 }

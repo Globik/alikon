@@ -1,14 +1,15 @@
 -- \i /home/globik/alikon/sql/transfer.sql
 --drop table transfer;
+/*
 create table transfer(id serial primary key,
-					  tfrom text not null references busers(email),
-					  tos text not null references busers(email),
+					  tfrom text not null references busers(id),
+					  tos text not null references busers(id),
 					  amount int not null,
 					  at timestamp not null default now(),
 					  type int not null,
 					  pid text not null);
 					  
-					  
+	*/				  
 					  
 					  /*
 create table ruser(id serial primary key,
@@ -24,8 +25,8 @@ IF(TG_OP = 'UPDATE') THEN
 --INSERT INTO emp_audit(empname, salary) values('updating', 200);
 RETURN new;
 ELSIF(TG_OP = 'INSERT') THEN
-update busers set items=items+new.amount where busers.email=new.tos;
-update busers set items=items-new.amount where busers.email=new.tfrom;
+update busers set items=items+new.amount where busers.id=new.tos;
+update busers set items=items-new.amount where busers.id=new.tfrom;
 RETURN new;
 END IF;
 RETURN null;

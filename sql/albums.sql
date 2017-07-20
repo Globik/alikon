@@ -4,7 +4,7 @@
 --drop table albums;
 create table albums(id varchar(24) not null,
 							   alb_title varchar(255) not null,
-                               us_id text not null references busers(email) on delete cascade on update cascade,
+                               us_id text not null references busers(id) on delete cascade on update cascade,
                                alb_dsc text,
 							   created timestamp not null default now(),
 					           visi int not null default 1,

@@ -37,7 +37,7 @@ result=us.rows;
 try{
 	//rooms.status.view.src busers.id.name
 let bus=await db.query(`select busers.id, busers.name,rooms.status,rooms.view,rooms.src 
-from busers inner join rooms on busers.email=rooms.email`/*where view>=1`*/)
+from busers inner join rooms on busers.name=rooms.room_name`/*where view>=1`*/)
 bresult=bus.rows;
 //console.log('bresult: ',bresult)
 }catch(e){console.log(e)}	
@@ -285,10 +285,12 @@ ctx.session.error="Link expired.";
 ctx.redirect('/error');
 }
 })
+
 pub.get('/error', async ctx=>{
 ctx.session.dorthin=ctx.path;
 ctx.body=await ctx.render('error',{message:ctx.message, error:ctx.session.error});
 })
+
 // heroku pg:psql --app alikon
 pub.post('/reset/:token', async ctx=>{
 if(!ctx.request.body.email && !ctx.request.body.token && !ctx.request.body.password) ctx.throw(400,"Please fill in folders");
@@ -369,22 +371,29 @@ ctx.body=ctx.render('purchase',{/*buser:this.req.user*/});
 WEBRTC STUFF /:models
 *************************************************************************** */
 
-pub.get('/webrtc/:buser_id', async ctx=>{
+pub.get('/webrtc/:buser_name', async ctx=>{
 let db=ctx.db;
 ctx.session.dorthin=ctx.path;
 var us=null;
 var owner=false;
 var mich={}
 var imgsrc=undefined;
+var result2=undefined;
 try{
-var result=await db.query(`select id, email,name,role,verif,model,items from busers where id='${ctx.params.buser_id}'`);
-var result2=await db.query(`select src from rooms where email='${result.rows[0].email}'`)
+var result=await db.query(`select id,name,role,verif,model,items from busers where name='${ctx.params.buser_name}'`);
+if(result.rows[0]) {
+result2=await db.query(`select src from rooms where room_name='${result.rows[0].name}'`)
 //console.log('result2: ',result2.rows[0])
-if(result2.rows[0]){imgsrc=result2.rows[0].src}
-result.rows[0].email=email_enc.encrypt(result.rows[0].email);
+if(result2 && result2.rows[0]){imgsrc=result2.rows[0].src}
 us=result.rows[0];
-if(ctx.state.user && ctx.state.user.id===ctx.params.buser_id){owner=true;}
-}catch(e){console.log(e)}
+}else{
+console.log('no results in result!');
+ctx.throw(404,"No user by that name!!!")}
+if(ctx.state.user && ctx.state.user.name===ctx.params.buser_name){owner=true;}
+}catch(e){
+console.log('error in webrtc/:buser_name db: ',e)
+ctx.redirect('/error');
+}
 ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),imgsrc:imgsrc});
 });
 

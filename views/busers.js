@@ -63,7 +63,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <!-- model -->
 <input type="hidden" id="modelName" value="${model.name}"/>
 <input type="hidden" id="modelId" value="${model.id}"/>
-<input type="hidden" id="modelEmail" value="${model.email}"/>
+<input type="hidden" id="modelEmail" value="${model.id}"/>
 <input type="hidden" id="owner" value='${n.owner}'/>
 <input type="hidden" id="modelTokens" value="${model.items}"/>
 
@@ -73,7 +73,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <input type="hidden" id="yourName" value="${buser ? buser.name : ''}"/>
 
 <input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
-<input type="hidden" id="yourEmail" value="${buser ? buser.email:''}"/>
+<input type="hidden" id="yourEmail" value="${buser ? buser.id:''}"/>
 <input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
 
 

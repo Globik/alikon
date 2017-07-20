@@ -111,7 +111,7 @@ bsrc='<img src="'+m.src+'"/>';
 }else{
 bsrc='no image at the moment';
 }
-div.innerHTML='<a href="/webrtc/'+m.id+'">'+m.name+'</a><br><br>'+
+div.innerHTML='<a href="/webrtc/'+m.name+'">'+m.name+'</a><br><br>'+
 '<b>img src: </b>'+bsrc+'<br><br>'+
 '<b>status: </b><span class="rstatus" data-rstatus="'+m.id+'">'+m.status+'</span><br><br>'+
 '<b>viewers: </b><span class="rviewers" data-rviewers="'+m.id+'">'+m.view+'</span><br><br>';
@@ -147,7 +147,7 @@ let s='';
 if(Array.isArray(n)){
  s+='<ul>';
  n.forEach((el,i)=>{
-s+=`<li><a href="/webrtc/${el.id}">${el.name}</a>`;
+s+=`<li><a href="/webrtc/${el.name}">${el.name}</a>`;
 });
 	s+='</ul>';
    }
@@ -160,7 +160,7 @@ if(Array.isArray(n)){
  s+='<ul>';
  n.forEach((el,i)=>{
 s+=`<hr><div data-divroomid="${el.id}">
-<a href="/webrtc/${el.id}">${el.name}</a><br><br>
+<a href="/webrtc/${el.name}">${el.name}</a><br><br>
 <b>img src: </b>${el.src !=="no" ? `<img src="${el.src}"/>`:'no image'}<br><br>
 <b>status: </b><span class="rstatus" data-rstatus="${el.id}">${el.status}</span><br><br>
 <b>viewers: </b><span class="rviewers" data-rviewers="${el.id}">${el.view}</span><br><br>

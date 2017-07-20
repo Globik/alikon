@@ -6,7 +6,8 @@ drop table tokens;
 drop type if exists token_type_enum cascade;
 create type token_type_enum as enum('validation', 'reset');
 
-create table if not exists tokens(token uuid primary key, 
+create table if not exists tokens(
+token uuid primary key, 
 token_type token_type_enum not null,
 email text not null references busers(email) on delete cascade on update cascade,
 created_at timestamptz  not null default current_date);

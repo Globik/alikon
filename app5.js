@@ -838,8 +838,8 @@ server.on('newroom',(r)=>{
 });
 server.on('close',(er)=>{
 console.log('closing the mediasoup server');
-	pool.query(`delete from rooms`).then(result=>{
-console.log('result delete rooms: ',result)
+pool.query(`delete from rooms`).then(result=>{
+console.log('result delete rooms ON_CLOSE mediasoup: OK')
 }).catch(err=>{console.log('err delete rooms: ',err)})
 if(er){console.log(er);}
 })
