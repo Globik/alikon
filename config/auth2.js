@@ -5,6 +5,7 @@ const FacebookStrategy=require('passport-facebook').Strategy;
 module.exports=(db,passport)=>{
 
 passport.serializeUser((user,done)=>{
+	//console.log('in serialize USERA: ',user);
 done(null,user.id)
 })
 
@@ -20,7 +21,7 @@ done(e)
 passport.use(new LocalStrategy({usernameField:'email',passwordField:'password'}, (email,password,done)=>{
 process.nextTick(async()=>{
 try{
-let user=await db.query(`select*from busers where email='${email}' and pwd=crypt('${password}',pwd) `)
+let user=await db.query(`select id from busers where email='${email}' and pwd=crypt('${password}',pwd) `)
 if(!user.rows[0]){return done(null,false,{message:'Wrong user email or password!'})}
 return done(null,user.rows[0],{message:'Erfolgreich loged in!!!'})
 }catch(err){return done(err)} 
@@ -29,19 +30,22 @@ return done(null,user.rows[0],{message:'Erfolgreich loged in!!!'})
 
 const nicky=email=>{return email.substring(0,email.indexOf("@"))}
 const get_str=n=>`insert into busers(email,pwd,name) values('${n.email}',crypt('${n.password}',gen_salt('bf',8)),'${n.username}') 
-returning name,role,email,verif`
+returning id`;//,name,role,email,verif`
 
 passport.use('local-signup',new LocalStrategy({usernameField:'email',passReqToCallback:true},(req,email,password,done)=>{
 if(!req.body.username){return done(null,false,{message:"missing username",code:'1'})}	
 process.nextTick(async()=>{
 try{
-var useri=await db.query(get_str({email:email,password:password,username:req.body.username}))				 
+var useri=await db.query(get_str({email:email,password:password,username:req.body.username}))
+//console.log('USER.rows[0]: ',useri.rows[0])
 return done(null,useri.rows[0],{message: `You're almost finished.<br><br>
 We've sent an account activation email to you at <strong>${email}</strong>.
 Head over to your inbox and click on the "Activate My Account" button to validate your email address.`})
 }catch(err){
-	//custom error handling
+	console.log('custom error handling: ',err);
 	if(err.code==='23505'){
+		let dru;
+		
 	return done(null,false,{message:'Email already in use', code:err.code})
 	}else if(err.code==='23514'){
 	return done(null,false,{message:'Email validation failed', code:err.code})

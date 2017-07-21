@@ -33,7 +33,7 @@ try{
 var us=await db.query(`select*from busers`);
 result=us.rows;
 }catch(e){console.log(e)}
-	
+	console.log('ctx.state.user BUSERRRR: ',ctx.state.user);
 try{
 	//rooms.status.view.src busers.id.name
 let bus=await db.query(`select busers.id, busers.name,rooms.status,rooms.view,rooms.src 

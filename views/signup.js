@@ -29,15 +29,15 @@ ${head.head({title:"sign up",cssl:["/css/login2.css"]})};
 <div id="loader"></div>
 <div id="wrap">
 <h2>Welcome. Please sign up.</h2>
-${n.errmsg ? `<span id="red-warnig">${messi(n.errmsg)}</span>` : ``}
+${n.errmsg ?`<span id="red-warnig">${messi(n.errmsg)}</span>`:''}
 <form id="mform" name="mform" action="/signup" method="post">
 <div class="username">
 <label><strong>Username</strong></label>
-<input type="text" name="username" placeholder="Username" value="markus" required/>
+<input type="text" name="username" placeholder="Username" value="mark" required/>
 </div>
 <div class="email">
 <label><strong>Email</strong></label>
-<input type="email" name="email"  placeholder="E-mail" value="gru5@yandex.ru" required/>
+<input type="email" name="email"  placeholder="E-mail" value="ag@yandex.ru" required/>
 </div>
 <div class="password">
 <label><strong>Password</strong></label>
