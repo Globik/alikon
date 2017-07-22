@@ -10,7 +10,82 @@ const busers = n=>{
 let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:`${model.name}. Live video.`, csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css"]})}</head>
+<head>${head.head({title:`${model.name}. Live video.`, csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css"]})}
+<style>
+#orlogincontainer {overflow-y:scroll;}
+#vorlogin{margin:0;padding:0;}
+#vorlogin h4{background:yellow;margin:0;}
+#mform{
+display:block;
+width: 100%;
+padding-left:6%;
+padding-right:6%;
+
+}
+.email, .password, .username,.submit{
+width:100%;
+	padding-top:10px;
+	padding-bottom:20px;
+	position:relative;
+   display:block;
+		}
+
+
+#mform input[type=password], #mform input[type=email], #mform input[type=text]{
+width:100%;
+display:block;
+padding-top:10px;
+padding-bottom:10px;
+margin-top: 4px;
+border: 1px solid #ccc;
+		}
+#mform input[type=submit]{
+width: 60%;
+display:block;
+color:red;
+padding-top:10px;
+padding-bottom:10px;
+cursor: pointer;	
+background: /*rgb(61, 157, 179)*/ brown;
+font-family: Courier,sans-serif;
+font-weight:bold;
+ont-size: 0.9rem;
+color: rgb(25,25,39);
+border: 1px solid rgb(28, 108, 122);		
+}
+#bott, .bott{
+display: block; 
+width:100%; 
+position:relative;
+padding-top:0px;
+padding-left: 6%;
+padding-right:6%;
+padding-bottom:0px;
+		}
+
+/* social icons 
+.soc-desc1{
+display:block;
+position:absolute;
+}
+		
+.soc-desc{
+position:relative;
+display:block;
+height: auto;
+width: 100%;
+
+text-align:center;
+}
+*/
+.soc-desc.fb{background: #4c74c4;background:linear-gradient(to bottom right, #4c74c4, #3b5998);}
+.soc-desc.vk{background:#45668e;}
+				
+.span-social{line-height: 5;}
+
+</style>
+
+</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
@@ -94,6 +169,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <button onclick="get_room();">privat</button> <span id="tokpermin">10</span> tokens/min<br><br>
 
 </div>
+<button onclick="vor_login();">log in</button>
 Time: <span id="mer">00:00:00</span><br><br>
 
 <hr><output id="out"></output>
@@ -114,6 +190,27 @@ Time: <span id="mer">00:00:00</span><br><br>
 
 <script src="/js/video_chat.js"></script>
 
+<a href="#" class="overlay" id="vorlogery"></a>
+<output id="vorlogin" class="popi">
+<a href="#" class="close"></a>
+<div id="vorlogincontainer"></div>
+</output>
+<script>
+function vor_login(){
+var xhr=new XMLHttpRequest();
+xhr.open('get','/vor_login');
+xhr.onload=function(evi){
+if(xhr.status==200){
+vorlogincontainer.innerHTML=JSON.parse(this.response).content;
+window.location.href="#vorlogery";
+}else{
+console.log(this.response);
+}
+}
+xhr.onerror=function(e){console.error(e);}
+xhr.send();
+}
+</script>
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
 </html>`;

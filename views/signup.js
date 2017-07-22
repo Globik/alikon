@@ -5,7 +5,7 @@ var dev_email=process.env.DEV_EMAIL;
 var login_css=require('./login_css.js');
 var head=require('./head.js');
 //var glocal_style=true;
-
+var fu=true;var fu2=true;
 const signup = n =>{
 	
 let messi=m=>{
@@ -13,12 +13,29 @@ console.log('msg: ',m)
 let s='';
 if(m.success==false){
 if(m.code){
-if(m.code=='23505'){s+=' User email already exists';fu=false;}else{s+=`${m.error ? m.error : ''}`}
+if(m.code=='23505'){
+if(m.bcode==2){s+=' This email is already exists';fu2=false;}else if(m.bcode==1){
+s+=' This nickname is already in use';fu=false;
+}else{s+=m.message}
+
+}else{
+s+=`${m.error ? m.error : ''}`
+}
 }else{s+=`${m.error ? m.error : ''}`;}
 }else if(m.success==true){s+=`${m.msg ? m.msg : ''}`}else{}
 return s;
 }
-	
+let f='border:2px solid red;color:red;'
+function do_inp(){
+let s='';
+if(!fu)s+=f;fu=true;
+return s;
+}
+function do_inp2(){
+let s='';
+if(!fu2)s+=f;fu2=true;
+return s;
+}
 return `<!DOCTYPE html><html lang="en">
 <head>
 ${head.head({title:"sign up",cssl:["/css/login2.css"]})};
@@ -32,12 +49,12 @@ ${head.head({title:"sign up",cssl:["/css/login2.css"]})};
 ${n.errmsg ?`<span id="red-warnig">${messi(n.errmsg)}</span>`:''}
 <form id="mform" name="mform" action="/signup" method="post">
 <div class="username">
-<label><strong>Username</strong></label>
-<input type="text" name="username" placeholder="Username" value="mark" required/>
+<label><strong>Username</strong></label>&nbsp;&nbsp;<span id="nameout"></span>
+<input type="text" style="${do_inp()}" name="username" placeholder="Username" value="mark" required/>
 </div>
 <div class="email">
-<label><strong>Email</strong></label>
-<input type="email" name="email"  placeholder="E-mail" value="ag@yandex.ru" required/>
+<label><strong>Email</strong></label>&nbsp;&nbsp;<span id="mailout"></span>
+<input type="email" name="email" style="${do_inp2()}" placeholder="E-mail" value="ag@yandex.ru" required/>
 </div>
 <div class="password">
 <label><strong>Password</strong></label>
@@ -85,6 +102,10 @@ var smally=gid("smally"),
 	pwd.oninput = go_show_pwd;
 var red_label=document.querySelector('.email label strong');
 var red_email=document.querySelector('input[type=email]');
+
+
+var red_username_label=document.querySelector('.username label strong');
+var red_username_input=document.querySelector('input[name=username]');
 
 //form.addEventListener('submit',baba, false);
 function baba(ev){
@@ -141,8 +162,17 @@ wrap.style.opacity="1";
 outresult.style.display="block";
 var er_msg='';
 if(e.code=='23505'){
+if(e.bcode==2){
 redmail();
 er_msg=e.message;
+mailout.textContent=e.message;
+}else if(e.bcode==1){
+redusername();
+er_msg=e.message;
+nameout.textContent=e.message;
+}else{
+er_msg=e.message;
+}
 }else if(e.code=='23514'){
 redmail();
 er_msg=e.message;
@@ -151,20 +181,40 @@ if(e.message){
 er_msg=e.message;
 }else{er_msg=e.response;}
 }
-console.log('kuku: ',e.response,e.message);
+console.warn('kuku: ',e);
 tohtml(outresult, '<p class="red">'+er_msg+'</p>');
 }
 
 red_email.oninput=function(e){
+//alert('a?')
 red_label.style.color="initial";
 red_email.style.border="initial";
+red_email.style.color="initial";
+mailout.textContent='';
 }
 
 function redmail(){
 red_label.style.color="red"; 
 red_email.style.border="2px solid red";
 outresult.style.background="pink";
+mailout.style.color="red";
 }
+
+function redusername(){
+//var red_username_label=document.querySelector('.username lable strong');
+//var red_username_input=document.querySelector('input[name=username]');
+red_username_label.style.color="red";
+red_username_input.style.border="2px solid red";
+nameout.style.color="red";
+}
+
+red_username_input.oninput=function(e){
+red_username_label.style.color="initial";
+red_username_input.style.border="initial";
+red_username_input.style.color="initial";
+nameout.textContent='';
+}
+
 function removeForm(){
 wrap.style.display="none";
 bod.style.background="initial";

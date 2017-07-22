@@ -42,13 +42,22 @@ return done(null,useri.rows[0],{message: `You're almost finished.<br><br>
 We've sent an account activation email to you at <strong>${email}</strong>.
 Head over to your inbox and click on the "Activate My Account" button to validate your email address.`})
 }catch(err){
-	console.log('custom error handling: ',err);
+	console.log('custom error handling: ',err.message);
 	if(err.code==='23505'){
-		let dru;
+		let dru='';let bcode=0;
+		if(err.detail.includes('name')){
+			dru='This nick is already in use';
+			bcode=1;
+		}else if(err.detail.includes('email')){
+			dru='This email is already in use';
+			bcode=2;
+		}else{
+			drue=err.message;
+		}
 		
-	return done(null,false,{message:'Email already in use', code:err.code})
+	return done(null,false,{message:dru, code:err.code, bcode:bcode})
 	}else if(err.code==='23514'){
-	return done(null,false,{message:'Email validation failed', code:err.code})
+	return done(null,false,{message:'Email validation failed', code:err.code,bcode:3})
 	}else{
 		return done(err)
 	}

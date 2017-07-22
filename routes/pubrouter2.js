@@ -149,6 +149,10 @@ if (!user) {ctx.session.messaga=[info.message];
 		yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)}
 		);
 */
+pub.get('/vor_login',async ctx=>{
+let content=await ctx.render('login_proto',{})
+ctx.body={content:content};
+})
 pub.post('/login', (ctx,next)=>{
 if(ctx.isAuthenticated()){
 if(ctx.state.xhr){
@@ -161,6 +165,7 @@ return passport.authenticate('local', (err,user,info,status)=>{
 if(ctx.state.xhr){
 if(err){ctx.body={success:false,info:err.message}; ctx.throw(500,err.message);}
 if(user===false){
+	//console.log('INFOOOOOOOOOOOOOOOO MESSSAGE!!!!: ',info.message)
 ctx.body={success:false,info:info.message}
 ctx.throw(401,info.message)
 }else{
@@ -175,7 +180,7 @@ if(user===false){
 ctx.session.bmessage={success:false, error:info.message};
 ctx.redirect('/login')
 }else{
-ctx.redirect('/')
+ctx.redirect(ctx.session.dorthin || '/')
 return ctx.login(user)
 }
 }
@@ -227,17 +232,17 @@ ctx.throw(409,err.message)
 }
 
 if(!user){
-ctx.body={success:false, message:info.message,code:info.code}
+ctx.body={success:false, message:info.message,code:info.code,bcode:info.bcode}
 }else{
 ctx.body={success:true, message:info.message}
 return ctx.login(user)
 }
 }else{
 if(err){
-ctx.session.bmessage={success:false,error:err.message,code:err.code,detail:err.detail}; return ctx.redirect('/signup');
+ctx.session.bmessage={success:false,message:err.message,code:err.code,detail:err.detail}; return ctx.redirect('/signup');
 }
 if(!user){
-ctx.session.bmessage={success:false,error:info.message}
+ctx.session.bmessage={success:false,message:info.message,code:info.code,bcode:info.bcode}
 ctx.redirect('/signup')
 }else{	
 ctx.session.bmessage={success:true, msg: info.message}
