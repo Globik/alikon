@@ -25,19 +25,19 @@ return s;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",cssl:["css/login2.css"]})}</head>
 <body>
 <main id="pagewrap">
-<a class="nav" href="/">home</a><br>
-<br><br>
-<div id="loginery-wrap">
 ${login_proto.login_proto(n)}
-</div>
+
 <script>
 var si=0, sendto=true;
-var formface=document.forms.namedItem("mform");
-formface.addEventListener('submit', baba, false);
+//var formface=document.forms.namedItem("mform");
+//formface.addEventListener('submit', baba, false);
+
 function baba(ev){
+
 si++;
 var xhr=new XMLHttpRequest();
-xhr.open(ev.target.method, ev.target.action);
+//alert(ev.method+ev.action)
+xhr.open(ev.method, ev.action);
 xhr.setRequestHeader('Content-Type', 'application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
@@ -45,18 +45,20 @@ if(xhr.status==200){
 //alert(this.response);
 var mata=JSON.parse(this.response);
 sessRed.innerHTML=mata.info;
-window.location.href=mata.redirect;
+//window.location.href=mata.redirect;
 }else{
 sessRed.innerHTML=this.response;
+
 }
 }
 
 xhr.onerror=function(e){console.error('XHR onerror: '+e);sessRed.innerHTML='Internet connection lost.';}
 var data={};
-data.email=formface.email.value;
-data.password=formface.password.value;
+data.email=ev.email.value;
+data.password=ev.password.value;
 
 var mid=JSON.stringify(data);
+//alert(mid)
 
 if(window.sessionStorage){
 if(sessionStorage.count){
@@ -64,25 +66,38 @@ sessionStorage.count=Number(sessionStorage.count)+1;
 }else{
 sessionStorage.count=1;
 }
-if(sessionStorage.count > 5){sessRed.innerHTML="Forgot your password? Go to <a href='/forgot'>reset</a> it.";
-xhr_failed_login(ev);
+if(sessionStorage.count > 5){
+sessRed.innerHTML="Forgot your password? Go to <a href='/forgot'>reset</a> it.";
+
+try{xhr_failed_login(ev);}catch(e){alert(e);console.log(e)}
 setTimeout(go_wieder, 5000);
+//ev.preventDefault();
+//return false;
 sendto=false;
+
 }
+
 function go_wieder(){
 console.log('istablished');
 sessionStorage.count=1;
 sendto=true;
 }
+
 }else{
 if(si>4){console.warn('great then 4');sendto=false;}
 }
 
-if(sendto){console.log('here');xhr.send(mid);}
-ev.preventDefault();
+if(sendto){
+//console.log('here');
+xhr.send(mid);
+}
+//return false;
+//ev.preventDefault();
+
 }
 
 function xhr_failed_login(e){
+//alert('a')
 var xhr=new XMLHttpRequest();
 xhr.open('post','/xhr_failed_login');
 xhr.onload=function(evi){
@@ -93,8 +108,10 @@ console.log(this.response);
 }
 }
 xhr.onerror=function(e){console.error(e);}
-if(e.target.email.value){
-xhr.send(e.target.email.value);
+if(e.email.value){
+//alert(e.email.value)
+xhr.send(e.email.value);
+//return false;
 }
 }
 </script>

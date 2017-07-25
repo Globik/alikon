@@ -3,29 +3,84 @@
 	<title>login form</title>
 	<style>
 	*{box-sizing: border-box;}
-html{font-size: 100%;}
-body{
-	font-size: 1em;
-	font-weight: 700;
-	font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
-	background: rgb(167,85, 2);
-	margin:0;
-	padding:0;
-	height:100%;
-		}
-		main{padding:2rem;}
-h2{
-	padding-left:6%;
-    padding-bottom:10px;
-	line-height:2;
-	color: rgb(112,66, 20);
-		}
-		h4{
-		line-height:0.5;
-			font-size:0.9rem;
-		}
+html{}
+body{}
+main{padding:2rem;}
+		.overlay {
+background-color: rgba(0, 0, 0, 0.8);
+bottom: 0;
+left:0;
+right: 0;
+top: 0;
+cursor: default;
+opacity: 0;
+position: fixed;
+visibility: hidden;
+z-index: 1;
+transition: opacity .5s;
+}
+.overlay:target {
+visibility: visible;
+opacity: 1;
+}
+.popi {
+background-color: inherit /*rgba(0,0,0,.7)*/;
+border: 3px solid rgba(255,255,255,0.4);
+left: 50%;
+top: 50%;
+width:auto;
+opacity:0;
+padding: 0em;
+position: fixed;
+text-align: justify;
+height:auto;
+
+visibility: hidden;
+z-index: 30;
+transform: translate(-50%, -50%);
+-webkit-transform:translate(-50%,-50%);
+-ms-transform:translate(-50%,50%);
+border-radius: 10px;
+transition: opacity .5s, top .5s;
+}
+.overlay:target+.popi {
+opacity: 1;
+visibility: visible;
+	width:auto;
+}
+.close {
+background-color: rgba(0, 0, 0, 0.8);
+height: 2em;
+line-height: 1.9em;
+text-align: center;
+text-decoration: none;
+width: 2em;
+border-radius: 15px;
+float:right;
+	
+}
+.before {
+color: rgba(255, 255, 255, 0.9);
+font-size: 1.5em;
+}
+.close:hover {
+ background-color: rgba(64, 128, 128, 0.8);
+}
+		
+#loginery-wrap{
+background: rgba(237, 201, 175,1);
+width:50%;
+width: 50vw;
+margin:0 auto;
+border: none;
+max-width: 31.250em;
+height:auto;
+}
+		
+#loginery-wrap a{cursor:pointer;color:rgba(0,0,30,0.9);}
+		
 		strong{
-			font-size:0.9rem;
+			font-size:0.8em;
 			color: rgba(0,0,30,0.9);
 			font-family: Courier;
 			
@@ -35,52 +90,26 @@ h2{
 		width: 100%;
 		padding-left:6%;
 	    padding-right:6%;
-		order:1px solid silver;
-}
-#wrap{
-background: rgba(237, 201, 175,0.2);
-width: 50vw;
-margin:0 auto;
-border: 1px solid transparent;
-	max-width: 31.250em;
-		}
-.email, .password{
-	padding-top:10px;
-	padding-bottom:20px;
-	position:relative;
-   display:block;
-		}
-a{
-text-decoration:none;
-font-size:0.8em;
-	font-weight:normal;
-font-family: Courier;	
-padding-right:1%;
-cursor:pointer;
-color: white;
-letter-spacing:0.1vw;
-		}
-.submit{
-	display:block;
-	position:relative;
-	padding-top:0px;
-	padding-bottom:0px;
-	width:100%;}
+	
 		
-input[type=password], input[type=email], input[type=text]{
+}
+
+
+
+		#mform h4{line-height:3.5em;}
+		
+#mform input[type=password], input[type=email],input[type=submit]{
 		width:100%;
 	display:block;
 			padding-top:10px;
 			padding-bottom:10px;
-			margin-top: 4px;
-		border: 1px solid #ccc;
+			margin-top: 10px;
+	
+	margin-bottom:10px;
 		}
-input[type=submit]{
+#mform input[type=submit]{
 width: 30%;
-display:block;
 margin-left:70%;
-padding-top:10px;
-padding-bottom:10px;
 cursor: pointer;	
 background: /*rgb(61, 157, 179)*/ brown;
 font-family: Courier,sans-serif;
@@ -89,91 +118,76 @@ font-size: 0.9rem;
 color: #fff;
 border: 1px solid rgb(28, 108, 122);		
 }
-		a:hover{color:blue;}
-#bott{
-display: block; 
-width:100%; 
-position:relative;
-padding-top:10px;
-padding-left: 6%;
-	padding-right:6%;
-padding-bottom:20px;
-		}
-		.soc-desc1, .soc-desc{display:block;position:absolute;height:100%;}
-		.soc-desc1{background:red;width:4em;top:0;left:0;}
-		.soc-desc{
-					top:0;
-					left:5em;
-					width:calc(100% - 5em);
-					background:lightgreen;
-				    text-align:center;
-					}
-				
-		.vk, .fb{display:block; position:relative;height:4em;margin-top:0.2em;margin-bottom:1em;width:60%;}
 		
-		.vk{background:#45668e;}
-		.fb{background:#4c74c4;}
-		span{line-height:5;}
+.soc-part{
+display:inline-block;
+width:40%;
+height:50px;
+overflow:hidden;
+margin-top:10px;
+margin-bottom:10px;
+}
+.soc-part.fb{background:#45668e;}
+.soc-part.vk{background:#4c74c4;}
+.soc-besch,.soc-icon{display:inline-block;}
+.soc-besch{width:100px;width:calc(100% - 50px);text-align:center;vertical-align:20px;}
+.soc-icon{width:50px;overflow:hidden;}
+.soc-icon img{width:100%;}
+.underform{margin-top:15px;}
 		
-		@media screen and(max-width: 1024px){
-			#wrap{background:green;}
-			
-		
-		}		
-		
+	
 @media screen and (max-width: 650px) {
-html,body{}
-	#wrap{background:red;
-	width:100%;
+#loginery-wrap{
+width:100%;
+width:97vw;
 	}
-	#mform{width:100%;}
+#mform{width:100%;}
+.soc-part{display:block;width:100%;}
 }
-@media screen and (max-width: 480px) {
-	
-	body{background:green;}
-	a{letter-spacing:0.2vw;}
-	main{padding:0.1rem;}
-	#wrap,#mform{}
-	#bott{}
-	h1{text-align:center;padding-left:0;}
-	.fb, .vk{width:100%;}
-	
-}
-	</style>
-	</head>
+</style>
+</head>
 <body>
-<main>
-	<div id="wrap">
-		<h2>Welcome. Please login.</h2>
-<form id="mform" action="/login" method="post">
-<div class="email" style="backround: green;">
-	<label><strong>Email</strong> </label>
-<input type="email" name="email"  placeholder="E-mail" value="" required >
-	
-</div>
 
-<div class="password" style="bacground:violet;">
-	<label><strong>Password</strong> <a style="float:right;" href="/forgot">Lost your password?</a></label>
-<input type="password" name="password"  placeholder="Password" value="" required />
+<div id="loginery-wrap">
+<form id="mform" name="mform" action="/login" method="post">
+	<h4>Welcome. Please login.<a href="/" style="float:right;">home</a></h4>
+<label><strong>Email</strong> </label>
+<input type="email" name="email"  placeholder="E-mail" value="dev@ya.ru" required />
+<label style=""><strong>Password</strong></label><a style="float:right;" href="/forgot"><strong>Lost your password?</strong></a>
+<input type="password" name="password"  placeholder="Password" value="ui" required />
+<input type="submit" value="Log in" >
+<div class="underform"><strong style="">No account yet?</strong><a href="/signup" style="float:right;">
+<strong>Create one</strong></a><hr>
+</div><div class="underform"><strong>Or you can sign in with:</strong></div>
+	
+<a href="fb">
+<div class="soc-part fb">
+<div class="soc-icon"><img src="../public/images/facebook-icon_64.png"/></div><div class="soc-besch"><span>facebook</span></div>
+</div>
+</a>
+<a href="vk">
+<div class="soc-part vk">
+<div class="soc-icon"><img src="../public/images/vk.png"></div><div class="soc-besch"><span>vk</span></div>
+</div>
+</a>
+</form>
 </div>
 	
-<div class="submit" style="bacground:lightblue;">
-<input type="submit" value="sign in" >
-</div>
-		</form>
-		<div id="bott" style="backround:yellow;"><strong style="">No account yet?</strong>&nbsp&nbsp<a href="/signup">Create one</a>
-			<h4>Or you can sign in with:</h4>
-		
- <div class="fb">
-	<div class="soc-desc1"><img src="../public/images/facebook-icon_64.png"/></div><a href=""><div class="soc-desc"><span>facebook</span>
-	</div> 
-				</a></div>
-<div class="vk">
-<div class="soc-desc1"><img src="../public/images/vk.png"/></div><a href=""><div class="soc-desc"><span>vkontakte</span>
-	</div>
-	</a>
-	</div></div>
-
-	</div>
-</main>
+	<br>
+<a href="#resultativ" onclick="do_login();">login</a>
+<a href="#" class="overlay" id="resultativ"></a>
+<output id="pop" class="popi">
+<a href="#" class="close"><span class="before">X</span></a>
+<div id="mid" style=""></div>
+</output>
+	<script>
+		function do_login(){
+			var col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
+			var clone=gid('loginery-wrap').cloneNode(true);
+			gid('loginery-wrap').style.display='none';
+			mid.appendChild(clone);
+			pop.style.background=col;//"violet";
+		}
+		function gid(id){return document.getElementById(id)}
+	</script>
 </body></html>

@@ -163,6 +163,7 @@ return ctx.redirect('/')
 }
 return passport.authenticate('local', (err,user,info,status)=>{
 if(ctx.state.xhr){
+	console.log('XHR!!!')
 if(err){ctx.body={success:false,info:err.message}; ctx.throw(500,err.message);}
 if(user===false){
 	//console.log('INFOOOOOOOOOOOOOOOO MESSSAGE!!!!: ',info.message)
@@ -226,6 +227,7 @@ return ctx.redirect('/')
 return passport.authenticate('local-signup', (err,user,info,status)=>{
 console.log(err,user,info,status)
 if(ctx.state.xhr){
+	console.log('XHR!!!!');
 	//23505 name already in use
 if(err){
 ctx.throw(409,err.message)
