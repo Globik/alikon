@@ -48,6 +48,7 @@ position:absolute;
 top:0;
 left:2rem;
 letter-spacing:0.1em;
+z-index:1;
 }
 #video-wrapper.offline::after{
 content:"The member you are trying to view is currently offline. Please wait or choose another member to view.";

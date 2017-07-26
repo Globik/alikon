@@ -2,7 +2,8 @@
 const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
-    footer=require('./footer');
+    footer=require('./footer'),
+	login_proto=require('./login_proto.js');
 var warnig=false;	  
 var haupt_ban=false;
 
@@ -113,7 +114,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 
 <span id="pid"></span>
 <span id="timeinfo"></span>
-
+<input type="hidden" id="loginstr" value='${login_proto.login_proto({})}'/>
 <script src="/js/video_chat.js"></script>
 
 <a href="#" class="overlay" id="vorlogery"></a>
@@ -122,25 +123,26 @@ Time: <span id="mer">00:00:00</span><br><br>
 <div id="vorlogincontainer"></div>
 </output>
 <script>
+var loginstr=document.getElementById('loginstr');
+
 function vor_login(){
-var xhr=new XMLHttpRequest();
-xhr.open('get','/vor_login');
-xhr.onload=function(evi){
-if(xhr.status==200){
-vorlogincontainer.innerHTML=JSON.parse(this.response).content;
+//alert(loginstr.value);
+vorlogincontainer.innerHTML=loginstr.value;
 let col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
 vorlogin.style.background=col;
 window.location.href="#vorlogery";
-}else{
-console.log(this.response);
-}
-}
-xhr.onerror=function(e){console.error(e);}
-xhr.send();
 }
 </script>
+${get_js(["/js/login.js"])}
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
 </html>`;
 }
 module.exports={busers};
+function get_js(n){
+let s='';
+n.forEach((el,i)=>{
+s+=`<script src="${el}"></script>`;
+})
+return s;
+}
