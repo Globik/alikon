@@ -149,10 +149,7 @@ if (!user) {ctx.session.messaga=[info.message];
 		yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)}
 		);
 */
-pub.get('/vor_login',async ctx=>{
-let content=await ctx.render('login_proto',{})
-ctx.body={content:content};
-})
+
 pub.post('/login', (ctx,next)=>{
 if(ctx.isAuthenticated()){
 if(ctx.state.xhr){
@@ -163,10 +160,8 @@ return ctx.redirect('/')
 }
 return passport.authenticate('local', (err,user,info,status)=>{
 if(ctx.state.xhr){
-	console.log('XHR!!!')
 if(err){ctx.body={success:false,info:err.message}; ctx.throw(500,err.message);}
 if(user===false){
-	//console.log('INFOOOOOOOOOOOOOOOO MESSSAGE!!!!: ',info.message)
 ctx.body={success:false,info:info.message}
 ctx.throw(401,info.message)
 }else{
@@ -236,12 +231,12 @@ ctx.throw(409,err.message)
 if(!user){
 ctx.body={success:false, message:info.message,code:info.code,bcode:info.bcode}
 }else{
-ctx.body={success:true, message:info.message}
+ctx.body={success:true, message:info.message,redirect:ctx.session.dorthin || '/'}
 return ctx.login(user)
 }
 }else{
 if(err){
-ctx.session.bmessage={success:false,message:err.message,code:err.code,detail:err.detail}; return ctx.redirect('/signup');
+ctx.session.bmessage={success:false,message:err.message}; return ctx.redirect('/signup');
 }
 if(!user){
 ctx.session.bmessage={success:false,message:info.message,code:info.code,bcode:info.bcode}
@@ -256,37 +251,59 @@ return ctx.login(user)
 
 pub.get('/logout', ctx=>{ctx.logout();ctx.redirect(ctx.session.dorthin || '/');});
 pub.get('/forgot', async ctx=>{
-//if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
-ctx.body=await ctx.render('forgot',{});	
+let  m=ctx.session.bmessage;
+ctx.body=await ctx.render('forgot',{errmsg:m});	
+delete ctx.session.bmessage;
 });
 
 pub.post('/forgot', async ctx=>{
-if(!ctx.request.body.email) ctx.throw(400,"Please, provide your email!");
+let es="Please, provide your email!";
+if(!ctx.request.body.email){ 
+if(ctx.sate.xhr){
+ctx.throw(400,es)
+}else{
+ctx.session.bmessage={success:false,message:es}
+return ctx.redirect('/forgot');
+}
+}
 let db=ctx.db;
-	//fordert LISTEN reset
-	//notif-antwort:{email,token,toke_type='reset'}
 try{
-var mid=await db.query(`select request_password_reset('${ctx.request.body.email}')`);
+await db.query(`select request_password_reset('${ctx.request.body.email}')`);
 }catch(e){
-		//console.log('err in post forgot!!!: ',e.message);
-ctx.throw(409, e.message);}
-ctx.body={"message": `We have sent a password reset email to your email address: ${ctx.request.body.email}.<br> Please check your inbox to continue.`};
+
+if(ctx.state.xhr){ctx.throw(409, e.message);}else{
+ctx.session.bmessage={success:false,message:e.message}
+return ctx.redirect('/forgot')
+}
+}
+let ms=`We have sent a password reset email to your email address: <a href="mailto:${ctx.request.body.email}">${ctx.request.body.email}</a><br><br> Please check your inbox to continue.`;
+
+if(ctx.state.xhr){
+ctx.body={"message": ms}
+
+}else{
+ctx.session.bmessage={success:true,message:ms}
+ctx.redirect('/forgot')
+}
 });
 
 pub.get('/reset/:token', async ctx=>{
-if(!valuid(ctx.params.token)) {
-return ctx.redirect('/error');
-}
-//if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
+if(!valuid(ctx.params.token)) {ctx.session.error="Not Found";return ctx.redirect('/error');}
 console.log('this.params.token: ', ctx.params.token);
-let db=ctx.db;var error=null;
+let db=ctx.db;var error=null;var result=undefined;var resu=null;
 try{
-var resu=await db.query(`select*from tokens where token='${ctx.params.token}' and created_at > now() - interval '2 days'`);
+resu=await db.query(`select*from tokens where token='${ctx.params.token}' and created_at > now() - interval '2 days'`);
 }catch(e){
-ctx.body={"error":e};error=e;
+error=e;
+	//if params uuid not valif
+	console.log('error in unterstutzung: ',e);
 }
 if(resu && resu.rows[0]){
-ctx.body=await ctx.render('reset',{"reset-token":ctx.params.token});
+	result=resu.rows[0];
+	console.log('resu.rows: ',resu.rows[0],' ',resu.rows)
+let mer=ctx.session.bmessage;
+ctx.body=await ctx.render('reset',{"reset-token":ctx.params.token,error,result,errmsg:mer});
+delete ctx.session.bmessage;
 }else{
 ctx.session.error="Link expired.";
 ctx.redirect('/error');
@@ -294,32 +311,47 @@ ctx.redirect('/error');
 })
 
 pub.get('/error', async ctx=>{
-ctx.session.dorthin=ctx.path;
 ctx.body=await ctx.render('error',{message:ctx.message, error:ctx.session.error});
+delete ctx.session.error;
 })
 
 // heroku pg:psql --app alikon
 pub.post('/reset/:token', async ctx=>{
-if(!ctx.request.body.email && !ctx.request.body.token && !ctx.request.body.password) ctx.throw(400,"Please fill in folders");
+if(!ctx.request.body.email && !ctx.request.body.token && !ctx.request.body.password) {
+let es="Please fill in all falders!"
+if(ctx.state.xhr){ctx.throw(400,es)}else{
+ctx.session.error=es;
+return ctx.redirect(`/reset/${ctx.request.body.token}` || '/error')
+}
+}
 let db=ctx.db;
 try{
-//select reset_password(email,token,pwd)
 await db.query(`select reset_password('${ctx.request.body.email}','${ctx.request.body.token}','${ctx.request.body.password}')`);
 }catch(e){
-ctx.throw(404, e.message);
+if(ctx.state.xhr){ctx.throw(409, e.message);}else{
+ctx.session.bmessage={success:false,message:e.message}
+ctx.session.error=e.message;
+return ctx.redirect(`/reset/${ctx.request.body.token}` || '/error')
 }
-ctx.body={"message":`Your password has been changed! You may log into your account <a href='/login'>log in</a> 
-					or go direct to <a href='/'>home</a>`};
+}
+let mis=`Your password has been changed! You may log into your account <a href='/login'>log in</a> or go direct to <a href='/'>home</a>`
+if(ctx.state.xhr){
+ctx.body={"message":mis};
+}else{
+ctx.session.bmessage={success:true,message:mis}
+ctx.session.error=mis;
+ctx.redirect(`/reset/${ctx.request.body.token}` || '/error')
+}
 })
 
 
 pub.get('/email_validation/:token', async ctx=>{
 if(!valuid(ctx.params.token)) {
-return; //this.redirect('/');
+ctx.session.error="Not Found";
+return ctx.redirect('/error');
 }
-//if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
 console.log('this.params.token: ', ctx.params.token);
-let db=ctx.db;var pmail;var error=null;
+let db=ctx.db, error=null;
 try{await db.query(`select say_yes_email('${ctx.params.token}')`);}catch(e){
 error=e.message;
 }

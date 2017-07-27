@@ -4,6 +4,7 @@ const head=require('./head'),
 	admin_main_menu=require('./admin_main_menu'),
     footer=require('./footer'),
 	login_proto=require('./login_proto.js');
+const {js_help}=require('../libs/helper.js');
 var warnig=false;	  
 var haupt_ban=false;
 
@@ -11,7 +12,7 @@ const busers = n=>{
 let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:`${model.name}. Live video.`, csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"]})}
+<head>${head.head({title:`${model.name}. Live video.`,/*js:['/js/video_chat.js'],*/ csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"]})}
 </head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
@@ -115,7 +116,6 @@ Time: <span id="mer">00:00:00</span><br><br>
 <span id="pid"></span>
 <span id="timeinfo"></span>
 <input type="hidden" id="loginstr" value='${login_proto.login_proto({})}'/>
-<script src="/js/video_chat.js"></script>
 
 <a href="#" class="overlay" id="vorlogery"></a>
 <output id="vorlogin" class="popi">
@@ -124,25 +124,16 @@ Time: <span id="mer">00:00:00</span><br><br>
 </output>
 <script>
 var loginstr=document.getElementById('loginstr');
-
 function vor_login(){
-//alert(loginstr.value);
 vorlogincontainer.innerHTML=loginstr.value;
 let col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
 vorlogin.style.background=col;
 window.location.href="#vorlogery";
 }
 </script>
-${get_js(["/js/login.js"])}
+${js_help(["/js/video_chat.js","/js/login.js"])}
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
 </html>`;
 }
 module.exports={busers};
-function get_js(n){
-let s='';
-n.forEach((el,i)=>{
-s+=`<script src="${el}"></script>`;
-})
-return s;
-}

@@ -46,10 +46,10 @@ Head over to your inbox and click on the "Activate My Account" button to validat
 	if(err.code==='23505'){
 		let dru='';let bcode=0;
 		if(err.detail.includes('name')){
-			dru='This nick is already in use';
+			dru='The nickname is already in use.';
 			bcode=1;
 		}else if(err.detail.includes('email')){
-			dru='This email is already in use';
+			dru='The email already exists. ';
 			bcode=2;
 		}else{
 			drue=err.message;

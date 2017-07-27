@@ -1,28 +1,32 @@
 //signup.js
-var dev_user=process.env.DEV_USER;
-var dev_pwd=process.env.DEV_PWD;
-var dev_email=process.env.DEV_EMAIL;
-var login_css=require('./login_css.js');
-var head=require('./head.js');
-//var glocal_style=true;
+var dev_user=process.env.DEV_USER,
+dev_pwd=process.env.DEV_PWD,
+dev_email=process.env.DEV_EMAIL;
+const login_css=require('./login_css.js'),
+head=require('./head.js');
+const {js_help}=require('../libs/helper.js');
+
 var fu=true;var fu2=true;
 const signup = n =>{
 	
 let messi=m=>{
 console.log('msg: ',m)
 let s='';
-if(m.success==false){
+if(m){
+if(!m.success){
 if(m.code){
 if(m.code=='23505'){
-if(m.bcode==2){s+=' This email is already exists';fu2=false;}else if(m.bcode==1){
-s+=' This nickname is already in use';fu=false;
+if(m.bcode==2){s=m.message;fu2=false;}else if(m.bcode==1){
+s=m.message;
+fu=false;
 }else{s+=m.message}
 
 }else{
-s+=`${m.error ? m.error : ''}`
+s=m.message;
 }
-}else{s+=`${m.error ? m.error : ''}`;}
-}else if(m.success==true){s+=`${m.msg ? m.msg : ''}`}else{}
+}else{s=m.message;}
+}else{s+=`${m.msg ? m.msg : ''}`}
+	}
 return s;
 }
 let f='border:2px solid red;color:red;'
@@ -38,212 +42,51 @@ return s;
 }
 return `<!DOCTYPE html><html lang="en">
 <head>
-${head.head({title:"sign up",cssl:["/css/login2.css"]})};
+${head.head({title:"sign up",cssl:["/css/login2.css"]})}
 </head>
 <body>
 <main id="pagewrap">
-<a class="nav" href="/">home</a>
-<div id="loader"></div>
-<div id="wrap">
-<h2>Welcome. Please sign up.</h2>
-${n.errmsg ?`<span id="red-warnig">${messi(n.errmsg)}</span>`:''}
+<div id="loginery-wrap">
 <form id="mform" name="mform" action="/signup" method="post">
-<div class="username">
+<h4>Welcome. Please sign up.<a href="/" style="float:right;font-size:1em;">home</a></h4>
+<span id="sessRed" class="${n.errmsg?'red':''}">${messi(n.errmsg)}</span><br>
+
 <label><strong>Username</strong></label>&nbsp;&nbsp;<span id="nameout"></span>
-<input type="text" style="${do_inp()}" name="username" placeholder="Username" value="mark" required/>
-</div>
-<div class="email">
+<input type="text" class="login-text" style="${do_inp()}" name="username" placeholder="Username" value="mark" required/>
 <label><strong>Email</strong></label>&nbsp;&nbsp;<span id="mailout"></span>
-<input type="email" name="email" style="${do_inp2()}" placeholder="E-mail" value="ag@yandex.ru" required/>
-</div>
-<div class="password">
+<input type="email" class="login-email" name="email" style="${do_inp2()}" placeholder="E-mail" value="ag@yandex.ru" required/>
+
 <label><strong>Password</strong></label>
-<input type="password" name="password"  placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required pattern=".{6,}" maxlength="20"/><br>
+<input type="password" name="password"
+class="login-pwd" placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" required pattern=".{6,}" maxlength="20"/><br>
 <u class="blue"><small id="smally" class="blue">show password</small></u><span id="show_pwd"></span>
-</div>
-<div class="submit">
-<input type="submit" value="Sign Up">
-</div>
-</form>
-<div id="bott">
- <strong>Already a member?</strong> <a href="/login">Login</a><br><br>
-<strong>Or you can sign in with:</strong><br><br>
 
+<input type="submit" class="login-submit" value="Sign Up" ${n.user?'disabled':''}>
+
+<div class="underform"><strong>Already a member?</strong> <a href="/login" style="float:right;">Login</a></div>
+<div class="underform"><strong>Or you can sign in with:</strong></div>
 <a href="/auth/facebook">
-<div class="soc-desc fb">
-<div class="soc-desc1">
-<img src="/images/facebook-icon_64.png"/>
+<div class="soc-part fb">
+<div class="soc-icon"><img src="/images/facebook-icon_64.png"/></div><div class="soc-besch"><span>facebook</span></div>
 </div>
-<span class="span-social">facebook</span>
+</a>
+<a href="/auth/vkontakte">
+<div class="soc-part vk">
+<div class="soc-icon"><img src="/images/vk.png"></div><div class="soc-besch"><span>vk</span></div>
 </div>
-	</a>
-<a href="/auth/vkontakte"><div class="soc-desc vk"><div class="soc-desc1"><img src="/images/vk.png"/></div><span class="span-social">vkontakte</span>
-	</div>
-	</a>
-	
+</a>
+</form>
+<div id="outresult" class="animate-bottom">buuu</div>
 </div>
-</div>
-<div id="outresult" class="animate-bottom">i am a div</div>
-<script>
-var smally=gid("smally"),
-	outresult=gid("outresult"),
-	bod=document.getElementsByTagName('main')[0],
-    wrap=gid("wrap"),
-    form=document.forms.namedItem("mform"), //gid("mform"),
-	show_pwd=gid('show_pwd'),
-    pwd=form.password,
-	email=form.email,
-	username=form.username,
-	str_show="show password",
-	str_hide="hide password";
-	
-	smally.onclick = if_show_pwd;
-	smally.ontouchstart = if_show_pwd;
-	pwd.oninput = go_show_pwd;
-var red_label=document.querySelector('.email label strong');
-var red_email=document.querySelector('input[type=email]');
-
-
-var red_username_label=document.querySelector('.username label strong');
-var red_username_input=document.querySelector('input[name=username]');
-
-//form.addEventListener('submit',baba, false);
-function baba(ev){
-ev.preventDefault();
-//form.style.opacity="0.2";
-wrap.style.opacity="0.9";
-bod.style.background="rgba(0,0,0,0.9)";
-loader.style.display="block";
-to_ajx(ev);
-}
-
-function to_ajx(ev){
-var pars={};
-pars.email=email.value;
-pars.username=username.value;
-pars.password=pwd.value;
-var xhr=new XMLHttpRequest();
-xhr.open(ev.target.method, ev.target.action);
-//xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-xhr.setRequestHeader('Content-Type', 'application/json','utf-8');
-xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-xhr.onload=function(evi){
-if(xhr.status==200){
-var ra=JSON.parse(this.response);
-if(ra.success==false){notif_er(ra)}else{notif(ra);}
-
-}else{
-notif_er(this);
-}
-}
-xhr.onerror=function(e){console.error(e);
-loader.style.display="none";
-alert('Internet connection failed');
-}
-var dies=JSON.stringify(pars);
-xhr.send(dies);
-}
-function notif(e){	
-loader.style.display="none";
-outresult.style.display="block";
-tohtml(outresult, '<p class="green"><h3>Thanks for creating an account with Alikon!</h3>'+e.message+'</p>');
-removeForm();
-}
-
-/*
-.email label strong{color:red;}
-.email{border:1px solid red;}
-*/
-function notif_er(e){
-
-loader.style.display="none";
-bod.style.background="initial";
-wrap.style.opacity="1";
-outresult.style.display="block";
-var er_msg='';
-if(e.code=='23505'){
-if(e.bcode==2){
-redmail();
-er_msg=e.message;
-mailout.textContent=e.message;
-}else if(e.bcode==1){
-redusername();
-er_msg=e.message;
-nameout.textContent=e.message;
-}else{
-er_msg=e.message;
-}
-}else if(e.code=='23514'){
-redmail();
-er_msg=e.message;
-}else{
-if(e.message){
-er_msg=e.message;
-}else{er_msg=e.response;}
-}
-console.warn('kuku: ',e);
-tohtml(outresult, '<p class="red">'+er_msg+'</p>');
-}
-
-red_email.oninput=function(e){
-//alert('a?')
-red_label.style.color="initial";
-red_email.style.border="initial";
-red_email.style.color="initial";
-mailout.textContent='';
-}
-
-function redmail(){
-red_label.style.color="red"; 
-red_email.style.border="2px solid red";
-outresult.style.background="pink";
-mailout.style.color="red";
-}
-
-function redusername(){
-//var red_username_label=document.querySelector('.username lable strong');
-//var red_username_input=document.querySelector('input[name=username]');
-red_username_label.style.color="red";
-red_username_input.style.border="2px solid red";
-nameout.style.color="red";
-}
-
-red_username_input.oninput=function(e){
-red_username_label.style.color="initial";
-red_username_input.style.border="initial";
-red_username_input.style.color="initial";
-nameout.textContent='';
-}
-
-function removeForm(){
-wrap.style.display="none";
-bod.style.background="initial";
-form.onsubmit=null;
-}
-	function if_show_pwd(e){
-		if(is_equal(smally, str_show)){
-			totext(smally, str_hide);
-			tohtml(show_pwd, ' '+ pwd.value);
-		}else{
-			totext(smally, str_show);
-			totext(show_pwd, "");
-		}
-	}
-	
-	function go_show_pwd(e){
-		if(is_equal(smally, str_hide))
-		show_pwd.textContent=' '+ e.target.value;
-	}
-	
-	function gid(id){return document.getElementById(id);}
-	function tohtml(s, v){return s.innerHTML=v;}
-	function totext(s, v){return s.textContent=v;}
-	function is_equal(d,s){
-	if(d.textContent===s) {return true;}else{return false;}
-	}
-</script>
+${js_help(['/js/signup.js'])}
 </main></body></html>`;}
-function get_local_style(){
-return `/css/login2.css`;
-}
 module.exports={signup};
+function html(s,...v){
+let r='';
+for(let i=0;i<v.length;i++){
+r+=s[i];
+r+=v[i];
+}
+r+=s[s.length-1];
+return r.replace(/\n/g,'');
+}
