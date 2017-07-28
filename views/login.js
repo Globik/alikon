@@ -6,7 +6,6 @@ const {js_help}=require('../libs/helper.js');
 const login= n =>{
 let {showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
-//console.log('busery me',n.user.name)
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Log in",cssl:["css/login2.css"]})}</head>
 <body>
 <main id="pagewrap">

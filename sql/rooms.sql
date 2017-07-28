@@ -1,9 +1,8 @@
 -- \i /home/globik/alikon/sql/rooms.sql
-create table rooms(id text not null,
+create table rooms(
 				  room_name text not null references busers(name),
 				  status text not null default 'm',
 				  view int not null default 0,
-				--  name text not null,
 				  src text not null default 'no');
 		/*		  
 CREATE OR REPLACE FUNCTION log_rooms() RETURNS TRIGGER AS $$

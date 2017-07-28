@@ -12,7 +12,7 @@ const busers = n=>{
 let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:`${model.name}. Live video.`,/*js:['/js/video_chat.js'],*/ csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"]})}
+<head>${head.head({title:`${model !==null ?model.name:'no user'}. Live video.`,/*js:['/js/video_chat.js'],*/ csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"]})}
 </head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
@@ -20,13 +20,13 @@ ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : 
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
 <main id="pagewrap"> 
 
-<div id="media-wrapper"><div id="media-header"><b>${model.name}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}</div>
+<div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}</div>
 <div id="video-container">
 <div id="video-wrapper" class="${n.imgsrc && n.imgsrc !=='no'?'':`${n.owner?'owner-offline':'offline'}`}">
 <video id="local_video" poster="${n.imgsrc && n.imgsrc !=='no'?n.imgsrc:''}" autoplay controls>HTML5 video element not supported.</video>
 </div>
 <div id="undervideo">
-${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button>${!n.owner ?'<button class="start" onclick="get_one();">send tip</button><button class="start" onclick="go_private();">private room</button>':''}
+${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button>${!n.owner ?'<button class="start" onclick="tip();">send tip</button><button class="start" onclick="go_private();">private room</button>':''}
 </div>
 </div>
 <div id="chat-container">
@@ -40,7 +40,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 <a href="#" class="overlay" id="resultativ"></a>
 <output id="pop" class="popi">
-<a href="#" class="close"><span class="before">X</span></a>
+<a href="#" class="close" style="text-decoration:none;"><span class="before" style="">X</span></a><div style="clear:both;"></div>
 <p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
 <p>You have <span id="yourTokens2"></span> tokens.</p>
 <p class="ptokenstosend">Tokens to send:&nbsp;&nbsp;<span class="ok" id="tokTosend"></span></p>
@@ -64,9 +64,9 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </p>
 </output>
 <!-- model -->
-<input type="hidden" id="modelName" value="${model.name}"/>
+<input type="hidden" id="modelName" value="${model?model.name:''}"/>
 <input type="hidden" id="modelId" value="${model.id}"/>
-<input type="hidden" id="modelEmail" value="${model.id}"/>
+
 <input type="hidden" id="owner" value='${n.owner}'/>
 <input type="hidden" id="modelTokens" value="${model.items}"/>
 
@@ -76,7 +76,6 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <input type="hidden" id="yourName" value="${buser ? buser.name : ''}"/>
 
 <input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
-<input type="hidden" id="yourEmail" value="${buser ? buser.id:''}"/>
 <input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
 
 
@@ -91,13 +90,11 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 
 
-
+<!--
 <div>
-
 <button onclick="get_room();">privat</button> <span id="tokpermin">10</span> tokens/min<br><br>
+</div> -->
 
-</div>
-<button onclick="vor_login();">log in</button>
 Time: <span id="mer">00:00:00</span><br><br>
 
 <hr><output id="out"></output>
@@ -122,15 +119,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 <a href="#" class="close" style="text-decoration:none;"><span class="before" style="">X</span></a><div style="clear:both;"></div>
 <div id="vorlogincontainer"></div>
 </output>
-<script>
-var loginstr=document.getElementById('loginstr');
-function vor_login(){
-vorlogincontainer.innerHTML=loginstr.value;
-let col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
-vorlogin.style.background=col;
-window.location.href="#vorlogery";
-}
-</script>
+
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>

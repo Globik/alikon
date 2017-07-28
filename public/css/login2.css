@@ -48,7 +48,7 @@ border: 1px solid rgb(28, 108, 122);
 .login-email.redinput,.login-pwd.redinput,.login-text.redinput{
 border:1px solid red;
 }
-#sessRed{color:green;}
+/*#sessRed{color:green;}*/
 #sessRed.red{color:red;}
 #sessRed.green{color:green;}
 /* social icons */

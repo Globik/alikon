@@ -102,8 +102,8 @@ height:12%;
 display:block;
 position:relative;
 }
-.start{background:lightblue;width:auto;height:100%;letter-spacing:0.05em;font-size:0.9em;}	
-.start[disabled]{background:pink;}	
+.start{background:lightblue;width:auto;height:100%;letter-spacing:0.05em;font-size:0.9em;cursor:pointer;}	
+.start[disabled]{background:pink;cursor:inherit;}	
 
 #chat-container{
 width:50%;
@@ -122,8 +122,8 @@ background:inherit;
 #underchat form{height:100%;}			
 #underchat input[type=text]{width:79%;height:100%;border-radius:0;}
 #underchat input[type=submit]{height:100%;background:lightgreen;width:21%;}
-#underchat input[type=submit].subm-state.waiting{background:green;}
-#underchat input[type=submit][disabled].subm-state{background:red;color:white;}
+#underchat input[type=submit].subm-state.waiting{background:green;cursor:pointer;}
+#underchat input[type=submit][disabled].subm-state{background:red;color:white;cursor:inherit;}
 	
 .chat-div{
 display:block;

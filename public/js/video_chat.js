@@ -6,18 +6,18 @@ var btype=0;
 
 var startDate,clocker,mlocker, startingDate;
 var modelName=gid('modelName').value;
-var modelEmail=gid('modelEmail').value;
+
 var modelId=gid('modelId').value;
 var modelTokens=gid('modelTokens');
 
 var yourName=gid('yourName').value;
 var yourId=gid('yourId').value;
-var yourEmail=gid('yourEmail').value;
+
 var yourTokens=gid('yourTokens');
 
 var tokTosend=gid('tokTosend');
 var submitChat=document.querySelector('#underchat input[type=submit].subm-state');
-
+var loginstr=gid('loginstr');
 
 yourTokens2.textContent=yourTokens.value;
 function buser(){
@@ -36,8 +36,8 @@ console.log('not owner!')
 if(yourTokens.value !="0"){
 console.log('tokens not 0');
 var data={};
-data.from=yourEmail;
-data.to=modelEmail;
+data.from=yourId;
+data.to=modelId;
 data.amount=Number(tokTosend.textContent);
 data.btype=1;
 data.type="token";
@@ -51,7 +51,17 @@ to_xhr(data);
 }else{
 console.log('you are an owner!');
 out.innerHTML='not selbst!';
-}}else{out.innerHTML='Please <a href="/login">log in</a>';}
+}}else{
+	out.innerHTML='Please <a href="/login">log in</a>';
+	//vor_login();
+}
+}
+
+function vor_login(){
+vorlogincontainer.innerHTML=loginstr.value;
+let col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
+vorlogin.style.background=col;
+window.location.href="#vorlogery";
 }
 
 function rechnet(amount){
@@ -155,12 +165,16 @@ function close_tokensblatt(){
 window.location.href='#';
 }
 
-function get_one(){
+function tip(){
 if(buser()){
 if(pidi==0)return;
 window.location.href="#resultativ";
 tokTosend.textContent='';
-reset_send_tok_style();}else{alert('please log in!');}
+reset_send_tok_style();}else{
+	if(pidi==0)return;
+	//alert('please log in!');
+vor_login();
+}
 }
 
 function reset_send_tok_style(){
@@ -215,7 +229,7 @@ if(owner()){
 var data={};
 data.pid=pidi;
 data.type=btype;
-data.who=modelEmail;
+data.who=modelName;
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/set_seat');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
@@ -268,7 +282,7 @@ submitChat.disabled=true;
 function go_socket(){
 if(!window.WebSocket)return;
 if(socket){console.log('scho gibts socket!');return;}
-socket=new WebSocket(new_uri+'//'+loc3+'/'+modelId);
+socket=new WebSocket(new_uri+'//'+loc3+'/'+modelName);
 socket.onopen=function(){
 submitChat.disabled=false;
 wso.innerHTML='websocket connected';
@@ -301,7 +315,6 @@ set_chat_btn_green();
 return false;
 }
 function set_chat_btn_green(){
-
 submitChat.classList.toggle('waiting');
 }
 /*
@@ -335,6 +348,7 @@ if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated);
 if(msg.pidi && msg.pidi !==0 && msg.pidi !==undefined){
 pidi=msg.pidi;
 pid.textContent=pidi;
+remove_user_offline();
 }
 
 }else{roomcreated=false;disableElement('connect_starter');}
@@ -486,7 +500,7 @@ let d='<b class="chat-user">'+message.from_nick+':&nbsp;</b>';
 let s=d+'<span class="chat-message">'+message.msg+'</span>';
 if(message){
 insert_message(s);
-set_chat_btn_green();
+if(message.from_nick===myusername)set_chat_btn_green();
 document.forms.publish.message.value="";
 }
 }
@@ -614,7 +628,7 @@ function sendSdp(sessionDescription) {
 console.log('---sending sdp ---');
 const jsonSDP = sessionDescription.toJSON();
 jsonSDP.planb = getUsePlanB();
-jsonSDP.roomname=modelId;
+jsonSDP.roomname=modelName;
 sendJson(jsonSDP);
 }
 
@@ -700,11 +714,11 @@ console.error('connected!')
 if(owner()){
 pidi=obid();
 pid.textContent=pidi;
-sendJson({type:'online',roomname:modelId, pidi:pidi});
+sendJson({type:'online',roomname:modelName, pidi:pidi});
 }
 
 }else if(peer.iceConnectionState==='closed'){
-if(owner()){sendJson({type:'offline', roomname:modelId,pidi:pidi});pidi=0;pid.textContent=pidi;}
+if(owner()){sendJson({type:'offline', roomname:modelName,pidi:pidi});pidi=0;pid.textContent=pidi;}
 }else if(peer.iceConnectionState==='failed'){
 pidi=0;pid.textContent=pidi;
 if(!buser()){
@@ -797,16 +811,16 @@ function do_conn(el){
 if(!con_fl){
 if(owner()){
 if(roomcreated){
-connect();
+connect(el);
 con_fl=true;
 el.textContent='disconnect';
 }else{alert('You have to start video first. Then press "connect"');}
 }else{
 if(roomcreated){
-connect();
+connect(el);
 con_fl=true;
 el.textContent='disconnect';
-}
+}else{connect(el);}
 }
 
 }else{
@@ -816,11 +830,12 @@ el.textContent='connect';
 }
 }
 
-function connect() {
+function connect(el) {
 if(!buser()){go_socket();}
 setTimeout(function(){
 if(roomcreated){
 //alert('is room created? '+roomcreated)
+if(!buser()){con_fl=true;el.textContent='disconnect';}
 callWithCapabilitySDP();
 updateButtons();
 }else{
@@ -839,7 +854,7 @@ vopt.offerToReceiveVideo=true;
 peerConnection.createOffer(vopt).then(function(sessionDescription){
 console.log('createOffer() succsess in callWithCapabilitySDP()');
 console.log('calling with Capalibity SDP ..');
-var whatsend={type: "call", planb: getUsePlanB(), capability: sessionDescription.sdp,roomname:modelId};
+var whatsend={type: "call", planb: getUsePlanB(), capability: sessionDescription.sdp,roomname:modelName};
 if(!owner()){
 whatsend.type="call_downstream";
 }
@@ -853,11 +868,11 @@ console.error('ERROR in callWithCapabilitySDP():', err);
 function createroom(src){
 if(owner()){
 var vobj={};
-vobj.roomname=modelId;
+vobj.roomname=modelName;
 vobj.owner=owner();
 vobj.id=clientId;
-vobj.email=modelEmail;
-vobj.name=modelName;
+//vobj.email=modelEmail;
+//vobj.name=modelName;
 vobj.src=src;
 vobj.type="createroom";
 sendJson(vobj);
@@ -866,14 +881,14 @@ sendJson(vobj);
 	
 function deleteroom(){
 if(roomcreated){
-sendJson({type:'removeroom', roomname:modelId,owner:owner(),id:clientId,email:modelEmail})
+sendJson({type:'removeroom', roomname:modelName,owner:owner(),id:clientId})
 }else{console.warn('roomcreated: ',roomcreated);}
 }
 
 
 
 function dissconnect() {
-sendJson({type: "bye",roomname: modelId});
+sendJson({type: "bye",roomname: modelName});
 if (peerConnection) {
 console.log('Hang up.');
 peerConnection.close();

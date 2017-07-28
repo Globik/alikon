@@ -12,12 +12,15 @@ xhr.onload=function(e){
 if(if_cont(submit,'waiting'));
 if(xhr.status==200){
 add_st();
-if_cont(sessRed,'red');
+//if_cont(sessRed,'red');
+sessRed.classList.add('green');	
 var mata=JSON.parse(this.response);
 sessRed.innerHTML=mata.info;
 window.location.href=mata.redirect;
 }else{
-if_cont(sessRed,'red');
+//if_cont(sessRed,'red');
+sessRed.classList.remove('green');
+	sessRed.classList.add('red');
 sessRed.innerHTML=this.response;
 add_st();
 }}

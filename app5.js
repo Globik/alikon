@@ -356,7 +356,7 @@ console.log('ROOM SIZE:',droom.size);
 }
 function on_close_room(err){
 droom.delete(name)
-pool.query(`delete from rooms where id='${name}' RETURNING id`).then(result=>{
+pool.query(`delete from rooms where room_name='${name}' RETURNING room_name`).then(result=>{
 console.log('DELETE RETURNING ID: ',result.rows[0]);
 sse.publish('ch_log_rooms','remove_room', result.rows[0])
 sendback(ws,{type:'goodbyeroom',roomname: name});
@@ -455,9 +455,17 @@ console.log('creating a room for id=', ws.clientId);
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
-let mail=mail_enc.decrypt(msg.email)
-pool.query(`insert into rooms(id,email,name,src) values('${ws.roomid}','${mail}','${msg.name}','${msg.src}') 
-returning id,status, view,name,src`).then(result=>{
+//let mail=mail_enc.decrypt(msg.email)
+/*
+id text not null,
+				  room_name text not null references busers(name),
+				  status text not null default 'm',
+				  view int not null default 0,
+				--  name text not null,
+				  src text not null default 'no');
+				  */
+pool.query(`insert into rooms(room_name,src) values('${msg.roomname}','${msg.src}') 
+returning status,view,room_name,src`).then(result=>{
 console.log('result insert rooms: ',result.rowCount);
 
 sendback(ws,{roomname:msg.roomname,type:'onroom'})
@@ -484,7 +492,7 @@ sendtoclients=false;
 debug('ONLINE roomer_online event:',msg);
 ws.ready=true;
 ws.pidi=msg.pidi;
-pool.query(`select src from rooms where id='${msg.roomname}'`).then(res=>{
+pool.query(`select src from rooms where room_name='${msg.roomname}'`).then(res=>{
 emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src})
 }).catch(er=>{console.log(er);
 emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:undefined})			 
@@ -498,11 +506,9 @@ emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
 sendtoclients=false;
 }else if(msg.type=="token"){
 console.log('TOKEN OCCURED: ',msg);
-//let {from,to,amount,type,pid}=ctx.request.body;
-let mail_to=email_enc.decrypt(msg.to);
-//var lamount=0;
+
 pool.query(`insert into transfer(tfrom, tos, amount,type,pid) 
-values('${msg.from}','${mail_to}',${msg.amount},${msg.btype},'${msg.pid}')`).then(res=>{
+values('${msg.from}','${msg.to}',${msg.amount},${msg.btype},'${msg.pid}')`).then(res=>{
 console.log('INSERTING A TOKEN: ',res);
 emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick});
 sendback(ws,{type:"success_token_transfer",from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
@@ -536,6 +542,7 @@ console.log('got Offer from id=');
 console.log('must not got offer.');
 }else if(msg.type=="answer"){
 console.log('got Answer from id=' + ws.clientId);
+	console.log('!!!MSG: !!!!',msg)
 handleAnswer(ws, msg);
 }else if(msg.type=="bye"){
 //dissconnect button
@@ -675,9 +682,9 @@ console.log('setRemoteDescription for Answer ERROR:', err)
 }
 
 function update_view(peerlength,roomname){
-pool.query(`update rooms set view=${peerlength} where id='${roomname}'`).then(r=>{
+pool.query(`update rooms set view=${peerlength} where room_name='${roomname}'`).then(r=>{
 console.log('ok update rooms view handleanswer')
-sse.publish('ch_log_rooms','room_view', {peers:peerlength,id:roomname})
+sse.publish('ch_log_rooms','room_view', {peers:peerlength,room_name:roomname})
 }).catch(err=>{console.log('err update rooms view handleanswer: ',err)})
 }
 

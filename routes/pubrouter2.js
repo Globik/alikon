@@ -420,19 +420,26 @@ var imgsrc=undefined;
 var result2=undefined;
 try{
 var result=await db.query(`select id,name,role,verif,model,items from busers where name='${ctx.params.buser_name}'`);
-if(result.rows[0]) {
-result2=await db.query(`select src from rooms where room_name='${result.rows[0].name}'`)
+	//console.log('result.rows in buser_name:',result.rows,result.rows.length)
+	//console.log('result.rows[0] in buser_name:',result.rows[0])
+if(result.rows.length>0) {
+//result2=await db.query(`select src from rooms where room_name='${result.rows[0].name}'`)
 //console.log('result2: ',result2.rows[0])
-if(result2 && result2.rows[0]){imgsrc=result2.rows[0].src}
+//if(result2 && result2.rows[0]){imgsrc=result2.rows[0].src}
 us=result.rows[0];
 }else{
 console.log('no results in result!');
-ctx.throw(404,"No user by that name!!!")}
-if(ctx.state.user && ctx.state.user.name===ctx.params.buser_name){owner=true;}
+//ctx.throw(404,"No user by that name!!!")
+	ctx.session.error="No such user."
+	return ctx.redirect('/error');
+}
+
+
 }catch(e){
 console.log('error in webrtc/:buser_name db: ',e)
-ctx.redirect('/error');
+//return ctx.redirect('/error');
 }
+	if(ctx.state.user && ctx.state.user.name===ctx.params.buser_name){owner=true;}
 ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),imgsrc:imgsrc});
 });
 
@@ -453,10 +460,10 @@ pub.post('/api/set_seat', async ctx=>{
 let db=ctx.db;
 const {pid,who,type}=ctx.request.body;
 	//console.log(ctx.request.body)
-	let mail=email_enc.decrypt(who)
+	//let mail=email_enc.decrypt(who)
 	//console.log('mail: ',mail)
 try{
-await db.query(`insert into seats(pid,us_id,type) values('${pid}','${mail}',${type})`);
+await db.query(`insert into seats(pid,us_name,type) values('${pid}','${who}',${type})`);
 }catch(e){console.log(e);}
 ctx.body={info:"OK",body: ctx.request.body}
 });

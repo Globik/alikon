@@ -51,7 +51,7 @@ ${users_list(lusers)}
 <hr>
 <h4>Roomers:</h4>
 <div id="roomContainer">
-${roomers && roomers.length >0 ? roomers_list(roomers) : '<b id="noroomer">No rooms at the moment</b>'}
+${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">No rooms at the moment</b> -->'}
 </div>
 <hr>
 <h1>Buy Tokens for Bitcoins!</h1>
@@ -97,30 +97,32 @@ s.addEventListener('room_view',room_view,false);
 function remove_room(e){
 console.log('on remove_room : '+e.data);
 var mata=JSON.parse(e.data);
-var l=document.querySelector('[data-divroomid="'+mata.id+'"]');
+var l=document.querySelector('[data-divroomid="'+mata.room_name+'"]');
 if(l){l.remove()}
 }
 
 function add_room(e){
 let m=JSON.parse(e.data);
+console.warn('on_add room');
 let div=document.createElement('div');
-div.setAttribute("data-divroomid", m.id);
+div.setAttribute("data-divroomid", m.room_name);
 var bsrc;
 if(m.src !=="no"){
 bsrc='<img src="'+m.src+'"/>';
 }else{
 bsrc='no image at the moment';
 }
-div.innerHTML='<a href="/webrtc/'+m.name+'">'+m.name+'</a><br><br>'+
+div.innerHTML='<a href="/webrtc/'+m.room_name+'">'+m.room_name+'</a><br><br>'+
 '<b>img src: </b>'+bsrc+'<br><br>'+
-'<b>status: </b><span class="rstatus" data-rstatus="'+m.id+'">'+m.status+'</span><br><br>'+
-'<b>viewers: </b><span class="rviewers" data-rviewers="'+m.id+'">'+m.view+'</span><br><br>';
+'<b>status: </b><span class="rstatus" data-rstatus="'+m.room_name+'">'+m.status+'</span><br><br>'+
+'<b>viewers: </b><span class="rviewers" data-rviewers="'+m.room_name+'">'+m.view+'</span><br><br>';
 //noroomer.remove();
 roomContainer.appendChild(div);
 }
 function room_view(e){
 let d=JSON.parse(e.data);
-let m=document.querySelector('[data-rviewers="'+d.id+'"]');
+console.warn('on room_view: ',d);
+let m=document.querySelector('[data-rviewers="'+d.room_name+'"]');
 if(m){m.textContent=d.peers;}
 }
 </script>
@@ -159,11 +161,11 @@ let s='';
 if(Array.isArray(n)){
  s+='<ul>';
  n.forEach((el,i)=>{
-s+=`<hr><div data-divroomid="${el.id}">
+s+=`<hr><div data-divroomid="${el.name}">
 <a href="/webrtc/${el.name}">${el.name}</a><br><br>
 <b>img src: </b>${el.src !=="no" ? `<img src="${el.src}"/>`:'no image'}<br><br>
-<b>status: </b><span class="rstatus" data-rstatus="${el.id}">${el.status}</span><br><br>
-<b>viewers: </b><span class="rviewers" data-rviewers="${el.id}">${el.view}</span><br><br>
+<b>status: </b><span class="rstatus" data-rstatus="${el.name}">${el.status}</span><br><br>
+<b>viewers: </b><span class="rviewers" data-rviewers="${el.name}">${el.view}</span><br><br>
 </div><hr>`;
 });
 	s+='</ul>';
