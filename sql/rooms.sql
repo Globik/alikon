@@ -3,7 +3,9 @@ create table rooms(
 				  room_name text not null references busers(name),
 				  status text not null default 'm',
 				  view int not null default 0,
-				  src text not null default 'no');
+				  src text);
+-- insert into rooms(room_name,src) values('globik','src');
+
 		/*		  
 CREATE OR REPLACE FUNCTION log_rooms() RETURNS TRIGGER AS $$
 DECLARE 

@@ -11,6 +11,11 @@ if(n.success){s=n.message}else{s=`<b>Your Password Change Complete!</b><br><br>$
 }
 return s;
 }
+let classi=n=>{
+let s='';
+if(n.success){s+='green'}else{s+='red';}
+return s;
+}
 return `<!DOCTYPE html><html lang="en">
 <head>
 ${head.head({title:"Reset Password", cssl:["/css/login2.css"]})}
@@ -22,7 +27,7 @@ ${head.head({title:"Reset Password", cssl:["/css/login2.css"]})}
 <div class=""><p>
 Enter your new account password below. Once confirmed, you'll be logged into your account and your new password will be active.
 </p></div>
-<span id="sessRed" class="${n.errmsg && n.errmsg.success?'green':'red'}">${messi(n.errmsg)}</span><br>
+<span id="sessRed" class="${n.errmsg?classi(n.errmsg):''}">${messi(n.errmsg)}</span><br>
 <label><strong>Email</strong></label>
 <input type="email" class="login-email" name="email" value="" placeholder="Your email" required>
 <label><strong>Password</strong></label>

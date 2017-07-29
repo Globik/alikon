@@ -18,7 +18,7 @@ var red_username_input=document.querySelector('.login-text');
 form.addEventListener('submit',baba, false);
 function baba(ev){
 ev.preventDefault();
-if_cont(submit,'waiting')
+if_cont(submit,'waiting','no')
 to_ajx(ev);
 }
 
@@ -32,6 +32,7 @@ xhr.open(ev.target.method, ev.target.action);
 xhr.setRequestHeader('Content-Type', 'application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(evi){
+if_cont(submit,'no','waiting');
 if(xhr.status==200){
 var ra=JSON.parse(this.response);
 if(ra.success==false){notif_er(ra)}else{notif(ra);}
@@ -40,7 +41,9 @@ if(ra.success==false){notif_er(ra)}else{notif(ra);}
 notif_er(this);
 }
 }
-xhr.onerror=function(e){console.error(e);
+xhr.onerror=function(e){
+if_cont(submit,'no','waiting');
+console.error(e);
 alert('Internet connection failed');
 }
 var dies=JSON.stringify(pars);
@@ -55,7 +58,6 @@ setTimeout(function(){window.location.href=e.redirect;},2000);
 
 
 function notif_er(e){
-if_cont(submit,'waiting');
 if(e.code=='23505'){
 if(e.bcode==2){
 redmail();
@@ -118,6 +120,7 @@ function totext(s, v){return s.textContent=v;}
 function is_equal(d,s){
 if(d.textContent===s) {return true;}else{return false;}
 }
-function if_cont(el,clas){
-if(!el.classList.contains(clas)){el.classList.add(clas)}else{el.classList.remove(clas);}
-}
+
+function if_cont(el,a,b){
+if(el.classList.contains(b)){el.classList.remove(b)}
+el.classList.add(a);}

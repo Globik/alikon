@@ -9,6 +9,11 @@ if(!n.errmsg.success){
 if(n.errmsg.message.includes('tokens_email_fkey'))s+='No such email addresse'
 }else{s+=n.errmsg.message;}}
 return s}
+let classi=n=>{
+let s='';
+if(n.success){s+='green'}else{s+='red';}
+return s;
+}
 return `<!DOCTYPE html><html lang="en">
 <head>
 ${head.head({title:"Reset Password",cssl:["/css/login2.css"] })}
@@ -17,17 +22,15 @@ ${head.head({title:"Reset Password",cssl:["/css/login2.css"] })}
 <a href="/">home</a>
 <div id="loginery-wrap">
 <form id="mform" action="/forgot" method="post">
-<div class="">
-<h3>Forgot your password?</h3>
+<h4>Forgot your password?</h4>
 <p>
 Enter your email address below to reset your password. 
 You will be sent an email  which you will need to open to continue. 
 You may need to check your spam folder.
 </p>
-</div>
-<span id="sessRed" class="${n.errmsg && n.errmsg.success ?'green':'red'}">${messi(n)}</span><br>
+<span id="sessRed" class="${n.errmsg?classi(n.errmsg):''}">${messi(n)}</span><br>
 <label><strong>Email</strong></label>
-<input type="email" name="email" class="login-email ${(n.errmsg && !n.errmsg.success)?'redinput':''}" placeholder="E-mail" value="gru5@yandex.ru" required />
+<input type="email" name="email" class="login-email ${(n.errmsg)?`${n.errmsg.success?'':'redinput'}`:''}" placeholder="E-mail" value="gru5@yandex.ru" required />
 <input type="submit" class="login-submit" value="Reset" ${n.errmsg && n.errmsg.success ? 'disabled':''}>
 <div class="underform">
 <small><a href="/login">Back to log in</a></small>

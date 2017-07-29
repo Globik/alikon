@@ -19,7 +19,7 @@ form.onsubmit=go_reset;
 function go_reset(ev){
 ev.preventDefault();
 to_ajx(ev);
-if_cont(submit,'waiting');
+if_cont(submit,'waiting','no');
 }	
 
 function notif(e){	
@@ -40,14 +40,14 @@ xhr.open(l.target.method,l.target.action);
 xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(evi){
-if_cont(submit,'waiting');
+if_cont(submit,'no','waiting');
 if(xhr.status==200){
 notif(this);
 }else{
 notif_er(this);
 }}
 xhr.onerror=function(e){
-if_cont(submit,'waiting');
+if_cont(submit,'no','waiting');
 alert('Internet connection failed.');}
 xhr.send(pars);
 }
@@ -77,6 +77,7 @@ function totext(s, v){return s.textContent=v;}
 function is_equal(d,s){
 if(d.textContent===s) {return true;}else{return false;}
 }
-function if_cont(el,clas){
-if(!el.classList.contains(clas)){el.classList.add(clas)}else{el.classList.remove(clas);}
-}
+
+function if_cont(el,a,b){
+if(el.classList.contains(b)){el.classList.remove(b)}
+el.classList.add(a);}

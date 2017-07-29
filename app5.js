@@ -187,6 +187,7 @@ pg_store.setup().then(()=>{
 pool.query(`delete from rooms`).then(r=>{
 console.log('OK, deleteng all rooms!')
 }).catch(err=>console.log('Error in deleteng all rooms: ',err))
+
 var servak=app.listen(process.env.PORT || 5000)
 	
 console.log('is Mediasoup server closed?: ',server.closed)
@@ -358,7 +359,7 @@ function on_close_room(err){
 droom.delete(name)
 pool.query(`delete from rooms where room_name='${name}' RETURNING room_name`).then(result=>{
 console.log('DELETE RETURNING ID: ',result.rows[0]);
-sse.publish('ch_log_rooms','remove_room', result.rows[0])
+//sse.publish('ch_log_rooms','remove_room', result.rows[0])
 sendback(ws,{type:'goodbyeroom',roomname: name});
 }).catch(err=>{console.log('err delete room by id: ',err);})
 if(err){
@@ -455,22 +456,14 @@ console.log('creating a room for id=', ws.clientId);
 croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
-//let mail=mail_enc.decrypt(msg.email)
-/*
-id text not null,
-				  room_name text not null references busers(name),
-				  status text not null default 'm',
-				  view int not null default 0,
-				--  name text not null,
-				  src text not null default 'no');
-				  */
-pool.query(`insert into rooms(room_name,src) values('${msg.roomname}','${msg.src}') 
+
+pool.query(`insert into rooms(room_name) values('${msg.roomname}') 
 returning status,view,room_name,src`).then(result=>{
 console.log('result insert rooms: ',result.rowCount);
 
 sendback(ws,{roomname:msg.roomname,type:'onroom'})
 	
-sse.publish('ch_log_rooms','add_room', result.rows[0])
+//sse.publish('ch_log_rooms','add_room', result.rows[0])
 }).catch(err=>{console.log('err insert rooms: ',err)})
 
 
@@ -492,8 +485,11 @@ sendtoclients=false;
 debug('ONLINE roomer_online event:',msg);
 ws.ready=true;
 ws.pidi=msg.pidi;
-pool.query(`select src from rooms where room_name='${msg.roomname}'`).then(res=>{
-emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src})
+let sis1=`update rooms set src='${msg.src}' where room_name='${msg.roomname}' returning status,view,room_name,src`;
+pool.query(sis1).then(res=>{
+emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src});
+	sse.publish('ch_log_rooms','add_room', res.rows[0])
+	//status,view,room_name,src
 }).catch(er=>{console.log(er);
 emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:undefined})			 
 })
@@ -501,8 +497,12 @@ sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
 console.log('PIDI: ', msg.pidi)
+let sis2=`update rooms set src='' where room_name='${msg.roomname}' returning room_name`;
+pool.query(sis2).then(res=>{
 update_end(msg.pidi)
 emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
+sse.publish('ch_log_rooms','remove_room', {room_name:msg.roomname})
+}).catch(e=>{console.log(e)})
 sendtoclients=false;
 }else if(msg.type=="token"){
 console.log('TOKEN OCCURED: ',msg);
@@ -516,15 +516,6 @@ sendback(ws,{type:"success_token_transfer",from:msg.from,to:msg.to,amount:msg.am
 console.log('error insert token: ',e.message);
 sendback(ws,{type:'error',mess:e.message})
 })
-		 
-
-/*data.from=yourEmail;
-data.to=modelEmail;
-data.amount=Number(tokTosend.textContent);
-data.btype=1;
-data.type="token";
-data.pid=pid.textContent;
-*/
 
 sendtoclients=false;
 }else if(msg.type=="call"){
@@ -845,9 +836,10 @@ server.on('newroom',(r)=>{
 });
 server.on('close',(er)=>{
 console.log('closing the mediasoup server');
+	
 pool.query(`delete from rooms`).then(result=>{
 console.log('result delete rooms ON_CLOSE mediasoup: OK')
-}).catch(err=>{console.log('err delete rooms: ',err)})
+}).catch(err=>{console.log('err delete rooms: ',err)}) 
 if(er){console.log(er);}
 })
 

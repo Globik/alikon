@@ -712,9 +712,12 @@ sendJson({type:'online',roomname:modelId,pidi:pidi});
 }else if(peer.iceConnectionState==='connected'){
 console.error('connected!')
 if(owner()){
+	/*
 pidi=obid();
 pid.textContent=pidi;
 sendJson({type:'online',roomname:modelName, pidi:pidi});
+*/
+	get_image();
 }
 
 }else if(peer.iceConnectionState==='closed'){
@@ -865,7 +868,7 @@ console.error('ERROR in callWithCapabilitySDP():', err);
 });
 }
 	
-function createroom(src){
+function createroom(){
 if(owner()){
 var vobj={};
 vobj.roomname=modelName;
@@ -873,7 +876,7 @@ vobj.owner=owner();
 vobj.id=clientId;
 //vobj.email=modelEmail;
 //vobj.name=modelName;
-vobj.src=src;
+//vobj.src=src;
 vobj.type="createroom";
 sendJson(vobj);
 }
@@ -991,11 +994,14 @@ var li=cnv.toDataURL('image/png',1.0);
 var emg=document.createElement('img');
 emg.src=li;
 pagewrap.appendChild(emg);
-createroom(li);
+pidi=obid();
+pid.textContent=pidi;
+sendJson({type:'online',roomname:modelName, pidi:pidi,src:li});
+//createroom(li);
 },10)
 }
 
 local_video.onloadedmetadata=function(e){
-if(owner())get_image(roomcreated);
+if(owner())createroom();//get_image(roomcreated);
 }
 function gid(id){return document.getElementById(id);}

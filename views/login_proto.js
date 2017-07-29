@@ -8,12 +8,17 @@ if(!m.errmsg.success)s=m.errmsg.error;
 }
 return s;
 }
+let classi=n=>{
+let s='';
+if(n.success){s+='green'}else{s+='red';}
+return s;
+}
 const login_proto=n=>{
 return html`
 <div id="loginery-wrap">
-<form id="mform" name="mform" action="/login" method="post" onsubmit="try{baba(this);}catch(e){alert(e);}return false;">
+<form id="mform" name="mform" action="/login" method="post" onsubmit="go_login(this);return false;">
 <h4>Welcome. Please login.<a href="/" style="float:right;font-size:1em;">home</a></h4>
-<span id="sessRed" class="">${messi(n)}</span><br>
+<span id="sessRed" class="${n.errmsg?classi(n.errmsg):''}">${messi(n)}</span><br>
 <label><strong>Email</strong> </label>
 <input type="email" name="email" class="login-email ${n.errmsg?'redinput':''}" placeholder="E-mail" value="" required />
 <label style=""><strong>Password</strong></label><a style="float:right;" href="/forgot"><strong>Lost your password?</strong></a>

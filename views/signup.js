@@ -40,7 +40,12 @@ let s='';
 if(!fu2)s+=f;fu2=true;
 return s;
 }
-return `<!DOCTYPE html><html lang="en">
+let classi=n=>{
+let s='';
+if(n.success){s+='green'}else{s+='red';}
+return s;
+}
+return html`<!DOCTYPE html><html lang="en">
 <head>
 ${head.head({title:"sign up",cssl:["/css/login2.css"]})}
 </head>
@@ -49,7 +54,7 @@ ${head.head({title:"sign up",cssl:["/css/login2.css"]})}
 <div id="loginery-wrap">
 <form id="mform" name="mform" action="/signup" method="post">
 <h4>Welcome. Please sign up.<a href="/" style="float:right;font-size:1em;">home</a></h4>
-<span id="sessRed" class="${n.errmsg?'red':''}">${messi(n.errmsg)}</span><br>
+<span id="sessRed" class="${n.errmsg?classi(n.errmsg):''}">${messi(n.errmsg)}</span><br>
 
 <label><strong>Username</strong></label>&nbsp;&nbsp;<span id="nameout"></span>
 <input type="text" class="login-text" style="${do_inp()}" name="username" placeholder="Username" value="mark" required/>
@@ -63,7 +68,7 @@ class="login-pwd" placeholder="Password" value="${dev_pwd ? dev_pwd : ''}" requi
 
 <input type="submit" class="login-submit" value="Sign Up" ${n.user?'disabled':''}>
 
-<div class="underform"><strong>Already a member?</strong> <a href="/login" style="float:right;">Login</a></div>
+<div class="underform"><strong>Already a member?</strong> <a href="/login" style="float:right;">Login</a></div><hr>
 <div class="underform"><strong>Or you can sign in with:</strong></div>
 <a href="/auth/facebook">
 <div class="soc-part fb">

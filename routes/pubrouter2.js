@@ -318,7 +318,7 @@ delete ctx.session.error;
 // heroku pg:psql --app alikon
 pub.post('/reset/:token', async ctx=>{
 if(!ctx.request.body.email && !ctx.request.body.token && !ctx.request.body.password) {
-let es="Please fill in all falders!"
+let es="Please fill out all fields!"
 if(ctx.state.xhr){ctx.throw(400,es)}else{
 ctx.session.error=es;
 return ctx.redirect(`/reset/${ctx.request.body.token}` || '/error')
@@ -406,6 +406,7 @@ pub.get('/tipping/purchase_tokens',ctx=>{
 ctx.session.dorthin=ctx.path;
 ctx.body=ctx.render('purchase',{/*buser:this.req.user*/});
 });
+
 /* *************************************************************************
 WEBRTC STUFF /:models
 *************************************************************************** */
@@ -413,36 +414,37 @@ WEBRTC STUFF /:models
 pub.get('/webrtc/:buser_name', async ctx=>{
 let db=ctx.db;
 ctx.session.dorthin=ctx.path;
-var us=null;
-var owner=false;
-var mich={}
-var imgsrc=undefined;
-var result2=undefined;
+let us=null;
+let owner=false;
+let sis=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,rooms.src 
+from busers left join rooms on busers.name=rooms.room_name where busers.name='${ctx.params.buser_name}'`;
 try{
-var result=await db.query(`select id,name,role,verif,model,items from busers where name='${ctx.params.buser_name}'`);
-	//console.log('result.rows in buser_name:',result.rows,result.rows.length)
-	//console.log('result.rows[0] in buser_name:',result.rows[0])
+var result=await db.query(sis);
 if(result.rows.length>0) {
-//result2=await db.query(`select src from rooms where room_name='${result.rows[0].name}'`)
-//console.log('result2: ',result2.rows[0])
-//if(result2 && result2.rows[0]){imgsrc=result2.rows[0].src}
 us=result.rows[0];
 }else{
 console.log('no results in result!');
-//ctx.throw(404,"No user by that name!!!")
-	ctx.session.error="No such user."
-	return ctx.redirect('/error');
+ctx.session.error="No such user."
+return ctx.redirect('/error');
 }
-
-
 }catch(e){
 console.log('error in webrtc/:buser_name db: ',e)
-//return ctx.redirect('/error');
+ctx.session.error=e;
+return ctx.redirect('/error');
 }
-	if(ctx.state.user && ctx.state.user.name===ctx.params.buser_name){owner=true;}
-ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),imgsrc:imgsrc});
-});
+if(ctx.state.user && ctx.state.user.name===ctx.params.buser_name){owner=true;}
+ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate()});
+})
 
+pub.post('/api/gof',async ctx=>{
+let db=ctx.db;
+let sis=`select busers.name,busers.role,rooms.src from busers left join rooms on busers.name=rooms.room_name where busers.name='globik'`;
+let sis2=`select rooms.src,busers.role from rooms inner join busers on busers.name=rooms.room_name where rooms.room_name='globik'`; 
+try{
+var result=await db.query(sis);
+}catch(e){ctx.throw(404,e);}
+ctx.body={result:result.rows}
+})
 /*
 pub.post('/api/set_transfer', auth, async ctx=>{
 let db=ctx.db;

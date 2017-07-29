@@ -62,32 +62,12 @@ ${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">N
 <a href="/demo/videostream">test videostream</a><br><br>
 <a href="/demo/webrtc">test webrtc</a><br><br>
 <script>
-/*
-var socket=new WebSocket('ws://'+location.hostname+':'+location.port);
-socket.onopen=function(){
-wso.innerHTML='websocket connected';
-socket.send("hello server");
-}
-socket.onclose=function(ev){wso.innerHTML='closed '+ev;}
-socket.onerror=function(e){wso.innerHTML=e.message;}
-socket.onmessage=function(ev){
-wso.innerHTML+='<br>message: '+ev.data;
-socket.send("Here is websocket client to server");
-}
-*/
+
 var s=new EventSource('/log_rooms');
 s.onopen=function(e){console.log('event source is opened! ')}
 s.onmessage=function(e){
 console.log('event data:',e.data);
 var mata=JSON.parse(e.data);
-//if(mata.type==='leave'){
-//var l=document.querySelector('[data-id="'+mata.id+'"]');
-//if(l){
-//console.log('ok');
-//l.remove();
-//}
-//}
-
 }
 s.onerror=function(e){console.error("event source error: ");}
 s.addEventListener('remove_room',remove_room,false);
@@ -107,7 +87,7 @@ console.warn('on_add room');
 let div=document.createElement('div');
 div.setAttribute("data-divroomid", m.room_name);
 var bsrc;
-if(m.src !=="no"){
+if(m.src){
 bsrc='<img src="'+m.src+'"/>';
 }else{
 bsrc='no image at the moment';
@@ -116,7 +96,6 @@ div.innerHTML='<a href="/webrtc/'+m.room_name+'">'+m.room_name+'</a><br><br>'+
 '<b>img src: </b>'+bsrc+'<br><br>'+
 '<b>status: </b><span class="rstatus" data-rstatus="'+m.room_name+'">'+m.status+'</span><br><br>'+
 '<b>viewers: </b><span class="rviewers" data-rviewers="'+m.room_name+'">'+m.view+'</span><br><br>';
-//noroomer.remove();
 roomContainer.appendChild(div);
 }
 function room_view(e){
@@ -124,6 +103,25 @@ let d=JSON.parse(e.data);
 console.warn('on room_view: ',d);
 let m=document.querySelector('[data-rviewers="'+d.room_name+'"]');
 if(m){m.textContent=d.peers;}
+}
+</script>
+<button onclick="gof();">gof</button>
+<script>
+function gof(){
+let data={}
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/gof');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+console.warn('xhr from server: ',this.response);
+}else{
+console.error('xhr from server: ',this.response);
+}}
+xhr.onerror=function(e){alert(e)};
+data.me='du';
+console.log(JSON.stringify(data));
+xhr.send(JSON.stringify(data));
 }
 </script>
 </main>
@@ -163,7 +161,7 @@ if(Array.isArray(n)){
  n.forEach((el,i)=>{
 s+=`<hr><div data-divroomid="${el.name}">
 <a href="/webrtc/${el.name}">${el.name}</a><br><br>
-<b>img src: </b>${el.src !=="no" ? `<img src="${el.src}"/>`:'no image'}<br><br>
+<b>img src: </b>${el.src ? `<img src="${el.src}"/>`:'no image'}<br><br>
 <b>status: </b><span class="rstatus" data-rstatus="${el.name}">${el.status}</span><br><br>
 <b>viewers: </b><span class="rviewers" data-rviewers="${el.name}">${el.view}</span><br><br>
 </div><hr>`;

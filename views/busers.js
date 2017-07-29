@@ -22,8 +22,8 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 
 <div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}</div>
 <div id="video-container">
-<div id="video-wrapper" class="${n.imgsrc && n.imgsrc !=='no'?'':`${n.owner?'owner-offline':'offline'}`}">
-<video id="local_video" poster="${n.imgsrc && n.imgsrc !=='no'?n.imgsrc:''}" autoplay controls>HTML5 video element not supported.</video>
+<div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}">
+<video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.</video>
 </div>
 <div id="undervideo">
 ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button>${!n.owner ?'<button class="start" onclick="tip();">send tip</button><button class="start" onclick="go_private();">private room</button>':''}
@@ -66,7 +66,6 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <!-- model -->
 <input type="hidden" id="modelName" value="${model?model.name:''}"/>
 <input type="hidden" id="modelId" value="${model.id}"/>
-
 <input type="hidden" id="owner" value='${n.owner}'/>
 <input type="hidden" id="modelTokens" value="${model.items}"/>
 

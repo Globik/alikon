@@ -263,7 +263,8 @@ display:none;
 .btnnotok.notok{display:inline;}
 .er-info{border:1px solid red;font-size:1.2em;padding:0.5em;}
 .ok-info{border:1px solid green;font-size:1.2em;padding:0.5em;}
-	
+	#mick.red{background:red;}
+	#mick.green{background:green;}
 @media screen and (max-width: 650px) {
 #media-wrapper{height:auto;min-height:none;}
 #video-container,#chat-container{float:none;width:100%;height:auto;}
@@ -344,9 +345,28 @@ display:none;
 <p>
 <button onclick="send_tokens();" class="">send&nbsp;&nbsp;<span class="btnok">&check;</span><span class="btnnotok">&times;</span></button>
 </p>
-</output>
-		
+</output><br><br>
+	<button onclick="green();">green</button><button onclick="red();">red</button><br><br>
+	<button onclick="unit();">unit</button>
+	<div id="mick" class="duri">mick</div>	
 <script>
+	var re=null;
+	if(re){console.log('not null re',re);}else{console.log('re is',re)}
+	function green(){
+	//mick.classList.remove('red');
+	//mick.classList.add('green');
+		unit('green','red');
+	}
+	function red(){
+	//mick.classList.remove('green');
+	//mick.classList.add('red');
+		unit('red','green');
+	}
+	
+	function unit(a,b){
+		if(mick.classList.contains(b)){mick.classList.remove(b);}
+		mick.classList.add(a);
+	}
 var balu=false;
 document.forms.publish.onsubmit=function(){
 try{
