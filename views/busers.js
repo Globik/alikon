@@ -76,6 +76,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 
 <input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
 <input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
+<input type="hidden" id="inkognito" value="${n.incognito}"/>
 
 
 <div class="firstchild" id="camera-container">

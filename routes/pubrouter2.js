@@ -413,6 +413,7 @@ WEBRTC STUFF /:models
 
 pub.get('/webrtc/:buser_name', async ctx=>{
 let db=ctx.db;
+let inkognito=false;
 ctx.session.dorthin=ctx.path;
 let us=null;
 let owner=false;
@@ -433,7 +434,7 @@ ctx.session.error=e;
 return ctx.redirect('/error');
 }
 if(ctx.state.user && ctx.state.user.name===ctx.params.buser_name){owner=true;}
-ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate()});
+ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),inkognito});
 })
 
 pub.post('/api/gof',async ctx=>{

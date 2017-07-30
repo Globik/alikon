@@ -12,12 +12,14 @@ var modelTokens=gid('modelTokens');
 
 var yourName=gid('yourName').value;
 var yourId=gid('yourId').value;
+//var ink=gid('inkognito').value;
 
 var yourTokens=gid('yourTokens');
 
 var tokTosend=gid('tokTosend');
 var submitChat=document.querySelector('#underchat input[type=submit].subm-state');
 var loginstr=gid('loginstr');
+var localVideo = gid('local_video');
 
 yourTokens2.textContent=yourTokens.value;
 function buser(){
@@ -26,7 +28,9 @@ if(gid('buser').value==='true'){return true;}else{return false;}
 function owner(){
 if(gid('owner').value==='true'){return true;}else{return false;}
 }
-
+function ink(){
+if(gid('inkognito').value==='true'){return true;}else{return false;}
+}
 function send_tokens(){
 if(pidi==0)return;
 if(buser()){
@@ -52,8 +56,7 @@ to_xhr(data);
 console.log('you are an owner!');
 out.innerHTML='not selbst!';
 }}else{
-	out.innerHTML='Please <a href="/login">log in</a>';
-	//vor_login();
+out.innerHTML='Please <a href="/login">log in</a>';
 }
 }
 
@@ -166,13 +169,11 @@ window.location.href='#';
 }
 
 function tip(){
-if(buser()){
 if(pidi==0)return;
+if(buser()){
 window.location.href="#resultativ";
 tokTosend.textContent='';
 reset_send_tok_style();}else{
-	if(pidi==0)return;
-	//alert('please log in!');
 vor_login();
 }
 }
@@ -389,7 +390,7 @@ disableElement('video_starter');
 broadcast();
 gid('online-detector').classList.toggle('puls');
 }else{
-if(msg.src){console.log('going to poster');local_video.poster=msg.src;}
+if(msg.src){console.log('going to poster');localVideo.poster=msg.src;}
 if(msg.ready){enabelElement('connect_starter');pidi=msg.pidy;roomcreated=true;}
 }
 }else if(msg.type==='roomer_offline'){
@@ -400,13 +401,16 @@ if(owner()){enabelElement('video_starter');
 gid('online-detector').classList.toggle('puls');	   
 		   }else{
 disableElement('connect_starter');
-local_video.poster='';
+localVideo.poster='';
 }
 if(peerConnection){
 console.log('signaling state: ',peerConnection.signalingState)
 console.log('ice connection state: ',peerConnection.iceConnectionState);
 
-if(!buser()){dissconnect();if(socket)socket.close();}else{
+if(!buser()){
+dissconnect();
+if(ink()){if(socket)socket.close();}
+}else{
 if(!owner()){
 dissconnect();
 }
@@ -443,7 +447,10 @@ unsuccess_token_transfer();
 console.error('on error: ',event.data);
 if(msg.num=="101"){
 
-if(!buser()){dissconnect();if(socket)socket.close();}
+if(!buser()){
+dissconnect();
+if(ink()){if(socket)socket.close();}
+}
 }
 if(peerConnection)console.log(peerConnection.signalingState)
 }else if(msg.type==='roomremove'){
@@ -457,7 +464,7 @@ var chat=gid('chat');
 
 
 const useTrickleICE = false;
-let localVideo = gid('local_video');
+//let localVideo = gid('local_video');
 let stateSpan = gid('state_span');
 let localStream = null;
 let peerConnection = null;
@@ -726,12 +733,13 @@ if(owner()){sendJson({type:'offline', roomname:modelName,pidi:pidi});pidi=0;pid.
 pidi=0;pid.textContent=pidi;
 if(!buser()){
 dissconnect();
-if(socket)socket.close();
+if(ink()){if(socket)socket.close();}
 }else{if(!owner())dissconnect();}
 }else if (peer.iceConnectionState === 'disconnected') {
 console.warn('-- disconnected --');
-if(!owner()){roomcreated=false;pidi=0;pid.textContent=pidi;
-if(!buser()){if(socket)socket.close();}
+if(!owner()){
+roomcreated=false;pidi=0;pid.textContent=pidi;
+if(!buser()){if(ink()){if(socket)socket.close();}}
 }
 dissconnect();
 }
@@ -832,9 +840,9 @@ con_fl=false;
 el.textContent='connect';
 }
 }
-
+if(!ink()){if(!buser())go_socket();}
 function connect(el) {
-if(!buser()){go_socket();}
+if(!buser()){if(ink())go_socket();}
 setTimeout(function(){
 if(roomcreated){
 //alert('is room created? '+roomcreated)
@@ -842,7 +850,7 @@ if(!buser()){con_fl=true;el.textContent='disconnect';}
 callWithCapabilitySDP();
 updateButtons();
 }else{
-if(!buser()){if(socket)socket.close();}
+if(!buser()){if(ink()){if(socket)socket.close();}}
 }
 },2000)
 }
@@ -874,8 +882,6 @@ var vobj={};
 vobj.roomname=modelName;
 vobj.owner=owner();
 vobj.id=clientId;
-//vobj.email=modelEmail;
-//vobj.name=modelName;
 //vobj.src=src;
 vobj.type="createroom";
 sendJson(vobj);
@@ -903,7 +909,7 @@ if(pidi==0)disableElement('connect_starter');
 removeRemoteVideo(1,1);
 //pidi=0;
 pid.textContent=pidi;
-if(!buser()){if(socket)socket.close();}
+if(!buser()){if(ink()){if(socket)socket.close();}}
 
 }
 }else{
@@ -988,7 +994,7 @@ cnv.height=h;
 //local_video.height=130;
 //alert(cnv.width+' '+cnv.height+' '+local_video.width+', '+local_video.height)
 var c=cnv.getContext("2d");
-c.drawImage(local_video,0,0,w,h);
+c.drawImage(localVideo,0,0,w,h);
 setTimeout(function(){
 var li=cnv.toDataURL('image/png',1.0);
 var emg=document.createElement('img');
@@ -1001,7 +1007,7 @@ sendJson({type:'online',roomname:modelName, pidi:pidi,src:li});
 },10)
 }
 
-local_video.onloadedmetadata=function(e){
+localVideo.onloadedmetadata=function(e){
 if(owner())createroom();//get_image(roomcreated);
 }
-function gid(id){return document.getElementById(id);}
+function gid(i){return document.getElementById(i);}
