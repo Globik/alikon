@@ -56,7 +56,10 @@ if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
 	dop_ssl="";
 }else{dop_ssl="?ssl=true"}
+
 const pgtypes=require('pg').types;
+const pgn=require('pg').native.Client;
+
 pgtypes.setTypeParser(1114, str=>str);
 const boss=new PgBoss(database_url+dop_ssl);
 
@@ -70,7 +73,8 @@ password:cauth[1],
 host:pars.hostname,
 port:pars.port,
 database:pars.pathname.split('/')[1],
-ssl:false
+ssl:false,
+Client:pgn
 }
 
 const pool=new Pool(pconfig)
@@ -357,7 +361,7 @@ console.log('ROOM SIZE:',droom.size);
 }
 function on_close_room(err){
 droom.delete(name)
-pool.query(`delete from rooms where room_name='${name}' RETURNING room_name`).then(result=>{
+pool.query('delete from rooms where room_name=$1 RETURNING room_name',[name]).then(result=>{
 console.log('DELETE RETURNING ID: ',result.rows[0]);
 //sse.publish('ch_log_rooms','remove_room', result.rows[0])
 sendback(ws,{type:'goodbyeroom',roomname: name});
@@ -377,12 +381,16 @@ return (Math.random()*16 | 0).toString(16);
 }
 
 function update_end(pidi){
-pool.query(`update seats set vend=now() where pid='${pidi}'`).then(result=>{
+pool.query('update seats set vend=now() where pid=$1',[pidi]).then(result=>{
 console.log('result ok update seats vend')
 }).catch(err=>{console.log('error update seat vend: ',err)})
 }
 
-
+function insert_message(msgi,roomname,nick){
+pool.query('insert into chat(msg,chat_name,us_name) values($1,$2,$3)',[msgi,roomname,nick]).then(r=>{
+console.log('OK inserting message into chat table ',msgi)
+}).catch(e=>{console.log('err in inserting message into chat table: ',e)})
+}
 	
 wss.on('connection', ws=>{
 console.log('websocket connected: ', ws.upgradeReq.url);
@@ -393,13 +401,20 @@ var blin2=blin.trim();
 var blin3=blin2.substring(1);
 ws.isAlive=true;
 ws.on('pong', heartbeat);
+	
 
-
+// from command line scrot -d 10 =take a screenshot
 	
 ws.clientId=shortid.generate();//obid();//nextId;
 //nextId++;
 var msg={type:"id",id:ws.clientId};
 ws.send(JSON.stringify(msg));
+	
+pool.query('select*from chat where chat_name=$1 limit $2',[blin3,10]).then(r=>{
+	console.log('row from chat: ',r.rows)
+if(r.rows.length > 0)ws.send(JSON.stringify({type:'history',d:r.rows}))
+}).catch(e=>{console.log('err in chat table: ',e)})
+	
 ws.on('error',e=>console.log('err: ',err))
 
 ws.on('close',()=>{
@@ -430,7 +445,7 @@ if(msg.type=="message"){
 if(connect){
 msg.name=connect.username;
 }
-msg.text=msg.text;
+//msg.text=msg.text;
 }else if(msg.type=="username"){
 connect.username=msg.name;
 connect.owner=msg.owner;
@@ -457,8 +472,7 @@ croom(msg.roomname).then((da)=>{
 console.log('da: ',da);
 ws.roomid=msg.roomname;
 
-pool.query(`insert into rooms(room_name) values('${msg.roomname}') 
-returning status,view,room_name,src`).then(result=>{
+pool.query('insert into rooms(room_name) values($1) returning status,view,room_name,src',[msg.roomname]).then(result=>{
 console.log('result insert rooms: ',result.rowCount);
 
 sendback(ws,{roomname:msg.roomname,type:'onroom'})
@@ -485,8 +499,8 @@ sendtoclients=false;
 debug('ONLINE roomer_online event:',msg);
 ws.ready=true;
 ws.pidi=msg.pidi;
-let sis1=`update rooms set src='${msg.src}' where room_name='${msg.roomname}' returning status,view,room_name,src`;
-pool.query(sis1).then(res=>{
+let sis1='update rooms set src=$1 where room_name=$2 returning status,view,room_name,src';
+pool.query(sis1,[msg.src,msg.roomname]).then(res=>{
 emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src});
 	sse.publish('ch_log_rooms','add_room', res.rows[0])
 	//status,view,room_name,src
@@ -497,8 +511,8 @@ sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
 console.log('PIDI: ', msg.pidi)
-let sis2=`update rooms set src='' where room_name='${msg.roomname}' returning room_name`;
-pool.query(sis2).then(res=>{
+let sis2="update rooms set src=$1 where room_name=$2 returning room_name";
+pool.query(sis2,['',msg.roomname]).then(res=>{
 update_end(msg.pidi)
 emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
 sse.publish('ch_log_rooms','remove_room', {room_name:msg.roomname})
@@ -507,11 +521,11 @@ sendtoclients=false;
 }else if(msg.type=="token"){
 console.log('TOKEN OCCURED: ',msg);
 
-pool.query(`insert into transfer(tfrom, tos, amount,type,pid) 
-values('${msg.from}','${msg.to}',${msg.amount},${msg.btype},'${msg.pid}')`).then(res=>{
+pool.query('insert into transfer(tfrom,tos,amount,type,pid) values($1,$2,$3,$4,$5)',[msg.from,msg.to,msg.amount,msg.btype,msg.pid]).then(res=>{
 console.log('INSERTING A TOKEN: ',res);
 emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick});
 sendback(ws,{type:"success_token_transfer",from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
+insert_message(msg.msg,msg.roomname,msg.from_nick)
 }).catch(e=>{
 console.log('error insert token: ',e.message);
 sendback(ws,{type:'error',mess:e.message})
@@ -557,11 +571,18 @@ var msgstring=JSON.stringify(msg);
 if(msg.target && msg.target !==undefined && msg.target.length !==0){
 sendtooneuser(ws,msg.target, msgstring);
 }else{
+if(msg.type=='message'){insert_message(msg.msg,msg.roomname,msg.from_nick)}
+emergency_to_all(ws,msg)
+/*
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===ws.upgradeReq.url){
 if(c && c.readyState===WebSocket.OPEN){c.send(msgstring)}
 }
-})}
+})
+*/
+
+
+}
 }
 })
 })
@@ -673,7 +694,7 @@ console.log('setRemoteDescription for Answer ERROR:', err)
 }
 
 function update_view(peerlength,roomname){
-pool.query(`update rooms set view=${peerlength} where room_name='${roomname}'`).then(r=>{
+pool.query('update rooms set view=$1 where room_name=$2',[peerlength,roomname]).then(r=>{
 console.log('ok update rooms view handleanswer')
 sse.publish('ch_log_rooms','room_view', {peers:peerlength,room_name:roomname})
 }).catch(err=>{console.log('err update rooms view handleanswer: ',err)})

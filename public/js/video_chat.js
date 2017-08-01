@@ -47,6 +47,8 @@ data.btype=1;
 data.type="token";
 data.pid=pid.textContent;
 data.from_nick=yourName;
+data.msg=toki_s(data.amount);
+data.roomname=modelName;
 if(Number(tokTosend.textContent)<=Number(yourTokens.value)){
 console.log('send token via Websoket')
 to_xhr(data);
@@ -306,6 +308,7 @@ var outm={};
 outm.msg=this.message.value;
 outm.id=clientId;
 outm.from_nick=myusername;
+outm.roomname=modelName;
 outm.type="message";
 if(this.message.value){
 try{
@@ -332,7 +335,9 @@ return false
 */
 
 function go_message(event){
+	try{
 var msg=JSON.parse(event.data);
+	}catch(e){console.error(e);return;}
 if(msg.type=="id"){
 clientId=msg.id;
 setusername(socket);
@@ -355,6 +360,9 @@ remove_user_offline();
 }else{roomcreated=false;disableElement('connect_starter');}
 }
 
+}else if(msg.type=='history'){
+	console.warn('on history: ',event.data)
+show_history(msg);
 }else if(msg.type=='joined_user'){
 console.warn('onJoinedUser: ',event.data);
 }else if(msg.type=='Doffer'){
@@ -501,26 +509,58 @@ fl=false;
 }
 }
 
+function show_history(m){
+if(m.d && m.d.length > 0){
+m.d.forEach(function(el,i){
+vr_mess(el.us_name,el.msg)
+})
+}
+}
+function vr_mess(nick,msg){
+//let s='<b class="chat-user">'+m.us_name+':&nbsp;</b>';
+//let d=s+'<span class="chat-message">'+m.msg+'</span>';
+let d=bo_mes(nick,msg);
+insert_message(d);
+}
 function showmessage(message){
 console.log('message: ',message);
-let d='<b class="chat-user">'+message.from_nick+':&nbsp;</b>';
-let s=d+'<span class="chat-message">'+message.msg+'</span>';
+//let d='<b class="chat-user">'+message.from_nick+':&nbsp;</b>';
+//let s=d+'<span class="chat-message">'+message.msg+'</span>';
 if(message){
+let s=bo_mes(message.from_nick,message.msg);
 insert_message(s);
 if(message.from_nick===myusername)set_chat_btn_green();
 document.forms.publish.message.value="";
 }
 }
 
+function bo_mes(from_nick,msg){
+let d='<b class="chat-user">'+from_nick+':&nbsp;</b>';
+let s=d+'<span class="chat-message">'+msg+'</span>';
+return s;
+}
+
 function show_event_token(m){
 console.log('m: ',m);
+	/*
 let u='<b class="chat-user">'+m.user_nick+':&nbsp;</b>';
 let dc=(m.amount==1 ? '':'s');
 let s=u+'<span class="chat-message">Send&nbsp;'+m.amount+'&nbsp;tip'+dc+'.</span>';
+*/
+let s=tok_str(m.amount,m.user_nick)
 insert_message(s);
-
 }
-
+function tok_str(am,nick){
+let ds=(am==1?'':'s');
+let b='<b class="chat-user">'+nick+':&nbsp;</b>';
+let s=b+'<span class="chat-message">'+toki_s(am)+'</span>';
+return s;
+}
+function toki_s(am){
+let ds=(am==1?'':'s');
+let s='Sent&nbsp;'+am+'&nbsp;tip'+ds+'.';
+return s;
+}
 function insert_message(div){
 let m=document.createElement('div');
 m.className="chat-div";

@@ -8,7 +8,8 @@
 
 "dependencies": {
 "koa":"2.2.0",
-"pg":"6.1.2", 
+"pg":"7.0.2", 
+"pg-native":"2.0.1", 
 "koa-static":"3.0.0",
 "koa-body":"2.0.1",
 "koa-generic-session":"1.11.4",
