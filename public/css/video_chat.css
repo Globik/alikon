@@ -121,8 +121,8 @@ background:inherit;
 }
 #underchat form{height:100%;}			
 #underchat input[type=text]{width:79%;height:100%;border-radius:0;}
-#underchat input[type=submit]{height:100%;background:lightgreen;width:21%;}
-#underchat input[type=submit].subm-state.waiting{background:green;cursor:pointer;}
+#underchat input[type=submit]{height:100%;background:lightgreen;width:21%;cursor:pointer;}
+#underchat input[type=submit].subm-state.waiting{background:green;}
 #underchat input[type=submit][disabled].subm-state{background:red;color:white;cursor:inherit;}
 	
 .chat-div{

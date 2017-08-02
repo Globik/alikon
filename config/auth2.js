@@ -11,7 +11,7 @@ done(null,user.id)
 
 passport.deserializeUser(async (id,done)=>{
 try{
-const luser=await db.query(`select id,name,role,verif,items, w_items,model from busers where id='${id}'`)
+const luser=await db.query(`select id,name,role,verif,items, w_items,model from busers where id=$1`,[id])
 done(null,luser.rows[0])
 }catch(e){
 done(e)
@@ -21,7 +21,7 @@ done(e)
 passport.use(new LocalStrategy({usernameField:'email',passwordField:'password'}, (email,password,done)=>{
 process.nextTick(async()=>{
 try{
-let user=await db.query(`select id from busers where email='${email}' and pwd=crypt('${password}',pwd) `)
+let user=await db.query(`select id from busers where email=$1 and pwd=crypt($2,pwd) `,[email,password])
 if(!user.rows[0]){return done(null,false,{message:'Wrong user email or password!'})}
 return done(null,user.rows[0],{message:'Erfolgreich loged in!!!'})
 }catch(err){return done(err)} 
@@ -29,14 +29,14 @@ return done(null,user.rows[0],{message:'Erfolgreich loged in!!!'})
 }))
 
 const nicky=email=>{return email.substring(0,email.indexOf("@"))}
-const get_str=n=>`insert into busers(email,pwd,name) values('${n.email}',crypt('${n.password}',gen_salt('bf',8)),'${n.username}') 
+const get_str=n=>`insert into busers(email,pwd,name) values(${n.email},crypt(${n.password},gen_salt('bf',8)),${n.username}) 
 returning id`;//,name,role,email,verif`
 
 passport.use('local-signup',new LocalStrategy({usernameField:'email',passReqToCallback:true},(req,email,password,done)=>{
 if(!req.body.username){return done(null,false,{message:"missing username",code:'1'})}	
 process.nextTick(async()=>{
 try{
-var useri=await db.query(get_str({email:email,password:password,username:req.body.username}))
+var useri=await db.query(get_str({email:'$1',password:'$2',username:'$3'}),[email,password,req.body.username])
 //console.log('USER.rows[0]: ',useri.rows[0])
 return done(null,useri.rows[0],{message: `You're almost finished.<br><br>
 We've sent an account activation email to you at <strong>${email}</strong>.
@@ -87,10 +87,10 @@ var sata=profile._json;
 const fpassword=profile.id;
 const fname=sata.first_name+' '+sata.last_name;
 try{
-let user=await db.query(`select*from busers where email='${femail}'`)
+let user=await db.query(`select*from busers where email=$1`,[femail])
 if(user.rows[0]){return done(null,user.rows[0])}else{
 try{
-let useri=await db.query(get_str({email:femail,password:fpassword,username:fname}))
+let useri=await db.query(get_str({email:'$1',password:'$2',username:'$3'}),[femail,fpassword,fname])
 return done(null,useri.rows[0])
 }catch(err){return done(err)}
 }

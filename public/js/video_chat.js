@@ -1,8 +1,8 @@
-
 var seat=0;
 var init=0;
 var pidi=0;
 var btype=0;
+var ignory=new Set();
 
 var startDate,clocker,mlocker, startingDate;
 var modelName=gid('modelName').value;
@@ -345,8 +345,7 @@ console.log("case id: "+event.data);
 }else if(msg.type=="username"){
 console.log("case username: "+event.data);
 }else if(msg.type=="message"){
-//showmessage(event.data);
-showmessage(msg);
+if(!find_ignor(ignory,msg.from_nick))showmessage(msg);
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
 if(!owner()){
@@ -517,15 +516,12 @@ vr_mess(el.us_name,el.msg)
 }
 }
 function vr_mess(nick,msg){
-//let s='<b class="chat-user">'+m.us_name+':&nbsp;</b>';
-//let d=s+'<span class="chat-message">'+m.msg+'</span>';
+
 let d=bo_mes(nick,msg);
 insert_message(d);
 }
 function showmessage(message){
 console.log('message: ',message);
-//let d='<b class="chat-user">'+message.from_nick+':&nbsp;</b>';
-//let s=d+'<span class="chat-message">'+message.msg+'</span>';
 if(message){
 let s=bo_mes(message.from_nick,message.msg);
 insert_message(s);
@@ -535,11 +531,46 @@ document.forms.publish.message.value="";
 }
 
 function bo_mes(from_nick,msg){
-let d='<b class="chat-user">'+from_nick+':&nbsp;</b>';
-let s=d+'<span class="chat-message">'+msg+'</span>';
+let d='<b class="chat-user" data-from_nick="'+from_nick+'" onclick="user_menu(this);">'+from_nick+':&nbsp;</b>';
+let s=d+'<span class="chat-message">'+escape_html(msg)+'</span>';
 return s;
 }
+var srigi='globik';
+var rigi=[]
+var du=new Set();
+function find_ignor(arr,n){
+if(arr.has(n))return true
+return false;}
+function update_ignor(arr,n){
+if(!find_ignor(arr,n)){arr.add(n);return true;}
+return false;
+}
+function remove_ignor(arr,n){
+if(find_ignor(arr,n)){arr.delete(n);return true;}
+}
 
+function user_menu(el){
+//alert(el.getAttribute('data-from_nick'));
+
+let b=el.getAttribute('data-from_nick');
+if(b)
+if(myusername===b)return;
+if(confirm('Do you wish to ignore the messages from '+b+'?')){
+let l=update_ignor(ignory,b);
+	console.warn('l: ',l);
+}
+}
+console.log('du: ',du);
+console.log('du size: ',du.size);
+console.error('find: ',find_ignor(du,srigi));
+console.log('du: ',du);
+console.log('du size: ',du.size);
+console.error('update: ',update_ignor(du,srigi));
+console.log('du: ',du);
+console.log('du size: ',du.size);
+console.error('remove: ',remove_ignor(du,srigi));
+console.log('du: ',du);
+console.log('du size: ',du.size);
 function show_event_token(m){
 console.log('m: ',m);
 	/*
@@ -567,6 +598,10 @@ m.className="chat-div";
 m.innerHTML=div;
 chat.appendChild(m);
 chat.scrollTop=chat.clientHeight;
+}
+
+function escape_html(s){
+return s.replace(/[&<>'"]/g,function(m){return '';})
 }
 
 var vidW=gid('video-wrapper');
