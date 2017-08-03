@@ -271,10 +271,11 @@ userlistmsg.users.push({username:c.username,owner:c.owner,clientId:c.clientId});
 return userlistmsg;
 }
 		
-function senduserlisttoall(bs,bool,pidi){
+function senduserlisttoall(bs,bool,pidi,ob){
 var userlistmsg=makeuserlistmessage(bs);
 	userlistmsg.ready=bool;
 	userlistmsg.pidi=pidi;
+	userlistmsg.chat=ob;
 var userlistmsgstr=JSON.stringify(userlistmsg);
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
@@ -451,7 +452,7 @@ connect.username=msg.name;
 connect.owner=msg.owner;
 connect.ready=false;
 
-senduserlisttoall(ws,sifa.pupkin,sifa.pidi);
+senduserlisttoall(ws,sifa.pupkin,sifa.pidi,msg.chat);
 send_new_user_to_all(ws);
 	
 sendtoclients=false;

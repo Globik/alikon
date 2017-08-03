@@ -63,6 +63,8 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <button onclick="send_tokens();" class="">send&nbsp;&nbsp;<span class="btnok">&check;</span><span class="btnnotok">&times;</span></button>
 </p>
 </output>
+<!-- global -->
+<input type="hidden" id="is_banned" value="false"/>
 <!-- model -->
 <input type="hidden" id="modelName" value="${model?model.name:''}"/>
 <input type="hidden" id="modelId" value="${model.id}"/>
@@ -76,7 +78,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 
 <input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
 <input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
-<input type="hidden" id="inkognito" value="${n.incognito}"/>
+<input type="hidden" id="inkognito" value="${n.inkognito}"/>
 
 
 <div class="firstchild" id="camera-container">
@@ -119,7 +121,13 @@ Time: <span id="mer">00:00:00</span><br><br>
 <a href="#" class="close" style="text-decoration:none;"><span class="before" style="">X</span></a><div style="clear:both;"></div>
 <div id="vorlogincontainer"></div>
 </output>
-
+<h3>Chat </h3>
+<h6>Silence level. Who can't chatting</h6>
+<p>guest users</p>
+level 1 <input type="checkbox" id="canchat_guest"/>
+<p>guest users and logged users with no tips</p>
+level 2 <input type="checkbox" id="canchat_logged"/>
+<button>save changes</button>
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>

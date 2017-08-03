@@ -31,6 +31,9 @@ if(gid('owner').value==='true'){return true;}else{return false;}
 function ink(){
 if(gid('inkognito').value==='true'){return true;}else{return false;}
 }
+function is_banned(){
+if(gid('is_banned').value==='true'){return true;}else{return false;}
+}
 function send_tokens(){
 if(pidi==0)return;
 if(buser()){
@@ -257,8 +260,12 @@ var targetusername=null;
 var pc=null;
 var socket=null;
 var roomcreated=false;
+var whoaccept=0;
 
-
+function get_ops(){
+// 1 - no guest; 2 - no guest, no user width no tokens
+return 2;
+}
 
 function setusername(s){
 if(owner()){
@@ -266,7 +273,7 @@ myusername=modelName;
 }else{
 if(yourName){myusername=yourName}else{myusername='Guest_'+shortid.value;}
 }
-if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner()}));
+if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner(),chat:{accept:get_ops()}}));
 }
 
 var loc1=location.hostname+':'+location.port;
@@ -302,8 +309,14 @@ var msgjson=JSON.stringify(message);
 console.log('msgjson: ',msgjson);
 if(socket)socket.send(msgjson);
 }
-
+var to=10;
 document.forms.publish.onsubmit=function(){
+if(whoaccept===1){if(!owner()){if(!buser())alert('we are sorry,but model have choosen silence level 1. You must log in.');return false;}
+}else if(whoaccept===2){
+alert(Number(yourTokens.value))
+if(yourTokens.value && Number(yourTokens.value) > 1){alert('what?');}else{alert('we are so sorry, but you can t');return false;}
+			 
+}else{console.log('fuck knows what is chat.accept must be');}
 var outm={};
 outm.msg=this.message.value;
 outm.id=clientId;
@@ -348,6 +361,7 @@ console.log("case username: "+event.data);
 if(!find_ignor(ignory,msg.from_nick))showmessage(msg);
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
+if(!owner()){if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;}
 if(!owner()){
 if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated);
 if(msg.pidi && msg.pidi !==0 && msg.pidi !==undefined){
@@ -355,7 +369,7 @@ pidi=msg.pidi;
 pid.textContent=pidi;
 remove_user_offline();
 }
-
+if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;
 }else{roomcreated=false;disableElement('connect_starter');}
 }
 
@@ -499,6 +513,9 @@ return (checkbox.checked === true);
 var fl=false;
 
 function get_vid(el){
+if(owner()){
+if(is_banned()){alert('you are banned.');return;}
+}
 if(!fl){
 startVideo(el);
 }else{
