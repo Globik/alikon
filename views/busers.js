@@ -21,7 +21,9 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 <main id="pagewrap"> 
 
 <div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}</div>
+
 <div id="video-container">
+<div id="topvideo">vidos</div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}">
 <video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.</video>
 </div>
@@ -30,6 +32,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 </div>
 <div id="chat-container">
+<div id="topchat" onclick="chat_gear();">gear</div>
 <div id="chat"></div>
 <div id="underchat">
 <form name="publish">
@@ -121,13 +124,18 @@ Time: <span id="mer">00:00:00</span><br><br>
 <a href="#" class="close" style="text-decoration:none;"><span class="before" style="">X</span></a><div style="clear:both;"></div>
 <div id="vorlogincontainer"></div>
 </output>
-<h3>Chat </h3>
-<h6>Silence level. Who can't chatting</h6>
-<p>guest users</p>
-level 1 <input type="checkbox" id="canchat_guest"/>
-<p>guest users and logged users with no tips</p>
-level 2 <input type="checkbox" id="canchat_logged"/>
-<button>save changes</button>
+<a href="#" class="overlay" id="chatnastroi"></a>
+<output id="chichat" class="popi" style="width:60%;">
+<a href="#" class="close"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+
+<form style="background:inherit;width:100%;" name="canchat">
+<p><strong>Don't accept chat users who's:</strong></p>
+<input type="radio" name="chataccess" id="canchat_guest" value="1"/>&nbsp;<label>a guest</label><br>
+<input type="radio" name="chataccess" id="canchat_logged" value="2"/>&nbsp;<label>a non-tokens user or a guest</label><br>
+<input type="submit" value="save"/>
+</form>
+
+</output>
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>

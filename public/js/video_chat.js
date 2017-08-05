@@ -264,7 +264,9 @@ var whoaccept=0;
 
 function get_ops(){
 // 1 - no guest; 2 - no guest, no user width no tokens
-return 2;
+if(is_loc_storage()){
+if(localStorage.chatac)return Number(localStorage.chatac);
+}else{return 0;}
 }
 
 function setusername(s){
@@ -314,7 +316,7 @@ document.forms.publish.onsubmit=function(){
 if(whoaccept===1){if(!owner()){if(!buser())alert('we are sorry,but model have choosen silence level 1. You must log in.');return false;}
 }else if(whoaccept===2){
 alert(Number(yourTokens.value))
-if(yourTokens.value && Number(yourTokens.value) > 1){alert('what?');}else{alert('we are so sorry, but you can t');return false;}
+if(yourTokens.value && Number(yourTokens.value) > 1){alert('what?');}else{if(!owner())alert('we are so sorry, but you can t');return false;}
 			 
 }else{console.log('fuck knows what is chat.accept must be');}
 var outm={};
@@ -577,6 +579,28 @@ let l=update_ignor(ignory,b);
 	console.warn('l: ',l);
 }
 }
+
+function is_loc_storage(){
+if(typeof(Storage) !=='undefined'){return true;}else{
+return false;}
+}
+function get_acc_users(){
+let s='';
+if(localStorage.chatac){s=localStorage.chatac;}
+if(s){
+if(s=='1'){gid('canchat_guest').checked=true;}else{gid('canchat_logged').checked=true;}
+}
+}
+function chat_gear(){
+get_acc_users();
+window.location.href="#chatnastroi";
+}
+document.forms.canchat.onsubmit=save_acc_users;
+function save_acc_users(ev){
+ev.preventDefault();
+//alert(ev.target.chataccess.value)
+localStorage.chatac=ev.target.chataccess.value;
+}
 console.log('du: ',du);
 console.log('du size: ',du.size);
 console.error('find: ',find_ignor(du,srigi));
@@ -590,11 +614,6 @@ console.log('du: ',du);
 console.log('du size: ',du.size);
 function show_event_token(m){
 console.log('m: ',m);
-	/*
-let u='<b class="chat-user">'+m.user_nick+':&nbsp;</b>';
-let dc=(m.amount==1 ? '':'s');
-let s=u+'<span class="chat-message">Send&nbsp;'+m.amount+'&nbsp;tip'+dc+'.</span>';
-*/
 let s=tok_str(m.amount,m.user_nick)
 insert_message(s);
 }

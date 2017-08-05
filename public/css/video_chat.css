@@ -18,7 +18,7 @@ visibility:visible;
 }
 #media-wrapper{
 width:100%;
-height:400px;
+height:450px;
 display:block;
 position:relative;
 max-width:1800px;
@@ -31,7 +31,7 @@ content:"";
 }
 	
 #video-wrapper{
-height:88%;
+height:/*88%;*/ calc(100% - (5% + 12%));
 background:brown;
 display:block;
 position:relative;
@@ -89,7 +89,7 @@ position:relative;
 float:left;
 height:100%;
 }
-	
+#topvideo{background:orange;width:100%;display:block;height:5%;}	
 #local_video{
 background:brown;
 height:100%;
@@ -111,7 +111,8 @@ float:right;
 overflow:hidden;
 height:100%;
 }
-#chat{width:100%;height:88%;display:block;overflow-y:auto;background:white;}
+#topchat{width:100%;background:brown;height:5%;}
+#chat{width:100%;height:/*88%*/calc(100% - (5% + 12%));display:block;overflow-y:auto;background:white;}
 #underchat{
 width:100%;
 display:block;
