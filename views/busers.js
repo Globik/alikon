@@ -1,4 +1,7 @@
 //busers.js
+const onroomstr="Press connect button to broadcast yourself. To stop broadcast press disconnect button. Or you can  just stop video right now.";
+const onowneroff="To broadcast yourself please enable your webcam and press start video button. Then connect button.";
+const usoff="The member you are trying to view is currently offline. Please wait or choose another member to view.";
 const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
@@ -24,7 +27,8 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 
 <div id="video-container">
 <div id="topvideo">vidos</div>
-<div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}">
+<div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}" data-onroom="${onroomstr}" 
+data-owneroffline="${onowneroff}" data-usoff="${usoff}">
 <video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.</video>
 </div>
 <div id="undervideo">

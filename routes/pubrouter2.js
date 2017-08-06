@@ -413,7 +413,7 @@ WEBRTC STUFF /:models
 
 pub.get('/webrtc/:buser_name', async ctx=>{
 let db=ctx.db;
-let inkognito=true;
+let inkognito=false;
 ctx.session.dorthin=ctx.path;
 let us=null;
 let owner=false;

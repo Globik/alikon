@@ -51,7 +51,7 @@ letter-spacing:0.1em;
 z-index:1;
 }
 #video-wrapper.offline::after{
-content:"The member you are trying to view is currently offline. Please wait or choose another member to view.";
+content:attr(data-useoff);
 color:rgba(255,255,255,0.7);
 position:absolute;
 top:2.2rem;
@@ -70,17 +70,19 @@ min-height:calc(80% - 4rem);
 letter-spacing:0.1em;
 }
 
-#video-wrapper.owner-offline::after{
+#video-wrapper.owner-offline::after, #video-wrapper.owner-onroom::after{
 box-sizing:border-box;
 position:absolute;
 background:violet;
-content:"To broadcast yourself please enable your webcam and press start video button. Then connect button.";
 word-wrap:break-word;
 top:0;
 left:0;
 padding:1rem;
 }
-
+#video-wrapper.owner-offline::after{content:attr(data-owneroffline);}
+#video-wrapper.owner-onroom::after{
+content:attr(data-onroom);
+}
 #video-container{
 background:brown;
 width:50%;

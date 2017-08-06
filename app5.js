@@ -271,11 +271,11 @@ userlistmsg.users.push({username:c.username,owner:c.owner,clientId:c.clientId});
 return userlistmsg;
 }
 		
-function senduserlisttoall(bs,bool,pidi,ob){
+function senduserlisttoall(bs,bool,pidi){
 var userlistmsg=makeuserlistmessage(bs);
 	userlistmsg.ready=bool;
 	userlistmsg.pidi=pidi;
-	userlistmsg.chat=ob;
+	//userlistmsg.chat=ob;
 var userlistmsgstr=JSON.stringify(userlistmsg);
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
@@ -452,7 +452,7 @@ connect.username=msg.name;
 connect.owner=msg.owner;
 connect.ready=false;
 
-senduserlisttoall(ws,sifa.pupkin,sifa.pidi,msg.chat);
+senduserlisttoall(ws,sifa.pupkin,sifa.pidi);
 send_new_user_to_all(ws);
 	
 sendtoclients=false;
@@ -502,7 +502,7 @@ ws.ready=true;
 ws.pidi=msg.pidi;
 let sis1='update rooms set src=$1 where room_name=$2 returning status,view,room_name,src';
 pool.query(sis1,[msg.src,msg.roomname]).then(res=>{
-emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src});
+emergency_to_all(ws,{type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src,chataccess:msg.chataccess});
 	sse.publish('ch_log_rooms','add_room', res.rows[0])
 	//status,view,room_name,src
 }).catch(er=>{console.log(er);

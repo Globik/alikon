@@ -20,6 +20,7 @@ var tokTosend=gid('tokTosend');
 var submitChat=document.querySelector('#underchat input[type=submit].subm-state');
 var loginstr=gid('loginstr');
 var localVideo = gid('local_video');
+var vidW=gid('video-wrapper');
 
 yourTokens2.textContent=yourTokens.value;
 function buser(){
@@ -264,8 +265,10 @@ var whoaccept=0;
 
 function get_ops(){
 // 1 - no guest; 2 - no guest, no user width no tokens
+if(owner()){
 if(is_loc_storage()){
 if(localStorage.chatac)return Number(localStorage.chatac);
+}else{return 0;}
 }else{return 0;}
 }
 
@@ -275,7 +278,7 @@ myusername=modelName;
 }else{
 if(yourName){myusername=yourName}else{myusername='Guest_'+shortid.value;}
 }
-if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner(),chat:{accept:get_ops()}}));
+if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner()}));
 }
 
 var loc1=location.hostname+':'+location.port;
@@ -313,10 +316,14 @@ if(socket)socket.send(msgjson);
 }
 var to=10;
 document.forms.publish.onsubmit=function(){
-if(whoaccept===1){if(!owner()){if(!buser())alert('we are sorry,but model have choosen silence level 1. You must log in.');return false;}
+if(whoaccept===1){
+if(!owner()){
+if(!buser()){insert_message('<span class="chat-message">This room only allows users to chat if they are logged in.</span>');
+return false;}}
 }else if(whoaccept===2){
 alert(Number(yourTokens.value))
-if(yourTokens.value && Number(yourTokens.value) > 1){alert('what?');}else{if(!owner())alert('we are so sorry, but you can t');return false;}
+if(yourTokens.value && Number(yourTokens.value) > 1){console.log('what?');}else{
+if(!owner())insert_message('<span class="chat-message">This room only allows members to chat if they have tokens.</span>');return false;}
 			 
 }else{console.log('fuck knows what is chat.accept must be');}
 var outm={};
@@ -371,7 +378,7 @@ pidi=msg.pidi;
 pid.textContent=pidi;
 remove_user_offline();
 }
-if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;
+//if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;
 }else{roomcreated=false;disableElement('connect_starter');}
 }
 
@@ -402,6 +409,11 @@ reject_call(msg.from_target);
 
 }else if(msg.type==='onroom'){
 console.warn('On created room: ', event.data);
+	
+if(vidW.classList.contains('owner-offline')){
+	vidW.classList.remove('owner-offline');
+	vidW.classList.add('owner-onroom');
+}	
 roomcreated=true;
 }else if(msg.type==='roomer_online'){
 //console.warn('on roomer_online: ',event.data);
@@ -411,21 +423,26 @@ remove_user_offline();
 if(owner()){
 disableElement('video_starter');
 broadcast();
+if(vidW.classList.contains('owner-onroom')){vidW.classList.remove('owner-onroom')}
 gid('online-detector').classList.toggle('puls');
 }else{
 if(msg.src){console.log('going to poster');localVideo.poster=msg.src;}
 if(msg.ready){enabelElement('connect_starter');pidi=msg.pidy;roomcreated=true;}
+if(msg.chataccess){whoaccept=msg.chataccess;}
 }
 }else if(msg.type==='roomer_offline'){
 
 console.warn('on roomer_offline: ',event.data);
 pidi=0;seat=0;
 if(owner()){enabelElement('video_starter');
-gid('online-detector').classList.toggle('puls');	   
-		   }else{
+gid('online-detector').classList.toggle('puls');
+vidW.classList.add('owner-onroom');
+}else{
 disableElement('connect_starter');
 localVideo.poster='';
+add_user_offline();
 }
+//add_user_offline();
 if(peerConnection){
 console.log('signaling state: ',peerConnection.signalingState)
 console.log('ice connection state: ',peerConnection.iceConnectionState);
@@ -451,7 +468,13 @@ console.log('Received answer ...');
 console.warn('NOT USED');
 }else if(msg.type==='goodbyeroom'){
 console.log('type goodbye room came')
-if(owner()){console.log('goodbyeroom: ', event.data);roomcreated=false;}
+if(owner()){
+	console.log('goodbyeroom: ', event.data);
+	vidW.classList.remove('owner-onroom');
+	vidW.classList.add('owner-offline')
+	//add_user_offline();
+	roomcreated=false;
+}
 
 
 }else if(msg.type==='token_antwort'){
@@ -601,17 +624,7 @@ ev.preventDefault();
 //alert(ev.target.chataccess.value)
 localStorage.chatac=ev.target.chataccess.value;
 }
-console.log('du: ',du);
-console.log('du size: ',du.size);
-console.error('find: ',find_ignor(du,srigi));
-console.log('du: ',du);
-console.log('du size: ',du.size);
-console.error('update: ',update_ignor(du,srigi));
-console.log('du: ',du);
-console.log('du size: ',du.size);
-console.error('remove: ',remove_ignor(du,srigi));
-console.log('du: ',du);
-console.log('du size: ',du.size);
+
 function show_event_token(m){
 console.log('m: ',m);
 let s=tok_str(m.amount,m.user_nick)
@@ -640,7 +653,7 @@ function escape_html(s){
 return s.replace(/[&<>'"]/g,function(m){return '';})
 }
 
-var vidW=gid('video-wrapper');
+
 function remove_user_offline(){
 if(owner()){
 if(vidW.classList.contains('owner-offline'))vidW.classList.remove('owner-offline');
@@ -651,7 +664,9 @@ if(vidW.classList.contains('offline'))vidW.classList.remove('offline');
 
 function add_user_offline(){
 if(owner()){
-if(!vidW.classList.contains('owner-offline'))vidW.classList.add('owner-offline');
+	//if !peerConnection add class owner-offline-with-room
+if(!vidW.classList.contains('owner-offline'))vidW.classList.add('owner-offline');console.log(peerConnection)
+//}else{console.warn('todo add class owner-offline-no_room',peerConnection)}
 }else{
 if(!vidW.classList.contains('offline'))vidW.classList.add('offline');
 }
@@ -1113,7 +1128,7 @@ emg.src=li;
 pagewrap.appendChild(emg);
 pidi=obid();
 pid.textContent=pidi;
-sendJson({type:'online',roomname:modelName, pidi:pidi,src:li});
+sendJson({type:'online',roomname:modelName, pidi:pidi,src:li,chataccess:get_ops()});
 //createroom(li);
 },10)
 }
