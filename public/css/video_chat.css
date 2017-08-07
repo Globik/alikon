@@ -51,7 +51,7 @@ letter-spacing:0.1em;
 z-index:1;
 }
 #video-wrapper.offline::after{
-content:attr(data-useoff);
+content:attr(data-usoff);
 color:rgba(255,255,255,0.7);
 position:absolute;
 top:2.2rem;

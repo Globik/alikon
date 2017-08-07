@@ -195,7 +195,11 @@ console.log('OK, deleteng all rooms!')
 var servak=app.listen(process.env.PORT || 5000)
 	
 console.log('is Mediasoup server closed?: ',server.closed)
-var wss=new WebSocket.Server({server:servak});
+var wss=new WebSocket.Server({server:servak,/*origin:'http://localhost:5000',*/verifyClient:function(info,cb){
+	console.log('info: ',info.origin)
+if(info.origin==='http://localhost:5000'){cb(true);return;}
+	cb(false)
+}});
 
 function croom(mn){
 return new Promise(function(res,rej){
