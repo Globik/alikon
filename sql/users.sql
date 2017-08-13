@@ -16,6 +16,7 @@ mjoind timestamp not null default now()::timestamp);
 -- alter table busers add column w_items int not null default 0;
 --alter table busers add column model boolean default false;
 alter table busers add column nick text not null default 'nick';
+--alter table busers add column bstatus text not null default 'no';
 -- alter table transfer add column pid text not null default 'aa';
 
 -- drop primary key on email
