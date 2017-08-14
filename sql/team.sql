@@ -25,6 +25,7 @@ RETURN null;
 END;
 $$ LANGUAGE plpgsql;
 -- (us_id,action,status,us_by,mark,type)
+-- insert into team(adm_id,role,us_by) values('58a1a78a406da007a696e917','superadmin','58a1a78a406da007a696e917');
 DROP TRIGGER IF EXISTS set_moder ON team;
 
 CREATE TRIGGER  set_moder AFTER INSERT OR UPDATE OR DELETE ON team FOR EACH ROW EXECUTE PROCEDURE set_moder_event();

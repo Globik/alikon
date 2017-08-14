@@ -1,6 +1,6 @@
 -- \i /home/globik/alikon/sql/aud_team.sql
 create table aud_team(id serial primary key,
-					  us_id text not null referencec busers(id),
+					  us_id text not null references busers(id),
 					  type text,
 					  action text,
 					  status text,
