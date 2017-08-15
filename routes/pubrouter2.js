@@ -417,10 +417,10 @@ let inkognito=false;
 ctx.session.dorthin=ctx.path;
 let us=null;
 let owner=false;
-let sis=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,rooms.src 
-from busers left join rooms on busers.name=rooms.room_name where busers.name='${ctx.params.buser_name}'`;
+let s=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,busers.bstatus,rooms.src 
+from busers left join rooms on busers.name=rooms.room_name where busers.name=$1`;
 try{
-var result=await db.query(sis);
+var result=await db.query(s,[ctx.params.buser_name]);
 if(result.rows.length>0) {
 us=result.rows[0];
 }else{
@@ -466,11 +466,23 @@ const {pid,who,type}=ctx.request.body;
 	//let mail=email_enc.decrypt(who)
 	//console.log('mail: ',mail)
 try{
-await db.query(`insert into seats(pid,us_name,type) values('${pid}','${who}',${type})`);
+await db.query('insert into seats(pid,us_name,type) values($1,$2,$3)',[pid,who,type]);
 }catch(e){console.log(e);}
 ctx.body={info:"OK",body: ctx.request.body}
 });
 
+pub.post('/api/send_abuse', async ctx=>{
+let db=ctx.db;
+	//d.selector=a;d.text=b;d.us_id=c;d.who=e;
+let {selector,text,us_id,who}=ctx.request.body;
+	//(slc,cmnt,us_id,by_nick)
+try{
+db.query('insert into abuse(slc,cmnt,us_id,by_nick) values($1,$2,$3,$4)',[selector,text,us_id,who])
+}catch(e){
+ctx.throw(404,e.name)
+}
+ctx.body={body:ctx.request.body,info:'ok,your report is accepted'}
+})
 /* *************************************************************************
 END OF WEBRTC STUFF
 *************************************************************************** */

@@ -1,10 +1,10 @@
 -- \i /home/globik/alikon/sql/team.sql
-create table team(id serial primary key,
-				  adm_id text not null references busers(id),
+create table team(
+				  adm_id varchar(24) not null primary key references busers(id),
 				  role text not null,
 				  status text not null default 'active',
 				  at timestamp not null default now(),
-				  us_by text not null references busers(id),
+				  us_by varchar(24) not null references busers(id),
 				  mark text);
 CREATE OR REPLACE FUNCTION set_moder_event() RETURNS TRIGGER AS $$
 BEGIN

@@ -2,9 +2,14 @@ var seat=0;
 var init=0;
 var pidi=0;
 var btype=0;
+var myusername=null;
 var ignory=new Set();
 
 var startDate,clocker,mlocker, startingDate;
+
+var txarComplain=gid("txar-complain");
+var complainiSelector=gid("complaini-selector");
+
 var modelName=gid('modelName').value;
 
 var modelId=gid('modelId').value;
@@ -33,7 +38,7 @@ function ink(){
 if(gid('inkognito').value==='true'){return true;}else{return false;}
 }
 function is_banned(){
-if(gid('is_banned').value==='true'){return true;}else{return false;}
+if(gid('is_banned').value==='yes'){return true;}else{return false;}
 }
 function send_tokens(){
 if(pidi==0)return;
@@ -173,6 +178,33 @@ setTimeout(close_tokensblatt,1000);
 function close_tokensblatt(){
 window.location.href='#';
 }
+function get_complain(el){
+window.location.href="#get_complaini";
+}
+
+function send_abuse(el){
+let a=complainiSelector.value;
+let b=txarComplain.value;
+let c=el.getAttribute('data-ownerid');
+let d={};
+let e=myusername;
+d.selector=a;d.text=b;d.us_id=c;d.who=e;
+let j=JSON.stringify(d);
+alert(j)
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/send_abuse');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+console.warn('xhr from server: ',this.response);
+}else{
+console.error('xhr from server: ',this.response);
+}}
+xhr.onerror=function(e){console.error(e)};
+xhr.send(j);
+
+}
+
 
 function tip(){
 if(pidi==0)return;
@@ -255,7 +287,7 @@ xhr.send(JSON.stringify(data));
 var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
-var myusername=null;
+//var myusername=null;
 var name,connecteduser;
 var targetusername=null;
 var pc=null;
@@ -539,7 +571,7 @@ var fl=false;
 
 function get_vid(el){
 if(owner()){
-if(is_banned()){alert('you are banned.');return;}
+if(is_banned()){alert("We're sorry you are banned from using this site.");return;}
 }
 if(!fl){
 startVideo(el);

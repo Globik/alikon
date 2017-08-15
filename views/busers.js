@@ -26,7 +26,7 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}
 <div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}</div>
 
 <div id="video-container">
-<div id="topvideo">vidos</div>
+<div id="topvideo"><span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span></div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}">
 <video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.</video>
@@ -71,7 +71,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </p>
 </output>
 <!-- global -->
-<input type="hidden" id="is_banned" value="false"/>
+<input type="hidden" id="is_banned" value="${model?model.bstatus:''}"/>
 <!-- model -->
 <input type="hidden" id="modelName" value="${model?model.name:''}"/>
 <input type="hidden" id="modelId" value="${model.id}"/>
@@ -139,6 +139,30 @@ Time: <span id="mer">00:00:00</span><br><br>
 <input type="submit" value="save"/>
 </form>
 
+</output>
+<a href="#" class="overlay" id="get_complaini"></a>
+<output id="complaini" class="popi">
+<a href="#" class="close"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+<h6>Report Abuse</h6>
+<div>
+<strong>Choose a category:</strong>
+<select id="complaini-selector" dropdown=true>
+<option value="Broadcaster is underage">Broadcaster is underage</option>
+<option value="Broadcaster is advertising">Broadcaster is advertising</option>
+<option value="Broadcaster is abusive">Broadcaster is abusive</option>
+<option value="Broadcaster is intoxicated">Broadcaster is intoxicated</option>
+<option value="Broadcaster is using a toy that is too large">Broadcaster is using a toy that is too large</option>
+<option value="Broadcaster is asking for offline payments">Broadcaster is asking for offline payments</option>
+<option value="Broadcaster is broadcasting in public">Broadcaster is broadcasting in public</option>
+<option value="Broadcaster is broadcasting in service uniform">Broadcaster is broadcasting in service uniform</option>
+<option value="Broadcaster is sleeping">Broadcaster is sleeping</option>
+<option value="Broadcaster is wrong gender">Broadcaster is wrong gender</option>
+<option value="Other">Other</option>
+</select>
+<strong>Additional Comments:</strong>
+<textarea id="txar-complain"></textarea>
+<div><button>cancel</button></div><div><button data-ownerid="${model?model.id:''}" onclick="send_abuse(this);">Report</button></div>
+</div>
 </output>
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 </main><footer id="footer">${footer.footer({})}</footer>
