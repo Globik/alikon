@@ -121,14 +121,20 @@ var mobject={};
 var locals={
 async showmodule(){try{var mn=await readf('app.json');
 	return mn;}catch(e){console.log('eeeeri: ',e);return e;}},
-async  show_banners(){try{let m=await pool.query('select*from banners');return m.rows;}catch(e){console.log(e);return e;}}
+async  show_banners(){try{let m=await pool.query('select*from banners');console.log('SHOW BANNERS!!!!!!!');
+return m.rows;}catch(e){console.log(e);return e;}},
+async show_abuse_nots(){try{let m=await pool.query(`select id from abuse where status='neu'`);
+							console.log('MUUUUUU: ',m.rows);
+							return m;}catch(e){console.log(e);return e.name;}}
 };
 app.use(async (ctx, next)=>{
+//if(ctx.path==='/log_rooms')return;
 ctx.state.filter_script=script;
 ctx.db=pool;
 ctx.boss=boss;
 var sa;
 if(lasha){sa=await locals.showmodule();
+console.log('SHOW MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 sa=JSON.parse(sa);
 mobject.showmodule=sa;
 lasha=false;
@@ -136,7 +142,15 @@ lasha=false;
 
 ctx.state.showmodule=mobject.showmodule;
 ctx.state.showmodulecache=lasha;
+if(ctx.path !=='/log_rooms' && ctx.method !=='POST'){
 ctx.state.banner=await locals.show_banners();
+console.log('BUT WHY????????????????????: path:',ctx.method,' ',ctx.path,' ',ctx.state.xhr);
+	//console.log('HERE CTX>STATE>USER : ',ctx.state.user)
+	if(ctx.state.user && ctx.state.user.role==='superadmin'){
+ctx.state.abuse_nots=await locals.show_abuse_nots();	
+console.log('ABUSE_NOTS!: ',ctx.state.abuse_nots.rowCount,' : ',ctx.state.abuse_nots.rows)
+	}
+	}
 if(ctx.path=='/module_cache'){
 lasha=true;}
 await next();

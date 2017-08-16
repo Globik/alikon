@@ -7,5 +7,5 @@ var admin_main_menu=n=>`<div id="admin_main_menu">
 <option value="/labs">labs</option>
 <option value="/dashboard">dashboard</option>
 </select><script>
-function showname1(el){window.location.href=el;}</script></div>`;
+function showname1(el){window.location.href=el;}</script>&nbsp;notes:&nbsp;${n.abuse_nots ? n.abuse_nots.rowCount:''}</div>`;
 module.exports={admin_main_menu};

@@ -20,7 +20,7 @@ return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`:'')}
 <main id="pagewrap"> 
 
 <div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}</div>
