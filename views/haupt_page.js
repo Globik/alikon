@@ -17,7 +17,7 @@ return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:'')}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:'')}
+${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`:'')}
 <main id="pagewrap"> 
 ${n.m ? n.m.msg : ''}<br><br>
 

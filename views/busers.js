@@ -16,6 +16,11 @@ let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:`${model !==null ?model.name:'no user'}. Live video.`,/*js:['/js/video_chat.js'],*/ csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"]})}
+<style>
+#abuse_popup{background:lightgreen;max-height:50%;overflow-y:scroll;}
+#abuse_popup ul{list-style:none;padding:3px;margin:0;}
+.abuseli{background:red;margin:0;padding:10px;}
+</style>
 </head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
