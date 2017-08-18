@@ -518,13 +518,17 @@ ctx.body={body:ctx.request.body}
 admin.post('/api/get_abuse_list',auth,async ctx=>{
 let db=ctx.db;
 console.log('body: ',ctx.request.body)
-let s=`select abuse.*,busers.name from abuse left join busers on abuse.us_id=busers.id where abuse.status='neu' limit 2`;
+let {nieder=''}=ctx.request.body;
+	console.log('NIEDER!: ',nieder)
+let s=`select abuse.*,busers.name from abuse left join busers on abuse.us_id=busers.id where abuse.status='neu'
+${nieder?`and at > '${nieder}'`:''} limit 14`;
+let s1=1
 try{
 var r=await db.query(s);
 	console.log('resultat: ',r.rows)
 }catch(e){ctx.throw(400,e.name)}
-let a=await ctx.render('adm_abuse_list',{abuse_list:r.rows})
-ctx.body={content:a}		   
+//let a=await ctx.render('adm_abuse_list',{abuse_list:r.rows})
+ctx.body={abuse_list:r.rows}		   
 })
 /*
 ==============================================================

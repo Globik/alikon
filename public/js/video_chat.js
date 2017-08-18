@@ -181,8 +181,9 @@ window.location.href='#';
 function get_complain(el){
 window.location.href="#get_complaini";
 }
-
+var sendabusi=0;
 function send_abuse(el){
+	sendabusi++;
 let a=complainiSelector.value;
 let b=txarComplain.value;
 let c=el.getAttribute('data-ownerid');
@@ -190,7 +191,7 @@ let d={};
 let e=myusername;
 d.selector=a;d.text=b;d.us_id=c;d.who=e;
 let j=JSON.stringify(d);
-alert(j)
+//alert(j)
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/send_abuse');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
@@ -202,7 +203,11 @@ console.error('xhr from server: ',this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
 xhr.send(j);
-
+	let ru={};
+	ru.m=sendabusi;
+	ru.who=myusername;
+if(!localStorage.abuse){localStorage.abuse=JSON.stringify(ru);}else{localStorage.abuse=JSON.stringify(ru);}
+console.error('abusi: ',localStorage.abuse,' : ',JSON.parse(localStorage.abuse).who,' : ',JSON.parse(localStorage.abuse).m);
 }
 
 

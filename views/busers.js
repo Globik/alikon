@@ -17,9 +17,16 @@ const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:`${model !==null ?model.name:'no user'}. Live video.`,/*js:['/js/video_chat.js'],*/ csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"]})}
 <style>
-#abuse_popup{background:lightgreen;max-height:50%;overflow-y:scroll;}
-#abuse_popup ul{list-style:none;padding:3px;margin:0;}
-.abuseli{background:red;margin:0;padding:10px;}
+#abuse_popup{background:rgba(0,14,18,0.8);height:80%;width:50%;}
+.msp,.fel{background:brown;}
+.msp.fel{margin-left:4em;}
+.podsmall{text-align:center;}
+
+.centstr{background:green;}
+#abuse_popup ul{list-style:none;padding:3px;margin:0;display:block;position:relative;background:rgba(0,0,0,0);}
+#html_abuse_popup{background:rgba(0,0,0,0);height:calc(100% - 2em - 1.5em - 2em);display:block;position:relative;overflow:auto;}
+.abuseli{background:rgba(0,0,0,0);margin:0;padding:10px;}
+body.ondialog{overflow:hidden;}
 </style>
 </head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
