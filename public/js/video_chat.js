@@ -277,6 +277,7 @@ data.who=modelName;
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/set_seat');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
 console.warn('xhr from server: ',this.response);
@@ -288,7 +289,30 @@ console.log(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
 }
-
+//administrative
+function ban_model(){
+let d={};
+	d.us_id=modelId;
+	d.us_by=yourId;
+	d.grund=complainiSelector.value;
+	d.notice=txarComplain.value;
+	d.status='yes';
+let a=JSON.stringify(d);
+	//alert(a)
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/set_ban_user');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert('OK. This broadcaster are banned!');
+console.warn('xhr from server: ',this.response);
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){console.error(e)};
+xhr.send(a);
+}
 var mediaconstraints={audio:true,video:true};
 
 var clientId=0;

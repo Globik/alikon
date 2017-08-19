@@ -35,10 +35,13 @@ ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : 
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`:'')}
 <main id="pagewrap"> 
 
-<div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}</div>
+<div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}
+&nbsp;${model?(model.bstatus=='yes'?'aha!':''):''}</div>
 
 <div id="video-container">
-<div id="topvideo"><span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span></div>
+<div id="topvideo"><span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>|
+<span onclick="get_complain();">ban broadcaster</span>
+</div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}">
 <video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.</video>
@@ -173,7 +176,9 @@ Time: <span id="mer">00:00:00</span><br><br>
 </select>
 <strong>Additional Comments:</strong>
 <textarea id="txar-complain"></textarea>
-<div><button>cancel</button></div><div><button data-ownerid="${model?model.id:''}" onclick="send_abuse(this);">Report</button></div>
+<div><button>cancel</button></div><div><button data-ownerid="${model?model.id:''}" onclick="send_abuse(this);">Report</button>
+&nbsp;&nbsp;<button onclick="ban_model();">ban</button>
+</div>
 </div>
 </output>
 ${js_help(["/js/video_chat.js","/js/login.js"])}

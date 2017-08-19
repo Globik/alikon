@@ -7,13 +7,15 @@ var admin_main_menu=n=>`<div id="admin_main_menu">
 <option value="/labs">labs</option>
 <option value="/dashboard">dashboard</option>
 </select>
-&nbsp;notes:&nbsp;<span onclick="fetch_abuse_popup();">${n.abuse_nots ? n.abuse_nots.rowCount:''}</span></div>
+&nbsp;notes:&nbsp;<span onclick="fetch_abuse_popup();" style="background:yellow;">${n.abuse_nots ? n.abuse_nots.rowCount:''}</span></div>
 <a href="#" class="overlay" id="link_abuse_popup"></a>
 <output id="abuse_popup" class="popi">
-<a href="#" class="close" style="text-decoration:none;"><span class="before" onclick="clickclose();" style="">X</span></a><div style="clear:both;"></div>
+<a href="#" class="close" style="text-decoration:none;"><span class="before" onclick="clickclose();" style="">X</span></a>
+<div style="clear:both;"></div>
 <span class="msp fel"><small>amin</small></span><span class="msp fel"><small>le pen</small></span><span class="msp fel"><small>duren</small></span>
 <div id="html_abuse_popup" class="lopi"><ul id="abuse_ul"></ul></div>
 <div class="podsmall"><small class="centstr" onclick="xhr_abuse_list();">else</small></div>
+<button onclick="insert_part();">insert part</button>
 </output>
 <script>
 var bflag=0;
@@ -105,6 +107,20 @@ xhr_abuse_list();
 //alert(vid);
 }
 
+}
+}
+function insert_part(){
+var frag=document.createDocumentFragment();
+let li=document.createElement('li');
+li.className="abuseli";
+li.setAttribute('data-vid',vid);
+li.innerHTML='<a class="fe" href="/webrtc/el.name" target="_blank">el.name</a>&nbsp;<span class="msp">el.slc  eventsource'+vid+'</span>';
+frag.appendChild(li)
+if(ul.hasChildNodes()){
+console.log('has childnodes()');
+ul.insertBefore(frag,ul.firstChild)
+}else{
+ul.appendChild(frag);
 }
 }
 function gid(id){return document.getElementById(id);}

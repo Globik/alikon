@@ -62,7 +62,7 @@ ${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">N
 <a href="/demo/videostream">test videostream</a><br><br>
 <a href="/demo/webrtc">test webrtc</a><br><br>
 <script>
-alert(localStorage.abuse);
+//alert(localStorage.abuse);
 var s=new EventSource('/log_rooms');
 s.onopen=function(e){console.log('event source is opened! ')}
 s.onmessage=function(e){

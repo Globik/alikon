@@ -530,6 +530,15 @@ var r=await db.query(s);
 //let a=await ctx.render('adm_abuse_list',{abuse_list:r.rows})
 ctx.body={abuse_list:r.rows}		   
 })
+admin.post('/api/set_ban_user',auth,async ctx=>{
+let db=ctx.db;
+//us_id,by_id,grund,notice,status='no';
+let {us_id,us_by,grund,notice,status}=ctx.request.body;
+try{
+await db.query('insert into banned_users(us_id,us_by,grund,status) values($1,$2,$3,$4)',[us_id,us_by,grund,status]);
+}catch(e){console.log(e);this.throw(400,e.name);}
+ctx.body={info:'OK. This user is banned!'}
+})
 /*
 ==============================================================
 MONGODB MANAGER

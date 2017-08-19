@@ -5,7 +5,7 @@ create table abuse(id serial primary key,
 				   cmnt text,
 				   us_id varchar(24) not null references busers(id),
 				   by_nick text not null,
-				   status text not null default 'neu',
+				   status text not null default 'neu',-- ok, gone
 				   at timestamp not null default now(),
 				   mngr varchar(24) references team(adm_id),
 				   at_t timestamp);

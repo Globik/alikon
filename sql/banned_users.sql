@@ -6,7 +6,7 @@ create table banned_users(id serial primary key,
 						  last_edit timestamp not null default now(),
 						  grund text,
 						  status text --not null must be yes or no,
-						 bstatus text not null default 'waiting');
+						  bstatus text not null default 'waiting');
 CREATE OR REPLACE FUNCTION banned_event() RETURNS TRIGGER AS $$
 BEGIN
 IF(TG_OP = 'UPDATE') THEN
