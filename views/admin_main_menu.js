@@ -68,11 +68,11 @@ var frag=document.createDocumentFragment();
 n.abuse_list.forEach(function(el,i){
 let li=document.createElement('li');
 li.className="abuseli";
-li.setAttribute('data-aid',el.id);
-li.setAttribute('data-abnick',el.by_nick);
-li.setAttribute('data-at',el.at);
-(el.cmnt?li.title=el.cmnt:'');
-li.innerHTML='<a class="fe" href="/webrtc/'+el.name+'" target="_blank">'+el.name+'</a>&nbsp;'+'<span class="msp">'+el.slc+' | '+el.id+'</span>';
+li.setAttribute('data-aid',el.abus_id);
+//li.setAttribute('data-abnick',el.by_nick);
+li.setAttribute('data-at',el.ab_at);
+(el.cmt?li.title=el.cmt:'');
+li.innerHTML='<a class="fe" href="/webrtc/'+el.name+'" target="_blank">'+el.name+'</a>&nbsp;'+'<span class="msp">'+el.ab_slc+' | '+el.abus_id+'</span>';
 frag.appendChild(li)
 });
 ul.appendChild(frag);

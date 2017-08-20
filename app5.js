@@ -123,7 +123,7 @@ async showmodule(){try{var mn=await readf('app.json');
 	return mn;}catch(e){console.log('eeeeri: ',e);return e;}},
 async  show_banners(){try{let m=await pool.query('select*from banners');console.log('SHOW BANNERS!!!!!!!');
 return m.rows;}catch(e){console.log(e);return e;}},
-async show_abuse_nots(){try{let m=await pool.query(`select id from abuse where status='neu'`);
+async show_abuse_nots(){try{let m=await pool.query(`select abus_id from abuse where ab_type='neu'`);
 							console.log('MUUUUUU: ',m.rows);
 							return m;}catch(e){console.log(e);return e.name;}}
 };

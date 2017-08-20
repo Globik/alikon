@@ -520,13 +520,13 @@ let db=ctx.db;
 console.log('body: ',ctx.request.body)
 let {nieder=''}=ctx.request.body;
 	console.log('NIEDER!: ',nieder)
-let s=`select abuse.*,busers.name from abuse left join busers on abuse.us_id=busers.id where abuse.status='neu'
+let s=`select abuse.*,busers.name from abuse left join busers on abuse.abus_id=busers.id where abuse.ab_type='neu'
 ${nieder?`and at > '${nieder}'`:''} limit 14`;
-let s1=1
+let s1=1;
 try{
 var r=await db.query(s);
 	console.log('resultat: ',r.rows)
-}catch(e){ctx.throw(400,e.name)}
+}catch(e){console.log(e);ctx.throw(400,e.name)}
 //let a=await ctx.render('adm_abuse_list',{abuse_list:r.rows})
 ctx.body={abuse_list:r.rows}		   
 })

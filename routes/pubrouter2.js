@@ -423,7 +423,7 @@ let s2=`select busers.id,busers.name,busers.role,busers.verif,busers.model,buser
 from busers left join rooms on busers.name=rooms.room_name left join  abuse on abuse.us_id=busers.id where busers.name=$1 and 
 exists(select*from abuse where abuse.status='neu') limit 1 `;
 try{
-var result=await db.query(s2,[ctx.params.buser_name]);
+var result=await db.query(s,[ctx.params.buser_name]);
 	console.log('OHO RESULT: ',result.rows);
 if(result.rows.length>0) {
 us=result.rows[0];
@@ -480,10 +480,13 @@ pub.post('/api/send_abuse', async ctx=>{
 let db=ctx.db;
 	//d.selector=a;d.text=b;d.us_id=c;d.who=e;
 let {selector,text,us_id,who}=ctx.request.body;
-	//(slc,cmnt,us_id,by_nick)
+//(abus_id,ab_slc,ab_cmt)
+ //abus_id,ab_type,ab_at,ab_l_mod,ab_cnt,ab_cmt,ab_slc
 try{
-db.query('insert into abuse(slc,cmnt,us_id,by_nick) values($1,$2,$3,$4)',[selector,text,us_id,who])
+db.query(`insert into abuse(abus_id,ab_slc,ab_cmt) values($1,$2,$3) on conflict(abus_id) do update set ab_cnt=abuse.ab_cnt+1,
+ab_slc=$4,ab_cmt=$5,ab_l_mod=now()`,[us_id,selector,text,selector,text])
 }catch(e){
+console.log(e)
 ctx.throw(404,e.name)
 }
 ctx.body={body:ctx.request.body,info:'ok,your report is accepted'}
