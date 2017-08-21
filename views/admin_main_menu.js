@@ -63,16 +63,15 @@ get_abuse_list(b);
 }
 
 function form_abuse_list(n){
-
 var frag=document.createDocumentFragment();
 n.abuse_list.forEach(function(el,i){
 let li=document.createElement('li');
 li.className="abuseli";
 li.setAttribute('data-aid',el.abus_id);
-//li.setAttribute('data-abnick',el.by_nick);
 li.setAttribute('data-at',el.ab_at);
 (el.cmt?li.title=el.cmt:'');
-li.innerHTML='<a class="fe" href="/webrtc/'+el.name+'" target="_blank">'+el.name+'</a>&nbsp;'+'<span class="msp">'+el.ab_slc+' | '+el.abus_id+'</span>';
+let cd='&nbsp;<span class="msp">'+el.ab_cnt+'</span>';
+li.innerHTML='<a class="fe" href="/webrtc/'+el.name+'" target="_blank">'+el.name+'</a>&nbsp;'+'<span class="msp">'+el.ab_slc+'</span>'+cd;
 frag.appendChild(li)
 });
 ul.appendChild(frag);
@@ -81,6 +80,7 @@ link_abuse_popup.onclick=function(){bflag=1;body.className="";}
 
 function clickclose(){bflag=1;body.className="";}
 var vid=0;
+
 function fake(){
 var frag=document.createDocumentFragment();
 

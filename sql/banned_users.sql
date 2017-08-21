@@ -15,6 +15,7 @@ update busers set bstatus=new.bn_status where busers.id=new.bn_us_id;
 RETURN new;
 ELSIF(TG_OP = 'INSERT') THEN
 update busers set bstatus=new.bn_status where busers.id=new.bn_us_id;
+delete from abuse where abus_id=new.bn_us_id;
 RETURN new;
 END IF;
 RETURN null;
@@ -24,4 +25,4 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS banned ON banned_users;
 
 CREATE TRIGGER  banned AFTER INSERT OR UPDATE ON banned_users FOR EACH ROW EXECUTE PROCEDURE banned_event();
---insert into banned_users(us_id,us_by,status) values('58ea81aa5204c81bb9113e6a',1,'yes');
+--insert into banned_users(bn_us_id,bn_us_by,bn_status,bn_cmt,bn_slc) values('58ea81aa5204c81bb9113e6a',1,'yes');

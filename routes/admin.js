@@ -530,14 +530,23 @@ var r=await db.query(s);
 //let a=await ctx.render('adm_abuse_list',{abuse_list:r.rows})
 ctx.body={abuse_list:r.rows}		   
 })
-admin.post('/api/set_ban_user',auth,async ctx=>{
+
+admin.post('/api/set_ban_user_two',auth,async ctx=>{
 let db=ctx.db;
-//us_id,by_id,grund,notice,status='no';
-let {us_id,us_by,grund,notice,status}=ctx.request.body;
+//banned_users(bn_us_id,bn_us_by,bn_status,bn_cmt,bn_slc)
+let {bn_us_id,bn_us_by,bn_cmt,bn_slc,bn_status}=ctx.request.body;
 try{
-await db.query('insert into banned_users(us_id,us_by,grund,status) values($1,$2,$3,$4)',[us_id,us_by,grund,status]);
+await db.query('insert into banned_users(bn_us_id,bn_us_by,bn_slc,bn_cmt,bn_status) values($1,$2,$3,$4,$5)',[bn_us_id,bn_us_by,bn_slc,bn_cmt,bn_status]);
 }catch(e){console.log(e);this.throw(400,e.name);}
 ctx.body={info:'OK. This user is banned!'}
+})
+admin.post('/api/skip_ban_user',auth,async ctx=>{
+let db=ctx.db;
+let {abus_id}=ctx.request.body;
+try{
+await db.query('delete from abuse where abus_id=$1',[abus_id])
+}catch(e){console.log(e);ctx.throw(400,e.name)}	
+ctx.body={info:"OK. Abuse deleted"}
 })
 /*
 ==============================================================

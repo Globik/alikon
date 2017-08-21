@@ -40,7 +40,7 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`
 
 <div id="video-container">
 <div id="topvideo"><span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>|
-<span onclick="get_complain();">ban broadcaster</span>
+<span onclick="get_complain();">ban broadcaster</span>&nbsp;<span onclick="get_one_abuse();" class="ab_cnt_span">${n.model.ab_cnt?n.model.ab_cnt:''}</span>
 </div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}">
@@ -102,6 +102,8 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
 <input type="hidden" id="inkognito" value="${n.inkognito}"/>
 
+<!-- Custom Events -->
+<input type="hidden" id="myevent" value="false"/>
 
 <div class="firstchild" id="camera-container">
 <div class="camera-box">
@@ -118,7 +120,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <div>
 <button onclick="get_room();">privat</button> <span id="tokpermin">10</span> tokens/min<br><br>
 </div> -->
-
+<br><button onclick="suka1();">do event</button><br>
 Time: <span id="mer">00:00:00</span><br><br>
 
 <hr><output id="out"></output>
@@ -181,7 +183,31 @@ Time: <span id="mer">00:00:00</span><br><br>
 </div>
 </div>
 </output>
+<a href="#" class="overlay" id="one_abuse"></a>
+<output id="one_abuse_id" class="popi">
+<a href="#" class="close"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+<ul>
+<li><b>What?: </b>${n.model.ab_slc?n.model.ab_slc:''}
+<li><b>Comment: </b>${n.model.ab_cmt?n.model.ab_cmt:''}
+<li><b>Created at: </b>${n.model.ab_at?n.model.ab_at:''}
+<li><b>Last modified: </b>${n.model.ab_l_mod?n.model.ab_l_mod:''}
+<li><b>Count: </b>${n.model.ab_cnt?n.model.ab_cnt:''}
+</ul>
+<button data-ab_slc="${n.model.ab_slc?n.model.ab_slc:''}" data-ab_cmt="${n.model.ab_cmt?n.model.ab_cmt:''}" onclick="ban_model2(this);">ban</button> |
+<button value="${n.model.abus_id?n.model.abus_id:''} onclick="not_ban(this);">not_ban</button>
+</output>
+
 ${js_help(["/js/video_chat.js","/js/login.js"])}
+<script>
+/*function suka1(){
+myevent.value='true';
+myevent.dispatchEvent(new Event('opis'));
+}*/
+//drei();
+setTimeout(function(){
+if(socket)alert('socket 2');
+},2000)
+</script>
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
 </html>`;

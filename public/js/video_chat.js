@@ -292,15 +292,15 @@ xhr.send(JSON.stringify(data));
 //administrative
 function ban_model(){
 let d={};
-	d.us_id=modelId;
-	d.us_by=yourId;
-	d.grund=complainiSelector.value;
-	d.notice=txarComplain.value;
-	d.status='yes';
+	d.bn_us_id=modelId;
+	d.bn_us_by=yourId;
+	d.bn_slc=complainiSelector.value;
+	d.bn_cmt=txarComplain.value;
+	d.bn_status='yes';
 let a=JSON.stringify(d);
 	//alert(a)
 var xhr=new XMLHttpRequest();
-xhr.open('post','/api/set_ban_user');
+xhr.open('post','/api/set_ban_user_two');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
@@ -312,6 +312,63 @@ alert(this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
 xhr.send(a);
+}
+//soll administrative.js
+function ban_model2(el){
+//banned_users(bn_us_id,bn_us_by,bn_status,bn_cmt,bn_slc)
+let d={};
+	d.bn_us_id=modelId;
+	d.bn_us_by=yourId;
+	d.bn_slc=el.getAttribute('data-ab_slc');
+	d.bn_cmt=el.getAttribute('data-ab_cmt');
+	d.bn_status='yes';
+let a=JSON.stringify(d);
+	//alert(a)
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/set_ban_user_two');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert('OK. This broadcaster are banned!');
+console.warn('xhr from server: ',this.response);
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){console.error(e)};
+xhr.send(a);
+}
+// into administrative.js
+function not_ban(el){
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/skip_ban_user');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert('OK. This broadcaster are banned!');
+console.warn('xhr from server: ',this.response);
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){console.error(e)};
+let d={};
+	d.abus_id=el.value;
+	let a=JSON.stringify(d);
+xhr.send(a);
+}
+//var boa=new Event('opis');
+function drei(){
+	//alert('drei');
+			   if(socket)alert('socket')
+			   }
+gid('myevent').addEventListener('opis',function(e){
+	//alert(1);
+	if(e.target.value=='true')alert('do! a True has established! : '+e.target.value);
+},false);
+
+function get_one_abuse(){
+window.location.href="#one_abuse";
 }
 var mediaconstraints={audio:true,video:true};
 

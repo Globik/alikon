@@ -420,10 +420,10 @@ let owner=false;
 let s=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,busers.bstatus,rooms.src
 from busers left join rooms on busers.name=rooms.room_name where busers.name=$1`;
 let s2=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,busers.bstatus,rooms.src,abuse.* 
-from busers left join rooms on busers.name=rooms.room_name left join  abuse on abuse.us_id=busers.id where busers.name=$1 and 
-exists(select*from abuse where abuse.status='neu') limit 1 `;
+from busers left join rooms on busers.name=rooms.room_name left join  abuse on abuse.abus_id=busers.id where busers.name=$1 and 
+exists(select*from abuse where abuse.ab_type='neu') limit 1 `;
 try{
-var result=await db.query(s,[ctx.params.buser_name]);
+var result=await db.query(s2,[ctx.params.buser_name]);
 	console.log('OHO RESULT: ',result.rows);
 if(result.rows.length>0) {
 us=result.rows[0];
