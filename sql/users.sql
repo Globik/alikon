@@ -15,7 +15,11 @@ mjoind timestamp not null default now()::timestamp);
 -- alter table busers add column items int not null default 0;
 -- alter table busers add column w_items int not null default 0;
 --alter table busers add column model boolean default false;
-alter table busers add column nick text not null default 'nick';
+-- alter table busers add column nick text not null default 'nick';
+alter table busers add column buser_d jsonb not null default '{}';
+update busers set buser_d=jsonb_set(buser_d,'{ban_id}','6') where name='globik';
+
+update busers set buser_d=(jsonb_set(to_jsonb(buser_d),'{ban_id}','47',false))::json where name='globik';
 --alter table busers add column bstatus text not null default 'no';
 -- alter table transfer add column pid text not null default 'aa';
 

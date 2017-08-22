@@ -239,9 +239,10 @@ console.log('is i.clientId typeof string? :',(typeof i.clientId==='string'))
 if(i.upgradeReq.url===bs.upgradeReq.url){
 	console.log('UPGRADE URL!!!!!!!!!!!!!!!!!!!!!')
 if(i && i.readyState===WebSocket.OPEN){
-//if(i.username===target){
-		console.log('OPENED!!!!!!!!!!!!!!!!!!!!!!!!!!')
-if(i.clientId===target){
+	console.log('I.USERNAME: ',i.username);
+if(i.username===target){
+console.log('OPENED!!!!!!!!!!!!!!!!!!!!!!!!!!')
+//if(i.clientId===target){
 console.log('i.username: ',i.username);
 i.send(mstring);
 break;
@@ -333,8 +334,8 @@ c.send(b)
 }}
 });
 }	
-	function make_channel_online_message(bs){
-	let usermsg={type:"roomer_online"};
+function make_channel_online_message(bs){
+let usermsg={type:"roomer_online"};
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
 if(c && c.readyState===WebSocket.OPEN){
@@ -590,7 +591,8 @@ var msgstring=JSON.stringify(msg);
 if(msg.target && msg.target !==undefined && msg.target.length !==0){
 sendtooneuser(ws,msg.target, msgstring);
 }else{
-if(msg.type=='message'){insert_message(msg.msg,msg.roomname,msg.from_nick)}
+if(msg.type=='message'){
+insert_message(msg.msg,msg.roomname,msg.from_nick)}
 emergency_to_all(ws,msg)
 /*
 wss.clients.forEach(c=>{

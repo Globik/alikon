@@ -182,11 +182,11 @@ function get_complain(el){
 window.location.href="#get_complaini";
 }
 var sendabusi=0;
-function send_abuse(el){
+function send_abuse(){
 	sendabusi++;
 let a=complainiSelector.value;
 let b=txarComplain.value;
-let c=el.getAttribute('data-ownerid');
+let c=modelId;
 let d={};
 let e=myusername;
 d.selector=a;d.text=b;d.us_id=c;d.who=e;
@@ -195,6 +195,7 @@ let j=JSON.stringify(d);
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/send_abuse');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
 console.warn('xhr from server: ',this.response);
@@ -289,87 +290,7 @@ console.log(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
 }
-//administrative
-function ban_model(){
-let d={};
-	d.bn_us_id=modelId;
-	d.bn_us_by=yourId;
-	d.bn_slc=complainiSelector.value;
-	d.bn_cmt=txarComplain.value;
-	d.bn_status='yes';
-let a=JSON.stringify(d);
-	//alert(a)
-var xhr=new XMLHttpRequest();
-xhr.open('post','/api/set_ban_user_two');
-xhr.setRequestHeader('Content-Type','application/json','utf-8');
-xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-xhr.onload=function(e){
-if(xhr.status==200){
-alert('OK. This broadcaster are banned!');
-console.warn('xhr from server: ',this.response);
-}else{
-alert(this.response);
-}}
-xhr.onerror=function(e){console.error(e)};
-xhr.send(a);
-}
-//soll administrative.js
-function ban_model2(el){
-//banned_users(bn_us_id,bn_us_by,bn_status,bn_cmt,bn_slc)
-let d={};
-	d.bn_us_id=modelId;
-	d.bn_us_by=yourId;
-	d.bn_slc=el.getAttribute('data-ab_slc');
-	d.bn_cmt=el.getAttribute('data-ab_cmt');
-	d.bn_status='yes';
-let a=JSON.stringify(d);
-	//alert(a)
-var xhr=new XMLHttpRequest();
-xhr.open('post','/api/set_ban_user_two');
-xhr.setRequestHeader('Content-Type','application/json','utf-8');
-xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-xhr.onload=function(e){
-if(xhr.status==200){
-alert('OK. This broadcaster are banned!');
-console.warn('xhr from server: ',this.response);
-}else{
-alert(this.response);
-}}
-xhr.onerror=function(e){console.error(e)};
-xhr.send(a);
-}
-// into administrative.js
-function not_ban(el){
-var xhr=new XMLHttpRequest();
-xhr.open('post','/api/skip_ban_user');
-xhr.setRequestHeader('Content-Type','application/json','utf-8');
-xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-xhr.onload=function(e){
-if(xhr.status==200){
-alert('OK. This broadcaster are banned!');
-console.warn('xhr from server: ',this.response);
-}else{
-alert(this.response);
-}}
-xhr.onerror=function(e){console.error(e)};
-let d={};
-	d.abus_id=el.value;
-	let a=JSON.stringify(d);
-xhr.send(a);
-}
-//var boa=new Event('opis');
-function drei(){
-	//alert('drei');
-			   if(socket)alert('socket')
-			   }
-gid('myevent').addEventListener('opis',function(e){
-	//alert(1);
-	if(e.target.value=='true')alert('do! a True has established! : '+e.target.value);
-},false);
 
-function get_one_abuse(){
-window.location.href="#one_abuse";
-}
 var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
@@ -485,8 +406,18 @@ console.log("case id: "+event.data);
 }else if(msg.type=="username"){
 console.log("case username: "+event.data);
 }else if(msg.type=="message"){
+	console.log(msg);
 if(!find_ignor(ignory,msg.from_nick))showmessage(msg);
-}else if(msg.type=="userlist"){
+if(msg.admin_type){
+if(msg.admin_type=="stop_broadcast"){
+console.log("stop broadcast!");
+if(owner()){
+gid('is_banned').value='yes';
+dissconnect();
+stopVideo();
+}
+}
+}}else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
 if(!owner()){if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;}
 if(!owner()){

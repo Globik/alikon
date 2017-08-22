@@ -178,8 +178,8 @@ Time: <span id="mer">00:00:00</span><br><br>
 </select>
 <strong>Additional Comments:</strong>
 <textarea id="txar-complain"></textarea>
-<div><button>cancel</button></div><div><button data-ownerid="${model?model.id:''}" onclick="send_abuse(this);">Report</button>
-&nbsp;&nbsp;<button onclick="ban_model();">ban</button>
+<div><button>cancel</button></div><div><button onclick="send_abuse();">Report</button>
+&nbsp;&nbsp;<button onclick="ban_model();">ban</button><button onclick="ban_out();">ban out</button>
 </div>
 </div>
 </output>
@@ -193,21 +193,14 @@ Time: <span id="mer">00:00:00</span><br><br>
 <li><b>Last modified: </b>${n.model.ab_l_mod?n.model.ab_l_mod:''}
 <li><b>Count: </b>${n.model.ab_cnt?n.model.ab_cnt:''}
 </ul>
-<button data-ab_slc="${n.model.ab_slc?n.model.ab_slc:''}" data-ab_cmt="${n.model.ab_cmt?n.model.ab_cmt:''}" onclick="ban_model2(this);">ban</button> |
-<button value="${n.model.abus_id?n.model.abus_id:''} onclick="not_ban(this);">not_ban</button>
+<button data-ab_slc="${n.model.ab_slc?n.model.ab_slc:''}" data-ab_cmt="${n.model.ab_cmt?n.model.ab_cmt:''}" 
+onclick="ban_model2(this);">ban</button> |
+<button value="${n.model.abus_id?n.model.abus_id:''}" onclick="not_ban(this);">not_ban</button>
 </output>
 
 ${js_help(["/js/video_chat.js","/js/login.js"])}
-<script>
-/*function suka1(){
-myevent.value='true';
-myevent.dispatchEvent(new Event('opis'));
-}*/
-//drei();
-setTimeout(function(){
-if(socket)alert('socket 2');
-},2000)
-</script>
+${js_help(["/js/admin_videochat.js"])}
+
 </main><footer id="footer">${footer.footer({})}</footer>
 </body>
 </html>`;
