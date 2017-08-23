@@ -14,11 +14,14 @@ CREATE OR REPLACE FUNCTION banned_event() RETURNS TRIGGER AS $$
 BEGIN
 IF(TG_OP = 'UPDATE') THEN
 
-update busers set bstatus=new.bn_status, buser_d=jsonb_set(buser_d,'{banistik}',jsonb_build_object('ban_id',new.ban_id)) where busers.id=new.bn_us_id;
+--update busers set bstatus=new.bn_status, buser_d=jsonb_set(buser_d,'{banistik}',jsonb_build_object('ban_id',new.ban_id)) where 
+--busers.id=new.bn_us_id;
+update busers set bstatus=new.bn_status,buser_d=jsonb_set(buser_d,'{ban_id}',to_jsonb(new.ban_id::int)) where busers.id=new.bn_us_id;
 RETURN new;
 ELSIF(TG_OP = 'INSERT') THEN
 
-update busers set bstatus=new.bn_status, buser_d=jsonb_set(buser_d,'{banistik}',jsonb_build_object('ban_id',new.ban_id)) where busers.id=new.bn_us_id;
+--update busers set bstatus=new.bn_status, buser_d=jsonb_set(buser_d,'{banistik}',jsonb_build_object('ban_id',new.ban_id)) where busers.id=new.bn_us_id;
+update busers set bstatus=new.bn_status,buser_d=jsonb_set(buser_d,'{ban_id}',to_jsonb(new.ban_id::int)) where busers.id=new.bn_us_id;
 -- update busers set buser_d=jsonb_set(buser_d,'{ban_id}','6') where name='globik';
 
 -- insert into banned_users(bn_us_id,bn_us_by,bn_status) values('58ea81aa5204c81bb9113e6a','58a1a78a406da007a696e917','yes');
