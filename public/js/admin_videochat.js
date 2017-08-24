@@ -30,7 +30,7 @@ outi.type="message";
 outi.admin_type="stop_broadcast";
 outi.target=modelName;
 sendJson(outi)
-sendJson({type:"message",msg:modelName+" is banned.",from_nick:/*myusername*/"moderator"})
+sendJson({type:"message",msg:modelName+" is banned.",roomname:modelName,from_nick:/*myusername*/"moderator"})
 gid('is_banned').value="yes";
 }
 
@@ -52,8 +52,8 @@ socket_to_ban_user();
 alert(this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
-//xhr.send(JSON.stringify(d));
-socket_to_ban_user();
+xhr.send(JSON.stringify(d));
+//socket_to_ban_user();
 }
 
 function not_ban(){
@@ -70,16 +70,39 @@ alert(this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
 let d={};
-	d.abus_id=modelId;//el.value;
-	let a=JSON.stringify(d);
-	alert(a);
-//xhr.send(a);
+d.abus_id=modelId;
+let a=JSON.stringify(d);
+alert(a);
+xhr.send(a);
 }
-function ban_out(){
+function ban_out(el){
 if(!is_banned()){alert('This user is already ban out!');return;}
 let d={}
+//model_id,bn_status='no',bstatus='end',ban_id
 d.model_id=modelId;
 d.bn_status='no';
 d.bstatus='end';
-alert(modelId)
-}
+d.ban_id=el.getAttribute('data-ban_id');
+if(!d.ban_id)return;
+let a=JSON.stringify(d);
+alert(a);
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/ban_out_user');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+let bi=JSON.parse(this.response);
+alert(this.response);
+gid('is_banned').value="no";
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){console.error(e)};
+xhr.send(a);
+}	
+	
+	
+	
+	
+	

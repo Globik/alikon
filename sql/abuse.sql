@@ -4,7 +4,7 @@ create table abuse(abus_id varchar(24) not null references busers(id),
 				   ab_type text not null default 'neu',
 				   ab_at timestamp not null default now(),
 				   ab_l_mod timestamp not null default now(),
-				   ab_cnt int not null default 0,
+				   ab_cnt int not null default 1,
 				   ab_cmt varchar(250),
 				   ab_slc varchar(250) not null,
 				   constraint unique_abus_id unique(abus_id));

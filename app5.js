@@ -251,7 +251,14 @@ break;
 }
 
 }
-	
+	/*
+update busers set buser_d=jsonb_set(buser_d,'{"ban_id"}','100') where name='globik';
+
+update busers set buser_d=jsonb_set(buser_d,'{"ban_id"}',to_jsonb('mama'::text)) where name='globik';
+
+update busers set buser_d=jsonb_set(buser_d,'{"ban_id"}',to_jsonb(1::int)) where name='globik';
+*/
+
 function getconnectionforid( bs, id){
 var connect=null;
 console.log('FUCK: ',bs.upgradeReq.url);
@@ -592,6 +599,8 @@ if(msg.target && msg.target !==undefined && msg.target.length !==0){
 sendtooneuser(ws,msg.target, msgstring);
 }else{
 if(msg.type=='message'){
+//from client({type:"message",msg:modelName+" is banned.",from_nick:/*myusername*/"moderator"})
+	console.log('BOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ',msg);
 insert_message(msg.msg,msg.roomname,msg.from_nick)}
 emergency_to_all(ws,msg)
 /*

@@ -541,6 +541,7 @@ await db.query('insert into banned_users(bn_us_id,bn_us_by,bn_slc,bn_cmt,bn_stat
 }catch(e){console.log(e);this.throw(400,e.name);}
 ctx.body={info:'OK. This user is banned!',bstatus:2}
 })
+
 admin.post('/api/skip_ban_user',auth,async ctx=>{
 let db=ctx.db;
 let {abus_id}=ctx.request.body;
@@ -548,6 +549,16 @@ try{
 await db.query('delete from abuse where abus_id=$1',[abus_id])
 }catch(e){console.log(e);ctx.throw(400,e.name)}	
 ctx.body={info:"OK. Abuse deleted"}
+})
+
+admin.post('/api/ban_out_user',auth,async ctx=>{
+let db=ctx.db;
+// model_id,bn_status='no',bstatus='end',ban_id
+let {model_id,bn_status,bstatus,ban_id}=ctx.request.body;
+try{
+await db.query('update banned_users set bn_status=$1,bstatus=$2,bn_last_edit=now() where ban_id=$3',[bn_status,bstatus,ban_id]);
+}catch(e){console.log(e);ctx.throw(400,e.name);}
+ctx.body={info:"OK. This user banned out."}
 })
 /*
 ==============================================================

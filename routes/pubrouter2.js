@@ -419,7 +419,7 @@ let us=null;
 let owner=false;
 let s=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,busers.bstatus,rooms.src
 from busers left join rooms on busers.name=rooms.room_name where busers.name=$1`;
-let s2=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,busers.bstatus,rooms.src,abuse.* 
+let s2=`select busers.id,busers.name,busers.role,busers.verif,busers.model,busers.items,busers.bstatus,busers.buser_d,rooms.src,abuse.* 
 from busers left join rooms on busers.name=rooms.room_name left join  abuse on abuse.abus_id=busers.id where busers.name=$1`;
 try{
 var result=await db.query(s2,[ctx.params.buser_name]);

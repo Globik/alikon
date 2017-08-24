@@ -40,7 +40,8 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`
 
 <div id="video-container">
 <div id="topvideo"><span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>|
-<span onclick="get_complain();">ban broadcaster</span>&nbsp;<span onclick="get_one_abuse();" class="ab_cnt_span">${n.model.ab_cnt?n.model.ab_cnt:''}</span>
+<span onclick="get_complain();">ban broadcaster</span>&nbsp;
+<span onclick="get_one_abuse();" class="ab_cnt_span">${n.model.ab_cnt?n.model.ab_cnt:''}</span>
 </div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}">
@@ -179,10 +180,12 @@ Time: <span id="mer">00:00:00</span><br><br>
 <strong>Additional Comments:</strong>
 <textarea id="txar-complain"></textarea>
 <div><button>cancel</button></div><div><button onclick="send_abuse();">Report</button>
-&nbsp;&nbsp;<button onclick="ban_model();">ban</button><button onclick="ban_out();">ban out</button>
+&nbsp;&nbsp;<button onclick="ban_model();">ban</button><button data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" 
+onclick="ban_out(this);">ban out </button>
 </div>
 </div>
 </output>
+
 <a href="#" class="overlay" id="one_abuse"></a>
 <output id="one_abuse_id" class="popi">
 <a href="#" class="close"><span class="before" style="">X</span></a><div style="clear:both;"></div>
