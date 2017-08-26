@@ -7,7 +7,10 @@ var admin_main_menu=n=>`<div id="admin_main_menu">
 <option value="/labs">labs</option>
 <option value="/dashboard">dashboard</option>
 </select>
-&nbsp;notes:&nbsp;<span onclick="fetch_abuse_popup();" style="background:yellow;">${n.abuse_nots ? (n.abuse_nots.rowCount==0?'':n.abuse_nots.rowCount):''}</span></div>
+
+&nbsp;notes:&nbsp;<span onclick="fetch_abuse_popup();" style="background:yellow;">
+${n.abuse_nots ? (n.abuse_nots.rowCount==0?'':n.abuse_nots.rowCount):''}</span> 
+</div>
 <a href="#" class="overlay" id="link_abuse_popup"></a>
 <output id="abuse_popup" class="popi">
 <a href="#" class="close" style="text-decoration:none;"><span class="before" onclick="clickclose();" style="">X</span></a>
@@ -17,6 +20,8 @@ var admin_main_menu=n=>`<div id="admin_main_menu">
 <div class="podsmall"><small class="centstr" onclick="xhr_abuse_list();">else</small></div>
 <button onclick="insert_part();">insert part</button>
 </output>
+
+
 <script>
 var bflag=0;
 var scrflag=0;

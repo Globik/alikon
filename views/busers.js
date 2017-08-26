@@ -2,6 +2,8 @@
 const onroomstr="Press connect button to broadcast yourself. To stop broadcast press disconnect button. Or you can  just stop video right now.";
 const onowneroff="To broadcast yourself please enable your webcam and press start video button. Then connect button.";
 const usoff="The member you are trying to view is currently offline. Please wait or choose another member to view.";
+const you_ban="You are banned.";
+const us_ban="This user is banned.";
 const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
@@ -33,18 +35,19 @@ body.ondialog{overflow:hidden;}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`:'')}
+
 <main id="pagewrap"> 
 
 <div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}
-&nbsp;${model?(model.bstatus=='yes'?'aha!':''):''}</div>
+&nbsp;${model?(model.bstatus=='yes'?'banned!':''):''}</div>
 
 <div id="video-container">
 <div id="topvideo"><span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>|
 <span onclick="get_complain();">ban broadcaster</span>&nbsp;
 <span onclick="get_one_abuse();" class="ab_cnt_span">${n.model.ab_cnt?n.model.ab_cnt:''}</span>
 </div>
-<div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}" data-onroom="${onroomstr}" 
-data-owneroffline="${onowneroff}" data-usoff="${usoff}">
+<div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}${model.bstatus=='yes'?' banned':''}" data-onroom="${onroomstr}" 
+data-owneroffline="${onowneroff}" data-usoff="${usoff}" data-banned="${model?(model.bstatus=='yes'?(n.owner?you_ban:us_ban):''):''}">
 <video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.</video>
 </div>
 <div id="undervideo">
@@ -88,6 +91,8 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </output>
 <!-- global -->
 <input type="hidden" id="is_banned" value="${model?model.bstatus:''}"/>
+<input type="hidden" id="class_us_ban" value="${us_ban}"/>
+<input type="hidden" id="class_you_ban" value="${you_ban}"/>
 <!-- model -->
 <input type="hidden" id="modelName" value="${model?model.name:''}"/>
 <input type="hidden" id="modelId" value="${model.id}"/>
@@ -180,7 +185,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 <strong>Additional Comments:</strong>
 <textarea id="txar-complain"></textarea>
 <div><button>cancel</button></div><div><button onclick="send_abuse();">Report</button>
-&nbsp;&nbsp;<button onclick="ban_model();">ban</button><button data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" 
+&nbsp;&nbsp;<button onclick="ban_model();">ban</button><button id="banId" data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" 
 onclick="ban_out(this);">ban out </button>
 </div>
 </div>

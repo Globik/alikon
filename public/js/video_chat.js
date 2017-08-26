@@ -415,9 +415,32 @@ if(owner()){
 gid('is_banned').value='yes';
 dissconnect();
 stopVideo();
+vidW.setAttribute('data-banned',class_you_ban.value);
+vidW.classList.add('banned');
+video_starter.textContent="banned";
+video_starter.disabled=true;
+}
+}else if(msg.admin_type=="you_ban_out"){
+if(owner()){
+gid('is_banned').value='no';
+vidW.classList.remove('banned');
+video_starter.textContent="start video";
+video_starter.disabled=false;
+}
+}else{}
+}
+
+if(msg.sub_admin_type){
+if(msg.sub_admin_type=='us_ban'){
+if(!owner()){
+vidW.setAttribute('data-banned',class_us_ban.value);
+vidW.classList.add('banned');
+
 }
 }
-}}else if(msg.type=="userlist"){
+}
+	
+}else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
 if(!owner()){if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;}
 if(!owner()){
@@ -756,6 +779,7 @@ updateButtons();
 }
 
 function stopLocalStream(stream) {
+	if(stream==null)return;
 let tracks = stream.getTracks();
 if (! tracks) {
 console.warn('NO tracks');

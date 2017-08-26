@@ -599,8 +599,6 @@ if(msg.target && msg.target !==undefined && msg.target.length !==0){
 sendtooneuser(ws,msg.target, msgstring);
 }else{
 if(msg.type=='message'){
-//from client({type:"message",msg:modelName+" is banned.",from_nick:/*myusername*/"moderator"})
-	console.log('BOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ',msg);
 insert_message(msg.msg,msg.roomname,msg.from_nick)}
 emergency_to_all(ws,msg)
 /*

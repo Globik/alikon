@@ -536,10 +536,11 @@ let db=ctx.db;
 //banned_users(bn_us_id,bn_us_by,bn_status,bn_cmt,bn_slc)
 let {bn_us_id,bn_us_by,bn_cmt,bn_slc,bn_status,is_banned}=ctx.request.body;
 if(is_banned)ctx.throw(400,'This user already is banned!')
+let result;
 try{
-await db.query('insert into banned_users(bn_us_id,bn_us_by,bn_slc,bn_cmt,bn_status) values($1,$2,$3,$4,$5)',[bn_us_id,bn_us_by,bn_slc,bn_cmt,bn_status]);
+result=await db.query('insert into banned_users(bn_us_id,bn_us_by,bn_slc,bn_cmt,bn_status) values($1,$2,$3,$4,$5) returning ban_id',[bn_us_id,bn_us_by,bn_slc,bn_cmt,bn_status]);
 }catch(e){console.log(e);this.throw(400,e.name);}
-ctx.body={info:'OK. This user is banned!',bstatus:2}
+ctx.body={info:'OK. This user is banned!',bstatus:2,result:result.rows[0]}
 })
 
 admin.post('/api/skip_ban_user',auth,async ctx=>{

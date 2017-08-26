@@ -30,7 +30,7 @@ outi.type="message";
 outi.admin_type="stop_broadcast";
 outi.target=modelName;
 sendJson(outi)
-sendJson({type:"message",msg:modelName+" is banned.",roomname:modelName,from_nick:/*myusername*/"moderator"})
+sendJson({type:"message",msg:modelName+" is banned.",roomname:modelName,from_nick:/*myusername*/"moderator",sub_admin_type:"us_ban"})
 gid('is_banned').value="yes";
 }
 
@@ -44,8 +44,10 @@ xhr.onload=function(e){
 if(xhr.status==200){
 console.warn('xhr from server: ',this.response);
 let bi=JSON.parse(this.response);
+	
 if(bi.bstatus==2){
-alert(bi.info);
+alert(bi.info+' '+bi.result.ban_id);
+banId.setAttribute('data-ban_id',bi.result.ban_id);
 socket_to_ban_user();
 }
 }else{
@@ -95,6 +97,15 @@ if(xhr.status==200){
 let bi=JSON.parse(this.response);
 alert(this.response);
 gid('is_banned').value="no";
+vidW.classList.remove('banned');
+let outi={};
+outi.msg='You just banned out';
+outi.from_nick='moderator';
+outi.type="message";
+outi.admin_type="you_ban_out";
+outi.target=modelName;
+sendJson(outi)
+//sendJson({type:"message",msg:modelName+" is just banned out.",roomname:modelName,from_nick:/*myusername*/"moderator",sub_admin_type:"us_ban_out"})
 }else{
 alert(this.response);
 }}

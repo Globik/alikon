@@ -16,6 +16,7 @@ IF(TG_OP = 'UPDATE') THEN
 
 --update busers set bstatus=new.bn_status, buser_d=jsonb_set(buser_d,'{banistik}',jsonb_build_object('ban_id',new.ban_id)) where 
 --busers.id=new.bn_us_id;
+-- update busers set buser_d=jsonb_set(buser_d,'{buser_d}',jsonb_build_object('mama','atos')) where name='dima';
 update busers set bstatus=new.bn_status,buser_d=jsonb_set(buser_d,'{ban_id}',to_jsonb(new.ban_id::int)) where busers.id=new.bn_us_id;
 RETURN new;
 ELSIF(TG_OP = 'INSERT') THEN
