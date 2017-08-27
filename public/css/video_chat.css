@@ -71,24 +71,7 @@ height:auto;
 min-height:calc(80% - 4rem);
 letter-spacing:0.1em;
 }
-/*
-#video-wrapper.owner-offline::after, #video-wrapper.owner-onroom::after,#video-wrapper.banned::after{
-box-sizing:border-box;
-position:absolute;
-background:violet;
-word-wrap:break-word;
-top:2.2rem;
-left:2rem;
-padding-left:1.3rem;
-padding-right:1.3rem;
-padding-top:3rem;
-line-height:1.5;
-	min-height:calc(80% - 4rem);
-letter-spacing:0.1em;
-	width:calc(100% - 4rem);
-}
 
-*/
 #video-wrapper.owner-offline::after{content:attr(data-owneroffline);}
 #video-wrapper.owner-onroom::after{content:attr(data-onroom);}
 #video-wrapper.banned::after{content:attr(data-banned);}
@@ -181,7 +164,7 @@ color:white;
 .zbox span::-webkit-selection{background:none;}
 .zbox span::-moz-selection{background:none;}
 .zbox:hover{background:rgba(255,0,0,0.1);}
-	
+#pop{background:rgba(0,0,0,0.4);}
 #pop button{
 display:block;
 border:none;
@@ -192,7 +175,8 @@ font-size:1.2em;
 line-height:0;
 position:relative;
 }
-#pop p{font-size:1em;padding:1em;line-height:1;}
+#pop p{font-size:1em;padding:1em;line-height:1;color:white;}
+#yourTokens2{color:yellow;}
 #tokTosend{color:yellow;letter-spacing:0.3em;}
 			
 @keyframes waiting{

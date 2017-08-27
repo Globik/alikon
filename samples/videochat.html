@@ -118,27 +118,27 @@ transition: opacity .5s, top .5s;
 opacity: 1;
 visibility: visible;
 }
-.close {
-background-color: rgba(0, 0, 0, 0.8);
-height: 2em;
-line-height: 1.9em;
-position: absolute;
-right: 0.7em;
+	
+	.wrap-close{height:2em;}
+	.close {
+background-color: brown;/*rgba(240, 0, 0, 0.8);*/
+height: 1.2em;
+
 text-align: center;
-text-decoration: none;
-top: 0.7em;
-width: 2em;
+width: 1.2em;
 border-radius: 15px;
+float:right;
+	text-decoration:none;
+		font-size:1.6em;
 }
-.close:before {
-color: rgba(255, 255, 255, 0.9);
-content: "X";
-font-size: 24px;
-text-shadow: 0 -1px rgba(0, 0, 0, 0.9);
+	.close::before{
+	color: rgba(255, 255, 255, 0.9);
+	content:"\274c";
+	/* or x \d7 */
 }
-.close:hover {
- background-color: rgba(64, 128, 128, 0.8);
-}
+
+
+
 
 			
 #chat-container{
@@ -323,8 +323,9 @@ display:none;
 
 <a href="#" class="overlay" id="resultativ"></a>
 <output id="pop" class="popi">
-<a href="#" class="close"></a>
-<p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
+
+<div class="wrap-close"><a href="#" class="close"></a></div>
+<p style="background:lightgreen;"><a href="/tipping/purchase_tokens">purchase tokens</a></p>
 <p>You have <span id="yourTokens2"></span> tokens.</p>
 <p class="ptokenstosend">Tokens to send:&nbsp;&nbsp;<span class="ok" id="tokTosend"></span></p>
 	<p><span id="outi"></span></p>

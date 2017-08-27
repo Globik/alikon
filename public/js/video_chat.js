@@ -164,7 +164,7 @@ btnok.classList.add('extra');
 balu=true;
 outi.innerHTML='<b class="ok-info">Thank you!</b>';
 rechnet(amount_token);
-setTimeout(close_tokensblatt,1000);
+//setTimeout(close_tokensblatt,1000);
 }
 
 function unseccess_token_transfer(){

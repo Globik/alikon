@@ -178,14 +178,14 @@ opacity: 1;
 z-index:100;
 }
 .popi {
-border: 3px solid rgba(255,255,255,1.0);
+border: 3px solid rgba(255,255,255,0.5);
 left: 50%;
 top: /*50%;*/1%;
 width:auto;
 opacity:0;
 padding: 0em;
 position: fixed;
-text-align: justify;
+/*text-align: justify;*/
 height:auto;
 
 visibility: hidden;
@@ -198,10 +198,10 @@ transition: opacity .5s, top .5s;
 background:rgb(200,200,200);
 }
 .overlay:target+.popi {
-
 opacity: 1;
 visibility: visible;
 }
+/*
 .close {
 background-color: rgba(0, 0, 0, 0.8);
 height: 2em;
@@ -215,6 +215,24 @@ float:right;
 .before {
 color: rgba(255, 255, 255, 0.9);
 font-size: 1.5em;}
+*/
+.wrap-close{height:2em;}
+	.close {
+background-color: brown;/*rgba(240, 0, 0, 0.8);*/
+height: 1.2em;
+
+text-align: center;
+width: 1.2em;
+border-radius: 15px;
+float:right;
+	text-decoration:none;
+		font-size:1.6em;
+}
+	.close::before{
+	color: rgba(255, 255, 255, 0.9);
+	content:"\274c";
+	/* or x \d7 */
+}
 
 
 .lopi::-webkit-scrollbar{width:5px;}

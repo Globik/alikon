@@ -65,8 +65,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 </div>
 <a href="#" class="overlay" id="resultativ"></a>
-<output id="pop" class="popi">
-<a href="#" class="close" style="text-decoration:none;"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+<output id="pop" class="popi"><div class="wrap-close"><a href="#" class="close"></a></div>
 <p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
 <p>You have <span id="yourTokens2"></span> tokens.</p>
 <p class="ptokenstosend">Tokens to send:&nbsp;&nbsp;<span class="ok" id="tokTosend"></span></p>
@@ -148,12 +147,12 @@ Time: <span id="mer">00:00:00</span><br><br>
 
 <a href="#" class="overlay" id="vorlogery"></a>
 <output id="vorlogin" class="popi">
-<a href="#" class="close" style="text-decoration:none;"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+<div class="wrap-close"><a href="#" class="close"></a></div>
 <div id="vorlogincontainer"></div>
 </output>
 <a href="#" class="overlay" id="chatnastroi"></a>
 <output id="chichat" class="popi" style="width:60%;">
-<a href="#" class="close"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+<div class="wrap-close"><a href="#" class="close"></a></div>
 
 <form style="background:inherit;width:100%;" name="canchat">
 <p><strong>Don't accept chat users who's:</strong></p>
@@ -165,7 +164,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 </output>
 <a href="#" class="overlay" id="get_complaini"></a>
 <output id="complaini" class="popi">
-<a href="#" class="close"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+<div class="wrap-close"><a href="#" class="close"></a></div>
 <h6>Report Abuse</h6>
 <div>
 <strong>Choose a category:</strong>
@@ -193,7 +192,7 @@ onclick="ban_out(this);">ban out </button>
 
 <a href="#" class="overlay" id="one_abuse"></a>
 <output id="one_abuse_id" class="popi">
-<a href="#" class="close"><span class="before" style="">X</span></a><div style="clear:both;"></div>
+<div class="wrap-close"><a href="#" class="close"></a></div>
 <ul>
 <li><b>What?: </b>${n.model.ab_slc?n.model.ab_slc:''}
 <li><b>Comment: </b>${n.model.ab_cmt?n.model.ab_cmt:''}
