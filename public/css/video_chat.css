@@ -1,8 +1,8 @@
 *{box-sizing:border-box;}
-#media-header{background:green;padding-left:0.5em;position:relative;}
+#media-header{background:green;padding-left:0.5em;position:relative;height:1.1em;}
 #media-header b{font-size:0.9em;}
 #online-detector{background:red;width:1em;height:1em;display:inline-block;vertical-align:middle;
-border-radius:1em;visibility:hidden;
+border-radius:1em;visibility:hidden;margin-top:-0.1em;
 }
 @keyframes puls{
 from{background:pink;}

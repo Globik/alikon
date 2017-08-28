@@ -43,7 +43,6 @@ background: #6f4e37;height:45px;width:100%;}
 /* background:pink;*/
 top:0;left:0;margin:0;padding:0;list-style:none;width:70%;height:100%;}
 nav #menu li{
-box-sizing:border-box;
 letter-spacing:0.06em;
 font-weight:bold;
 text-align:center;
@@ -178,7 +177,7 @@ opacity: 1;
 z-index:100;
 }
 .popi {
-border: 3px solid rgba(255,255,255,0.5);
+border: 2px solid rgba(255,255,255,0.2);
 left: 50%;
 top: /*50%;*/1%;
 width:auto;
@@ -193,7 +192,7 @@ z-index: 100;
 transform: translate(-50%, 1%);
 -webkit-transform:translate(-50%,1%);
 -ms-transform:translate(-50%,1%);
-border-radius: 10px;
+border-radius: 2px;
 transition: opacity .5s, top .5s;
 background:rgb(200,200,200);
 }
