@@ -8,7 +8,9 @@ body {height:100%;
 /*font-size:18px;font-size:1.6rem;*/
 /*-webkit-font-smoothing:antialised;*/
 margin:0;padding:0;font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;}
+body.ondialog{overflow:hidden;}
 .orange{background:orange;} .green{background:green;}
+/*
 a {color: #026acb;text-decoration: none;outline: none;}
 a:hover {text-decoration: underline;}
 .p {margin: 0 0 1.2rem; padding: 0;}
@@ -18,6 +20,7 @@ h1, h2, h3, h4, h5, h6 {line-height: 2.3rem;margin: 2.0rem 0 4.0rem;color: #000;
 h1 {font-size: 3.2rem;} h2 {font-size: 2.56rem;}
 h3 {font-size: 2.24rem;} h4 {font-size: 1.92rem;}
 h5 {font-size: 1.76rem;} h6 {font-size: 1.6rem;}
+*/
 main{display:block;position:relative;}
 #pagewrap {
 /*max-width:1365px;*//* me 1365px*/
@@ -177,16 +180,17 @@ opacity: 1;
 z-index:100;
 }
 .popi {
-border: 2px solid rgba(255,255,255,0.2);
+border: 20px solid rgba(255,245,255,0.2);
+background:rgba(20,20,30,0.9);
+color:rgba(233,240,250,0.9);
+font-family:Arial,sans-serif;
 left: 50%;
-top: /*50%;*/1%;
+top: 1%;
 width:auto;
 opacity:0;
-padding: 0em;
+/*padding: 0em;*/
 position: fixed;
-/*text-align: justify;*/
 height:auto;
-
 visibility: hidden;
 z-index: 100;
 transform: translate(-50%, 1%);
@@ -194,7 +198,6 @@ transform: translate(-50%, 1%);
 -ms-transform:translate(-50%,1%);
 border-radius: 2px;
 transition: opacity .5s, top .5s;
-background:rgb(200,200,200);
 }
 .overlay:target+.popi {
 opacity: 1;
@@ -216,24 +219,24 @@ color: rgba(255, 255, 255, 0.9);
 font-size: 1.5em;}
 */
 .wrap-close{height:2em;}
-	.close {
-background-color: brown;/*rgba(240, 0, 0, 0.8);*/
+.close {
+background-color: rgba(0, 0, 0, 0.9);
 height: 1.2em;
-
 text-align: center;
 width: 1.2em;
 border-radius: 15px;
 float:right;
-	text-decoration:none;
-		font-size:1.6em;
+text-decoration:none;
+font-size:1.6em;
 }
+
 	.close::before{
 	color: rgba(255, 255, 255, 0.9);
 	content:"\274c";
 	/* or x \d7 */
 }
 
-
+.close:hover::before{color:brown;}
 .lopi::-webkit-scrollbar{width:5px;}
 .lopi::-webkit-scrollbar-track{
 box-shadow: inset 0 0 6px rgba(255,255,240,0.3);

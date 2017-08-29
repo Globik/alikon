@@ -28,7 +28,7 @@ return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 #abuse_popup ul{list-style:none;padding:3px;margin:0;display:block;position:relative;background:rgba(0,0,0,0);}
 #html_abuse_popup{background:rgba(0,0,0,0);height:calc(100% - 2em - 1.5em - 2em);display:block;position:relative;overflow:auto;}
 .abuseli{background:rgba(0,0,0,0);margin:0;padding:10px;}
-body.ondialog{overflow:hidden;}
+
 </style>
 </head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
@@ -37,14 +37,14 @@ ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : 
 ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`:'')}
 
 <main id="pagewrap"> 
-
-<div id="media-wrapper"><div id="media-header"><b>${model?model.name:''}</b>${n.owner?'&nbsp;&nbsp;<div id="online-detector"></div>':''}
-&nbsp;${model?(model.bstatus=='yes'?'banned!':''):''}</div>
-
+<div id="media-header">
+<b>${model?model.name:''}&nbsp;</b>${n.owner?'<div id="online-detector"</div>':''}&nbsp;
+${model?(model.bstatus=='yes'?'<span id="banned">banned</span>':''):''}
+</div>
+<div id="media-wrapper">
 <div id="video-container">
-<div id="topvideo"><span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>|
-<span onclick="get_complain();">ban broadcaster</span>&nbsp;
-<span onclick="get_one_abuse();" class="ab_cnt_span">${n.model.ab_cnt?n.model.ab_cnt:''}</span>
+<div id="topvideo">&nbsp;<span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>&nbsp;
+${n.model.ab_cnt?`<span onclick="get_one_abuse();" class="ab_cnt_span" title="sum of complains">${n.model.ab_cnt}</span>`:''}
 </div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}${model.bstatus=='yes'?' banned':''}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}" data-banned="${model?(model.bstatus=='yes'?(n.owner?you_ban:us_ban):''):''}">
@@ -54,8 +54,9 @@ data-owneroffline="${onowneroff}" data-usoff="${usoff}" data-banned="${model?(mo
 ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button>${!n.owner ?'<button class="start" onclick="tip();">send tip</button><button class="start" onclick="go_private();">private room</button>':''}
 </div>
 </div>
+
 <div id="chat-container">
-<div id="topchat" onclick="chat_gear();">gear</div>
+<div id="topchat" onclick="chat_gear();"><span style="cursor:pointer;" title="chat options">gear</span></div>
 <div id="chat"></div>
 <div id="underchat">
 <form name="publish">
@@ -63,7 +64,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </form>
 </div>
 </div>
-</div>
+</div><div style="clear:both;">.</div>
 <a href="#" class="overlay" id="resultativ"></a>
 <output id="pop" class="popi"><div class="wrap-close"><a href="#" class="close"></a></div>
 <p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
@@ -127,7 +128,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div> -->
 <br><button onclick="suka1();">do event</button><br>
 Time: <span id="mer">00:00:00</span><br><br>
-
+<button onclick="vor_login();">log in</button>
 <hr><output id="out"></output>
 
 <input type="checkbox" id="plan_b_check" >planB<br>
@@ -151,23 +152,22 @@ Time: <span id="mer">00:00:00</span><br><br>
 <div id="vorlogincontainer"></div>
 </output>
 <a href="#" class="overlay" id="chatnastroi"></a>
-<output id="chichat" class="popi" style="width:60%;">
+<output id="chat-gear" class="popi">
 <div class="wrap-close"><a href="#" class="close"></a></div>
-
-<form style="background:inherit;width:100%;" name="canchat">
-<p><strong>Don't accept chat users who's:</strong></p>
+<form name="canchat">
+<div><strong>Don't accept chat users who's:</strong></div>
 <input type="radio" name="chataccess" id="canchat_guest" value="1"/>&nbsp;<label>a guest</label><br>
 <input type="radio" name="chataccess" id="canchat_logged" value="2"/>&nbsp;<label>a non-tokens user or a guest</label><br>
 <input type="submit" value="save"/>
 </form>
-
 </output>
+
 <a href="#" class="overlay" id="get_complaini"></a>
 <output id="complaini" class="popi">
 <div class="wrap-close"><a href="#" class="close"></a></div>
-<h6>Report Abuse</h6>
-<div>
-<strong>Choose a category:</strong>
+
+<div><h3>Report Abuse</h3>
+<h4>Choose a category:</h4>
 <select id="complaini-selector" dropdown=true>
 <option value="Broadcaster is underage">Broadcaster is underage</option>
 <option value="Broadcaster is advertising">Broadcaster is advertising</option>
@@ -181,12 +181,14 @@ Time: <span id="mer">00:00:00</span><br><br>
 <option value="Broadcaster is wrong gender">Broadcaster is wrong gender</option>
 <option value="Other">Other</option>
 </select>
-<strong>Additional Comments:</strong>
-<textarea id="txar-complain"></textarea>
-<div><button>cancel</button></div><div><button onclick="send_abuse();">Report</button>
-&nbsp;&nbsp;<button onclick="ban_model();">ban</button><button id="banId" data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" 
-onclick="ban_out(this);">ban out </button>
 </div>
+<div>
+<h4>Additional Comments:</h4>
+<textarea id="txar-complain" placeholder="Your complain here"></textarea>
+</div>
+<div>
+<button onclick="send_abuse();">Report</button>
+<button onclick="ban_model();" class="ban">ban</button><button id="banId" class="ban" data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" onclick="ban_out(this);">ban out</button>
 </div>
 </output>
 
@@ -201,8 +203,7 @@ onclick="ban_out(this);">ban out </button>
 <li><b>Count: </b>${n.model.ab_cnt?n.model.ab_cnt:''}
 </ul>
 <button data-ab_slc="${n.model.ab_slc?n.model.ab_slc:''}" data-ab_cmt="${n.model.ab_cmt?n.model.ab_cmt:''}" 
-onclick="ban_model2(this);">ban</button> |
-<button value="${n.model.abus_id?n.model.abus_id:''}" onclick="not_ban(this);">not_ban</button>
+onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="${n.model.abus_id?n.model.abus_id:''}" onclick="not_ban(this);">skip it</button>
 </output>
 
 ${js_help(["/js/video_chat.js","/js/login.js"])}

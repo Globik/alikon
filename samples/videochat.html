@@ -4,8 +4,8 @@
 <title>videochat</title>
 <style>
 *{box-sizing:border-box;}
-#media-header{background:green;padding-left:0.5em;position:relative;height:1.1em;}
-#media-header b{font-size:0.9em;}
+#media-header{background:#e0efda;padding-left:0.5em;position:relative;hight:1.1em;}
+#media-header b{font-size:0.9em;color:#1b0846;}
 #online-detector{background:red;width:1em;height:1em;display:inline-block;vertical-align:middle;
 border-radius:1em;visibility:hidden;margin-top:-0.1em;
 }
@@ -23,23 +23,21 @@ visibility:visible;
 }
 #media-wrapper{
 width:100%;
-height:400px;
+height:470px;
+
 display:block;
 position:relative;
 max-width:1800px;
 margin:0 auto;
+border:1px solid rgba(0,200,0,0.6);
 }
 	
-#topvideo{background:orange;width:100%;display:block;height:5%;}
-	
-#media-wrapper::after{
-clear:both;
-content:"";
-}
+#topvideo{background:#ab4545;width:100%;display:block;height:20px;}
+#topvideo span{font-family:Arial,Georgia,sans-serif;}
 	
 #video-wrapper{
-height:/*88%*/ calc(100% - (5% + 12%));
-background:brown;
+height:86%;
+height:calc(100% - 13.5% - 20px);
 display:block;
 position:relative;
 }
@@ -77,26 +75,28 @@ letter-spacing:0.1em;
 }
 	
 #video-container{
-background:brown;
 width:50%;
 display:block;
 position:relative;
 float:left;
+height:100%;
 }
 	
 #local_video{
-background:brown;
+background:#8c3737;
 height:100%;
 width:100%;}
 	
 #undervideo{
-background:yellow;
+background:silver;
 width:100%;
-height:12%;
+height:13.5%;
 display:block;
-position:relative;
+position:relative;border-top:1px solid rgba(0,0,0,0.3);
 }
-.start{background:lightblue;width:auto;height:100%;letter-spacing:0.05em;font-size:0.9em;}	
+.start{background:rgba(255,202,200,0.5);width:auto;height:100%;letter-spacing:0.05em;font-size:0.9em;
+	cursor:pointer;
+	font-weight:bold;}	
 	
 .overlay {
 background-color: rgba(0, 0, 0, 0.2);
@@ -117,16 +117,16 @@ opacity: 1;
 }
 .popi {
 color:rgba(233,240,250,0.9);
-letter-spacing:0.1em;
-background-color: rgba(0,0,0,.7);
-border: 2px solid rgba(255,255,255,0.1);
+font-family:Arial,sans-serif;
+background-color: rgba(20,20,30,0.9);
+border: 20px solid rgba(255,245,255,0.2);
 left: 50%;
 top: 1%;
 width:auto;
 opacity:0;
 /*padding: 2em;*/
 position: fixed;
-/*text-align: justify;*/
+
 height:auto;
 min-height:50px;
 visibility: hidden;
@@ -140,41 +140,42 @@ opacity: 1;
 visibility: visible;
 }
 	
-	.wrap-close{height:2em;ackground:yellow;}
-	.close {
-background-color: brown;/*rgba(240, 0, 0, 0.8);*/
+.wrap-close{height:2em;}
+.close {
+background-color: black;/*rgba(240, 0, 0, 0.8);*/
 height: 1.2em;
-
 text-align: center;
 width: 1.2em;
 border-radius: 15px;
 float:right;
-	text-decoration:none;
-		font-size:1.6em;
+text-decoration:none;
+font-size:1.6em;
 }
-	.close::before{
-	color: rgba(255, 255, 255, 0.9);
-	content:"\274c";
+	
+.close::before{
+color: rgba(255, 255, 255, 0.9);
+content:"\274c";
 	/* or x \d7 */
 }
 
+.close:hover::before{color:brown;}
 
 
-
-			
 #chat-container{
 width:50%;
 float:right;
-overflow:hidden;
+overflow:hidden;height:100%;
 }
-#topchat{width:100%;background:brown;height:5%;}
-#chat{width:100%;height:/*88%*/calc(100% - (5% + 12%));display:block;overflow-y:auto;background:white;}
+
+#topchat{width:100%;background:brown;height:20px;}
+#chat{width:100%;height:86.5%;
+height:calc(100% - 13.5% - 20px);display:block;overflow-y:auto;background:white;}
 
 #underchat{
 width:100%;
 display:block;
 position:relative;
-height:12%;
+height:13.5%;border-top:1px solid silver;
 }
 			
 #underchat input[type=text]{width:80%;height:100%;border-radius:0;}
@@ -289,6 +290,7 @@ display:none;
 	#mick.red{background:red;}
 	#mick.green{background:green;}
 	
+	#complain{cursor:pointer;}
 	#complaini{width:30%;padding-left:1em;padding-right:1em;padding-top:0.5em;}	
 	#complaini div{margin-bottom:5px;}
 	#txar-complain{width:100%;height:40px;}
@@ -307,7 +309,20 @@ display:none;
 	#one_abuse_id ul{list-style:none;margin-left:0;padding-left:0;background:rgba(10,25,10,0.7);color:rgba(250,252,250,0.9);}
 	#one_abuse_id ul li{border-bottom:1px solid rgba(33,33,33,0.9);margin-top:2px;margin-bottom:2px;}
 	
-@media screen and (max-width: 650px) {
+	#chat-gear{width:30%;padding-left:1em;padding-right:1em;padding-top:0.5em;}
+	#chat-gear form{width:100%;background:black;}
+	#chat-gear input[type=submit]{background:brown;height:45px;font-weight:bold;width:50%;font-size:1em;cursor:pointer}
+	#chat-gear input[type=submit]:hover{background:lightblue;}
+	#chat-gear input[type=radio]{width:5%;margin:10px;}
+	
+	
+	
+	#banned{color:#ff4848;font-weight:bold;}
+	.ab_cnt_span{background:#671f1f;padding-left:2px;padding-right:2px;color:#efe8e8;font-weight:bold;}
+	/*@media screen and(max-width:800px){.popi{width:100%;background:red;}
+		body{background:red;}
+	}*/
+@media screen and (max-width: 690px) {
 #media-wrapper{height:auto;min-height:none;}
 #video-container,#chat-container{float:none;width:100%;height:auto;}
 #video-wrapper{height:auto;}
@@ -319,6 +334,7 @@ display:none;
 #chat{height:320px;}
 #underchat{height:50px;}
 #pop{width:100%;height:auto;margin-top:4px;}
+#complaini,#chat-gear,#one_abuse_id{width:100%;}
 .close{top:4em;}
 }
 	/*
@@ -343,19 +359,17 @@ display:none;
 </style>
 </head>
 <body>
-<div id="media-wrapper"><div id="media-header">
-<b>Globik&nbsp;</b><div id="online-detector" class="puls"></div>&nbsp;banned</div>
-	
-	
+<div id="media-header" style=""><b>Globik&nbsp;</b><div id="online-detector" class="puls"></div>&nbsp;<span id="banned">banned</span></div>
+<div id="media-wrapper">
 <div id="video-container">
-<div id="topvideo"><span id="complain" data-ownerid="22" onclick="get_complain(this);">report abuse</span>|
-<span onclick="get_complain();">ban broadcaster</span>&nbsp;
+<div id="topvideo" style=""><span id="complain" data-ownerid="22" onclick="get_complain(this);">&nbsp;<span style="color:orange;font-weight:bold;">report abuse</span></span>&nbsp;
+&nbsp;
 <span onclick="get_one_abuse();" class="ab_cnt_span">2</span>
 </div>
 <div id="video-wrapper"><video id="local_video" poster="" autoplay controls></video></div>
 <div id="undervideo">
 <button class="start">start video</button><button class="start">connect</button><button class="start" onclick="get_one();">send tip</button>
-</div>
+	</div>
 </div>
 		    
 <div id="chat-container"><div id="topchat" onclick="chat_gear();">gear</div>
@@ -365,10 +379,13 @@ display:none;
 </div>
 </div>
 </div>
-
+	<div style="clear:both;">suka!!!!!!!!!!!</div>
 <button onclick="get_offline();">get_offline</button><br>
 <br><button onclick="get_green();">get_green</button>
-
+	<br><span style="font-family:Arial;">one</span><br>
+	<br><span style="font-family:Impact;">ggggone</span><br>
+	<br><span style="font-family:Courier;">sone</span><br>
+	<br><span style="font-family:Helvetica;">one</span><br>
 
 <a href="#" class="overlay" id="resultativ"></a>
 <output id="pop" class="popi">
@@ -400,7 +417,6 @@ display:none;
 <a href="#" class="overlay" id="get_complaini"></a>
 <output id="complaini" class="popi">
 <div class="wrap-close"><a href="#" class="close"></a></div>
-	
 <div>
 <h3>Report Abuse</h3>
 
@@ -425,7 +441,8 @@ display:none;
 </div>
 <div>
 	<button onclick="send_abuse();">Report</button>
-	<button onclick="ban_model();" class="ban">ban</button><button class="ban" id="banId" data-ban_id="22" onclick="ban_out(this);"><strong>ban out</strong></button>
+	<button onclick="ban_model();" class="ban">ban</button><button class="ban" id="banId" data-ban_id="22" onclick="ban_out(this);">
+	<strong>ban out</strong></button>
 </div>
 </output>
 	<a href="#" class="overlay" id="one_abuse"></a>
@@ -439,6 +456,18 @@ display:none;
 <li><b>Count: </b>10
 </ul>
 <button data-ab_slc="12" data-ab_cmt="Pizdit suka" onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="7" onclick="not_ban(this);">skip it</button>
+</output>
+	
+<a href="#" class="overlay" id="chatnastroi"></a>
+<output id="chat-gear" class="popi">
+<div class="wrap-close"><a href="#" class="close"></a></div>
+
+<form name="canchat">
+<div><strong>Don't accept chat users who's:</strong></div>
+<input type="radio" name="chataccess" id="canchat_guest" value="1"/>&nbsp;<label>a guest</label><br>
+<input type="radio" name="chataccess" id="canchat_logged" value="2"/>&nbsp;<label>a non-tokens user or a guest</label><br>
+<input type="submit" value="save"/>
+</form>
 </output>
 	<br><br>
 	<button onclick="green();">green</button><button onclick="red();">red</button><br><br>
@@ -565,5 +594,9 @@ window.location.href="#get_complaini";
 }
 function get_one_abuse(){
 window.location.href="#one_abuse";
+}
+	function chat_gear(){
+//get_acc_users();
+window.location.href="#chatnastroi";
 }
 </script></body></html>
