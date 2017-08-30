@@ -290,7 +290,10 @@ console.log(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
 }
-
+function message_box(n){
+inbox.innerHTML='<b>'+n+'</b>';
+window.location.href="#message_box";
+}
 var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
@@ -571,6 +574,10 @@ if(ink()){if(socket)socket.close();}
 }
 }
 if(peerConnection)console.log(peerConnection.signalingState)
+}else if(msg.type==='overfilled'){
+console.error(msg);
+	//alert(msg);
+message_box('Overfilled occured! Limit. No room. No peer. Please wait.');
 }else if(msg.type==='roomremove'){
 if(!owner()){
 console.warn('roomremove: ',event.data);
@@ -710,7 +717,7 @@ return s;
 }
 function toki_s(am){
 let ds=(am==1?'':'s');
-let s='Sent&nbsp;'+am+'&nbsp;tip'+ds+'.';
+let s='Sent '+am+' tip'+ds+'.';
 return s;
 }
 function insert_message(div){

@@ -188,10 +188,12 @@ Time: <span id="mer">00:00:00</span><br><br>
 </div>
 <div>
 <button onclick="send_abuse();">Report</button>
-<button onclick="ban_model();" class="ban">ban</button><button id="banId" class="ban" data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" onclick="ban_out(this);">ban out</button>
+${buser && buser.role=='superadmin'?`<button onclick="ban_model();"
+class="ban">ban</button><button id="banId" class="ban" 
+data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" onclick="ban_out(this);">ban out</button>`:''}
 </div>
 </output>
-
+<br><button onclick="message_box('Halli halo message box!');">message box</button><br>
 <a href="#" class="overlay" id="one_abuse"></a>
 <output id="one_abuse_id" class="popi">
 <div class="wrap-close"><a href="#" class="close"></a></div>
@@ -205,7 +207,11 @@ Time: <span id="mer">00:00:00</span><br><br>
 <button data-ab_slc="${n.model.ab_slc?n.model.ab_slc:''}" data-ab_cmt="${n.model.ab_cmt?n.model.ab_cmt:''}" 
 onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="${n.model.abus_id?n.model.abus_id:''}" onclick="not_ban(this);">skip it</button>
 </output>
-
+<a href="#" class="overlay" id="message_box"></a>
+<output id="out_box" class="popi">
+<div class="wrap-close"><a href="#" class="close"></a></div>
+<div id="inbox"></div>
+</output>
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 ${js_help(["/js/admin_videochat.js"])}
 

@@ -254,6 +254,9 @@ background-color:rgba(20,20,20,0.6);}
 background:rgba(255,0,0,0.4);
 }
 
+#out_box {width:50%;}
+#inbox{padding-left:40px; color:red;background:yellow;}
+
 @media screen and (max-width: 1024px) {
 
 #content {width: auto;float:none;padding: 3% 4%;}
@@ -279,7 +282,7 @@ nav #menu{display:none;}
 #content {width: auto;float: none;margin: 2px 0;padding:2.8rem;}
 #sidebar {width: 100%;margin: 0;float: none;}#sidebar .widget {padding: 3% 4%;margin: 0 0 1px;}
 #sidebar  img{width:40%;}
-
+#out_box{width:100%;}
 	}
 	
 @media screen and (max-width: 15em) {

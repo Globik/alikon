@@ -8,8 +8,8 @@ const koaBody=require('koa-body')
 const fs=require('co-fs');
 const fss=require('fs');
 const debug=require('debug')('k');
-const ROOM=100;
-const PEER=100;
+var ROOM=100;
+var PEER=100;
 
 const redis=require('./examples/redis-promis.js')();
 const cl=redis.createClient();
@@ -487,7 +487,11 @@ console.log('CREATING ROOM');
 if(!server.closed){
 	console.log('MSG.OWNER: ',msg.owner)
 if(msg.owner){
-if(droom.size > ROOM) return;
+if(droom.size > ROOM) {
+if(ws.readyState===1){ws.send(JSON.stringify({type:"overfilled", roomquan:ROOM,roomsize:droom.size,
+emsg:"Rooms size is overfilled. Please wait some time",etype:5}))}
+return;
+}
 console.log('owner is true');
 if(droom.has(msg.roomname)){
 console.log('Schoo gibts this room by name: ',msg.roomname)
@@ -637,13 +641,20 @@ const planb=message.planb;
 const capabilitySDP=message.capability;
 console.log('MESSAGE.ROOMNAME: ',message.roomname);
 let vid=droom.get(message.roomname);
+	
 if(vid){
-if(vid.peers.length > PEER){console.log('peers great than ',PEER,' Skip creating a peer...');return;}
+if(vid.peers.length > PEER){
+console.log('peers great than ',PEER,' Skip creating a peer...');
+sendback(ws,{type:"overfilled",peerquan:PEER,peersize:vid.peers.length,etype:6,emsg:"Peer size is overfilled. Please wait some time."});
+return;
+}
+
 let peer=vid.Peer(id.toString());
 let peerconnection=new RTCPeerConnection({peer:peer,usePlanB:planb});
 console.log('--- create rtcpeerconnection --');
 let peerlength=vid.peers.length;
 console.log('-- peers in the room from PREPAREPEER = ',peerlength);
+	
 update_view(peerlength,message.roomname)
 
 
@@ -715,6 +726,7 @@ let peerlength=vid.peers.length;
 console.log('-- PEERS in the room FROM handleAnswer = ', peerlength);
 update_view(peerlength,message.roomname)
 }
+	//if(ws.readyState===1)ws.send(JSON.stringify({type:"error", ename:e.name,emsg:e.message}))
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
 }).catch( (err) => {
 console.log('setRemoteDescription for Answer ERROR:', err)
