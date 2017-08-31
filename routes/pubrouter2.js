@@ -410,10 +410,11 @@ ctx.body=ctx.render('purchase',{/*buser:this.req.user*/});
 /* *************************************************************************
 WEBRTC STUFF /:models
 *************************************************************************** */
-
+var langsam_stop=false;
+var inkognito=false;
 pub.get('/webrtc/:buser_name', async ctx=>{
 let db=ctx.db;
-let inkognito=false;
+
 ctx.session.dorthin=ctx.path;
 let us=null;
 let owner=false;
@@ -438,9 +439,14 @@ ctx.session.error=e;
 return ctx.redirect('/error');
 }
 if(ctx.state.user && ctx.state.user.name===ctx.params.buser_name){owner=true;}
-ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),inkognito});
+ctx.body=await ctx.render('busers',{model: us,owner:owner,shortid:shortid.generate(),inkognito,langsam_stop});
 })
-
+pub.post('/api/langsam_stop',admin_auth,async ctx=>{
+if(ctx.request.body.stop==true){langsam_stop=true;}else if(ctx.request.body.stop==false){
+langsam_stop=false;
+}else{}
+ctx.body={info:"OK",body:ctx.request.body,stopi:langsam_stop}
+})
 pub.post('/api/gof',async ctx=>{
 let db=ctx.db;
 let sis=`select busers.name,busers.role,rooms.src from busers left join rooms on busers.name=rooms.room_name where busers.name='globik'`;
@@ -601,4 +607,6 @@ ctx.throw(401,"Please, log in.");
 function authent(ctx, next){
 if(ctx.isAuthenticated()){return next()}else{ctx.redirect('/login');}
 }
+function admin_auth(ctx,next){
+if(ctx.isAuthenticated() && ctx.state.user.role=="superadmin"){return next()}else{ctx.throw(401, "Please log in.")}}
 function isNumb(str){var numstr=/^\d+$/;return numstr.test(str);}

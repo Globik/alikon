@@ -4,6 +4,8 @@ const onowneroff="To broadcast yourself please enable your webcam and press star
 const usoff="The member you are trying to view is currently offline. Please wait or choose another member to view.";
 const you_ban="You are banned.";
 const us_ban="This user is banned.";
+const str_langsam_stop="We are sorry, but no more activity is acceptable. Site is closing for a profilactic works in a pair of hours.";
+const str_emergency_stop="Emergency stop all activities on this site. We are sorry";
 const head=require('./head'),
     header_menu=require('./header_menu'),
 	admin_main_menu=require('./admin_main_menu'),
@@ -56,7 +58,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 
 <div id="chat-container">
-<div id="topchat" onclick="chat_gear();"><span style="cursor:pointer;" title="chat options">gear</span></div>
+<div id="topchat"><span onclick="chat_gear();" style="cursor:pointer;" title="chat options">gear</span></div>
 <div id="chat"></div>
 <div id="underchat">
 <form name="publish">
@@ -65,8 +67,9 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 </div>
 </div><div style="clear:both;">.</div>
-<a href="#" class="overlay" id="resultativ"></a>
-<output id="pop" class="popi"><div class="wrap-close"><a href="#" class="close"></a></div>
+
+<a href="#." class="overlay" id="resultativ"></a>
+<output id="pop" class="popi"><div class="wrap-close"><a href="#." class="close"></a></div>
 <p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
 <p>You have <span id="yourTokens2"></span> tokens.</p>
 <p class="ptokenstosend">Tokens to send:&nbsp;&nbsp;<span class="ok" id="tokTosend"></span></p>
@@ -93,6 +96,11 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 <input type="hidden" id="is_banned" value="${model?model.bstatus:''}"/>
 <input type="hidden" id="class_us_ban" value="${us_ban}"/>
 <input type="hidden" id="class_you_ban" value="${you_ban}"/>
+<input type="hidden" id="inkognito" value="${n.inkognito}"/>
+<input type="hidden" id="langsam_stop" value="${n.langsam_stop}"/>
+<input type="hidden" id="str_langsam_stop" value="${str_langsam_stop}"/>
+<input type="hidden" id="emrgency_stop" value="false"/>
+<input type="hidden" id="str_emergency_stop" value="${str_emergency_stop}"/>
 <!-- model -->
 <input type="hidden" id="modelName" value="${model?model.name:''}"/>
 <input type="hidden" id="modelId" value="${model.id}"/>
@@ -106,7 +114,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 
 <input type="hidden" id="yourId" value="${buser ? buser.id : ''}"/>
 <input type="hidden" id="yourTokens" value="${buser ? buser.items:''}"/>
-<input type="hidden" id="inkognito" value="${n.inkognito}"/>
+
 
 <!-- Custom Events -->
 <input type="hidden" id="myevent" value="false"/>
@@ -131,11 +139,8 @@ Time: <span id="mer">00:00:00</span><br><br>
 <button onclick="vor_login();">log in</button>
 <hr><output id="out"></output>
 
-<input type="checkbox" id="plan_b_check" >planB<br>
-
+<input type="checkbox" id="plan_b_check">planB<br>
 <span id="state_span"></span>
-
-
 <div id="remote_container"></div>	
 
 <br><b>WebRTC errors:</b><br>
@@ -146,14 +151,14 @@ Time: <span id="mer">00:00:00</span><br><br>
 <span id="timeinfo"></span>
 <input type="hidden" id="loginstr" value='${login_proto.login_proto({})}'/>
 
-<a href="#" class="overlay" id="vorlogery"></a>
+<a href="#." class="overlay" id="vorlogery"></a>
 <output id="vorlogin" class="popi">
-<div class="wrap-close"><a href="#" class="close"></a></div>
+<div class="wrap-close"><a href="#." class="close"></a></div>
 <div id="vorlogincontainer"></div>
 </output>
-<a href="#" class="overlay" id="chatnastroi"></a>
+<a href="#." class="overlay" id="chatnastroi"></a>
 <output id="chat-gear" class="popi">
-<div class="wrap-close"><a href="#" class="close"></a></div>
+<div class="wrap-close"><a href="#." class="close"></a></div>
 <form name="canchat">
 <div><strong>Don't accept chat users who's:</strong></div>
 <input type="radio" name="chataccess" id="canchat_guest" value="1"/>&nbsp;<label>a guest</label><br>
@@ -162,9 +167,9 @@ Time: <span id="mer">00:00:00</span><br><br>
 </form>
 </output>
 
-<a href="#" class="overlay" id="get_complaini"></a>
+<a href="#." class="overlay" id="get_complaini"></a>
 <output id="complaini" class="popi">
-<div class="wrap-close"><a href="#" class="close"></a></div>
+<div class="wrap-close"><a href="#." class="close"></a></div>
 
 <div><h3>Report Abuse</h3>
 <h4>Choose a category:</h4>
@@ -194,9 +199,9 @@ data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" onclick="ban_out(t
 </div>
 </output>
 <br><button onclick="message_box('Halli halo message box!');">message box</button><br>
-<a href="#" class="overlay" id="one_abuse"></a>
+<a href="#." class="overlay" id="one_abuse"></a>
 <output id="one_abuse_id" class="popi">
-<div class="wrap-close"><a href="#" class="close"></a></div>
+<div class="wrap-close"><a href="#." class="close"></a></div>
 <ul>
 <li><b>What?: </b>${n.model.ab_slc?n.model.ab_slc:''}
 <li><b>Comment: </b>${n.model.ab_cmt?n.model.ab_cmt:''}
@@ -207,11 +212,15 @@ data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" onclick="ban_out(t
 <button data-ab_slc="${n.model.ab_slc?n.model.ab_slc:''}" data-ab_cmt="${n.model.ab_cmt?n.model.ab_cmt:''}" 
 onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="${n.model.abus_id?n.model.abus_id:''}" onclick="not_ban(this);">skip it</button>
 </output>
-<a href="#" class="overlay" id="message_box"></a>
+<a href="#." class="overlay" id="message_box"></a>
 <output id="out_box" class="popi">
-<div class="wrap-close"><a href="#" class="close"></a></div>
+<div class="wrap-close"><a href="#." class="close"></a></div>
 <div id="inbox"></div>
 </output>
+<br><input type="checkbox" id="enable_langsam_stop"/><span id="stop_out"></span>
+<br><button onclick="langsam_stop_it();">langsam stop</button><br>
+<br><button onclick="emergency_stop_it();">emergency stop</button><br>
+<br><button onclick="gh();">hash</button><br>
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 ${js_help(["/js/admin_videochat.js"])}
 

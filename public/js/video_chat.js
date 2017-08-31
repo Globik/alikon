@@ -5,6 +5,7 @@ var btype=0;
 var myusername=null;
 var ignory=new Set();
 
+
 var startDate,clocker,mlocker, startingDate;
 
 var txarComplain=gid("txar-complain");
@@ -26,6 +27,8 @@ var submitChat=document.querySelector('#underchat input[type=submit].subm-state'
 var loginstr=gid('loginstr');
 var localVideo = gid('local_video');
 var vidW=gid('video-wrapper');
+var str_langsam_stop=gid('str_langsam_stop').value;
+var str_emergency_stop=gid('str_emergency_stop').value;
 
 yourTokens2.textContent=yourTokens.value;
 function buser(){
@@ -39,6 +42,9 @@ if(gid('inkognito').value==='true'){return true;}else{return false;}
 }
 function is_banned(){
 if(gid('is_banned').value==='yes'){return true;}else{return false;}
+}
+function is_langsam_stop(){
+if(gid('langsam_stop').value==='true'){return true;}else{return false;}
 }
 function send_tokens(){
 if(pidi==0)return;
@@ -214,6 +220,7 @@ console.error('abusi: ',localStorage.abuse,' : ',JSON.parse(localStorage.abuse).
 
 function tip(){
 if(pidi==0)return;
+if(is_langsam_stop()){message_box(str_langsam_stop);return;}
 if(buser()){
 window.location.href="#resultativ";
 tokTosend.textContent='';
@@ -293,6 +300,7 @@ xhr.send(JSON.stringify(data));
 function message_box(n){
 inbox.innerHTML='<b>'+n+'</b>';
 window.location.href="#message_box";
+//console.log(document.body.clientHeight);
 }
 var mediaconstraints={audio:true,video:true};
 
@@ -577,7 +585,11 @@ if(peerConnection)console.log(peerConnection.signalingState)
 }else if(msg.type==='overfilled'){
 console.error(msg);
 	//alert(msg);
-message_box('Overfilled occured! Limit. No room. No peer. Please wait.');
+message_box('Overfilled occured! Limit. No room. No peer. Please wait your turn.');
+}else if(msg.type==='emergency_stop'){
+if(owner()){dissconnect();stopVideo();}else{dissconnect();}
+message_box(str_emergency_stop);
+gid('langsam_stop').value="true";
 }else if(msg.type==='roomremove'){
 if(!owner()){
 console.warn('roomremove: ',event.data);
@@ -617,6 +629,7 @@ return (checkbox.checked === true);
 var fl=false;
 
 function get_vid(el){
+if(is_langsam_stop()){message_box(str_langsam_stop);return;}
 if(owner()){
 if(is_banned()){alert("We're sorry you are banned from using this site.");return;}
 }
@@ -1025,6 +1038,7 @@ console.error(err);
 var con_fl=false;
 
 function do_conn(el){
+if(is_langsam_stop()){message_box(str_langsam_stop);return;}
 if(!con_fl){
 if(owner()){
 if(roomcreated){

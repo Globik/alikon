@@ -127,21 +127,26 @@ async show_abuse_nots(){try{let m=await pool.query(`select abus_id from abuse wh
 							console.log('MUUUUUU: ',m.rows);
 							return m;}catch(e){console.log(e);return e.name;}}
 };
+//var inkognito=false;
+//var langsam_stop=false;
 app.use(async (ctx, next)=>{
 //if(ctx.path==='/log_rooms')return;
 ctx.state.filter_script=script;
 ctx.db=pool;
 ctx.boss=boss;
 var sa;
-if(lasha){sa=await locals.showmodule();
+if(lasha){
+sa=await locals.showmodule();
 console.log('SHOW MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 sa=JSON.parse(sa);
 mobject.showmodule=sa;
+//mobject.webrtc_stream={inkognito:inkognito,langsam_stop:langsam_stop}
 lasha=false;
 }
 
 ctx.state.showmodule=mobject.showmodule;
 ctx.state.showmodulecache=lasha;
+//ctx.state.langsam_stop=langsam_stop;
 if(ctx.path !=='/log_rooms' && ctx.method !=='POST'){
 ctx.state.banner=await locals.show_banners();
 console.log('BUT WHY????????????????????: path:',ctx.method,' ',ctx.path,' ',ctx.state.xhr);
@@ -341,6 +346,11 @@ c.send(b)
 }}
 });
 }	
+function super_emergency_to_all(){
+wss.clients.forEach(c=>{
+if(c&&c.readyState===WebSocket.OPEN)c.send(JSON.stringify({type:"emergency_stop",msg:"Stop all streams"}))
+})
+}
 function make_channel_online_message(bs){
 let usermsg={type:"roomer_online"};
 wss.clients.forEach(c=>{
@@ -481,6 +491,9 @@ connect.ready=false;
 senduserlisttoall(ws,sifa.pupkin,sifa.pidi);
 send_new_user_to_all(ws);
 	
+sendtoclients=false;
+}else if(msg.type=="emergency_stop"){
+super_emergency_to_all();
 sendtoclients=false;
 }else if(msg.type=="createroom"){
 console.log('CREATING ROOM');

@@ -561,6 +561,8 @@ await db.query('update banned_users set bn_status=$1,bstatus=$2,bn_last_edit=now
 }catch(e){console.log(e);ctx.throw(400,e.name);}
 ctx.body={info:"OK. This user banned out."}
 })
+
+
 /*
 ==============================================================
 MONGODB MANAGER

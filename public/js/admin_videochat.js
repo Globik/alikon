@@ -112,8 +112,56 @@ alert(this.response);
 xhr.onerror=function(e){console.error(e)};
 xhr.send(a);
 }	
+if(is_langsam_stop()){gid('enable_langsam_stop').checked=true;stop_out.textContent="disable stop";}else{
+gid('enable_langsam_stop').checked=false;
+stop_out.textContent="enable stop";
+}
+gid('enable_langsam_stop').onchange=function(e){
+if(e.target.checked){stop_out.textContent="disable stop";}else{stop_out.textContent="enable stop";}
+}
+function langsam_stop_it(){
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/langsam_stop');
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert(this.response);
+	let m=JSON.parse(this.response);
+	gid('langsam_stop').value=m.stopi;
+	gid('enable_langsam_stop').checked=m.stopi;
+	if(m.stopi){stop_out.textContent='disable stop';}else{stop_out.textContent='enable stop';}
+}else{
+alert(this.response);
+}}
+xhr.onerror=function(e){console.error(e)};
+let d={};
+if(gid('enable_langsam_stop').checked){
+d.stop=true;
+}else{
+d.stop=false;
+}
+xhr.send(JSON.stringify(d));
+	 };
 	
+function emergency_stop_it(){
+sendJson({type:"emergency_stop",msg:"stop all streaming",from_nick:"admin"});
+gid('enable_langsam_stop').checked=true;
+stop_out.textContent='disable stop';
+langsam_stop_it();
+}
 	
+	gid('message_box').onclick=function(e){
+	console.log(99)
+	setTimeout(function(){gh();},0);
+	}
 	
-	
-	
+	function gh(){
+		//alert(window.location.hash);
+	//var wewa=
+		//window.location.hash.replace(/#.*/,'suka');
+		if(history)history.pushState('',null,window.location.pathname);
+		//return false;
+		//window.location.hash="#";
+		//window.location=wewa;
+	}
