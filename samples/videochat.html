@@ -4,7 +4,9 @@
 <title>videochat</title>
 <style>
 *{box-sizing:border-box;}
-#media-header{background:#e0efda;padding-left:0.5em;position:relative;hight:1.1em;}
+#media-header{background:#e0efda;padding-left:0.5em;position:relative;hight:1.1em;
+	transition: background 4s;}
+	#media-header:active{background:red;}
 #media-header b{font-size:0.9em;color:#1b0846;}
 #online-detector{background:red;width:1em;height:1em;display:inline-block;vertical-align:middle;
 border-radius:1em;visibility:hidden;margin-top:-0.1em;
@@ -121,7 +123,7 @@ font-family:Arial,sans-serif;
 background-color: rgba(20,20,30,0.9);
 border: 20px solid rgba(255,245,255,0.2);
 left: 50%;
-top: 1%;
+top: 90%;
 width:auto;
 opacity:0;
 /*padding: 2em;*/
@@ -139,8 +141,22 @@ transition: opacity .5s, top .5s;
 opacity: 1;
 visibility: visible;
 }
+.dopi{visibility:hidden;position:fixed;left: 50%;background:yellow;color:green;
+top: 1%;width:50%;
+transform:translate(-50%,90vh);
+transition: background 2s,color 1s,transform 1s,visibility 1s;
+}
+.dopi.qu{
+background:red;
+color:violet;
+op:10%;
+visibility:visible;
+transform:translate(-50%,0vh);
+transition: visibility 3s,transform 0.4s;
+eft:1%;
+}
 	
-.wrap-close{height:2em;}
+.wrap-close{height:2em;margin-bottom:0.5em;}
 .close {
 background-color: black;/*rgba(240, 0, 0, 0.8);*/
 height: 1.2em;
@@ -160,6 +176,8 @@ content:"\274c";
 
 .close:hover::before{color:brown;}
 
+#out_box {width:50%;}
+#inbox{padding-left:40px;padding-right:40px; padding-top:5px;padding-bottom:5px; color:red;background:yellow;}
 
 #chat-container{
 width:50%;
@@ -291,17 +309,17 @@ display:none;
 	#mick.green{background:green;}
 	
 	#complain{cursor:pointer;}
-	#complaini{width:30%;padding-left:1em;padding-right:1em;padding-top:0.5em;}	
+	#complaini,#stoper_id{width:30%;padding-left:1em;padding-right:1em;padding-top:0.5em;padding-bottom:1em;}	
 	#complaini div{margin-bottom:5px;}
 	#txar-complain{width:100%;height:40px;}
-	#complaini button,#one_abuse_id button{width:100%;height:45px;background:rgba(10,24,24,0.01);margin-top:2px;margin-bottom:2px;cursor:pointer;
+	#complaini button,#one_abuse_id button,#stoper_id button{width:100%;height:45px;background:rgba(10,24,24,0.01);margin-top:2px;margin-bottom:2px;cursor:pointer;
 	font-size:1em;color:rgba(240,230,230,0.9);letter-spacing:0.125em;
 	}
 	#complaini button:hover,#one_abuse_id button:hover{color:red;background:rgba(230,0,0,0.1);}
 	#complaini button.ban:hover,
-	#one_abuse_id button.ban:hover{background:rgba(230,0,0,0.1);}
+	#one_abuse_id button.ban:hover,#stoper_id button.ban:hover{background:rgba(230,0,0,0.1);}
 	
-	#complaini button.ban,#one_abuse_id button.ban{width:50%;background:rgba(50,24,50,0.09);height:45px;font-weight:bold;}
+	#complaini button.ban,#one_abuse_id button.ban,#stoper_id button.ban{width:50%;background:rgba(50,24,50,0.09);height:45px;font-weight:bold;}
 	#complaini select{background:rgba(0,0,0,0.4);color:white;height:35px;width:100%;letter-spacing:0.1em;}
 	#complaini select option{background:rgba(1,2,1,0.9);font-size:16px;color:rgb(200,240,243);}
 	
@@ -322,6 +340,7 @@ display:none;
 	/*@media screen and(max-width:800px){.popi{width:100%;background:red;}
 		body{background:red;}
 	}*/
+	
 @media screen and (max-width: 690px) {
 #media-wrapper{height:auto;min-height:none;}
 #video-container,#chat-container{float:none;width:100%;height:auto;}
@@ -334,7 +353,7 @@ display:none;
 #chat{height:320px;}
 #underchat{height:50px;}
 #pop{width:100%;height:auto;margin-top:4px;}
-#complaini,#chat-gear,#one_abuse_id{width:100%;}
+#complaini,#chat-gear,#one_abuse_id,#stoper_id{width:100%;}
 .close{top:4em;}
 }
 	/*
@@ -359,7 +378,8 @@ display:none;
 </style>
 </head>
 <body>
-<div id="media-header" style=""><b>Globik&nbsp;</b><div id="online-detector" class="puls"></div>&nbsp;<span id="banned">banned</span></div>
+<div id="media-header" style=""><b>Globik&nbsp;</b><div id="online-detector" class="puls"></div>&nbsp;<span id="banned">banned</span>
+	<span onclick="hol_stoper();">stoper</span></div>
 <div id="media-wrapper">
 <div id="video-container">
 <div id="topvideo" style=""><span id="complain" data-ownerid="22" onclick="get_complain(this);">&nbsp;<span style="color:orange;font-weight:bold;">report abuse</span></span>&nbsp;
@@ -458,9 +478,9 @@ display:none;
 <button data-ab_slc="12" data-ab_cmt="Pizdit suka" onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="7" onclick="not_ban(this);">skip it</button>
 </output>
 	
-<a href="#" class="overlay" id="chatnastroi"></a>
+<a href="#." class="overlay" id="chatnastroi"></a>
 <output id="chat-gear" class="popi">
-<div class="wrap-close"><a href="#" class="close"></a></div>
+<div class="wrap-close"><a href="#." class="close"></a></div>
 
 <form name="canchat">
 <div><strong>Don't accept chat users who's:</strong></div>
@@ -469,6 +489,19 @@ display:none;
 <input type="submit" value="save"/>
 </form>
 </output>
+<a href="#." class="overlay" id="stoper"></a>
+<output id="stoper_id" class="popi">
+<div class="wrap-close"><a href="#." class="close"></a></div>
+	<button class="ban" data-zus="false" title="stop all streams" onclick="langsam_stop_it(this);">slow stop</button>
+	<button class="ban" onclick="emergency_stop_it();" title="emergency stop all streams">dirty stop</button>
+</output>
+	<div class="dopi" id="fuck">what?</div><button onclick="dofuck();">noch message</button>
+<a href="#." class="overlay" id="message_box#d"></a>
+<output id="out_box" class="popi">
+<div class="wrap-close"><a href="#." class="close"></a></div>
+<div id="inbox"></div>
+</output>
+	
 	<br><br>
 	<button onclick="green();">green</button><button onclick="red();">red</button><br><br>
 	<button onclick="unit();">unit</button>
@@ -476,6 +509,13 @@ display:none;
 <script>
 	var re=null;
 	if(re){console.log('not null re',re);}else{console.log('re is',re)}
+	
+	function dofuck(){
+	fuck.classList.add('qu');
+		setTimeout(function(){
+		fuck.classList.remove('qu');
+		},5000)
+	}
 	function green(){
 	//mick.classList.remove('red');
 	//mick.classList.add('green');
@@ -551,6 +591,8 @@ let str=tokTosend.textContent;
 let fi=str.slice(0,-1);
 tokTosend.textContent=fi;
 }
+	//left: 50%;
+//top: 1%;
 }
 			
 function send_tokens(){
@@ -599,4 +641,26 @@ window.location.href="#one_abuse";
 //get_acc_users();
 window.location.href="#chatnastroi";
 }
+function message_box(n){
+inbox.innerHTML='<b>'+n+'</b>';
+window.location.href="#message_box#d";
+}
+	function hol_stoper(){
+	window.location.href="#stoper";
+	}
+	var is_stop=false;
+	function langsam_stop_it(el){
+	el.style.background='lightgreen';
+	if(!is_stop){el.setAttribute('data-zus',true);}else{el.setAttribute('data-zus',false);}
+	setTimeout(function(){go_l_s(el);},10);
+	}
+	
+	function go_l_s(el){
+	el.style.background='initial';
+	el.textContent='start all';
+	el.title='Enable all streams';
+		dofuck();
+		
+	//message_box('All is OK. Disabled slow.');
+	}
 </script></body></html>

@@ -218,7 +218,7 @@ float:right;
 color: rgba(255, 255, 255, 0.9);
 font-size: 1.5em;}
 */
-.wrap-close{height:2em;}
+.wrap-close{height:2em;margin-bottom:0.5em;}
 .close {
 background-color: rgba(0, 0, 0, 0.9);
 height: 1.2em;
