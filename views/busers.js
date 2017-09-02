@@ -40,8 +40,8 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`
 
 <main id="pagewrap"> 
 <div id="media-header">
-<b>${model?model.name:''}&nbsp;</b>${n.owner?'<div id="online-detector"</div>':''}&nbsp;
-${model?(model.bstatus=='yes'?'<span id="banned">banned</span>':''):''}
+ <b>${model?model.name:''}&nbsp;</b>${n.owner?'<div id="online-detector"></div>':''} 
+${model?(model.bstatus=='yes'?'<span id="banned">banned</span>':''):''}&nbsp;&nbsp;<span style="cursor:pointer;color:black;" onclick="hol_stoper();"><b>stoper</b></span>
 </div>
 <div id="media-wrapper">
 <div id="video-container">
@@ -217,6 +217,25 @@ onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="$
 <div class="wrap-close"><a href="#." class="close"></a></div>
 <div id="inbox"></div>
 </output>
+<a href="#." class="overlay" id="stoper"></a>
+<output id="stoper_id" class="popi">
+<div class="wrap-close"><a href="#." class="close"></a></div>
+<button class="ban" id="smartStopBtn" data-zus="${n.langsam_stop}" title="Smart enable/disable all streams" 
+onclick="shell(this,'Smart stoping all streams?',smart_stop_ev)">smart stop</button>
+<button class="ban" id="dirtyStopBtn" onclick="shell(this,'Emergency stoping all streams?',dirty_stop_ev);" title="Dirty enable/disable all streams">dirty stop</button>
+</output>
+
+<output class="alert" id="alert_id">
+<div id="inbox2"></div>
+</output>
+
+<dialog  id="dialogConfirm">
+<div id="inbox3"></div>
+<form method="dialog">
+<button id="dialogCancelbtn" type="reset" onclick="dialogConfirm.close();">cancel</button>
+<button type="submit" value="true">yes</button><button type="submit" value="false">no</button>
+</form>
+</dialog>
 <br><input type="checkbox" id="enable_langsam_stop"/><span id="stop_out"></span>
 <br><button onclick="langsam_stop_it();">langsam stop</button><br>
 <br><button onclick="emergency_stop_it();">emergency stop</button><br>

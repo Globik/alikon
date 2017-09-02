@@ -112,6 +112,10 @@ alert(this.response);
 xhr.onerror=function(e){console.error(e)};
 xhr.send(a);
 }	
+function hol_stoper(){
+window.location.href="#stoper";
+}
+
 if(is_langsam_stop()){gid('enable_langsam_stop').checked=true;stop_out.textContent="disable stop";}else{
 gid('enable_langsam_stop').checked=false;
 stop_out.textContent="enable stop";
@@ -119,7 +123,33 @@ stop_out.textContent="enable stop";
 gid('enable_langsam_stop').onchange=function(e){
 if(e.target.checked){stop_out.textContent="disable stop";}else{stop_out.textContent="enable stop";}
 }
-function langsam_stop_it(){
+var prompa=gid('alert_id');
+var smart_stop_ev=new Event('smartStop');
+
+function shell(el,n,ml){
+if(typeof HTMLDialogElement==='function'){
+inbox3.innerHTML='<b>'+n+'</b>';dialogConfirm.showModal();
+dialogConfirm.onclose=function(ev){
+if(ev.target.returnValue=='true'){el.dispatchEvent(ml);
+ev.target.returnValue=null;
+}
+}}else{
+if(confirm(n)){el.dispatchEvent(ml);}
+}
+}
+function galert(n){
+let c=window.getComputedStyle(document.querySelector('.popi'),null).getPropertyValue('z-index');
+inbox2.innerHTML='<b>'+n+'</b>';
+if(c)alert_id.style.zIndex=c+1;
+alert_id.classList.add('ak');
+setTimeout(function(){
+alert_id.classList.remove('ak');
+},5000)
+}
+smartStopBtn.addEventListener('smartStop',smart_stop_streams,false);
+function smart_stop_streams(e){
+galert('aha langsam stop all streams!')
+/*el.setAttribute('data-zus', true);
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/langsam_stop');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
@@ -136,13 +166,14 @@ alert(this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
 let d={};
-if(gid('enable_langsam_stop').checked){
+if(el.getAttribute('data-zus')=="true"){
 d.stop=true;
 }else{
 d.stop=false;
 }
 xhr.send(JSON.stringify(d));
-	 };
+*/
+};
 	
 function emergency_stop_it(){
 sendJson({type:"emergency_stop",msg:"stop all streaming",from_nick:"admin"});

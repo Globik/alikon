@@ -123,7 +123,7 @@ font-family:Arial,sans-serif;
 background-color: rgba(20,20,30,0.9);
 border: 20px solid rgba(255,245,255,0.2);
 left: 50%;
-top: 90%;
+top: 1%;
 width:auto;
 opacity:0;
 /*padding: 2em;*/
@@ -141,19 +141,18 @@ transition: opacity .5s, top .5s;
 opacity: 1;
 visibility: visible;
 }
-.dopi{visibility:hidden;position:fixed;left: 50%;background:yellow;color:green;
-top: 1%;width:50%;
-transform:translate(-50%,90vh);
-transition: background 2s,color 1s,transform 1s,visibility 1s;
+.dopi{visibility:hidden;position:fixed;left: 30%;background:yellow;color:green;
+top: 1%;width:30%;
+transform:translate(-100%,1vh);
+transition: background .2s,color .2s,transform .2s,visibility .2s;
 }
 .dopi.qu{
 background:red;
 color:violet;
-op:10%;
 visibility:visible;
-transform:translate(-50%,0vh);
-transition: visibility 3s,transform 0.4s;
-eft:1%;
+transform:translate(-50%,1vh);
+/*transition: visibility 3s,ransform 0.4s;*/
+/* z-index:900; */
 }
 	
 .wrap-close{height:2em;margin-bottom:0.5em;}
@@ -493,9 +492,10 @@ display:none;
 <output id="stoper_id" class="popi">
 <div class="wrap-close"><a href="#." class="close"></a></div>
 	<button class="ban" data-zus="false" title="stop all streams" onclick="langsam_stop_it(this);">slow stop</button>
-	<button class="ban" onclick="emergency_stop_it();" title="emergency stop all streams">dirty stop</button>
+	<button class="ban" id="esit" onclick="emergency_stop_it(this);" title="emergency stop all streams">dirty stop</button>
 </output>
-	<div class="dopi" id="fuck">what?</div><button onclick="dofuck();">noch message</button>
+	<div class="dopi" id="fuck"><div id="inbox2"></div></div>
+	<button onclick="dofuck();">noch message</button>
 <a href="#." class="overlay" id="message_box#d"></a>
 <output id="out_box" class="popi">
 <div class="wrap-close"><a href="#." class="close"></a></div>
@@ -505,12 +505,51 @@ display:none;
 	<br><br>
 	<button onclick="green();">green</button><button onclick="red();">red</button><br><br>
 	<button onclick="unit();">unit</button>
-	<div id="mick" class="duri">mick</div>	
+	<div id="mick" class="duri">mick</div>
+	<br><button id="fickmich" data-masha="suka" onclick="shell(this,'stop all streams?',tr);">prompt</button><br>
+	<dialog  id="dpromp">
+		<div id="inbox3"></div>
+		<form method="dialog">
+			<button id="cancel" type="reset" onclick="dpromp.close();">cancel</button>
+			<button type="submit" value="true">yes</button><button type="submit" value="false">no</button>
+		</form>
+	</dialog>
+	<input type="hidden" value="true" id="larisa">
+	<button onclick="bla();">bla</button>
 <script>
+var tr=new Event('build');
+	var fid=function(i){return document.getElementById(i);}
+	function shell(el,n,ml){
+	if(typeof HTMLDialogElement==='function'){
+	inbox3.innerHTML='<b>'+n+'</b>';dpromp.showModal();
+	dpromp.onclose=function(ev){
+	if(ev.target.returnValue=='true'){el.dispatchEvent(ml);
+	ev.target.returnValue=null;
+	}
+	}}else{
+	let r=confirm(n);
+	if(r){el.dispatchEvent(ml);}
+	}
+	}
+	fid('fickmich').addEventListener('build',doing_stop,false);
+	
+	
+	function bla(){fid('fickmich').dispatchEvent(tr);}
+	
+	
+	function doing_stop(e){
+	//alert('OK, stoping all stream!'+e.target.getAttribute('data-masha'));
+	dofuck('OK, stoping all streams right now! '+e.target.dataset.masha)
+	}
 	var re=null;
 	if(re){console.log('not null re',re);}else{console.log('re is',re)}
 	
-	function dofuck(){
+	function dofuck(n){
+		let col=window.getComputedStyle(document.querySelector('.popi'),null).getPropertyValue('z-index');
+		//alert(col);
+		
+	inbox2.innerHTML='<b>'+n+'</b>';
+		if(col)fuck.style.zIndex=col+1;
 	fuck.classList.add('qu');
 		setTimeout(function(){
 		fuck.classList.remove('qu');
@@ -649,6 +688,7 @@ window.location.href="#message_box#d";
 	window.location.href="#stoper";
 	}
 	var is_stop=false;
+	var fishka=false;
 	function langsam_stop_it(el){
 	el.style.background='lightgreen';
 	if(!is_stop){el.setAttribute('data-zus',true);}else{el.setAttribute('data-zus',false);}
@@ -656,11 +696,38 @@ window.location.href="#message_box#d";
 	}
 	
 	function go_l_s(el){
+		if(fishka)return;
 	el.style.background='initial';
+		if(el.getAttribute('data-zus')=='true'){
+			is_stop=true;
 	el.textContent='start all';
 	el.title='Enable all streams';
-		dofuck();
-		
-	//message_box('All is OK. Disabled slow.');
+	dofuck("Stoping all");
+			
+		}else{
+		is_stop=false;
+			el.textContent='slow stop';
+			el.title='Disable all streams';
+			esit.disabled=false;
+			esit.textContent="dirty stop";
+			dofuck("OK. All streams are allowed.");
+		}
+	}
+	function emergency_stop_it(el){
+	el.style.background='green';
+	setTimeout(function(){
+	do_emergency(el);
+	},12)
+	}
+	function do_emergency(el){
+		//id_stop=false;
+	el.style.background='initial';
+	dofuck("OK. Emergency stoping all!");
+	el.textContent='Stoped!';
+	el.disabled=true;
+	//is_stop=true;
+	//fishka=true;	
+	langsam_stop_it(document.querySelector('button[data-zus]'));
+	fishka=true;	
 	}
 </script></body></html>
