@@ -115,84 +115,83 @@ xhr.send(a);
 function hol_stoper(){
 window.location.href="#stoper";
 }
-
-if(is_langsam_stop()){gid('enable_langsam_stop').checked=true;stop_out.textContent="disable stop";}else{
-gid('enable_langsam_stop').checked=false;
-stop_out.textContent="enable stop";
-}
-gid('enable_langsam_stop').onchange=function(e){
-if(e.target.checked){stop_out.textContent="disable stop";}else{stop_out.textContent="enable stop";}
-}
-var prompa=gid('alert_id');
+var pipka=false;
 var smart_stop_ev=new Event('smartStop');
+var dirty_stop_ev=new Event('dirtyStop');
+if(is_langsam_stop()){pipka=true;}
 
-function shell(el,n,ml){
-if(typeof HTMLDialogElement==='function'){
-inbox3.innerHTML='<b>'+n+'</b>';dialogConfirm.showModal();
-dialogConfirm.onclose=function(ev){
-if(ev.target.returnValue=='true'){el.dispatchEvent(ml);
-ev.target.returnValue=null;
-}
-}}else{
-if(confirm(n)){el.dispatchEvent(ml);}
+smartStopBtn.onclick=function(e){
+
+if(e.target.dataset.zus=='false'){
+shell(e,'Do you wish enable smart stoping all video streams on this site?',smart_stop_ev);
+}else{
+shell(e,'Do you wish disable a smart stoping process?',smart_stop_ev);
 }
 }
-function galert(n){
-let c=window.getComputedStyle(document.querySelector('.popi'),null).getPropertyValue('z-index');
-inbox2.innerHTML='<b>'+n+'</b>';
-if(c)alert_id.style.zIndex=c+1;
-alert_id.classList.add('ak');
-setTimeout(function(){
-alert_id.classList.remove('ak');
-},5000)
+
+dirtyStopBtn.onclick=function(e){
+if(smartStopBtn.dataset.zus !=='null'){
+if(!pipka){shell(e,'Dirty stop all video streams on this site right now?',dirty_stop_ev);}else{
+shell(e,'Reallowed all videostream processes?',dirty_stop_ev);
+}
+}else{
+shell(e,'Wish you restart video streaming processes?',dirty_stop_ev);
+}
 }
 smartStopBtn.addEventListener('smartStop',smart_stop_streams,false);
-function smart_stop_streams(e){
-galert('aha langsam stop all streams!')
-/*el.setAttribute('data-zus', true);
+dirtyStopBtn.addEventListener('dirtyStop',emergency_stop_streams,false);
+function smart_stop_streams(el){
+if(el.target.dataset.zus=='false'){
+el.target.setAttribute('data-zus', true);
+}else{el.target.setAttribute('data-zus',false)}
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/langsam_stop');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
-alert(this.response);
-	let m=JSON.parse(this.response);
-	gid('langsam_stop').value=m.stopi;
-	gid('enable_langsam_stop').checked=m.stopi;
-	if(m.stopi){stop_out.textContent='disable stop';}else{stop_out.textContent='enable stop';}
+console.log(this.response);
+let m=JSON.parse(this.response);
+gid('langsam_stop').value=m.stopi;
+el.target.setAttribute('data-zus',m.stopi);
+if(m.stopi){
+galert('OK. Smart stoping streams enabled!');
+sendJson({type:"note",msg:"Smart stoping streams occured. Sorry.",from_nick:"admin"});
+el.target.textContent='cancel smart';
+}else{
+galert('OK. Smart stoping streams disabled!');
+if(pipka){
+dirtyStopBtn.textContent="dirty stop";
+pipka=false;
+}
+sendJson({type:"note",msg:"Stream are allowed now 2, hurra!!!",from_nick:"admin"});
+el.target.textContent='smart stop';
+}
 }else{
 alert(this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
 let d={};
-if(el.getAttribute('data-zus')=="true"){
+if(el.target.dataset.zus=="true"){
 d.stop=true;
 }else{
 d.stop=false;
 }
 xhr.send(JSON.stringify(d));
-*/
 };
-	
-function emergency_stop_it(){
+
+function emergency_stop_streams(e){
+if(!pipka){	
 sendJson({type:"emergency_stop",msg:"stop all streaming",from_nick:"admin"});
-gid('enable_langsam_stop').checked=true;
-stop_out.textContent='disable stop';
-langsam_stop_it();
+sendJson({type:"note",msg:"Emergency papa stop all streams. Sorry.",from_nick:"admin"});
+e.target.textContent='enable';
+if(!is_langsam_stop()){
+smartStopBtn.setAttribute('data-zus','false');
+smartStopBtn.dispatchEvent(smart_stop_ev);
 }
-	
-	gid('message_box').onclick=function(e){
-	console.log(99)
-	setTimeout(function(){gh();},0);
-	}
-	
-	function gh(){
-		//alert(window.location.hash);
-	//var wewa=
-		//window.location.hash.replace(/#.*/,'suka');
-		if(history)history.pushState('',null,window.location.pathname);
-		//return false;
-		//window.location.hash="#";
-		//window.location=wewa;
-	}
+pipka=true;
+}else{
+smartStopBtn.setAttribute('data-zus','true');
+smartStopBtn.dispatchEvent(smart_stop_ev); 
+}
+}

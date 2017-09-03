@@ -521,7 +521,7 @@ console.log('body: ',ctx.request.body)
 let {nieder=''}=ctx.request.body;
 	console.log('NIEDER!: ',nieder)
 let s=`select abuse.*,busers.name from abuse left join busers on abuse.abus_id=busers.id where abuse.ab_type='neu'
-${nieder?`and at > '${nieder}'`:''} limit 14`;
+${nieder?`and ab_at > '${nieder}'`:''} limit 14`;
 let s1=1;
 try{
 var r=await db.query(s);

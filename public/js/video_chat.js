@@ -297,11 +297,12 @@ console.log(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
 }
+/*
 function message_box(n){
 inbox.innerHTML='<b>'+n+'</b>';
 window.location.href="#message_box";
-//console.log(document.body.clientHeight);
 }
+*/
 var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
@@ -594,6 +595,9 @@ gid('langsam_stop').value="true";
 if(!owner()){
 console.warn('roomremove: ',event.data);
 }
+}else if(msg.type=='dumppeer'){
+	console.log('on dump peer')
+console.warn(event.data)
 }else{console.warn('uknown msg type',msg.type);}
 
 }
@@ -631,7 +635,7 @@ var fl=false;
 function get_vid(el){
 if(is_langsam_stop()){message_box(str_langsam_stop);return;}
 if(owner()){
-if(is_banned()){alert("We're sorry you are banned from using this site.");return;}
+if(is_banned()){message_box("We're sorry you are banned from using this site.");return;}
 }
 if(!fl){
 startVideo(el);
@@ -665,8 +669,14 @@ document.forms.publish.message.value="";
 }
 
 function bo_mes(from_nick,msg){
-let d='<b class="chat-user" data-from_nick="'+from_nick+'" onclick="user_menu(this);">'+from_nick+':&nbsp;</b>';
-let s=d+'<span class="chat-message">'+escape_html(msg)+'</span>';
+var sadmin='';
+if(from_nick=='admin'){sadmin=' sadmin';}else if(from_nick=='moderator'){
+sadmin=' smoderator';
+}else{sadmin='';
+	 if(owner())sadmin=' sowner';
+	 }
+let d='<b class="chat-user'+sadmin+'" data-from_nick="'+from_nick+'" onclick="user_menu(this);">'+from_nick+':&nbsp;</b>';
+let s=d+'<span class="chat-message'+sadmin+'">'+escape_html(msg)+'</span>';
 return s;
 }
 var srigi='globik';

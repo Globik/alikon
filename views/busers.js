@@ -19,19 +19,8 @@ const busers = n=>{
 let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:`${model !==null ?model.name:'no user'}. Live video.`,/*js:['/js/video_chat.js'],*/ csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"]})}
-<style>
-#abuse_popup{background:rgba(0,14,18,0.8);height:80%;width:50%;}
-.msp,.fel{background:brown;}
-.msp.fel{margin-left:4em;}
-.podsmall{text-align:center;}
-
-.centstr{background:green;}
-#abuse_popup ul{list-style:none;padding:3px;margin:0;display:block;position:relative;background:rgba(0,0,0,0);}
-#html_abuse_popup{background:rgba(0,0,0,0);height:calc(100% - 2em - 1.5em - 2em);display:block;position:relative;overflow:auto;}
-.abuseli{background:rgba(0,0,0,0);margin:0;padding:10px;}
-
-</style>
+<head>${head.head({title:`${model !==null ?model.name:'no user'}. Live video.`,
+csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"],luser:buser})}
 </head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
@@ -212,33 +201,16 @@ data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" onclick="ban_out(t
 <button data-ab_slc="${n.model.ab_slc?n.model.ab_slc:''}" data-ab_cmt="${n.model.ab_cmt?n.model.ab_cmt:''}" 
 onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="${n.model.abus_id?n.model.abus_id:''}" onclick="not_ban(this);">skip it</button>
 </output>
-<a href="#." class="overlay" id="message_box"></a>
-<output id="out_box" class="popi">
-<div class="wrap-close"><a href="#." class="close"></a></div>
-<div id="inbox"></div>
-</output>
+
 <a href="#." class="overlay" id="stoper"></a>
 <output id="stoper_id" class="popi">
 <div class="wrap-close"><a href="#." class="close"></a></div>
-<button class="ban" id="smartStopBtn" data-zus="${n.langsam_stop}" title="Smart enable/disable all streams" 
-onclick="shell(this,'Smart stoping all streams?',smart_stop_ev)">smart stop</button>
-<button class="ban" id="dirtyStopBtn" onclick="shell(this,'Emergency stoping all streams?',dirty_stop_ev);" title="Dirty enable/disable all streams">dirty stop</button>
+<button class="ban" id="smartStopBtn" data-zus="${n.langsam_stop}" title="Smart enable/disable all streams">${n.langsam_stop?'cancel smart':'smart stop'}</button>
+<button class="ban" id="dirtyStopBtn" title="Dirty enable/disable all streams">${n.langsam_stop?'cancel smart':'dirty stop'}</button>
 </output>
 
-<output class="alert" id="alert_id">
-<div id="inbox2"></div>
-</output>
 
-<dialog  id="dialogConfirm">
-<div id="inbox3"></div>
-<form method="dialog">
-<button id="dialogCancelbtn" type="reset" onclick="dialogConfirm.close();">cancel</button>
-<button type="submit" value="true">yes</button><button type="submit" value="false">no</button>
-</form>
-</dialog>
-<br><input type="checkbox" id="enable_langsam_stop"/><span id="stop_out"></span>
-<br><button onclick="langsam_stop_it();">langsam stop</button><br>
-<br><button onclick="emergency_stop_it();">emergency stop</button><br>
+
 <br><button onclick="gh();">hash</button><br>
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 ${js_help(["/js/admin_videochat.js"])}

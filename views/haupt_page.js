@@ -13,7 +13,7 @@ const buser=n.user;
 	//console.log('N>USER: ',n.user)
 const roomers=n.roomers;
 return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
-<head>${head.head({title:"home", meta:`${get_meta()}`,csslink:"/css/main2.css"})}</head>
+<head>${head.head({title:"home", meta:`${get_meta()}`,csslink:"/css/main2.css",luser:buser})}</head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:'')}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}

@@ -26,6 +26,21 @@ ${(n.buser ? `<li><div class="znak-svg">pic</div><a href="/logout" id="login_pop
 ${(sign_up ? `<li><div class="znak-svg">pic</div><a href="#join_form" id="join_pop">sign up</a>` :``)}
 </ul>
 -->
+<a href="#." class="overlay" id="message_box"></a>
+<output id="out_box" class="popi">
+<div class="wrap-close"><a href="#." class="close"></a></div>
+<div id="inbox"></div>
+</output>
+<dialog  id="dialogConfirm">
+<div id="inbox3"></div>
+<form method="dialog">
+<button id="dialogCancelbtn" type="reset" onclick="dialogConfirm.close();">cancel</button>
+<button type="submit" value="true">yes</button><button type="submit" value="false">no</button>
+</form>
+</dialog>
+<output class="alert" id="alert_id">
+<div id="inbox2"></div>
+</output>
 <script>
 var duri=gbid("duri"),elmini=gbid("operamini-menu-selector"),minmen=gbid('miniMenu'),
 lb=gbid('lb-menu-all'),dsel=document.querySelectorAll('label .spinner');

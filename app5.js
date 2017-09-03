@@ -351,6 +351,12 @@ wss.clients.forEach(c=>{
 if(c&&c.readyState===WebSocket.OPEN)c.send(JSON.stringify({type:"emergency_stop",msg:"Stop all streams"}))
 })
 }
+function achtung(n){
+wss.clients.forEach(c=>{
+if(c&&c.readyState===WebSocket.OPEN)c.send(n)
+})
+}	
+	
 function make_channel_online_message(bs){
 let usermsg={type:"roomer_online"};
 wss.clients.forEach(c=>{
@@ -362,8 +368,7 @@ usermsg.roomname=bs.upgradeReq.url.substring(1);
 }}
 })
 return usermsg;
-	
-	}
+}
 	
 function send_channel_online(bs){
 let usermsg=make_channel_online_message(bs);
@@ -494,6 +499,9 @@ send_new_user_to_all(ws);
 sendtoclients=false;
 }else if(msg.type=="emergency_stop"){
 super_emergency_to_all();
+sendtoclients=false;
+}else if(msg.type=="note"){
+achtung(JSON.stringify({type:"message",msg:msg.msg,from_nick:msg.from_nick}))
 sendtoclients=false;
 }else if(msg.type=="createroom"){
 console.log('CREATING ROOM');
@@ -741,6 +749,9 @@ update_view(peerlength,message.roomname)
 }
 	//if(ws.readyState===1)ws.send(JSON.stringify({type:"error", ename:e.name,emsg:e.message}))
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
+sendback(ws,{type:"dumppeer",transp:peerconnection.peer.transports.length,rtprec:peerconnection.peer.rtpReceivers.length,
+			 rtpsend:peerconnection.peer.rtpSenders.length});
+
 }).catch( (err) => {
 console.log('setRemoteDescription for Answer ERROR:', err)
 });
@@ -754,9 +765,8 @@ sse.publish('ch_log_rooms','room_view', {peers:peerlength,room_name:roomname})
 }
 
 function dumpPeer(peer, caption) {
-console.log(caption + ' transports=%d receivers=%d senders=%d',
-peer.transports.length, peer.rtpReceivers.length, peer.rtpSenders.length
-  );
+console.log(caption + ' transports=%d receivers=%d senders=%d',peer.transports.length, peer.rtpReceivers.length, peer.rtpSenders.length);
+
 }
 
 

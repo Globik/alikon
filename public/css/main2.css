@@ -229,11 +229,10 @@ float:right;
 text-decoration:none;
 font-size:1.6em;
 }
-
-	.close::before{
-	color: rgba(255, 255, 255, 0.9);
-	content:"\274c";
-	/* or x \d7 */
+.close::before{
+color: rgba(255, 255, 255, 0.9);
+content:"\274c";
+/* or x \d7 */
 }
 
 .close:hover::before{color:brown;}
@@ -253,12 +252,23 @@ background-color:rgba(20,20,20,0.6);}
 .lopi::-webkit-scrollbar-thumb:active{
 background:rgba(255,0,0,0.4);
 }
-
+/* message_box */
 #out_box {width:50%;}
 #inbox{padding-left:40px;padding-right:40px; padding-top:5px;padding-bottom:5px; color:red;background:yellow;}
-
+/* CONFIRM  */
+#alert_id{}
+#inbox2{}
+.alert{visibility:hidden;position:fixed;left: 30%;background:yellow;color:green;
+top: 1%;width:30%;
+transform:translate(-100%,1vh);
+transition: transform .2s,visibility .2s;
+}
+.alert.ak{
+visibility:visible;
+transform:translate(-50%,1vh);
+/*transition: visibility 3s,ransform 0.4s;*/
+}
 @media screen and (max-width: 1024px) {
-
 #content {width: auto;float:none;padding: 3% 4%;}
 #sidebar {width: 100%;margin:0 auto;padding-left:0%;}
 #sidebar .widget {padding: 3% 4%;margin-top:2%;margin-bottom: 2%;}
