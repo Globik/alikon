@@ -10,7 +10,8 @@ const fss=require('fs');
 const debug=require('debug')('k');
 var ROOM=100;
 var PEER=100;
-
+var broom=0;
+var bpeer=0;
 const redis=require('./examples/redis-promis.js')();
 const cl=redis.createClient();
 
@@ -219,6 +220,7 @@ var wss=new WebSocket.Server({server:servak,/*origin:'http://localhost:5000',*/v
 if(info.origin==='http://localhost:5000'){cb(true);return;}
 	cb(false)
 }});
+	
 
 function croom(mn){
 return new Promise(function(res,rej){
@@ -227,7 +229,14 @@ server.createRoom(roomOptions)
 console.log('room.roomId: ',room.id);
 //console.log('ROOM: ',room)
 droom.set(mn,room);
-//room.dump().then(f=>{console.log('room dump: ',f)}).catch(e=>{console.log(e)})
+room.dump().then(f=>{console.log('room dump: ',f)}).catch(e=>{console.log(e)})
+room.on('newpeer',peer=>{
+console.log('ON NEW PEER: ',peer.id);
+bpeer++;
+
+	//statistic
+	achtung(JSON.stringify({type:"dump",broom:broom,bpeer:bpeer}))
+})
 res('ok');
 })
 .catch((err) => {
@@ -399,6 +408,7 @@ let vid=droom.get(name)
 if(vid){
 vid.on('close', on_close_room)
 vid.close();
+	
 console.log('ROOM SIZE:',droom.size);
 }
 function on_close_room(err){
@@ -407,6 +417,9 @@ pool.query('delete from rooms where room_name=$1 RETURNING room_name',[name]).th
 console.log('DELETE RETURNING ID: ',result.rows[0]);
 //sse.publish('ch_log_rooms','remove_room', result.rows[0])
 sendback(ws,{type:'goodbyeroom',roomname: name});
+	broom--;
+	//statistic
+	achtung(JSON.stringify({type:"dump",broom:broom,bpeer:bpeer}))
 }).catch(err=>{console.log('err delete room by id: ',err);})
 if(err){
 console.log('error closing the room: ',err);
@@ -645,7 +658,7 @@ https.createServer(ssl_options,app.callback()).listen(process.env.PORT || 5000, 
 console.log('Listening on https//localhost: 5000');
 });
 	*/
-});
+// });
 console.log('soll on port 5000');
 
 /* MEDIASOUP */
@@ -654,7 +667,12 @@ function sendback(ws, message) {
 let str = JSON.stringify(message);
 if(ws.readyState===1)ws.send(str);
 }
-
+function dumpsend(wss,ssage){
+let sd=JSON.stringify(ssage);
+wss.clients.forEach(c=>{
+if(c&&c.readyState===1)c.send(sd);
+})
+}
 function preparePeer(ws, message, downOnly){
 const id=ws.clientId;
 console.log('ID: ',id.toString())
@@ -675,11 +693,104 @@ let peerconnection=new RTCPeerConnection({peer:peer,usePlanB:planb});
 console.log('--- create rtcpeerconnection --');
 let peerlength=vid.peers.length;
 console.log('-- peers in the room from PREPAREPEER = ',peerlength);
-	
+	//statistik
+	dumpsend(wss,{type:"dump",broom:broom,bpeer:bpeer,plen:vid.peers.length})
 update_view(peerlength,message.roomname)
 
+peer.on('close',n=>{
+console.log('PEER CLOSED!!')
+if(n)console.log('PEER BY CLOSED: ',n);
+	let d={};
+d.type="dump";
+d.broom=broom;
+d.bpeer=bpeer;
+d.name=peer.name;
+d.id=peer.id;
+d.closed=peer.closed;
+d.transports=peer.transports.length;
+d.rtpreceivers=peer.rtpReceivers.length;
+d.rtpsenders=peer.rtpSenders.length;
+d.event="peer_closed";
+dumpsend(wss,d);
+})
 
+peer.on("newrtpsender",rtpSender=>{
+//name,id,closed,transports,rtpReceivers,rtpSenders,
+console.log('NEW RTPSENDER!: ');
+console.log('peer name: ',peer.name);
+console.log('peer id: ',peer.id);
+console.log('peer closed: ',peer.closed);
+	console.log('d.senderid=!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ',rtpSender.id);
+	console.log('rtp sender closed: ',rtpSender.closed);
+	console.log('peer transports: ',peer.transports.length);
+	console.log('peer rtpSenders: ',peer.rtpSenders.length)
+let d={};
+d.type="dump";
+d.broom=broom;
+d.bpeer=bpeer;
+d.name=peer.name;
+d.id=peer.id;
+d.closed=peer.closed;
+d.rtpsenderclosed=rtpSender.closed;
+	/*
+	dont do this circular json error
+d.transports=peer.transports;
+d.rtpreceivers=peer.rtpReceivers;
+d.rtpsenders=peer.rtpSenders;
+*/
 
+d.event="new_rtpsender";
+setTimeout(function(){dumpsend(wss,d)},10);	
+	//console.log('sender closed: ',rtpSender.closed)
+})
+/*
+peer.on('newrtpreceiver',rtpReceiver=>{
+console.log('NEW RTP RECEIVER!! :');
+	let d={};
+d.type="dump";
+d.broom=broom;
+d.bpeer=bpeer;
+d.name=peer.name;
+d.id=peer.id;
+d.closed=peer.closed;
+d.transports=peer.transports;
+d.rtpreceivers=peer.rtpReceivers;
+d.rtpsenders=peer.rtpSenders;
+console.log('d.rtpreceiver_id!!!!!!!!!!!!!!!!!!!!!!!!!!=: ',rtpReceiver.id);
+d.event="new_rtpreceiver";
+dumpsend(wss,d);
+})
+*/
+/*
+peer.on('newtransport',transport=>{
+console.log('ON NEW TRANSPORT!!!!')
+let d={};
+d.type="dump";
+d.broom=broom;
+d.bpeer=bpeer;
+d.name=peer.name;
+d.id=peer.id;
+d.closed=peer.closed;
+d.transports=peer.transports;
+d.rtpreceivers=peer.rtpReceivers;
+d.rtpsenders=peer.rtpSenders;
+dumpsend(wss,d);
+})
+peer.on('capabilities',capabilities=>{
+console.log('ON CAPABILITIES!!!!');
+	let d={};
+d.type="dump";
+d.broom=broom;
+d.bpeer=bpeer;
+d.name=peer.name;
+d.id=peer.id;
+d.closed=peer.closed;
+d.transports=peer.transports;
+d.rtpreceivers=peer.rtpReceivers;
+d.rtpsenders=peer.rtpSenders;
+dumpsend(wss,d);
+})
+*/
 peerconnection.on('close', err=>{
 console.log('peerconnection closed ');
 debug('PEER_CONNECTION CLOSED');
@@ -688,11 +799,24 @@ debug('PC closed for ws id: ',ws.clientId);
 let vidi=droom.get(message.roomname);
 if(vidi){
 let peerlength=vidi.peers.length;
+	//statistik
+bpeer--;
+//dumpsend(wss,{type:"dump",broom:broom,bpeer:bpeer,plen:vid.peers.length});
+let d={};	
+d.transports=peerconnection.peer.transports.length;
+d.rtpreceivers=peerconnection.peer.rtpReceivers.length;
+d.rtpsenders=peerconnection.peer.rtpSenders.length;
+d.broom=broom;
+d.bpeer=bpeer;
+d.peerlength=vid.peers.length;
+d.type="dump";
+dumpsend(wss,d)
 update_view(peerlength,message.roomname);
 }
 	
 if(err)console.log(err);
 });
+	
 peerconnection.on('signalingstatechange',()=>console.log('state ',peerconnection.signalingState));
 peerconnection.on('negotiationneeded',()=>{
 console.log('negotiationneeded id: ', id);
@@ -749,8 +873,6 @@ update_view(peerlength,message.roomname)
 }
 	//if(ws.readyState===1)ws.send(JSON.stringify({type:"error", ename:e.name,emsg:e.message}))
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
-sendback(ws,{type:"dumppeer",transp:peerconnection.peer.transports.length,rtprec:peerconnection.peer.rtpReceivers.length,
-			 rtpsend:peerconnection.peer.rtpSenders.length});
 
 }).catch( (err) => {
 console.log('setRemoteDescription for Answer ERROR:', err)
@@ -765,8 +887,17 @@ sse.publish('ch_log_rooms','room_view', {peers:peerlength,room_name:roomname})
 }
 
 function dumpPeer(peer, caption) {
-console.log(caption + ' transports=%d receivers=%d senders=%d',peer.transports.length, peer.rtpReceivers.length, peer.rtpSenders.length);
-
+//console.log(caption + ' transports=%d receivers=%d senders=%d',peer.transports.length, peer.rtpReceivers.length, peer.rtpSenders.length);
+let d={}
+d.transports=peer.transports.length;
+d.rtpreceivers=peer.rtpReceivers.length;
+d.rtpsenders=peer.rtpSenders.length;
+d.broom=broom;
+d.bpeer=bpeer;
+d.type="dump";
+dumpsend(wss,d)
+//console.log('RTP_RECEIVERS FROM DUMP_PEER:',peer.rtpReceivers);
+	
 }
 
 
@@ -817,7 +948,7 @@ console.log('sendto:' + message.sendto + '   type:' + message.type);
 sendback(ws, message);
 }
 
-
+})
 /* END OF MEDIASOUP */
 pool.on('connect', client=>{setImmediate(()=>{console.log('pool connected')})});
 pool.on('error', (err, client)=>{setImmediate(()=>{console.log('error in pool: ', err.message)})});
@@ -917,6 +1048,7 @@ done().then(()=>console.log('confirmed done'))
 
 server.on('newroom',(r)=>{
 //console.log('new room: ', r.id);
+	broom++;
 });
 server.on('close',(er)=>{
 console.log('closing the mediasoup server');

@@ -595,9 +595,10 @@ gid('langsam_stop').value="true";
 if(!owner()){
 console.warn('roomremove: ',event.data);
 }
-}else if(msg.type=='dumppeer'){
-	console.log('on dump peer')
-console.warn(event.data)
+}else if(msg.type=='dump'){
+	console.log('on dump')
+console.error(event.data);
+	dfucker.innerHTML+=event.data+'<br>';
 }else{console.warn('uknown msg type',msg.type);}
 
 }

@@ -212,6 +212,9 @@ onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="$
 
 
 <br><button onclick="gh();">hash</button><br>
+<h3>Dumping:</h3>
+
+<div style="border:2px solid green;" id="dfucker"></div>
 ${js_help(["/js/video_chat.js","/js/login.js"])}
 ${js_help(["/js/admin_videochat.js"])}
 

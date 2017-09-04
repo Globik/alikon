@@ -424,10 +424,10 @@ let s2=`select busers.id,busers.name,busers.role,busers.verif,busers.model,buser
 from busers left join rooms on busers.name=rooms.room_name left join  abuse on abuse.abus_id=busers.id where busers.name=$1`;
 try{
 var result=await db.query(s2,[ctx.params.buser_name]);
-	console.log('OHO RESULT: ',result.rows);
+	//console.log('OHO RESULT: ',result.rows);
 if(result.rows.length>0) {
 us=result.rows[0];
-	console.log('OHO RESULT ROWS[0]: ',us);
+	//console.log('OHO RESULT ROWS[0]: ',us);
 }else{
 console.log('no results in result!');
 ctx.session.error="No such user."
