@@ -301,13 +301,16 @@ return {pupkin:pupkin,pidi:pidi};
 }	
 	
 function makeuserlistmessage(bs){
+var us_counti=0;
 var userlistmsg={type:"userlist", users:[]};
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
 if(c && c.readyState===WebSocket.OPEN){
+us_counti++;
 userlistmsg.users.push({username:c.username,owner:c.owner,clientId:c.clientId});
 }}
 })
+userlistmsg.cus=us_counti;
 return userlistmsg;
 }
 		
@@ -315,6 +318,7 @@ function senduserlisttoall(bs,bool,pidi){
 var userlistmsg=makeuserlistmessage(bs);
 	userlistmsg.ready=bool;
 	userlistmsg.pidi=pidi;
+
 	//userlistmsg.chat=ob;
 var userlistmsgstr=JSON.stringify(userlistmsg);
 wss.clients.forEach(c=>{
@@ -325,18 +329,22 @@ c.send(userlistmsgstr)
 });
 }
 function make_user_message(bs){
+var mus_cnt=0;
 let usermsg={type:"joined_user"};
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
 if(c && c.readyState===WebSocket.OPEN){
 usermsg.username=c.username;
 usermsg.clientId=c.clientId;
+mus_cnt++;
 }}
 })
+usermsg.mus_cnt=mus_cnt;
 return usermsg;
 }
 function send_new_user_to_all(bs){
 let usermsg=make_user_message(bs);
+
 var usermsgstr=JSON.stringify(usermsg);
 wss.clients.forEach(c=>{
 if(c.upgradeReq.url===bs.upgradeReq.url){
@@ -345,7 +353,33 @@ c.send(usermsgstr)
 }}
 });
 }	
-	
+function make_out_user_message(bs){
+let m_cnt=0;
+//let usm={type:"out_user"}
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+//usm.username=c.username;
+//usm.clientId=c.clientId;
+m_cnt++;
+}}
+})
+//usm.mus_cnt=m_cnt;
+//return usm;
+return m_cnt;
+}
+function send_old_user_to_all(bs,id,name){
+//let um=make_out_user_message(bs);
+let ct=make_out_user_message(bs);
+let um={type:"out_user",username:name,clientId:id,mus_cnt:ct}
+let ums=JSON.stringify(um);
+wss.clients.forEach(c=>{
+if(c.upgradeReq.url===bs.upgradeReq.url){
+if(c && c.readyState===WebSocket.OPEN){
+c.send(ums)
+}}
+})
+}
 function emergency_to_all(bs,obj){
 let b=JSON.stringify(obj);
 wss.clients.forEach(c=>{
@@ -474,7 +508,8 @@ ws.on('error',e=>console.log('err: ',err))
 
 ws.on('close',()=>{
 console.log('websocket closed')
-console.log('client closed. id=' + ws.clientId + '  , total clients=' + wss.clients.size);
+console.log('client closed. id=' + ws.clientId + ' name: '+ws.username+'  , total clients=' + wss.clients.size);
+send_old_user_to_all(ws,ws.clientId,ws.username)
 cleanUpPeer(ws, blin3);
 
 if(ws.owner){
@@ -668,9 +703,9 @@ let str = JSON.stringify(message);
 if(ws.readyState===1)ws.send(str);
 }
 function dumpsend(wss,ssage){
-let sd=JSON.stringify(ssage);
+try{var sd=JSON.stringify(ssage);}catch(e){console.log('JSON STRINGIFY ERROR: ',e);return;}
 wss.clients.forEach(c=>{
-if(c&&c.readyState===1)c.send(sd);
+if(c&&c.readyState===1){c.send(sd);}
 })
 }
 function preparePeer(ws, message, downOnly){
@@ -695,7 +730,7 @@ let peerlength=vid.peers.length;
 console.log('-- peers in the room from PREPAREPEER = ',peerlength);
 	//statistik
 	dumpsend(wss,{type:"dump",broom:broom,bpeer:bpeer,plen:vid.peers.length})
-update_view(peerlength,message.roomname)
+update_view(ws,peerlength,message.roomname)
 
 peer.on('close',n=>{
 console.log('PEER CLOSED!!')
@@ -731,19 +766,40 @@ d.bpeer=bpeer;
 d.name=peer.name;
 d.id=peer.id;
 d.closed=peer.closed;
-d.rtpsenderclosed=rtpSender.closed;
-	/*
-	dont do this circular json error
-d.transports=peer.transports;
-d.rtpreceivers=peer.rtpReceivers;
-d.rtpsenders=peer.rtpSenders;
-*/
+d.rtps_closed=rtpSender.closed;
+d.rtps_id=rtpSender.id;
+d.rtps_kind= rtpSender.kind;
+//console.log('d.rtps_peer= ',rtpSender.peer);//no
+console.log('kuku 741 ',rtpSender.peer.id); 
+console.log('peer name: ',rtpSender.peer.name)
+console.log(rtpSender.peer.closed);
+console.log('rtp senders length: ',rtpSender.peer.rtpSenders.length);
+//console.log('d.rtps_transport= ',rtpSender.transport);//
+console.log('d.rtsp_params= ',rtpSender.rtpParameters.codecs[0].clockRate);
+//d.rtsp_params=rtpSender.rtpParameters;//ok
+//console.log('d.rtsp_assocrtpreceiver= ',rtpSender.associatedRtpReceiver);//n
 
+d.rtsp_active=rtpSender.active;//ok
+	
+	//dont do this circular json error
+//d.transports=peer.transports;
+//d.rtpreceivers=peer.rtpReceivers;
+//d.rtpsenders=peer.rtpSenders;
 d.event="new_rtpsender";
 setTimeout(function(){dumpsend(wss,d)},10);	
 	//console.log('sender closed: ',rtpSender.closed)
+	rtpSender.on('close',er=>{
+	if(er)console.log('err on close rtpsender : ',er)
+	console.log('rtpSender closed - line 754');
+	})
+	rtpSender.on('parameterschange',(rtpParameters,active)=>{
+	console.log('on parameters change - line 757')
+	})
+	rtpSender.on('activechange',active=>{console.log('on active change line 759 ',active)})
 })
-/*
+
+//peerconnection.peer.on('newrtpsender',rtpReceiver=>{console.log('ON NEW RTP RECEIVER OCCURED!!!')})
+
 peer.on('newrtpreceiver',rtpReceiver=>{
 console.log('NEW RTP RECEIVER!! :');
 	let d={};
@@ -753,17 +809,37 @@ d.bpeer=bpeer;
 d.name=peer.name;
 d.id=peer.id;
 d.closed=peer.closed;
-d.transports=peer.transports;
-d.rtpreceivers=peer.rtpReceivers;
-d.rtpsenders=peer.rtpSenders;
+d.rtprec_id=rtpReceiver.id;
+d.rtprec_closed=rtpReceiver.closed;
+d.rtprec_kind=rtpReceiver.kind;
+
 console.log('d.rtpreceiver_id!!!!!!!!!!!!!!!!!!!!!!!!!!=: ',rtpReceiver.id);
 d.event="new_rtpreceiver";
 dumpsend(wss,d);
+	rtpReceiver.on('close',err=>{
+	console.log('RTP RECEIVER CLOSED!!!!!!!!!!!!!!!!!')
+	if(err)console.log('err in close rtpreceiver: ',err)
+	})
+	rtpReceiver.on('parameters',rtpParameters=>{
+	console.log('ON RTPRECEIVER PARAMETERS OCCURED!!!!!! 789')
+	})
+	rtpReceiver.on('parameterchange', rtpParameters=>{
+	console.log('PARAMETER CHANGED IN RTP RECEIVER OCCURRED!!! 792')
+	})
+	rtpReceiver.on('transport', transport=>{
+	console.log('ON TRANSPORT OCCURED IN RECEIVER!!!! 795')
+	})
+	rtpReceiver.on('rtpraw', packet=>{
+	//console.log('RTPRAW OCCURED IN RECEIVER 798')
+	})
+	rtpReceiver.on('rtpobject', packet=>{
+	//console.log('ON RTP OBJECT OCCURED IN RTP RECEIVER 801')
+	})
 })
-*/
-/*
+
+
 peer.on('newtransport',transport=>{
-console.log('ON NEW TRANSPORT!!!!')
+console.log('ON NEW TRANSPORT on peer!!!!')
 let d={};
 d.type="dump";
 d.broom=broom;
@@ -771,26 +847,45 @@ d.bpeer=bpeer;
 d.name=peer.name;
 d.id=peer.id;
 d.closed=peer.closed;
-d.transports=peer.transports;
-d.rtpreceivers=peer.rtpReceivers;
-d.rtpsenders=peer.rtpSenders;
+d.trans_id=transport.id;
+d.trans_closed=transport.closed;
+d.trans_icerole=transport.iceRole;
+d.trans_state=transport.iceState;
+d.event="newtransport";
+// iceLocalParameters, iceLocalCandidates iceSelectedTuple dtlsLocalParameters dtlsState dtlsRemoteCert
 dumpsend(wss,d);
+	
+transport.on('close', err=>{
+if(err)console.log('er close transport: ',err)
+console.log('TRANSPORT CLOSE OCCURED')
 })
+transport.on('iceselectedtuplechange', iceSelectedTuple=>{
+console.log('ice SELECTED TUPLE OCCURED')
+})
+transport.on('icestatechange', iceState=>{
+console.log('ICE STATE CHANGE OCCURED')
+})
+transport.on('dtlsstatechange', dtlsState=>{
+console.log('ON DTLS STATE CHANGE OCCURED')
+})
+})
+
+
+
 peer.on('capabilities',capabilities=>{
 console.log('ON CAPABILITIES!!!!');
-	let d={};
+let d={};
 d.type="dump";
 d.broom=broom;
 d.bpeer=bpeer;
 d.name=peer.name;
 d.id=peer.id;
 d.closed=peer.closed;
-d.transports=peer.transports;
-d.rtpreceivers=peer.rtpReceivers;
-d.rtpsenders=peer.rtpSenders;
+d.event="capabilities";
+//console.log('CAPABILITIES: ', capabilities);
 dumpsend(wss,d);
 })
-*/
+
 peerconnection.on('close', err=>{
 console.log('peerconnection closed ');
 debug('PEER_CONNECTION CLOSED');
@@ -811,7 +906,7 @@ d.bpeer=bpeer;
 d.peerlength=vid.peers.length;
 d.type="dump";
 dumpsend(wss,d)
-update_view(peerlength,message.roomname);
+update_view(ws,peerlength,message.roomname);
 }
 	
 if(err)console.log(err);
@@ -869,7 +964,7 @@ let vid=droom.get(message.roomname);
 if(vid){
 let peerlength=vid.peers.length;
 console.log('-- PEERS in the room FROM handleAnswer = ', peerlength);
-update_view(peerlength,message.roomname)
+update_view(ws,peerlength,message.roomname)
 }
 	//if(ws.readyState===1)ws.send(JSON.stringify({type:"error", ename:e.name,emsg:e.message}))
 dumpPeer(peerconnection.peer, 'peer.dump after setRemoteDescription(re-answer):');
@@ -879,10 +974,11 @@ console.log('setRemoteDescription for Answer ERROR:', err)
 });
 }
 
-function update_view(peerlength,roomname){
+function update_view(ws,peerlength,roomname){
 pool.query('update rooms set view=$1 where room_name=$2',[peerlength,roomname]).then(r=>{
 console.log('ok update rooms view handleanswer')
 sse.publish('ch_log_rooms','room_view', {peers:peerlength,room_name:roomname})
+emergency_to_all(ws,{type:"stat_room",peers:peerlength,room_name:roomname})
 }).catch(err=>{console.log('err update rooms view handleanswer: ',err)})
 }
 

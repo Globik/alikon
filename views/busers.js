@@ -1,6 +1,7 @@
 //busers.js
 const onroomstr="Press connect button to broadcast yourself. To stop broadcast press disconnect button. Or you can  just stop video right now.";
-const onowneroff="To broadcast yourself please enable your webcam and press start video button. Then connect button.";
+const onowneroff=`To broadcast yourself please enable your webcam and press start video button.
+\nThen connect button.`;
 const usoff="The member you are trying to view is currently offline. Please wait or choose another member to view.";
 const you_ban="You are banned.";
 const us_ban="This user is banned.";
@@ -36,6 +37,7 @@ ${model?(model.bstatus=='yes'?'<span id="banned">banned</span>':''):''}&nbsp;&nb
 <div id="video-container">
 <div id="topvideo">&nbsp;<span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>&nbsp;
 ${n.model.ab_cnt?`<span onclick="get_one_abuse();" class="ab_cnt_span" title="sum of complains">${n.model.ab_cnt}</span>`:''}
+&nbsp;<b>viewers: </b><span id="rview">0</span>
 </div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}${model.bstatus=='yes'?' banned':''}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}" data-banned="${model?(model.bstatus=='yes'?(n.owner?you_ban:us_ban):''):''}">
@@ -47,7 +49,8 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 
 <div id="chat-container">
-<div id="topchat"><span onclick="chat_gear();" style="cursor:pointer;" title="chat options">gear</span></div>
+<div id="topchat"><span onclick="chat_gear();" style="cursor:pointer;" title="chat options">gear</span>&nbsp;<b>chaters: </b>
+<span id="rchaters">0</span></div>
 <div id="chat"></div>
 <div id="underchat">
 <form name="publish">

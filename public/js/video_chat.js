@@ -4,6 +4,7 @@ var pidi=0;
 var btype=0;
 var myusername=null;
 var ignory=new Set();
+var conn_timeout=0;
 
 
 var startDate,clocker,mlocker, startingDate;
@@ -454,6 +455,7 @@ vidW.classList.add('banned');
 	
 }else if(msg.type=="userlist"){
 console.log("case userlist: "+event.data);
+//rchaters.textContent=msg.
 if(!owner()){if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;}
 if(!owner()){
 if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated);
@@ -471,6 +473,10 @@ remove_user_offline();
 show_history(msg);
 }else if(msg.type=='joined_user'){
 console.warn('onJoinedUser: ',event.data);
+	rchaters.textContent=msg.mus_cnt;
+}else if(msg.type=="out_user"){
+console.log('on out_user: ',event.data);
+	rchaters.textContent=msg.mus_cnt;
 }else if(msg.type=='Doffer'){
 handleoffer(msg.offer,msg.from_target);
 }else if(msg.type=='Danswer'){
@@ -599,6 +605,9 @@ console.warn('roomremove: ',event.data);
 	console.log('on dump')
 console.error(event.data);
 	dfucker.innerHTML+=event.data+'<br>';
+}else if(msg.type=='stat_room'){
+console.log('on stat_room: ',event.data);
+rview.textContent=msg.peers;
 }else{console.warn('uknown msg type',msg.type);}
 
 }
@@ -1083,7 +1092,7 @@ updateButtons();
 }else{
 if(!buser()){if(ink()){if(socket)socket.close();}}
 }
-},2000)
+},conn_timeout)
 }
 
 function callWithCapabilitySDP() {
