@@ -215,6 +215,7 @@ onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="$
 
 
 <br><button onclick="gh();">hash</button><br>
+<button onclick="maudio();">audio</button>
 <h3>Dumping:</h3>
 
 <div style="border:2px solid green;" id="dfucker"></div>

@@ -30,7 +30,29 @@ globik@globik-laptop:~/alikon/public/uploads/58a1a78a406da007a696e917$ ls -i
 28442690 blum-m4-k1.jpg  28442693 blum-m4-k4.jpg  28442696 hosp-m4-k3.jpg
 28442691 blum-m4-k2.jpg  28442694 hosp-m4-k1.jpg  28442697 hosp-m4-k4.jpg
 28442692 blum-m4-k3.jpg  28442695 hosp-m4-k2.jpg
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
 
+# "local" is for Unix domain socket connections only
+local   all             all                                     trust
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            trust
+#host   all              all               217.118.83.202                                   trust
+# IPv6 local connections:
+host    all             all             ::1/128                 trust
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+#local   replication     globik                                trust
+#host    replication     globik        127.0.0.1/32            trust
+#host    replication     globik        ::1/128                 trust
 
+export DISPLAY=:0
+export USER=globik
+export XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
+#/usr/bin/canberra-gtk-play -i complete
+#/usr/bin/canberra-gtk-play  -f /usr/share/sounds/freedesktop/stereo/complete.oga
+#/usr/bin/paplay /usr/share/sounds/freedesktop/stereo/complete.oga
+/usr/bin/aplay /usr/share/sounds/alsa/Front_Center.wav
+#/usr/bin/aplay /usr/share/sounds/purple/receive.wav
+exit 0
 
 

@@ -220,7 +220,10 @@ console.error('abusi: ',localStorage.abuse,' : ',JSON.parse(localStorage.abuse).
 
 
 function tip(){
-if(pidi==0)return;
+if(pidi==0){
+	message_box('No broadcasting of this user at the moment!');
+	return;
+}
 if(is_langsam_stop()){message_box(str_langsam_stop);return;}
 if(buser()){
 window.location.href="#resultativ";
@@ -419,7 +422,7 @@ console.log("case id: "+event.data);
 }else if(msg.type=="username"){
 console.log("case username: "+event.data);
 }else if(msg.type=="message"){
-	console.log(msg);
+	//console.log(msg);
 if(!find_ignor(ignory,msg.from_nick))showmessage(msg);
 if(msg.admin_type){
 if(msg.admin_type=="stop_broadcast"){
@@ -473,6 +476,8 @@ remove_user_offline();
 show_history(msg);
 }else if(msg.type=='joined_user'){
 console.warn('onJoinedUser: ',event.data);
+	//maudio();
+	playSound(sounds.l2.buffer);
 	rchaters.textContent=msg.mus_cnt;
 }else if(msg.type=="out_user"){
 console.log('on out_user: ',event.data);
@@ -758,6 +763,8 @@ let m=document.createElement('div');
 m.className="chat-div";
 m.innerHTML=div;
 chat.appendChild(m);
+playSound(sounds.l3.buffer)
+	//maudio();
 chat.scrollTop=chat.clientHeight;
 }
 

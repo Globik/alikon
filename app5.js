@@ -66,6 +66,7 @@ const boss=new PgBoss(database_url+dop_ssl);
 
 const app = new Koa();
 const pars=url.parse(database_url)
+console.log('pars: ', database_url);
 const cauth=pars.auth.split(':')
 
 const pconfig={
@@ -1055,6 +1056,8 @@ if(process.env.DEVELOPMENT ==="yes"){
 	dop_ssl="";
 }else{dop_ssl="?ssl=true"}
 */
+
+
 var ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
@@ -1090,6 +1093,7 @@ await pool.query(`update busers set w_items=w_items-${items} where email='${mail
 })()
 }else{}
 })
+
 //--trace-warnings
 
 boss.start().then(ready).catch(err=>console.log(err));
