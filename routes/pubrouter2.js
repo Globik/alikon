@@ -456,19 +456,18 @@ var result=await db.query(sis);
 }catch(e){ctx.throw(404,e);}
 ctx.body={result:result.rows}
 })
-/*
+
 pub.post('/api/set_transfer', auth, async ctx=>{
 let db=ctx.db;
-let {from,to,amount,type,pid}=ctx.request.body;
-let mail_to=email_enc.decrypt(to);
+let {from,to,amount,type,pid,btype}=ctx.request.body;
 var lamount=0;
 try{
-await db.query(`insert into transfer(tfrom, tos, amount,type,pid) values('${from}','${mail_to}',${amount},${type},'${pid}')`)
+await db.query('insert into transfer(tfrom,tos,amount,type,pid) values($1,$2,$3,$4,$5)',[from,to,amount,btype,pid]);
 lamount=amount;
 }catch(e){ctx.throw(400,e.message);}
-ctx.body={info: {amount:lamount}}
+ctx.body={amount:lamount}
 })
-*/
+
 pub.post('/api/set_seat', async ctx=>{
 let db=ctx.db;
 const {pid,who,type}=ctx.request.body;

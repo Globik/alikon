@@ -619,18 +619,19 @@ emergency_to_all(ws,{type:'roomer_offline',ready:false,pidi:0})
 sse.publish('ch_log_rooms','remove_room', {room_name:msg.roomname})
 }).catch(e=>{console.log(e)})
 sendtoclients=false;
-}else if(msg.type=="token"){
+}else if(msg.type=="money_trans"){
 console.log('TOKEN OCCURED: ',msg);
 
-pool.query('insert into transfer(tfrom,tos,amount,type,pid) values($1,$2,$3,$4,$5)',[msg.from,msg.to,msg.amount,msg.btype,msg.pid]).then(res=>{
-console.log('INSERTING A TOKEN: ',res);
+//pool.query('insert into transfer(tfrom,tos,amount,type,pid) values($1,$2,$3,$4,$5)',[msg.from,msg.to,msg.amount,msg.btype,msg.pid]).
+	//then(res=>{
+console.log('INSERTING A TOKEN: ');
 emergency_to_all(ws,{type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick});
-sendback(ws,{type:"success_token_transfer",from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
+//sendback(ws,{type:"success_token_transfer",from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid})
 insert_message(msg.msg,msg.roomname,msg.from_nick)
-}).catch(e=>{
-console.log('error insert token: ',e.message);
-sendback(ws,{type:'error',mess:e.message})
-})
+//}).catch(e=>{
+//console.log('error insert token: ',e.message);
+//sendback(ws,{type:'error',mess:e.message})
+//})
 
 sendtoclients=false;
 }else if(msg.type=="call"){

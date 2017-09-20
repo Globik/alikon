@@ -1,35 +1,12 @@
-var seat=0;
-var init=0;
-var pidi=0;
-var btype=0;
-var myusername=null;
-var ignory=new Set();
-var conn_timeout=0;
-
-
+var seat=0,init=0,pidi=0,btype=0,myusername=null,ignory=new Set(),conn_timeout=0;
 var startDate,clocker,mlocker, startingDate;
 
-var txarComplain=gid("txar-complain");
-var complainiSelector=gid("complaini-selector");
-
-var modelName=gid('modelName').value;
-
-var modelId=gid('modelId').value;
-var modelTokens=gid('modelTokens');
-
-var yourName=gid('yourName').value;
-var yourId=gid('yourId').value;
-//var ink=gid('inkognito').value;
-
-var yourTokens=gid('yourTokens');
-
-var tokTosend=gid('tokTosend');
-var submitChat=document.querySelector('#underchat input[type=submit].subm-state');
-var loginstr=gid('loginstr');
-var localVideo = gid('local_video');
-var vidW=gid('video-wrapper');
-var str_langsam_stop=gid('str_langsam_stop').value;
-var str_emergency_stop=gid('str_emergency_stop').value;
+var txarComplain=gid("txar-complain"),
+complainiSelector=gid("complaini-selector"),
+modelName=gid('modelName').value,modelId=gid('modelId').value,modelTokens=gid('modelTokens'),
+yourName=gid('yourName').value,yourId=gid('yourId').value,yourTokens=gid('yourTokens'),tokTosend=gid('tokTosend'),
+submitChat=document.querySelector('#underchat input[type=submit].subm-state'),loginstr=gid('loginstr'),localVideo = gid('local_video'),
+vidW=gid('video-wrapper'),str_langsam_stop=gid('str_langsam_stop').value,str_emergency_stop=gid('str_emergency_stop').value;
 
 yourTokens2.textContent=yourTokens.value;
 function buser(){
@@ -60,7 +37,7 @@ data.from=yourId;
 data.to=modelId;
 data.amount=Number(tokTosend.textContent);
 data.btype=1;
-data.type="token";
+data.type="money_trans";
 data.pid=pid.textContent;
 data.from_nick=yourName;
 data.msg=toki_s(data.amount);
@@ -77,6 +54,7 @@ out.innerHTML='not selbst!';
 out.innerHTML='Please <a href="/login">log in</a>';
 }
 }
+
 
 function vor_login(){
 vorlogincontainer.innerHTML=loginstr.value;
@@ -160,6 +138,21 @@ if(r)r.classList.toggle('btnajx');
 ptokenstosend.style.background="black";
 console.log('sending token: ',n);
 sendJson(n);
+let xhr=new XMLHttpRequest();
+xhr.open("POST","/api/set_transfer");
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+let m=JSON.parse(this.response);
+success_token_transfer(m.amount)
+}else{
+console.error('xhr from server: ',this.response);
+unsucces_token_transfer(this.response);
+}}
+xhr.onerror=function(e){console.error(e)};
+xhr.send(JSON.stringify(n));
+	
 }
 
 
@@ -174,11 +167,11 @@ rechnet(amount_token);
 //setTimeout(close_tokensblatt,1000);
 }
 
-function unseccess_token_transfer(){
+function unseccess_token_transfer(resu){
 if(r)r.classList.toggle('btnajx');
 btnotok.classList.add('notok');
 ptokenstosend.style.background="initial";
-outi.innerHTML='<b class="er-info">Error occured!</b>';
+outi.innerHTML='<b class="er-info">Error occured! '+resu+'</b>';
 setTimeout(close_tokensblatt,1000);
 }
 
@@ -198,7 +191,6 @@ let d={};
 let e=myusername;
 d.selector=a;d.text=b;d.us_id=c;d.who=e;
 let j=JSON.stringify(d);
-//alert(j)
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/send_abuse');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
@@ -211,9 +203,9 @@ console.error('xhr from server: ',this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
 xhr.send(j);
-	let ru={};
-	ru.m=sendabusi;
-	ru.who=myusername;
+let ru={};
+ru.m=sendabusi;
+ru.who=myusername;
 if(!localStorage.abuse){localStorage.abuse=JSON.stringify(ru);}else{localStorage.abuse=JSON.stringify(ru);}
 console.error('abusi: ',localStorage.abuse,' : ',JSON.parse(localStorage.abuse).who,' : ',JSON.parse(localStorage.abuse).m);
 }
@@ -221,8 +213,8 @@ console.error('abusi: ',localStorage.abuse,' : ',JSON.parse(localStorage.abuse).
 
 function tip(){
 if(pidi==0){
-	message_box('No broadcasting of this user at the moment!');
-	return;
+message_box('No broadcasting of this user at the moment!');
+return;
 }
 if(is_langsam_stop()){message_box(str_langsam_stop);return;}
 if(buser()){
@@ -301,12 +293,6 @@ console.log(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
 }
-/*
-function message_box(n){
-inbox.innerHTML='<b>'+n+'</b>';
-window.location.href="#message_box";
-}
-*/
 var mediaconstraints={audio:true,video:true};
 
 var clientId=0;
@@ -472,13 +458,12 @@ remove_user_offline();
 }
 
 }else if(msg.type=='history'){
-	console.warn('on history: ',event.data)
+//console.warn('on history: ',event.data)
 show_history(msg);
 }else if(msg.type=='joined_user'){
 console.warn('onJoinedUser: ',event.data);
-	//maudio();
-	playSound(sounds.l2.buffer);
-	rchaters.textContent=msg.mus_cnt;
+playSound(sounds.l2.buffer);
+rchaters.textContent=msg.mus_cnt;
 }else if(msg.type=="out_user"){
 console.log('on out_user: ',event.data);
 	rchaters.textContent=msg.mus_cnt;
@@ -504,10 +489,9 @@ reject_call(msg.from_target);
 
 }else if(msg.type==='onroom'){
 console.warn('On created room: ', event.data);
-	
 if(vidW.classList.contains('owner-offline')){
-	vidW.classList.remove('owner-offline');
-	vidW.classList.add('owner-onroom');
+vidW.classList.remove('owner-offline');
+vidW.classList.add('owner-onroom');
 }	
 roomcreated=true;
 }else if(msg.type==='roomer_online'){
@@ -576,18 +560,9 @@ if(owner()){
 //to all
 console.warn('token_answer occured!: ',event.data)
 show_event_token(msg);
-}else if(msg.type==="success_token_transfer"){
-//to sender
-console.warn('success_token_transfer: ',event.data);
-success_token_transfer(msg.amount);
-}else if(msg.type==="unsuccess_token_transfer"){
-//to sender
-console.error('unsuccess_token_transfer: ',event.data);
-unsuccess_token_transfer();
 }else if(msg.type==='error'){
 console.error('on error: ',event.data);
 if(msg.num=="101"){
-
 if(!buser()){
 dissconnect();
 if(ink()){if(socket)socket.close();}
@@ -603,50 +578,25 @@ if(owner()){dissconnect();stopVideo();}else{dissconnect();}
 message_box(str_emergency_stop);
 gid('langsam_stop').value="true";
 }else if(msg.type==='roomremove'){
-if(!owner()){
-console.warn('roomremove: ',event.data);
-}
+if(!owner()){console.warn('roomremove: ',event.data);}
 }else if(msg.type=='dump'){
-	console.log('on dump')
+console.log('on dump')
 console.error(event.data);
-	dfucker.innerHTML+=event.data+'<br>';
+dfucker.innerHTML+=event.data+'<br>';
 }else if(msg.type=='stat_room'){
 console.log('on stat_room: ',event.data);
 rview.textContent=msg.peers;
+	playSound(sounds.l1.buffer);
 }else{console.warn('uknown msg type',msg.type);}
-
 }
-var chat=gid('chat');
+var chat=gid('chat'),useTrickleICE=false,stateSpan=gid('state_span'),localStream=null,peerConnection=null;
 
-
-const useTrickleICE = false;
-//let localVideo = gid('local_video');
-let stateSpan = gid('state_span');
-let localStream = null;
-let peerConnection = null;
-  
-  navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
-                            navigator.mozGetUserMedia || navigator.msGetUserMedia;
-  RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-  RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
-  
-  if (window.window.webkitRTCPeerConnection) {
-    gid('plan_b_check').checked = true;
-  }
-
-var clientId=0;
-var ws;
-var myusername=null;
-var name,connecteduser;
-var targetusername=null;
-var remoteContainer = gid('remote_container');
-
-function getUsePlanB() {
-let checkbox = gid('plan_b_check');
-return (checkbox.checked === true);
-}
-var fl=false;
-
+navigator.getUserMedia=navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+RTCPeerConnection=window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+RTCSessionDescription=window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
+if (window.window.webkitRTCPeerConnection) {gid('plan_b_check').checked=true;}
+var clientId=0,ws,myusername=null,name,connecteduser,targetusername=null,remoteContainer = gid('remote_container'),fl=false;
+function getUsePlanB(){return (gid('plan_b_check').checked === true);}
 function get_vid(el){
 if(is_langsam_stop()){message_box(str_langsam_stop);return;}
 if(owner()){
