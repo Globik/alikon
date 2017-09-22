@@ -383,7 +383,7 @@ display:none;
 <div id="video-container">
 <div id="topvideo" style=""><span id="complain" data-ownerid="22" onclick="get_complain(this);">&nbsp;<span style="color:orange;font-weight:bold;">report abuse</span></span>&nbsp;
 &nbsp;
-<span onclick="get_one_abuse();" class="ab_cnt_span">2</span>
+	<span onclick="get_one_abuse();" class="ab_cnt_span">2</span><b>viewers:</b><span id="viewers">0</span>
 </div>
 <div id="video-wrapper"><video id="local_video" poster="" autoplay controls></video></div>
 <div id="undervideo">
@@ -399,6 +399,8 @@ display:none;
 </div>
 </div>
 	<div style="clear:both;">suka!!!!!!!!!!!</div>
+	<br><button onclick="vminus();">minus</button> | <button onclick="vplus();">plus</button>
+	<br><button onclick="dplus(10);">dplus</button> | <button onclick="dminus(5);">dminus</button>
 <button onclick="get_offline();">get_offline</button><br>
 <br><button onclick="get_green();">get_green</button>
 	<br><span style="font-family:Arial;">one</span><br>
@@ -732,4 +734,44 @@ window.location.href="#message_box#d";
 	langsam_stop_it(document.querySelector('button[data-zus]'));
 	fishka=true;	
 	}
+	function vminus(){
+	let a=viewers.textContent;
+		let b=Number(a);
+		b=b-1;
+		viewers.textContent=b;
+	}
+	function vplus(){
+	let a=viewers.textContent;
+		let b=Number(a);
+		b=b+1;
+		viewers.textContent=b;
+	}
+	function dplus(c){
+	let a=viewers.textContent;
+	let b=Number(a);
+	if(c > b) viewers.textContent=c;//playSound(plus.ogg)	
+	}
+	function dminus(c){
+	let a=viewers.textContent;
+	let b=Number(a);
+	if(c < b) viewers.textContent=c;//playSound(minus.ogg)
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </script></body></html>

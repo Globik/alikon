@@ -732,7 +732,7 @@ let peerlength=vid.peers.length;
 console.log('-- peers in the room from PREPAREPEER = ',peerlength);
 	//statistik
 	dumpsend(wss,{type:"dump",broom:broom,bpeer:bpeer,plen:vid.peers.length})
-update_view(ws,peerlength,message.roomname)
+//update_view(ws,peerlength,message.roomname)
 
 peer.on('close',n=>{
 console.log('PEER CLOSED!!')

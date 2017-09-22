@@ -31,13 +31,14 @@ ${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`
 <main id="pagewrap"> 
 <div id="media-header">
  <b>${model?model.name:''}&nbsp;</b>${n.owner?'<div id="online-detector"></div>':''} 
-${model?(model.bstatus=='yes'?'<span id="banned">banned</span>':''):''}&nbsp;&nbsp;<span style="cursor:pointer;color:black;" onclick="hol_stoper();"><b>stoper</b></span>
+${model?(model.bstatus=='yes'?'<span id="banned">banned</span>':''):''}&nbsp;&nbsp;
+<span style="cursor:pointer;color:black;" onclick="hol_stoper();"><b>stoper</b></span>
 </div>
 <div id="media-wrapper">
 <div id="video-container">
 <div id="topvideo">&nbsp;<span id="complain" data-ownerid="${model?model.id:''}" onclick="get_complain(this);">report abuse</span>&nbsp;
 ${n.model.ab_cnt?`<span onclick="get_one_abuse();" class="ab_cnt_span" title="sum of complains">${n.model.ab_cnt}</span>`:''}
-&nbsp;<b>viewers: </b><span id="rview">0</span>
+&nbsp;<b>viewers: </b><span id="rview">0</span>  ${n.owner?'<span id="tokens_panel">0</span>':''}
 </div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}${model.bstatus=='yes'?' banned':''}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}" data-banned="${model?(model.bstatus=='yes'?(n.owner?you_ban:us_ban):''):''}">
@@ -59,7 +60,7 @@ ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">st
 </div>
 </div>
 </div><div style="clear:both;">.</div>
-
+${n.owner?`<br>you have <span id="modelTokens2">${model.items}</span> tokens</span><br>`:''}
 <a href="#." class="overlay" id="resultativ"></a>
 <output id="pop" class="popi"><div class="wrap-close"><a href="#." class="close"></a></div>
 <p><a href="/tipping/purchase_tokens">purchase tokens</a></p>
@@ -148,6 +149,7 @@ Time: <span id="mer">00:00:00</span><br><br>
 <div class="wrap-close"><a href="#." class="close"></a></div>
 <div id="vorlogincontainer"></div>
 </output>
+
 <a href="#." class="overlay" id="chatnastroi"></a>
 <output id="chat-gear" class="popi">
 <div class="wrap-close"><a href="#." class="close"></a></div>
@@ -155,6 +157,8 @@ Time: <span id="mer">00:00:00</span><br><br>
 <div><strong>Don't accept chat users who's:</strong></div>
 <input type="radio" name="chataccess" id="canchat_guest" value="1"/>&nbsp;<label>a guest</label><br>
 <input type="radio" name="chataccess" id="canchat_logged" value="2"/>&nbsp;<label>a non-tokens user or a guest</label><br>
+<hr>
+<input type="checkbox" name="soundenable" id="soundenableid" checked value="1"/>&nbsp;<label id="soundenablelabelid">sound enabled</label><br>
 <input type="submit" value="save"/>
 </form>
 </output>

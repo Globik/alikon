@@ -467,7 +467,15 @@ lamount=amount;
 }catch(e){ctx.throw(400,e.message);}
 ctx.body={amount:lamount}
 })
-
+pub.get('/fetch_toks/:id', auth, async ctx=>{
+	console.log('CTX.PARAMS.ID: ',ctx.params.id)
+if(ctx.state.user && ctx.state.user.id !==ctx.params.id){ctx.throw(404,"You are not owner. ID: "+ctx.params.id+" us.id: "+ctx.state.user.id)}
+let db=ctx.db;
+try{
+var r=await db.query('select items from busers where id=$1',[ctx.params.id]);
+}catch(e){ctx.throw(404,e)}
+ctx.body={info:"OK",items:r.rows[0].items};
+})
 pub.post('/api/set_seat', async ctx=>{
 let db=ctx.db;
 const {pid,who,type}=ctx.request.body;

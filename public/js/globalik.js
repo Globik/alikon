@@ -1,12 +1,30 @@
 'use strict';
 var sounds={
-l1:{src:"/sounds/KDE-Im-Contact-Out"},
-l2:{src:"/sounds/KDE-Im-Low-Priority-Message"},
-l3:{src:"/sounds/KDE-Im-Phone-Ring"}
+l1:{src:"/sounds/KDE-Im-Contact-Out.ogg"},
+l2:{src:"/sounds/KDE-Im-Low-Priority-Message.ogg"},
+l3:{src:"/sounds/KDE-Im-Phone-Ring.ogg"},
+complete:{src:"/sounds/complete.oga"},
+bell:{src:"/sounds/bell.ogg"},
+message:{src:"/sounds/message.ogg"}
+}
+
+function is_local_storage(){
+if(typeof(Storage) !=='undefined'){return true;}else{
+return false;}
+}
+function is_sound(){
+if(is_local_storage()){
+if(localStorage.soundenable){
+if(localStorage.soundenable=="0"){return false;}else{return true;}
+}
+return true;
+}
+return false;
 }
 function shell(el,n,ml){
 if(typeof HTMLDialogElement==='function'){
 inbox3.innerHTML='<b>'+n+'</b>';dialogConfirm.showModal();
+playSound(sounds.message.buffer);
 dialogConfirm.onclose=function(ev){
 if(ev.target.returnValue=='true'){el.target.dispatchEvent(ml);
 ev.target.returnValue=null;
@@ -47,7 +65,7 @@ if(b){return true;}else{return false;}
 fogg();
 function loadSoundObj(obj){
 let r=new XMLHttpRequest();
-r.open('GET',obj.src+'.ogg',true)
+r.open('GET',obj.src,true)
 r.setRequestHeader('X-Requested-With','XMLHttpRequest');
 r.responseType='arraybuffer';
 r.onload=function(){
@@ -71,7 +89,9 @@ let s=ax.createBufferSource();
 }catch(e){console.error(e);return;}
 }}
 function playSound(buffer){
+if(!is_sound())return;
 if(!fogg())return;
+
 return blaysound(buffer);
 }
 function message_box(n){

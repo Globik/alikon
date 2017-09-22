@@ -25,7 +25,7 @@ function is_langsam_stop(){
 if(gid('langsam_stop').value==='true'){return true;}else{return false;}
 }
 function send_tokens(){
-if(pidi==0)return;
+if(pidi==0){message_box("user is offline");return;}
 if(buser()){
 console.log('buser!')
 if(!owner()){
@@ -307,7 +307,7 @@ var whoaccept=0;
 function get_ops(){
 // 1 - no guest; 2 - no guest, no user width no tokens
 if(owner()){
-if(is_loc_storage()){
+if(is_local_storage()){
 if(localStorage.chatac)return Number(localStorage.chatac);
 }else{return 0;}
 }else{return 0;}
@@ -345,7 +345,10 @@ wso.innerHTML='websocket connected';
 }
 socket.onmessage=go_message;
 socket.onerror=function(e){wso.innerHTML="error: "+e;}
-socket.onclose=function(e){wso.innerHTML="closed";socket=null;submitChat.disabled=true;}
+socket.onclose=function(e){wso.innerHTML="closed";socket=null;
+submitChat.disabled=true;
+submitChat.value="closed";
+}
 }
 
 function sendtoserver(message){
@@ -466,7 +469,7 @@ playSound(sounds.l2.buffer);
 rchaters.textContent=msg.mus_cnt;
 }else if(msg.type=="out_user"){
 console.log('on out_user: ',event.data);
-	rchaters.textContent=msg.mus_cnt;
+rchaters.textContent=msg.mus_cnt;
 }else if(msg.type=='Doffer'){
 handleoffer(msg.offer,msg.from_target);
 }else if(msg.type=='Danswer'){
@@ -562,6 +565,7 @@ console.warn('token_answer occured!: ',event.data)
 show_event_token(msg);
 }else if(msg.type==='error'){
 console.error('on error: ',event.data);
+	message_box(msg.ename);
 if(msg.num=="101"){
 if(!buser()){
 dissconnect();
@@ -584,9 +588,18 @@ console.log('on dump')
 console.error(event.data);
 dfucker.innerHTML+=event.data+'<br>';
 }else if(msg.type=='stat_room'){
+	//alert('stat_room occured!');
 console.log('on stat_room: ',event.data);
+let c=rview.textContent;
+let d=Number(c);
 rview.textContent=msg.peers;
-	playSound(sounds.l1.buffer);
+if(owner()){
+if(msg.peers > d){
+playSound(sounds.bell.buffer);
+}else{
+playSound(sounds.message.buffer);
+}
+}
 }else{console.warn('uknown msg type',msg.type);}
 }
 var chat=gid('chat'),useTrickleICE=false,stateSpan=gid('state_span'),localStream=null,peerConnection=null;
@@ -628,6 +641,7 @@ console.log('message: ',message);
 if(message){
 let s=bo_mes(message.from_nick,message.msg);
 insert_message(s);
+playSound(sounds.l1.buffer);
 if(message.from_nick===myusername)set_chat_btn_green();
 document.forms.publish.message.value="";
 }
@@ -670,32 +684,61 @@ let l=update_ignor(ignory,b);
 }
 }
 
-function is_loc_storage(){
-if(typeof(Storage) !=='undefined'){return true;}else{
-return false;}
-}
+
 function get_acc_users(){
-let s='';
+let s='',t='';
+if(is_local_storage()){
 if(localStorage.chatac){s=localStorage.chatac;}
-if(s){
+if(localStorage.soundenable){t=localStorage.soundenable;}
+
 if(s=='1'){gid('canchat_guest').checked=true;}else{gid('canchat_logged').checked=true;}
+if(t!=='1'){gid('soundenableid').checked=true;
+		   gid('soundenableid').value="0";
+		   gid('soundenablelabelid').textContent="sound disabled";}else{
+gid('soundenableid').checked=false;
+gid('soundenableid').value="1";
+gid('soundenablelabelid').textContent="sound enabled";
+}
+}else{console.log('localStorage not available');}
+}
+gid('soundenableid').onclick=function(e){
+//alert(e.target.checked+' '+e.target.value);
+if(!e.target.checked){
+soundenablelabelid.textContent="sound enabled";
+e.target.value="1";
+}else{
+soundenablelabelid.textContent="sound disabled";	
+e.target.value="0";
 }
 }
 function chat_gear(){
 get_acc_users();
 window.location.href="#chatnastroi";
+playSound(sounds.message.buffer);
 }
 document.forms.canchat.onsubmit=save_acc_users;
 function save_acc_users(ev){
 ev.preventDefault();
 //alert(ev.target.chataccess.value)
 localStorage.chatac=ev.target.chataccess.value;
+localStorage.soundenable=ev.target.soundenable.value;
+message_box('Saved!');
 }
 
 function show_event_token(m){
 console.log('m: ',m);
 let s=tok_str(m.amount,m.user_nick)
 insert_message(s);
+if(owner()){
+	//alert('a? '+m.amount)
+let l=gid('tokens_panel').textContent;
+let i=Number(l);
+l=i+m.amount;
+	console.log('l ',l)
+	gid('tokens_panel').textContent=l;
+playSound(sounds.complete.buffer);
+updateModelTokens();
+}
 }
 function tok_str(am,nick){
 let ds=(am==1?'':'s');
@@ -713,8 +756,7 @@ let m=document.createElement('div');
 m.className="chat-div";
 m.innerHTML=div;
 chat.appendChild(m);
-playSound(sounds.l3.buffer)
-	//maudio();
+
 chat.scrollTop=chat.clientHeight;
 }
 
@@ -722,6 +764,26 @@ function escape_html(s){
 return s.replace(/[&<>'"]/g,function(m){return '';})
 }
 
+function updateModelTokens(){
+var xhr=new XMLHttpRequest();
+	//alert('model.id: '+modelId);
+	xhr.open("GET","/fetch_toks/"+modelId);
+	xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+	xhr.onload=function(e){
+	if(xhr.status==200){
+		//alert(this.response)
+	let m=JSON.parse(this.response);
+		console.warn('items: ',m.items);
+	//modelTokens.textContent=m.items;
+	modelTokens2.textContent=m.items;
+	}else{
+		//alert(this.response);
+		  console.log(this.response);
+	}
+	}
+	xhr.onerror=function(e){console.log(e)};
+	xhr.send();
+}
 
 function remove_user_offline(){
 if(owner()){
