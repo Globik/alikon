@@ -22,6 +22,19 @@ const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
 <head>${head.head({title:`${model !==null ?model.name:'no user'}. Live video.`,
 csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"],luser:buser})}
+<style>
+video::cue{
+background-image:linear-gradient(to bottom,black,black);
+color:white;
+}
+video::cue(b){color:green;}
+video::cue(a){color:blue;}
+::cue-region {
+color:yellow;
+background:red;
+}
+video::cue(v[voice="fred"]){color:blue;background:red;border:5px solid green;border-radius:5px;}
+</style>
 </head>
 <body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
@@ -42,7 +55,9 @@ ${n.model.ab_cnt?`<span onclick="get_one_abuse();" class="ab_cnt_span" title="su
 </div>
 <div id="video-wrapper" class="${model && model.src ? '':`${n.owner?'owner-offline':'offline'}`}${model.bstatus=='yes'?' banned':''}" data-onroom="${onroomstr}" 
 data-owneroffline="${onowneroff}" data-usoff="${usoff}" data-banned="${model?(model.bstatus=='yes'?(n.owner?you_ban:us_ban):''):''}">
-<video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.</video>
+<video id="local_video" poster="${model && model.src ? model.src:''}" autoplay controls>HTML5 video element not supported.
+<track src="/vtt/test2.vtt" default>
+</video>
 </div>
 <div id="undervideo">
 ${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button>${!n.owner ?'<button class="start" onclick="tip();">send tip</button><button class="start" onclick="go_private();">private room</button>':''}
