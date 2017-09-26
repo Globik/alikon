@@ -1,4 +1,5 @@
 //const CircularJson=require('circular-json');
+var jsi=require('node-stringify');
 const mail_enc=require('./libs/email_enc.js');
 const EventEmitter=require('events');
 const Koa=require('koa')
@@ -204,7 +205,8 @@ pg_store.on('connect',()=>console.log('PG_STORE IS CONNECTED!!!'));
 //var ssl_options={key:fss.readFileSync('server.key'),cert:fss.readFileSync('server.crt')};
 
 var nextId=Date.now();
-var Connections = new Array();
+//var Connections = new Array();
+var Connections=new Map();
 var droom=new Map();
 
 pg_store.setup().then(()=>{
@@ -998,29 +1000,30 @@ dumpsend(wss,d)
 	
 }
 
-
+//var jsi=require('node-stringify');
+	
 function addPeerConnection(id, pc) {
-/* try{let b=CircularJson.stringify(pc);console.log('B: ',b);
-		console.log('pc: ',pc);
-		let a=CircularJson.parse(b);
-		console.log('a: ',a);
-		cl.set('pc',b,(er,r)=>{
-	   console.log('result of redis: ',r);
-		   if(er)console.log('redis error: ',er)
-	   })
-	   }catch(e){console.log('error: ',e)}
-*/
-Connections[id] = pc;
+	let l={}
+	l.closed=pc.closed;
+	l.peer=pc.peer;
+	l.localDescription=pc.localDescription;
+	l.remoteDescription=pc.remoteDescription;
+	l.signalingState=pc.signalingState;
+	
+	Connections.set(id,pc)
+	//var piri=jsi(pc);
+	//console.log('PEER_CONNECTION: ',piri)
 }
 
 function getPeerConnection(id) {
-const pc = Connections[id];
+const pc = Connections.get(id);//Connections[id];
 //console.log('pc: ',pc)
 return pc
 }
 
 function deletePeerConnection(id) {
-delete Connections[id];  
+//delete Connections[id];  
+	Connections.delete(id)
 }
 
 function cleanUpPeer(ws,name) {

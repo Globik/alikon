@@ -181,7 +181,101 @@ width:97vw;
 <a href="#" class="close"><span class="before">X</span></a>
 <div id="mid" style=""></div>
 </output>
+	PEERCONNECTION:  RTCPeerConnectionPlanB {
+  domain: null,
+  _events: 
+   { close: [Function],
+     signalingstatechange: [Function],
+     negotiationneeded: [Function] },
+  _eventsCount: 3,
+  _maxListeners: Infinity,
+  _logger: 
+   Logger {
+     _debug: 
+      { [Function: debug]
+        namespace: 'mediasoup:webrtc:RTCPeerConnection:rJNFhHSjW',
+        enabled: false,
+        useColors: true,
+        color: 4,
+        inspectOpts: {},
+        log: [Function: bound bound log] },
+     _warn: 
+      { [Function: debug]
+        namespace: 'mediasoup:WARN:webrtc:RTCPeerConnection:rJNFhHSjW',
+        enabled: false,
+        useColors: true,
+        color: 4,
+        inspectOpts: {},
+        log: [Function: bound bound warn] },
+     _error: 
+      { [Function: debug]
+        namespace: 'mediasoup:ERROR:webrtc:RTCPeerConnection:rJNFhHSjW',
+        enabled: false,
+        useColors: true,
+        color: 1,
+        inspectOpts: {},
+        log: [Function: bound bound warn] } },
+  _options: 
+   { peer: 
+      Peer {
+        domain: null,
+        _events: [Object],
+        _eventsCount: 5,
+        _maxListeners: Infinity,
+        _internal: [Object],
+        _sandbox: [Object],
+        _data: [Object],
+        _channel: [Object],
+        _transports: [Object],
+        _rtpReceivers: Set {},
+        _rtpSenders: Set {},
+        _closed: false },
+     usePlanB: true },
+  _peer: 
+   Peer {
+     domain: null,
+     _events: 
+      { close: [Object],
+        newrtpreceiver: [Object],
+        newrtpsender: [Object],
+        newtransport: [Function],
+        capabilities: [Function] },
+     _eventsCount: 5,
+     _maxListeners: Infinity,
+     _internal: { roomId: 50734151, peerId: 93399155, peerName: 'rJNFhHSjW' },
+     _sandbox: { getRtpReceiverById: [Function: getRtpReceiverById] },
+     _data: { capabilities: [Object] },
+     _channel: 
+      Channel {
+        domain: null,
+        _events: [Object],
+        _eventsCount: 3,
+        _maxListeners: Infinity,
+        _socket: [Object],
+        _pendingSent: Map {},
+        _recvBuffer: null,
+        _lastBinaryNotification: null },
+     _transports: Set { [Object] },
+     _rtpReceivers: Set {},
+     _rtpSenders: Set {},
+     _closed: false },
+  _localDescription: null,
+  _remoteDescription: null,
+  _signalingState: 'stable',
+  _busy: false,
+  _initialOfferCreated: false,
+  _initialNegotiationDone: false,
+  _negotiationNeeded: false,
+  _negotiationNeededTimer: null,
+  _closed: false,
+  _initialCreateOfferOptions: { offerToReceiveAudio: 1, offerToReceiveVideo: 1 },
+  _sdpGlobalFields: { id: 95361989, version: 0 },
+  _mapTrackToRtpReceiver: Map {} }
+
 	<script>
+		var dada=new Map();
+		dada.set('sudent','globik')
+		console.log('dada: ',dada);
 		function do_login(){
 			var col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
 			var clone=gid('loginery-wrap').cloneNode(true);
