@@ -49,7 +49,8 @@ bvid('message_box').onclick=function(e){
 in_rem_hash();
 }}
 function in_rem_hash(){setTimeout(function(){rem_hash();},0);}
-function rem_hash(){if(history)history.pushState('',null,window.location.pathname);}
+function rem_hash(){
+if(history)history.pushState('',null,window.location.pathname);}
 var ax=null;
 function getAudioContext(){
 try{ax=new (window.AudioContext || window.webkitAudionContext);}catch(e){
@@ -95,7 +96,9 @@ if(!fogg())return;
 return blaysound(buffer);
 }
 function message_box(n){
+	console.log('mess: ',n)
 inbox.innerHTML='<b>'+n+'</b>';
 window.location.href="#message_box";
-playSound(sounds.l1.buffer);
-open_al();}
+playSound(sounds.complete.buffer);
+open_al();
+}

@@ -399,7 +399,16 @@ if(socket)socket.send(JSON.stringify(outm));
 return false
 }
 */
-
+function sendtome(){
+let d={}
+d.msg="Test target message";
+d.username=myusername;
+d.roomname=modelName;
+d.from_nick=myusername;
+d.target=myusername;
+d.type="message";
+sendJson(d)
+}
 function go_message(event){
 	try{
 var msg=JSON.parse(event.data);

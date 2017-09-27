@@ -246,7 +246,7 @@ res('ok');
 console.error('server.createRoom() ERROR', err.name,' : ',err.message);
 rej(err);
 });})}	
-	
+/*
 function sendtooneuser(bs,target,mstring){
 console.log('SEND TO ONE USER to target: ',target)
 console.log('is target typeof string ?: ',(typeof target==='string'))
@@ -268,6 +268,12 @@ break;
 }
 
 }
+	*/
+	
+	
+	
+	
+	
 	/*
 update busers set buser_d=jsonb_set(buser_d,'{"ban_id"}','100') where name='globik';
 
@@ -383,6 +389,59 @@ c.send(ums)
 }}
 })
 }
+	
+	
+	
+function dura1(bs,obj,bool,db){
+const as=(arg,cb)=>process.nextTick(()=>cb(arg))
+const final=()=>db(null,rs)
+var rs=[]
+let bmess=JSON.stringify(obj);
+let running=0,lim=2;
+let lift=[...wss.clients]
+function launcher(){
+while(running<lim && lift.length>0){
+let item=lift.shift();
+as(item, async function(el){
+if(el.upgradeReq.url===bs.upgradeReq.url){
+if(el && el.readyState===WebSocket.OPEN){
+if(bool){el.send(bmess)}else{
+rs.push(el)
+}
+}
+}
+running--
+if(lift.length>0){
+await launcher();
+// process.nextTick(launcher)
+}else if(running==0){
+final();
+}
+})
+running++
+}
+}
+process.nextTick(launcher)
+}
+	//function sendtooneuser(bs,target,mstring)
+	function dura3(bs,obj,bool){
+	return  new Promise((r,j)=>{
+	dura1(bs,obj,bool,(e,d)=>{
+	if(e)j(e)
+	r(d)
+	})
+	})
+	}
+	async function emergency_to_all(bs,obj){
+	//let bmes=JSON.stringify(obj)	
+	try{
+	let d=await dura3(bs,obj,true)
+	console.log('if sending emergency to all?: ',d)
+	//d.forEach(el=>el.send(bmes))
+	}catch(e){console.log(e)}
+	}
+	
+	/*
 function emergency_to_all(bs,obj){
 let b=JSON.stringify(obj);
 wss.clients.forEach(c=>{
@@ -392,6 +451,20 @@ c.send(b)
 }}
 });
 }	
+*/
+	const boo2=(v,id,m)=>new Promise((r,j)=>r(v.find(e=>e[id]==m)))
+	async function sendtooneuser(bs,target,mstring){
+	let bm=JSON.stringify(mstring)
+	try{
+	let d=await dura3(bs,{fake:'f'},false)
+	let si=await boo2(d,'username',target)
+	si.send(bm)
+	}catch(e){console.log(e)}
+	}
+	
+	
+	
+	
 function super_emergency_to_all(){
 wss.clients.forEach(c=>{
 if(c&&c.readyState===WebSocket.OPEN)c.send(JSON.stringify({type:"emergency_stop",msg:"Stop all streams"}))
@@ -484,8 +557,7 @@ console.log('OK inserting message into chat table ',msgi)
 }).catch(e=>{console.log('err in inserting message into chat table: ',e)})
 }
 	
-wss.on('connection', ws=>{
-console.log('websocket connected: ', ws.upgradeReq.url);
+wss.on('connection', ws=>{setImmediate(()=>{console.log('websocket connected: ', ws.upgradeReq.url);
 	//console.log('WS: ',ws.upgradeReq);
 	//console.log('headers of ws: ',ws.headers,ws.upgradeReq.headers);
 var blin=ws.upgradeReq.url;
@@ -671,26 +743,16 @@ sendtoclients=false;
 
 	
 if(sendtoclients){
-var msgstring=JSON.stringify(msg);
 if(msg.target && msg.target !==undefined && msg.target.length !==0){
-sendtooneuser(ws,msg.target, msgstring);
+sendtooneuser(ws,msg.target,msg);
 }else{
 if(msg.type=='message'){
 insert_message(msg.msg,msg.roomname,msg.from_nick)}
 emergency_to_all(ws,msg)
-/*
-wss.clients.forEach(c=>{
-if(c.upgradeReq.url===ws.upgradeReq.url){
-if(c && c.readyState===WebSocket.OPEN){c.send(msgstring)}
-}
-})
-*/
-
-
 }
 }
 })
-})
+})})
 	/*
 https.createServer(ssl_options,app.callback()).listen(process.env.PORT || 5000, (err) => {
 //if (err) { throw new Error(err);}

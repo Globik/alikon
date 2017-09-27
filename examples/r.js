@@ -16,25 +16,27 @@ var i=0;
 var big=abb.length;
 					 console.log('abb.length: ',abb.length);
 var max=5;
-var s=0;
+//var s=0;
 function baba(){
-	//var s=0;
-	s++;
+	var s=0;
+	//s++;
 	console.log('kuku')
-//for(var k=i;k<(i+max) && k<= big;k++){
-	while(i<big){
-		//s++;
+for(var k=i;k<(i+max) && k<= big;k++){
+	//while(i<big){
+		s++;
 //print(k);
 console.log('k: ','k','i: ',i,' max: ',max)
 if(i==max){
 i=max;
 //i+=s;
 console.log('max');
-	cb(null,'baba');
+	cb(null,'baba '+s);
+	s=0;
 	
 	max+=5;
-	
-if(i<big){	console.log('moving recursion');process.nextTick(baba);}else{console.log('dura!!!!!!!!!!!!!!!!!!!!');cb(null,'done')}
+	break;
+//process.nextTick(baba)	
+//if(i<big){	console.log('moving recursion');process.nextTick(baba);}else{console.log('dura!!!!!!!!!!!!!!!!!!!!');cb(null,'done')}
 console.log('gu')
 
 //s++;
@@ -43,6 +45,7 @@ console.log('gu')
 //max+=5;
 
 }
+	//baba();
 		if(i==big-1){console.log('SUKA!!!!!!!!!!!!!!!!!!!!! i = ',i);cb(null,'done')}
 	//else{
 //if(i<10){	console.log('moving recursion');process.nextTick(baba)}
@@ -153,7 +156,7 @@ let vri=0,dl=mstep;
 function fuck(){
 	console.log('OHO!!')
 	let si=0;
-//while(vri<clients.size){
+while(vri<clients.size){
 for(let [i,v] of clients.entries()){
 	si++;
 if(i.room==vroom)console.log('room: ',i.room,' id: ',i.id,' vri: ',vri,' dl: ',dl);
@@ -163,24 +166,106 @@ vri=dl;
 dl+=5;
 cb(null,'cb here! '+si)
 
-break;
-if(vri<clients.size){console.log('next tick');/*si++*/;/*process.nextTick(fuck);*/}
+//break;
+if(vri<clients.size){console.log('next tick');/*si++*/;process.nextTick(fuck);}
+//break;
 }
 	
 	//console.log('what')
 if(vri==clients.size-1)cb(null,'fertig! '+si)
 vri++;
 }
-//}
+}
 }
 fuck();
-	setTimeout(function(){fuck();},2000)
+	//setTimeout(function(){fuck();},2000)
 
 }
 drug(5,'globik',(er,res)=>{
 if(er)console.log(er)
 console.log('cb: ',res)
 })
+
+function arfrom(n){
+return new Promise((res,rej)=>res([...n]))
+}
+(async function(){
+let d=await arfrom(clients);
+	//console.log('await clients: ',d);
+}())
+var dsa=[...clients]
+console.log('dsa: ',dsa.length)
+var dsa1=fifa.slice(0,2)
+//console.log('dsa1: ',dsa1);
+
+function dias(room,db){
+function as(arg,cb){process.nextTick(()=>cb(arg));}
+	
+function final(){console.log('done 3',rs);db(null,'ok')}
+var rs=[]
+var running=0;
+var lim=2;
+	var lifa=[...clients]
+function launcher(){
+	let me=false;
+while(running<lim && lifa.length>0){
+
+let item=lifa.shift();
+as(item, async function(rt){
+if(rt.room=='globik')rs.push(rt)
+running--
+if(lifa.length>0){
+await launcher();
+// process.nextTick(launcher)
+}else if(running==0){
+final();
+}
+})
+running++
+}
+}
+process.nextTick(launcher)
+}
+/*
+dias('globik',(e,r)=>{
+if(e)console.log(e)
+console.log('result: ',r);
+})
+*/
+function bios(){
+return new Promise((res,rej)=>{
+dias('globik',(er,r)=>{
+if(er)console.log(er)
+res(r)
+})
+})
+}
+(async function(){
+var s=await bios()
+console.log('s:',s)
+}())
+
+function boo(){
+for(let l of clients){
+console.log('i: ',l.id)
+if(l.id==3)break;
+}
+}
+boo()
+var ass=[...clients].find(el=>el.id==2)
+console.log('ass: ',ass);
+
+const boo2=(v,id,m)=>new Promise((r,j)=>r([...v].find(e=>e[id]==m)))
+
+//boo2(clients,'id',2).then((d)=>console.log('DATA: ',d)).catch(e=>console.log('error: ',e))
+
+async function f(cu,i,n){
+let c=await boo2(cu,i,n)
+console.log('C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ',c)
+}
+f(clients,'id',2)
+console.log('LEN: ',[...clients].length)
+//for(var k
 
 
 
