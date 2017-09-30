@@ -198,13 +198,22 @@ console.log('dsa: ',dsa.length)
 var dsa1=fifa.slice(0,2)
 //console.log('dsa1: ',dsa1);
 
-function dias(room,db){
-function as(arg,cb){process.nextTick(()=>cb(arg));}
+function dias(room,bool,db){
+function as(arg,cb){process.nextTick(()=>{
+	//if(arg.room=='globik'){
+	if(arg==2){
+	console.log('ard: ',arg);
+		return;
+	}
+	cb(arg)
+});
+				   }
 	
-function final(){console.log('done 3',rs);db(null,'ok')}
+function final(){console.log('done 3',rs);db(null,{arr:rs,size:rsn,info:"OK"})}
 var rs=[]
+var rsn=0;
 var running=0;
-var lim=2;
+var lim=5;
 	var lifa=[...clients]
 function launcher(){
 	let me=false;
@@ -212,7 +221,16 @@ while(running<lim && lifa.length>0){
 
 let item=lifa.shift();
 as(item, async function(rt){
-if(rt.room=='globik')rs.push(rt)
+/*if(rt.room=='globik'){
+if(bool){
+	rsn++
+	//el.send(bmess)
+}else{
+rs.push(rt)
+}
+}
+*/
+	rsn++
 running--
 if(lifa.length>0){
 await launcher();
@@ -232,17 +250,17 @@ if(e)console.log(e)
 console.log('result: ',r);
 })
 */
-function bios(){
+function bios(bool){
 return new Promise((res,rej)=>{
-dias('globik',(er,r)=>{
+dias('globik',bool,(er,r)=>{
 if(er)console.log(er)
 res(r)
 })
 })
 }
-(async function(){
-var s=await bios()
-console.log('s:',s)
+(async function(){console.log('SUKA')
+var s=await bios(false)
+console.log('sIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII:',s)
 }())
 
 function boo(){

@@ -319,7 +319,7 @@ myusername=modelName;
 }else{
 if(yourName){myusername=yourName}else{myusername='Guest_'+shortid.value;}
 }
-if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner()}));
+if(s)s.send(JSON.stringify({name:myusername,id:clientId, type:"username",owner:owner(),room:modelName}));
 }
 
 var loc1=location.hostname+':'+location.port;
@@ -360,16 +360,20 @@ if(socket)socket.send(msgjson);
 }
 var to=10;
 document.forms.publish.onsubmit=function(){
+try{
+console.log('whoaccept: '+whoaccept)
+	
 if(whoaccept===1){
 if(!owner()){
 if(!buser()){insert_message('<span class="chat-message">This room only allows users to chat if they are logged in.</span>');
 return false;}}
 }else if(whoaccept===2){
-alert(Number(yourTokens.value))
+//alert('PIZDA! '+Number(yourTokens.value))
 if(yourTokens.value && Number(yourTokens.value) > 1){console.log('what?');}else{
 if(!owner())insert_message('<span class="chat-message">This room only allows members to chat if they have tokens.</span>');return false;}
 			 
 }else{console.log('fuck knows what is chat.accept must be');}
+
 var outm={};
 outm.msg=this.message.value;
 outm.id=clientId;
@@ -383,6 +387,7 @@ set_chat_btn_green();
 }catch(e){console.error(e);}
 }
 return false;
+}catch(e){console.error(e);return false;}
 }
 function set_chat_btn_green(){
 submitChat.classList.toggle('waiting');
@@ -410,16 +415,16 @@ d.type="message";
 sendJson(d)
 }
 function go_message(event){
+	//console.log(event.data)
 	try{
 var msg=JSON.parse(event.data);
-	}catch(e){console.error(e);return;}
+	}catch(e){console.error(e);alert(e);return;}
 if(msg.type=="id"){
 clientId=msg.id;
 setusername(socket);
 console.log("case id: "+event.data);
-}else if(msg.type=="username"){
-console.log("case username: "+event.data);
-}else if(msg.type=="message"){
+}
+else if(msg.type=="message"){
 	//console.log(msg);
 if(!find_ignor(ignory,msg.from_nick))showmessage(msg);
 if(msg.admin_type){
@@ -454,26 +459,26 @@ vidW.classList.add('banned');
 }
 }
 	
-}else if(msg.type=="userlist"){
-console.log("case userlist: "+event.data);
-//rchaters.textContent=msg.
-if(!owner()){if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;}
+}
+else if(msg.type=='history'){
+//console.warn('on history: ',event.data)
+show_history(msg);
+}else if(msg.type=='joined_user'){
+console.warn('onJoinedUser: ',event.data);
+	console.log('msg.chat: ',msg.chataccess)
+if(!owner()){
+if(msg.chataccess)whoaccept=msg.chataccess;
+}
 if(!owner()){
 if(msg.ready){roomcreated=true;console.log('roomcreated: ',roomcreated);
 if(msg.pidi && msg.pidi !==0 && msg.pidi !==undefined){
 pidi=msg.pidi;
 pid.textContent=pidi;
-remove_user_offline();
-}
-//if(msg.chat && msg.chat.accept)whoaccept=msg.chat.accept;
+remove_user_offline();	
+	}
+
 }else{roomcreated=false;disableElement('connect_starter');}
 }
-
-}else if(msg.type=='history'){
-//console.warn('on history: ',event.data)
-show_history(msg);
-}else if(msg.type=='joined_user'){
-console.warn('onJoinedUser: ',event.data);
 playSound(sounds.l2.buffer);
 rchaters.textContent=msg.mus_cnt;
 }else if(msg.type=="out_user"){
@@ -519,7 +524,7 @@ gid('online-detector').classList.toggle('puls');
 }else{
 if(msg.src){console.log('going to poster');localVideo.poster=msg.src;}
 if(msg.ready){enabelElement('connect_starter');pidi=msg.pidy;roomcreated=true;}
-if(msg.chataccess){whoaccept=msg.chataccess;}
+//if(msg.chataccess){whoaccept=msg.chataccess;}
 }
 }else if(msg.type==='roomer_offline'){
 
@@ -1168,7 +1173,7 @@ function dissconnect() {
 sendJson({type: "bye",roomname: modelName});
 if (peerConnection) {
 console.log('Hang up.');
-peerConnection.close();
+peerConnection.close()
 peerConnection = null;
 if(!owner()){
 connect_starter.textContent='connect';
