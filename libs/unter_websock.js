@@ -4,7 +4,134 @@ let m=JSON.stringify(n)
 return m
 }catch(e){console.log('err json stringify: ',e)}
 }
-module.exports={tjson}
+function wslookup(wss){
+	
+const list_of_clients=(ws,obj,bool,level,db)=>{
+	
+const as=(arg,cb)=>process.nextTick(()=>cb(arg))
+const final=()=>db(null,{arr:rs,size:rsn,lusers:lusers,info:"ok",sifilis:sifilis,pidment:pidment,chataccess:chataccess})
+var rs=[]
+var chataccess=0
+var lusers=[];
+var rsn=0
+let bmess=obj;
+var sifilis=0
+var pidment=0
+let running=0,lim=200;
+//console.log('WSS2: ',wss.clients.size)
+let lift=[...wss.clients]
+//console.log('lift: ',lift)
+function launcher(){
+while(running<lim && lift.length>0){
+let item=lift.shift();
+as(item, async function(el){
+if(level=="uroom"){
+if(el.upgradeReq.url===ws.upgradeReq.url){
+if(el && el.readyState===1){
+if(bool){
+el.send(bmess);rsn++;
+}else{
+if(el.ready===true){
+sifilis=true
+pidment=el.pidi
+if(el.chataccess){chataccess=el.chataccess}
+}
+rsn++
+lusers.push({username:el.username,owner:el.owner,clientId:el.clientId})
+rs.push(el)
+}
+}
+}
+}else if(level=="all"){
+	//console.log('METHOD ALLLLL')
+if(el && el.readyState===1){
+rsn++
+el.send(bmess)
+}
+}else if(level=="websock"){
+	//console.log('el.isAlive??:',el.isAlive)
+if(el.isAlive===false)return el.terminate()
+el.isAlive=false;
+el.ping('',false,true)
+}else{}
+running--
+if(lift.length>0){
+await launcher();
+// process.nextTick(launcher)
+}else if(running==0){
+final();
+}
+})
+running++
+}
+}
+process.nextTick(launcher)
+}
+const promis_list=(ws,obj,bool,level)=>{
+return  new Promise((r,j)=>{
+list_of_clients(ws,obj,bool,level,(e,d)=>{
+if(e)j(e)
+r(d)
+})
+})
+}
+
+async function emergency_to_all_in_room(ws,obj){
+try{
+let d=await promis_list(ws,obj,true,"uroom")
+//console.log('if sending emergency to all in room?: ',d)
+}catch(e){console.log(e)}
+}
+	
+async function send_new_user_to_all(ws,username,clid){
+console.log('sending new user ')
+try{
+let b=await promis_list(ws,{fake:'f'},false,"uroom");
+//let sifa=await
+let msg={type:"joined_user",mus_cnt:b.arr.length,username:username,clid:clid,
+		 users:b.lusers,ready:b.sifilis,pidi:b.pidment,info:b.info,chataccess:b.chataccess}
+try{var me2=JSON.stringify(msg)
+console.log('me2: ',me2)}catch(e){console.log(e)}
+emergency_to_all_in_room(ws,me2)
+}catch(e){console.log('err sending new user to all: ',e)}
+}	
+
+async function super_send(ws,obj){
+try{
+let mes=JSON.stringify(obj)
+let d=await promis_list(ws,mes,true,"all")
+}catch(e){console.log('in super_send: ',e)}
+}
+	
+async function send_to_one_user_in_room(ws,target,mstring){
+let bm=tjson(mstring)
+try{
+let d=await promis_list(ws,{fake:'f'},false,"uroom")
+let si=await find_target(d.arr,'username',target)
+if(si && si.readyState==1)si.send(bm)
+}catch(e){console.log(e)}
+}
+async function on_leave_out(ws,id,name){
+	console.log('on_leave_out()')
+try{
+let a=await promis_list(ws,{fake:'f'},false,"uroom");
+let um={type:"out_user",username:name,clientId:id,mus_cnt:a.arr.length}
+console.log('sending message on _leave_out()')
+try{var fiki2=JSON.stringify(um)}catch(e){console.log('json stringify err in on_leave_out')}
+emergency_to_all_in_room(ws,fiki2)
+}catch(e){console.log(e)}
+	console.log('end of on_leave out()')
+}
+const sendback=(ws,m)=>{if(ws.readyState==1)ws.send(tjson(m))}
+
+return {send_new_user_to_all,super_send,sendback,emergency_to_all_in_room,send_to_one_user_in_room,on_leave_out,promis_list}
+
+}
+/*
+
+lwan -r /home/globik/lwan/wwwroot -c 
+*/ 
+module.exports={tjson,wslookup}
 /*
 var interval=setInterval(function ping(){
 	console.log('ping?')

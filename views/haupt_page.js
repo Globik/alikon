@@ -34,7 +34,8 @@ ${n.banner[0].src}
 <!-- <button onclick="set_banner();">set banner</button> -->
 <script>${clearCache()}</script>
 
-
+<img src="/kl/pic.png"/>
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 
 <!-- end reklama -->
 <!-- <output id="out4"></output>

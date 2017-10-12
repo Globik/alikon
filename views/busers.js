@@ -213,6 +213,7 @@ data-ban_id="${model.buser_d.ban_id?model.buser_d.ban_id:''}" onclick="ban_out(t
 <a href="#." class="overlay" id="one_abuse"></a>
 <output id="one_abuse_id" class="popi">
 <div class="wrap-close"><a href="#." class="close"></a></div>
+
 <ul>
 <li><b>What?: </b>${n.model.ab_slc?n.model.ab_slc:''}
 <li><b>Comment: </b>${n.model.ab_cmt?n.model.ab_cmt:''}

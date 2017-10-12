@@ -134,6 +134,9 @@ async show_abuse_nots(){try{let m=await pool.query(`select abus_id from abuse wh
 //var langsam_stop=false;
 app.use(async (ctx, next)=>{
 //if(ctx.path==='/log_rooms')return;
+	//console.log('REQUEST: ',ctx.req)
+	console.log('PATH: ',ctx.method,ctx.path,ctx.url)
+	console.log('RESPONSE: ',ctx.response)
 ctx.state.filter_script=script;
 ctx.db=pool;
 ctx.boss=boss;
