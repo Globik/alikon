@@ -106,7 +106,8 @@ let m=document.querySelector('[data-rviewers="'+d.room_name+'"]');
 if(m){m.textContent=d.peers;}
 }
 </script>
-<button onclick="gof();">gof</button>
+<button onclick="gof();">gof</button><br>
+<button onclick="alibaba();">post url with params</button>
 <script>
 function gof(){
 let data={}
@@ -124,6 +125,25 @@ data.me='du';
 console.log(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
+function alibaba(){
+let form=new FormData();
+form.append("fucker","fucker2");
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/posturlparams/VadikGlobus/666');
+//xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert('xhr from server: '+this.response);
+}else{
+alert('xhr not ok: '+this.response);
+}}
+xhr.onerror=function(e){alert(e)};
+
+xhr.send(form);
+}
+var estr="http://example.com/name/big-name/little_name";
+var estr2=encodeURIComponent(estr);
+console.log('estr2: ',estr2);
 </script>
 </main>
 <footer id="footer">${footer.footer({})}</footer></body></html>`;}

@@ -59,8 +59,15 @@ where bitpayers.infbp->>'status' not like '%complete%'`);
 }catch(e){console.log(e.message);ctx.throw(400,e.message);}
 ctx.status=200;
 ctx.body={info:"OK"}
-});
+})
 
+pub.post('/api/posturlparams/:name/:card',bodyParser({multipart:true,formidable:{}}),async ctx=>{
+	console.log('ctx.params.name: ',ctx.params,' : ',ctx.params.name);
+	console.log('ctx.params.card: ',ctx.params.card);
+	console.log('REQUEST.BODY: ',ctx.request.body)
+	//console.log('HEADERS: ',ctx.request.headers) multipart/form-data
+ctx.body={"body":ctx.request.body.fields};
+})
 pub.post('/api/dummy_set_bitpay', async ctx=>{
 //console.log('DUMMY: ',this.request.body);
 	let locs=ctx.request.body;
@@ -271,7 +278,7 @@ try{
 await db.query(`select request_password_reset('${ctx.request.body.email}')`);
 }catch(e){
 
-if(ctx.state.xhr){ctx.throw(409, e.message);}else{
+if(ctx.state.xhr){ctx.throw(409, e.message);}else{bodyParser({multipart:true,formidable:{}})
 ctx.session.bmessage={success:false,message:e.message}
 return ctx.redirect('/forgot')
 }

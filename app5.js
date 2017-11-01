@@ -1,5 +1,8 @@
 //const CircularJson=require('circular-json');
-var jsi=require('node-stringify');
+//var jsi=require('node-stringify');
+//var estr="http://example.com/name/big-name/little_name";
+//var estr2=encodeURIComponent(estr);
+//console.log('estr2: ',estr2);
 const mail_enc=require('./libs/email_enc.js');
 const EventEmitter=require('events');
 const Koa=require('koa')
