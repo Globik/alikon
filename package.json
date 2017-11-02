@@ -38,7 +38,8 @@
 "sse-broadcast":"0.4.1",
     "uuid-validate": "0.0.2",
     "wallet-address-validator": "0.1.0",
-    "ws": "3.2.0"
+    "ws": "3.2.0",
+"request":"2.83.0"
   },
   "engines": {
     "node": "9.0.0",

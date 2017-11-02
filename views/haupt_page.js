@@ -107,7 +107,10 @@ if(m){m.textContent=d.peers;}
 }
 </script>
 <button onclick="gof();">gof</button><br>
-<button onclick="alibaba();">post url with params</button>
+<button onclick="alibaba();">post url with params</button><br>
+<button onclick="qr();">qr code</button><br>
+<button onclick="qr2();">qr code server side</button><br>
+<image id="fuckqr" src=""/>
 <script>
 function gof(){
 let data={}
@@ -144,6 +147,46 @@ xhr.send(form);
 var estr="http://example.com/name/big-name/little_name";
 var estr2=encodeURIComponent(estr);
 console.log('estr2: ',estr2);
+var grund="https://bitaps.com/api/";
+var padres="1DSPfSrZDJJXCKfVPmmP6ZEw45GLvWtSAk?amount=20.3&label=Vasja_Pupkin&message=order%20for%tokens";
+var s6=grund+"qrcode/png/"+padres;
+function qr(){
+var xhr=new XMLHttpRequest();
+xhr.open('get',s6);
+//xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert('xhr from server: '+this.response);
+}else{
+alert('xhr not ok: '+this.response);
+}}
+xhr.onerror=function(e){alert(e)};
+
+xhr.send();
+}
+
+function qr2(){
+var xhr=new XMLHttpRequest();
+xhr.open('get','/api/get_qrcode');
+//xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+//alert('xhr from server: '+this.response);
+let dm=JSON.parse(this.response);
+var dmasrc=JSON.parse(dm.body).qrcode;
+alert(dmasrc)
+//var buf=new Uint8Array(dm.body);
+//var bl=new Blob([buf],{type:'image/png'});
+console.log('antwort src')
+fuckqr.src=dmasrc;
+//window.URL.createObjectURL(bl)
+}else{
+alert('xhr not ok: '+this.response);
+}}
+xhr.onerror=function(e){alert(e)};
+
+xhr.send();
+}
 </script>
 </main>
 <footer id="footer">${footer.footer({})}</footer></body></html>`;}

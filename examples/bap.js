@@ -24,7 +24,9 @@ body_1:  {
 }
 
 */
-var real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";
+var real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs"; // hot wallet?
+var cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3"
+
 var s2=grund+"get/redeemcode/info";
 var redeem= "BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le";
 var data1={redeemcode:redeem};
@@ -54,13 +56,14 @@ console.log('body: ',body);
 var callback=estr2;
 var s4=grund+"create/payment/"+real_address+"/"+callback+"?";
 var qes={confirmations:3,free_level:"low"};
+/*
 rk({method:"get",url:s4,qs:qes},function(err,resp,body){
 if(err)console.log('error: ',err)
 console.log('status: ',resp.statusCode)
 console.log('headers: ',resp.headers)
 console.log('body: ',body);
 })
-
+*/
 /*
 body:  {
 "payment_code": "PMTujx5hrxG9zRrNcNQVfK25AEc1wp6QVi4ueRUM1bRqsynp5uL9W", 
@@ -68,6 +71,42 @@ body:  {
 "address": "1DSPfSrZDJJXCKfVPmmP6ZEw45GLvWtSAk"
 }
 */
+
+var padres="1DSPfSrZDJJXCKfVPmmP6ZEw45GLvWtSAk?amount=20.3&label=Vasja_Pupkin&message=order%20for%tokens";
+var s5=grund+"qrcode/"+padres;
+
+/*
+rk({method:'get',url:s5},function(err,resp,body){
+if(err)console.log('error: ',err)
+console.log('status: ',resp.statusCode)
+console.log('headers: ',resp.headers)
+console.log('body: ',body);
+})
+*/
+//var padres2="1DSPfSrZDJJXCKfVPmmP6ZEw45GLvWtSAk?amount=20.3&label=Vasja_Pupkin&message=order%20for%tokens";
+var s6=grund+"qrcode/png/"+padres;
+/*
+rk({method:'get',url:s6},function(err,resp,body){
+if(err)console.log('error: ',err)
+console.log('status: ',resp.statusCode)
+console.log('headers: ',resp.headers)
+console.log('body: ',body);
+})
+*/
+var s6=grund+"create/payment/smartcontract/"+callback;
+var data5={type:"hot_wallet",hot_wallet:real_address,cold_storage:cold_wallet_address,hot_wallet_quota:60}
+var ops5={url:s6,method:'post',json:true,body:data5};
+rk(ops5,function(err,resp,body){
+if(err)console.log('error: ',err)
+console.log('status: ',resp.statusCode)
+console.log('headers: ',resp.headers)
+console.log('body: ',body);
+})
+
+
+
+
+
 
 
 

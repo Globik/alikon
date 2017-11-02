@@ -9,6 +9,7 @@ const walletValidator=require('wallet-address-validator');//0.1.0
 const cofs=require('../libs/await-fs.js');
 const fs=require('fs');
 const email_enc=require('../libs/email_enc.js');
+const rk=require('request');
 /*
 var bitpay=require('bitpay-rest');
 var bitauth=require('bitauth');
@@ -68,6 +69,26 @@ pub.post('/api/posturlparams/:name/:card',bodyParser({multipart:true,formidable:
 	//console.log('HEADERS: ',ctx.request.headers) multipart/form-data
 ctx.body={"body":ctx.request.body.fields};
 })
+pub.get("/api/get_qrcode",async ctx=>{
+var grund="https://bitaps.com/api/";
+var padres="1DSPfSrZDJJXCKfVPmmP6ZEw45GLvWtSAk?amount=20.3&label=Vasja_Pupkin&message=order%20for%tokens";
+var s6=grund+"qrcode/"+padres;
+
+	function rkw(obj){
+	return new Promise(function(res,rej){
+	rk(obj,function(err,resp,body){
+	if(err)rej(err)
+	res({resp:resp,body:body})
+	})
+	})
+	}
+	try{
+	var ewq=await rkw({method:'get',url:s6});
+console.log('ewq status code: ',ewq.resp.statusCode);
+		console.log('ewq body: ',ewq.body)
+	}catch(e){console.log('error in request.js: ',e);ctx.throw(404,e.message)}
+	ctx.body={info:"OK",body:ewq.body}
+});
 pub.post('/api/dummy_set_bitpay', async ctx=>{
 //console.log('DUMMY: ',this.request.body);
 	let locs=ctx.request.body;
@@ -409,9 +430,9 @@ ctx.body={info:ctx.request.body,somels:"OK - accepted!"}
 pub.post('/module_cache', ctx=>{ctx.body={body: ctx.request.body};});
 pub.get('/labs',ctx=>{ctx.body='str';});
 
-pub.get('/tipping/purchase_tokens',ctx=>{
+pub.get('/tipping/purchase_tokens',async ctx=>{
 ctx.session.dorthin=ctx.path;
-ctx.body=ctx.render('purchase',{/*buser:this.req.user*/});
+ctx.body=await ctx.render('purchase',{/*buser:this.req.user*/});
 });
 
 /* *************************************************************************
