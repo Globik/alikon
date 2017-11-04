@@ -426,15 +426,24 @@ let {dob, bid}=ctx, b=ctx.request.body, docs=dob.collection('posts');
 try{let a=await docs.updateOne({_id:bid(b._id)},{$addToSet:{'meta.fail':b.fail_src}});console.log('a :',a.result);}
 catch(e){this.throw(404,`not found ${e}`)}
 ctx.body={info:ctx.request.body,somels:"OK - accepted!"}
-});
+})
 pub.post('/module_cache', ctx=>{ctx.body={body: ctx.request.body};});
 pub.get('/labs',ctx=>{ctx.body='str';});
 
 pub.get('/tipping/purchase_tokens',async ctx=>{
 ctx.session.dorthin=ctx.path;
 ctx.body=await ctx.render('purchase',{/*buser:this.req.user*/});
-});
+})
 
+pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
+	console.log('is ctx.xhr?: ',ctx.state.xhr)
+	if(ctx.state.xhr){
+let mata=ctx.request.body.fields;
+ctx.body={body:mata}
+	}else{
+	ctx.body={info:"We are sorry, we don't process non xhr request."}
+	}
+})
 /* *************************************************************************
 WEBRTC STUFF /:models
 *************************************************************************** */
@@ -641,6 +650,13 @@ ctx.throw(401,"Please, log in.");
 }}
 function authent(ctx, next){
 if(ctx.isAuthenticated()){return next()}else{ctx.redirect('/login');}
+}
+function xhr_auth(ctx,next){
+if(ctx.state.xhr){
+if(ctx.isAuthenticated()){return next()}else{ctx.throw(401,"Please log in!")}
+}else{
+if(ctx.isAuthenticated()){return next()}else{ctx.redirect('/login');}
+}
 }
 function admin_auth(ctx,next){
 if(ctx.isAuthenticated() && ctx.state.user.role=="superadmin"){return next()}else{ctx.throw(401, "Please log in.")}}

@@ -103,6 +103,11 @@ console.log('headers: ',resp.headers)
 console.log('body: ',body);
 })
 
+body:  { 
+  payment_code: 'PMTvNPy4NYp9PKZ76BG1f4KAWR3LC95XQS1rWgYjG1NGEshAqge63',
+  invoice: 'invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm',
+  address: '18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb' 
+}
 
 
 

@@ -32,12 +32,38 @@ return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
 		<div class="inp"><input type="submit" value="go to pay"></div>
 		</form>
 		</section>
+
+
+<section class="sect">
+<h1>Get Tokens - a real mode</h1>
+<h4>Recommended amount of tokens:</h4>
+<output id="payoutinfo2"></output>
+<form id="payment2"  name="payment2" method="post" action="get_invoice" enctype="multipart/form-data">
+
+<input type="hidden" name="buyerId" value="${buser ? buser.id : ''}"/>
+
+
+<div class="inp"><input type="radio" name="items2" value="0.04" data-t_pack="100" onchange="set_price2(this);" checked/> 100 tokens for 0.04 BTC</div>
+<div class="inp"><input type="radio" name="items2" value="0.08" data-t_pack="200" onchange="set_price2(this);"/> 200 tokens for 0.08 BTC</div>
+<div class="inp"><input type="radio" name="items2" value="0.2" data-t_pack="500" onchange="set_price2(this);"/> 500 tokens for 0.2 BTC</div>
+<div class="inp"><input type="radio" name="items2" value="0.4" data-t_pack="1000" onchange="set_price2(this);"/> 1000 tokens for 0.4 BTC</div>
+
+<div class="inp"><input id="bitsend" name="submit" type="submit" value="go to pay"></div>
+</form>
+</section>
 <script>
 var messy=null;
 var forma=document.forms.namedItem("payment");
+var dforma=document.forms.namedItem("payment2");
 function set_price(el){
 forma.price.value=el.getAttribute('data-price');
 }
+var tokens_packet=100;
+function set_price2(el){console.log('setting a price');
+tokens_packet=el.getAttribute('data-t_pack');
+}
+dforma.addEventListener('submit',get_invoice);
+
 forma.addEventListener('submit',function(ev){
 if(payEmail.value){
 payoutinfo.innerHTML="Connecting to server...";
@@ -93,6 +119,33 @@ xhr.onerror=function(e){console.log(this.response + e)}
 
 xhr.send(JSON.stringify(messy));
 }
+var instat=0;
+function get_invoice(ev){
+ev.preventDefault();
+if(ev.target.buyerId.value.length==0){ payoutinfo2.innerHTML='Go <a href="/login">log in</a><br>';return ev.preventDefault();}
+//alert(ev.target.buyerId.value.length);
+payoutinfo2.innerHTML=ev.target.method+'<br>'+ev.target.action+'<br>'+ev.target.items2.value+'<br>'+tokens_packet;
+instat++;
+//ev.target.submit.disabled=true;
+//setTimeout(function(){ev.target.submit.disabled=false;},5000)
+var data=new FormData(document.forms.namedItem("payment2"));
+data.append("instat",instat);
+data.append("tok_pack",tokens_packet);
+var xhr=new XMLHttpRequest();
+xhr.open(ev.target.method,ev.target.action,true);
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+payoutinfo2.innerHTML=this.response;
+}
+else{
+payoutinfo2.innerHTML=this.response;
+}}
+xhr.onerror=function(e){payoutinfo.innerHTML=e;}
+xhr.send(data);
+}
+
+
 </script>
 </body>
 </html>`;
