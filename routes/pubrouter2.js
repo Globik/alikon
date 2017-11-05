@@ -437,9 +437,15 @@ ctx.body=await ctx.render('purchase',{/*buser:this.req.user*/});
 
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 	console.log('is ctx.xhr?: ',ctx.state.xhr)
+	let db=ctx.db;
+	
 	if(ctx.state.xhr){
+		try{
+			var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',['asuser','anfang',100,'20']);
+			console.log('MRES length: ',mres.rows.length);
+			}catch(e){console.log('err: ',e)}
 let mata=ctx.request.body.fields;
-ctx.body={body:mata}
+ctx.body={body:mata,resultat:mres.rows[0]}
 	}else{
 	ctx.body={info:"We are sorry, we don't process non xhr request."}
 	}

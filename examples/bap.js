@@ -18,14 +18,14 @@ console.log('it s work?')
 /*
 
 body_1:  {
-"address": "1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs", 
-"invoice": "invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V", 
-"redeem_code": "BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le"
+"address": "1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs", 34 
+"invoice": "invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V", 53 
+"redeem_code": "BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le" 53
 }
 
 */
 var real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs"; // hot wallet?
-var cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3"
+var cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3" //34
 
 var s2=grund+"get/redeemcode/info";
 var redeem= "BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le";
