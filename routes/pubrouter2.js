@@ -25,6 +25,18 @@ const pub=new Router();
 
 //bpclient.on('ready',()=>{console.log('bitpay ready')})
 const limit=3;
+function rkw(obj){return new Promise(function(res,rej){
+rk(obj,function(err,resp,body){
+if(err)rej(err)
+res({resp:resp,body:body})
+})})
+	}
+function is_devel(b){
+if(process.env.DEVELOPMENT=="yes"){
+	if(!b){return false;}
+	return true;
+}else{return false;}
+}
 pub.get('/',async ctx=>{
 let result=null;
 let bresult=null;
@@ -73,7 +85,7 @@ pub.get("/api/get_qrcode",async ctx=>{
 var grund="https://bitaps.com/api/";
 var padres="1DSPfSrZDJJXCKfVPmmP6ZEw45GLvWtSAk?amount=20.3&label=Vasja_Pupkin&message=order%20for%tokens";
 var s6=grund+"qrcode/"+padres;
-
+/*
 	function rkw(obj){
 	return new Promise(function(res,rej){
 	rk(obj,function(err,resp,body){
@@ -82,6 +94,7 @@ var s6=grund+"qrcode/"+padres;
 	})
 	})
 	}
+	*/
 	try{
 	var ewq=await rkw({method:'get',url:s6});
 console.log('ewq status code: ',ewq.resp.statusCode);
@@ -436,19 +449,67 @@ ctx.body=await ctx.render('purchase',{/*buser:this.req.user*/});
 })
 
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
-	console.log('is ctx.xhr?: ',ctx.state.xhr)
-	let db=ctx.db;
-	
-	if(ctx.state.xhr){
-		try{
-			var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',['asuser','anfang',100,'20']);
-			console.log('MRES length: ',mres.rows.length);
-			}catch(e){console.log('err: ',e)}
+let db=ctx.db;
+let smin='20';
+if(ctx.state.xhr){
 let mata=ctx.request.body.fields;
-ctx.body={body:mata,resultat:mres.rows[0]}
-	}else{
-	ctx.body={info:"We are sorry, we don't process non xhr request."}
-	}
+//tok_pack,items2,buyerId
+if(!mata.tok_pack && !mata.items2 && !mata.buyerId){ctx.throw(400,'Not enough data provided to be processed.')}
+let {tok_pack,items2,buyerId}=mata;
+try{
+var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfang',tok_pack,smin]);
+}catch(e){ctx.throw(400,e.name)}
+if(mres.rows[0]){
+ctx.body={body:mata,resultat:mres.rows[0],amt:items2,type:"alt"}
+}else{
+if(is_devel(true)){
+ var payment_code_dev='PMTvNPy4NYp9PKZ76BG1f4KAWR3LC95XQS1rWgYjG1NGEshAqge63';
+ var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';
+ var address_dev='18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb'; 
+try{
+let resw=await db.query(`insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount)
+values($1,$2,$3,$4,$5,$6) returning addr,bt_pck_tok,bt_amount`,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack,400000])
+ctx.body={body:mata,resultat:{p_addr:resw.rows[0].addr,p_bt_pck_tok:resw.rows[0].bt_pck_tok},amt:resw.rows[0].bt_amount,type:"neu"}
+}catch(e){ctx.throw(400,e)}
+}else{
+
+let real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";
+let cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3";
+let estr="http://alikon.herokuapp.com/name/big-name/little_name";//?
+let estr2=encodeURIComponent(estr);
+let cb1=estr2
+let grund="https://bitaps.com/api/";
+let s6=grund+"create/payment/smartcontract/"+cb1;
+let data5={type:"hot_wallet",hot_wallet:real_address,cold_storage:cold_wallet_address,hot_wallet_quota:60}
+let ops5={url:s6,method:'post',json:true,body:data5};
+try{
+var ewq2=await rkw(ops5);
+console.log('ewq status code: ',ewq2.resp.statusCode);
+console.log('ewq body: ',ewq2.body)
+}catch(e){console.log('error in request.js: ',e);ctx.throw(404,e.message)}
+try{
+var rs3=await db.query(`insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount)
+values($1,$2,$3,$4,$5,$6) returning addr, bt_pck_tok, bt_amount`,[ewq2.body.invoice,ewq2.body.address,ewq2.body.payment_code,buyerId,tok_pack,400000])
+}catch(e){ctx.throw(400,e)}
+ctx.body={body:mata,result:rs3.rows[0],type:"neu"}
+}
+}
+
+}else{
+ctx.body={info:"We are sorry, but we don't process non xhr payment request."}
+}
+})
+pub.post('/bitaps/cb',async ctx=>{
+let db=ctx.db;
+let b=ctx.request.body;
+if(!b.payment_code){ctx.throw(400,'no p_code provided')}
+try{
+var r4=await db.query(`select p_c from bitaps_temp where p_c=$1`,[b.payment_code]);
+}catch(e){console.log(e);ctx.throw(400,e);}
+if(r4.rows[0]){
+// do staff with bitaps_temp.sql and audit_success_bitaps_p.sql and busers.sql
+}else{ctx.throw(400,'very bad about p_c')}
+ctx.body={}
 })
 /* *************************************************************************
 WEBRTC STUFF /:models

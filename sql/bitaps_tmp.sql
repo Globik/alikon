@@ -12,7 +12,7 @@ create table bitaps_temp(bt_inv_id text not null,
 						 
 insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount) values('12cb','adrsw','pm3','asuser',100,6000000);						 
 select addr,bt_pck_tok, bt_amount from bitaps_temp where us_id='asuser' and bt_status='anfang' 
-and bt_pck_tok=100 and bt_at < NOW() - INTERVAL '120 minutes';
+and bt_pck_tok=100 and bt_at > NOW() - INTERVAL '120 minutes';
 */
 create or replace function get_invoice(usid text,status text,pack int,zeit text)
 returns table(p_addr text,p_bt_pck_tok int) as $$

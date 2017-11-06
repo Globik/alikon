@@ -136,8 +136,14 @@ xhr.open(ev.target.method,ev.target.action,true);
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
-try{alert(JSON.parse(this.response).resultat.p_addr);}catch(e){alert(e);}
+//try{alert(JSON.parse(this.response).resultat.p_addr);}catch(e){alert(e);}
 payoutinfo2.innerHTML=this.response;
+try{
+var mdata=JSON.parse(this.response);
+}catch(e){console.error(e);}
+
+if(mdata.type=="neu"){}else if(mdata.type=="alt"){}else{}
+
 }
 else{
 payoutinfo2.innerHTML=this.response;
