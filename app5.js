@@ -287,19 +287,19 @@ try{
 //console.log('Durak: ',JSON.parse(bp_msg.data.infbp.buyerFields).buyerEmail);
 	//console.log('email: ',bp_msg.data.infbp.buyerFields.buyerEamil);
 //console.log('items: ',JSON.parse(bp_msg.data.infbp.posData).items);
-await pool.query(`update busers set w_items=${items} where email='${mail}'`);
+//await pool.query(`update busers set w_items=${items} where email='${mail}'`);
 }catch(e){console.log('err in evs bitpay status paid: ', e);}
 })()
 }else if(bp_msg.data.infbp.status==="complete"){
 (async()=>{
 try{
-await pool.query(`update busers set items=items+${items}, w_items=w_items-${items} where email='${mail}'`);
+await pool.query(`update busers set items=items+${items} where email='${mail}'`);
 }catch(e){console.log('err in evs bitpay status complete: ', e);}
 })()
 }else if(bp_msg.data.infbp.status==="invalid"){
 (async()=>{
 try{
-await pool.query(`update busers set w_items=w_items-${items} where email='${mail}'`);
+//await pool.query(`update busers set w_items=w_items-${items} where email='${mail}'`);
 }catch(e){console.log('err in ev bitpay status invalid: ',e);}
 })()
 }else{}

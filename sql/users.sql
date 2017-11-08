@@ -14,6 +14,7 @@ mjoind timestamp not null default now()::timestamp);
 -- insert into busers(id,email,pwd,name) values('1','gru5@yandex.ru','kuku','globik');
 -- alter table busers add column items int not null default 0;
 -- alter table busers add column w_items int not null default 0;
+-- alter table busers alter column w_items type bigint;
 --alter table busers add column model boolean default false;
 -- alter table busers add column nick text not null default 'nick';
 alter table busers add column buser_d jsonb not null default '{}';

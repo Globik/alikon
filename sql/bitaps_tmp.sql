@@ -25,5 +25,5 @@ language plpgsql;
 
 -- select * from get_invoice('asuser','anfang',100,'20');
 -- with bitaps_cb.sql
--- insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount) values('inv66','adr55e','p_c333','58a1a78a406da007a696e917',100,6000000);
+insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount) values('inv66','adr55e','p_c333','58a1a78a406da007a696e917',100,6000000);
 -- select bitaps_cb_proc('txh3w3','adr55e','inv66','p_c333',100000,4,'ptx55',0.0002,0.001,'58a1a78a406da007a696e917');
