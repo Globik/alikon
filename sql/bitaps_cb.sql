@@ -1,9 +1,9 @@
 -- \i /home/globik/alikon/sql/bitaps_cb.sql
 /*
-insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount) values('inv66','adr55e','p_c333','58a1a78a406da007a696e917',100,6000000);
+insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount) values('inv66','adr55e','p_c333','58a1a78a406da007a696e917',100,40000);
 
 */
---  select bitaps_cb_proc('txh3w3','adr55e','inv66','p_c333',100000,4,'ptx55',0.0002,0.001,'58a1a78a406da007a696e917');
+--  select bitaps_cb_proc('txh3w3','adr55e','inv66','paymCode6666',40000,3,'p_tx_h_666y',0.0002,0.0002,'58a1a78a406da007a696e917');
 
 /*
 drop table bitaps_cb;
@@ -36,7 +36,7 @@ _dolg bigint;
 _vdolg int;
 _promdolg int :=0;
 begin
-if exists(select 1 from bitaps_temp where bitaps_temp.p_c=bitaps_cb_proc.p_c) then
+if exists(select 1 from bitaps_tmp where bitaps_tmp.p_c=bitaps_cb_proc.p_c) then
 select trunc(bitaps_cb_proc.amt/40000) into p_pack;
 
 insert into bitaps_cb(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,cb_us_id,pack) values(
@@ -48,12 +48,14 @@ set cb_n=bitaps_cb.cb_n + 1, l_at=now(), cnf=bitaps_cb_proc.cnf;
 select bitaps_cb.cb_n from bitaps_cb where bitaps_cb.inv=bitaps_cb_proc.inv into muck; 
 	-- if bitaps_cb.cb_n==1
 if muck = 0 then
-update bitaps_temp set bt_status='paid', bt_l_mod=now() where bitaps_temp.p_c=bitaps_cb_proc.p_c;
-perform pg_notify('bitaps_ok',json_build_object('us_id',bitaps_cb_proc.cb_us_id,'items',p_pack,'type','paid')::text);
+update bitaps_tmp set bt_status='paid', bt_l_mod=now() where bitaps_tmp.p_c=bitaps_cb_proc.p_c;
+perform pg_notify('bitaps_ok',json_build_object('us_id',bitaps_cb_proc.cb_us_id,'items',p_pack,
+	'inv_id',bitaps_cb_proc.inv,'bcamt',bitaps_cb_proc.amt,'type','paid')::text);
 
 elsif muck = 1 then
 update busers set items=busers.items + p_pack where busers.id=bitaps_cb_proc.cb_us_id;
-perform pg_notify('bitaps_ok',json_build_object('us_id',bitaps_cb_proc.cb_us_id,'items',p_pack,'type','do_ok')::text);
+perform pg_notify('bitaps_ok',json_build_object('us_id',bitaps_cb_proc.cb_us_id,'items',p_pack,
+'inv_id',bitaps_cb_proc.inv,'bcamt',bitaps_cb_proc.amt,'type','do_ok')::text);
 
 if p_pack = 0 then
 update busers set w_items=busers.w_items + bitaps_cb_proc.amt where busers.id=bitaps_cb_proc.cb_us_id;
@@ -66,7 +68,7 @@ update busers set items=busers.items + _vdolg,w_items=busers.w_items - _dolg whe
 update bitaps_cb set prom_pack=bitaps_cb.prom_pack + _vdolg where bitaps_cb.inv=bitaps_cb_proc.inv;
 end if;
 
-update bitaps_temp set bt_status='confirming',bt_l_mod=now() where bitaps_temp.p_c=bitaps_cb_proc.p_c;
+update bitaps_tmp set bt_status='confirming',bt_l_mod=now() where bitaps_tmp.p_c=bitaps_cb_proc.p_c;
 elsif muck = 3 then
 select prom_pack from bitaps_cb where bitaps_cb.inv=bitaps_cb_proc.inv into _promdolg;
 insert into bitaps_pays(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,pus_id,pack) 
@@ -82,7 +84,7 @@ insert into bitaps_pays(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,pus_id,pack)
 		   bitaps_cb_proc.cb_us_id,
 		   p_pack + _promdolg);
 	
-	delete from bitaps_temp where bitaps_temp.p_c=bitaps_cb_proc.p_c;
+	delete from bitaps_tmp where bitaps_tmp.p_c=bitaps_cb_proc.p_c;
 	delete from bitaps_cb where bitaps_cb.inv=bitaps_cb_proc.inv;
 	else
 	

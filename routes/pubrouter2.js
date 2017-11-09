@@ -448,34 +448,37 @@ ctx.session.dorthin=ctx.path;
 ctx.body=await ctx.render('purchase',{/*buser:this.req.user*/});
 })
 
+ var payment_code_dev='PMTvNPy4NYp9PKZ76BG1f4KAWR3LC95XQS1rWgYjG1NGEshAqge63';
+ var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';
+ var address_dev='18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb'; 
+
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 let db=ctx.db;
 let smin='20';
 if(ctx.state.xhr){
 let mata=ctx.request.body.fields;
+if(!mata){ctx.throw(400,'no body vars')}
 //tok_pack,items2,buyerId
-if(!mata.tok_pack && !mata.items2 && !mata.buyerId){ctx.throw(400,'Not enough data provided to be processed.')}
-let {tok_pack,items2,buyerId}=mata;
+if(!mata.tok_pack  && !mata.buyerId){ctx.throw(400,'Not enough data provided to be processed.')}
+let {tok_pack,buyerId}=mata;
 try{
 var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfang',tok_pack,smin]);
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
-ctx.body={body:mata,resultat:mres.rows[0],amt:items2,type:"alt"}
+ctx.body={body:mata,result:mres.rows[0],type:"alt",prod:is_devel(true)}
 }else{
 if(is_devel(true)){
- var payment_code_dev='PMTvNPy4NYp9PKZ76BG1f4KAWR3LC95XQS1rWgYjG1NGEshAqge63';
- var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';
- var address_dev='18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb'; 
+
 try{
-let resw=await db.query(`insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount)
-values($1,$2,$3,$4,$5,$6) returning addr,bt_pck_tok,bt_amount`,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack,400000])
-ctx.body={body:mata,resultat:{p_addr:resw.rows[0].addr,p_bt_pck_tok:resw.rows[0].bt_pck_tok},amt:resw.rows[0].bt_amount,type:"neu"}
+let resw=await db.query(`insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok)
+values($1,$2,$3,$4,$5) returning addr,bt_pck_tok,bt_inv_id`,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack])
+ctx.body={body:mata,result:resw.rows[0],type:"neu",prod:false}
 }catch(e){ctx.throw(400,e)}
 }else{
 
 let real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";
 let cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3";
-let estr="http://alikon.herokuapp.com/name/big-name/little_name";//?
+let estr="https://alikon.herokuapp.com/bitaps/cb/"+buyerId;//?
 let estr2=encodeURIComponent(estr);
 let cb1=estr2
 let grund="https://bitaps.com/api/";
@@ -488,10 +491,11 @@ console.log('ewq status code: ',ewq2.resp.statusCode);
 console.log('ewq body: ',ewq2.body)
 }catch(e){console.log('error in request.js: ',e);ctx.throw(404,e.message)}
 try{
-var rs3=await db.query(`insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount)
-values($1,$2,$3,$4,$5,$6) returning addr, bt_pck_tok, bt_amount`,[ewq2.body.invoice,ewq2.body.address,ewq2.body.payment_code,buyerId,tok_pack,400000])
+var rs3=await db.query(`insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok)
+values($1,$2,$3,$4,$5) returning addr, bt_pck_tok,bt_inv_id`,
+[ewq2.body.invoice,ewq2.body.address,ewq2.body.payment_code,buyerId,tok_pack])
 }catch(e){ctx.throw(400,e)}
-ctx.body={body:mata,result:rs3.rows[0],type:"neu"}
+ctx.body={body:mata,result:rs3.rows[0],type:"neu",prod:true}
 }
 }
 
@@ -499,17 +503,36 @@ ctx.body={body:mata,result:rs3.rows[0],type:"neu"}
 ctx.body={info:"We are sorry, but we don't process non xhr payment request."}
 }
 })
-pub.post('/bitaps/cb',async ctx=>{
+
+pub.post('/bitaps/cb/:bus_id',async ctx=>{
 let db=ctx.db;
 let b=ctx.request.body;
-if(!b.payment_code){ctx.throw(400,'no p_code provided')}
+if(!b){ctx.throw(400,'no body vars')}
+if(!b.code){ctx.throw(400,'no p_code provided')}
+let cb_us_id=ctx.params.bus_id;
+if(!cb_us_id){ctx.throw(404,'not found')}
+	let tx_h=b.tx_hash;
+	let adr=b.address;
+	let inv=b.invoice;
+	let p_c=b.code;
+	let amt=b.amount;//satoshi
+	let cnf=b.confirmations;
+	let p_tx_h=b.payout_tx_hash;
+	let p_m_f=b.payout_miner_fee;
+	let p_s_f=b.payout_service_fee;
+	console.log(cb_us_id,'\n',tx_h,'\n',adr,'\n',inv,'\n',p_c,'\n',amt,'\n',cnf,'\n',p_tx_h,'\n',p_m_f,'\n',p_s_f,'\n')
+
+/*	bitaps_cb_proc(tx_h text,adr text,inv text,p_c text,
+				   amt bigint,cnf int,p_tx_h text,
+				   p_m_f float,p_s_f float,
+				cb_us_id varchar(24)) 
+										 */
 try{
-var r4=await db.query(`select p_c from bitaps_temp where p_c=$1`,[b.payment_code]);
+await db.query('select bitaps_cb_proc($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+			   [tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,cb_us_id])
 }catch(e){console.log(e);ctx.throw(400,e);}
-if(r4.rows[0]){
-// do staff with bitaps_temp.sql and audit_success_bitaps_p.sql and busers.sql
-}else{ctx.throw(400,'very bad about p_c')}
-ctx.body={}
+
+ctx.body={body:b,params:ctx.params,invoice:inv}
 })
 /* *************************************************************************
 WEBRTC STUFF /:models

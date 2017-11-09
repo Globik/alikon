@@ -1,7 +1,10 @@
 //purchase.js
 const head=require('./head'),
     header_menu=require('./header_menu');
-
+const is_devel=process.env.DEVELOPMENT;
+function devi(){
+if(is_devel=="yes"){return true;}else{return false;}
+}
 const purchase = n=>{
  const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
@@ -21,6 +24,7 @@ return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
 		<form id="payment"  name="payment" method="post" enctype="multipart/form-data">
 			<h4>The more tokens you buy, the less they cost!</h4>
 			<input id="payEmail" type="hidden" name="buyerEmail" value="${buser ? buser.email : ''}"/>
+<input type="hidden" id="isDevel" name="is_develop" value="${devi()}"/>
             <input type="hidden" name="buyerName" value="${buser ? buser.name : ''}"/>
             <input type="hidden" name="price" value=""/>
             <input type="hidden" name="currency" value="USD"/>
@@ -40,7 +44,7 @@ return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
 <output id="payoutinfo2"></output>
 <form id="payment2"  name="payment2" method="post" action="get_invoice" enctype="multipart/form-data">
 
-<input type="hidden" name="buyerId" value="${buser ? buser.id : ''}"/>
+<input type="hidden" id="busid" name="buyerId" value="${buser ? buser.id : ''}"/>
 
 
 <div class="inp"><input type="radio" name="items2" value="0.04" data-t_pack="100" onchange="set_price2(this);" checked/> 100 tokens for 0.04 BTC</div>
@@ -51,7 +55,12 @@ return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
 <div class="inp"><input id="bitsend" name="submit" type="submit" value="go to pay"></div>
 </form>
 </section>
+${devi()?'<br><button onclick="dev_bitaps_cb();">devel_bitaps_cb</button><br>':''}
 <script>
+var is_dev=document.getElementById("isDevel").value;
+function is_devel(){
+if(is_dev=="true"){return true;}else{return false;}
+}
 var messy=null;
 var forma=document.forms.namedItem("payment");
 var dforma=document.forms.namedItem("payment2");
@@ -120,6 +129,10 @@ xhr.onerror=function(e){console.log(this.response + e)}
 xhr.send(JSON.stringify(messy));
 }
 var instat=0;
+//var dtest;
+var gInvoice=null;
+var gAddress=null;
+var btoki=null;
 function get_invoice(ev){
 ev.preventDefault();
 if(ev.target.buyerId.value.length==0){ payoutinfo2.innerHTML='Go <a href="/login">log in</a><br>';return ev.preventDefault();}
@@ -142,7 +155,25 @@ try{
 var mdata=JSON.parse(this.response);
 }catch(e){console.error(e);}
 
-if(mdata.type=="neu"){}else if(mdata.type=="alt"){}else{}
+if(mdata.type=="neu"){
+if(is_devel()){
+if(mdata.result){
+//dtest=mdata.result;
+gInvoice=mdata.result.bt_inv_id;
+gAddress=mdata.result.addr;
+btoki=mdata.result.bt_pck_tok;
+}
+}
+}else if(mdata.type=="alt"){
+if(is_devel()){
+if(mdata.result){
+//dtest=mdata.result;
+gInvoice=mdata.result.bt_inv_id;
+gAddress=mdata.result.addr;
+btoki=mdata.result.bt_pck_tok;
+}
+}
+}else{}
 
 }
 else{
@@ -152,7 +183,44 @@ xhr.onerror=function(e){payoutinfo.innerHTML=e;}
 xhr.send(data);
 }
 
+function dev_bitaps_cb(){
+if(!is_devel()){console.log('not develop mode');return;}
+if(busid.value.length==0){alert('please go log in');return;}
+//if(!dtest){console.warn('no dtest provided. Press go_to_pay button.');return;}
+let d={};
+var payment_code_dev='PMTvNPy4NYp9PKZ76BG1f4KAWR3LC95XQS1rWgYjG1NGEshAqge63';
+ var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';
+ var address_dev='18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb'; 
+console.log('invoice: ',invoice_dev);
+console.log('invoice: ',gInvoice);
+console.log('addr: ',address_dev);
+console.log('gAdr: ',gAddress);
+console.log('btoki: ',btoki);
+d.address=gAddress;
+d.invoice=gInvoice;
+d.amount=40000;//satoshi
+d.code=payment_code_dev;
+d.tx_hash="tx_h_09c90";
+d.confirmations=3;
+d.payout_tx_hash="p_tx_h_666y";
+d.payout_miner_fee=0.0002;
+d.payout_service_fee=0.0002;
 
+//result:
+//"addr":"18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb","bt_pck_tok":100,"bt_inv_id":"invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm"
+
+let xhr=new XMLHttpRequest();
+xhr.open('post','/bitaps/cb/'+busid.value);
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.onload=function(e){
+if(xhr.status==200){
+console.log(this.response);
+}else{
+console.log(this.response);
+}}
+xhr.onerror=function(e){console.log(this.response + e)}
+xhr.send(JSON.stringify(d));
+}
 </script>
 </body>
 </html>`;
