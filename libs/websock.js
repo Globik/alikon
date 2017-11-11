@@ -245,12 +245,17 @@ var interval2=setInterval(async function ping(){
 let bulu=await wsping();
 },6000)
 
-wss.on('connection',ws=>{
+wss.on('connection',(ws,iu)=>{
 process.nextTick(()=>{
-console.log('websocket connected: ', ws.upgradeReq.url)
+//console.log('websocket connected: ', ws.upgradeReq.url)
+	console.log('websocket connected: ',iu.url);
+	console.log('is ready: ',ws.readyState);
+	console.log('clients:',wss.clients.size);
 ws.isAlive=true;
 ws.on('pong', heartbeat);
-var blin=ws.upgradeReq.url,blin2=blin.trim(),urlRoom=blin2.substring(1)
+//var blin=ws.upgradeReq.url,blin2=blin.trim(),urlRoom=blin2.substring(1)
+var blin=iu.url,blin2=blin.trim(),urlRoom=blin2.substring(1)
+console.log('URL_ROOM: ',urlRoom)
 ws.clientId=shortid.generate();
 var msg={type:"id",id:ws.clientId}
 didi.sendback(ws,msg)
@@ -359,7 +364,7 @@ didi.emergency_to_all_in_room(ws,jsob)
 	
 ws.on('error',e=>console.log('err in websocket: ',err))
 ws.on('close',()=>{
-console.log('WEBSOCKET CLOSED')
+console.log('WEBSOCKET CLOSED. ',urlRoom)
 	//function on_leave_out(wss,ws,id,name)
 didi.on_leave_out(ws,ws.clientId,ws.username)
 cleanUpPeer(ws, urlRoom);
@@ -368,7 +373,7 @@ if(ws.owner){
 	console.log('websocket closing for ws.owner')
 if(ws.pidi && ws.pidi.length>0){
 console.log('updating pidi in websocket closing')
-delete_room(ws,urlroom)
+delete_room(ws,urlRoom)
 update_end(ws.pidi);
 }
 close_room(ws,urlRoom);

@@ -139,7 +139,7 @@ app.use(async (ctx, next)=>{
 //if(ctx.path==='/log_rooms')return;
 	//console.log('REQUEST: ',ctx.req)
 	console.log('PATH: ',ctx.method,ctx.path,ctx.url)
-	console.log('RESPONSE: ',ctx.response)
+	console.log('RESPONSE_ME: ',ctx.response)
 ctx.state.filter_script=script;
 ctx.db=pool;
 ctx.boss=boss;
@@ -189,6 +189,7 @@ app.use(adminrouter.routes()).use(adminrouter.allowedMethods());
   }
 });*/
 app.use(async (ctx, next)=>{
+	console.log('ctx.status: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',ctx.status);
 try{
 await next();
 if(ctx.status === 404) ctx.throw(404,"fuck not found",{user:"fuck userss"});
@@ -198,7 +199,6 @@ console.log('THIS>STATUS: ', ctx.status);
 if(ctx.status=== 404){
 ctx.session.error='';
 ctx.redirect('/error');}
-//this.body=this.render('error',{message:err.message, error:err.status});
 }
 });
 
@@ -304,7 +304,10 @@ try{
 })()
 }else{}
 })
-
+// bitaps_ok
+ps.addChannel('bitaps_ok', bitaps_msg=>{
+console.log('Bitaps_Msg: ',bitaps_msg)
+})
 //--trace-warnings
 
 boss.start().then(ready).catch(err=>console.log(err));

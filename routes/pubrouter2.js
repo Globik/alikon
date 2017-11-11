@@ -352,8 +352,10 @@ ctx.redirect('/error');
 })
 
 pub.get('/error', async ctx=>{
+	console.log('ctx.response_666: ',ctx.response);
 ctx.body=await ctx.render('error',{message:ctx.message, error:ctx.session.error});
 delete ctx.session.error;
+delete ctx.message;
 })
 
 // heroku pg:psql --app alikon
@@ -447,12 +449,16 @@ pub.get('/tipping/purchase_tokens',async ctx=>{
 ctx.session.dorthin=ctx.path;
 ctx.body=await ctx.render('purchase',{/*buser:this.req.user*/});
 })
-
+pub.get('/tip/get_tokens',async ctx=>{
+ctx.session.dorthin=ctx.path;
+ctx.body=await ctx.render('bitaps',{})
+})
  var payment_code_dev='PMTvNPy4NYp9PKZ76BG1f4KAWR3LC95XQS1rWgYjG1NGEshAqge63';
  var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';
  var address_dev='18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb'; 
 
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
+
 let db=ctx.db;
 let smin='20';
 if(ctx.state.xhr){
@@ -532,7 +538,9 @@ await db.query('select bitaps_cb_proc($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
 			   [tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,cb_us_id])
 }catch(e){console.log(e);ctx.throw(400,e);}
 
+if(is_devel(true)){
 ctx.body={body:b,params:ctx.params,invoice:inv}
+}else{ctx.body=inv;}
 })
 /* *************************************************************************
 WEBRTC STUFF /:models

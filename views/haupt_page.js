@@ -41,11 +41,6 @@ eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 <!-- <output id="out4"></output>
 <output id="out5"></output> -->
 <!-- <aside>${showModule(n)}</aside> -->
-
-
-
-
-
 <hr>
 <h4>Users: </h4>
 ${users_list(lusers)}
@@ -57,7 +52,8 @@ ${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">N
 <hr>
 <h1>Buy Tokens for Bitcoins!</h1>
 <h6>In a test mode</h6>
-<a href='/tipping/purchase_tokens'>Purchase tokens</a>
+<a href='/tipping/purchase_tokens'>Purchase tokens</a><hr>
+<a href='/tip/get_tokens'>bitaps</a><hr>
 <output id="wso"></output>
 <br><br>
 <a href="/demo/videostream">test videostream</a><br><br>
