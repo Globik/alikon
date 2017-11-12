@@ -233,7 +233,7 @@ onclick="ban_model2(this);" class="ban">ban</button><button class="ban" value="$
 </output>
 
 <br><button onclick="sendtome();">send to me</button><br>
-
+<br><button onclick="send_btc_cb();">send btc cb</button><br>
 <br><button onclick="gh();">hash</button><br>
 <button onclick="maudio();">audio</button>
 <h3>Dumping:</h3>

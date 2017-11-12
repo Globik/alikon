@@ -6,7 +6,7 @@ return m
 }
 function wslookup(wss){
 	
-const list_of_clients=(ws,obj,bool,level,db)=>{
+const list_of_clients=(ws,url,obj,bool,level,db)=>{
 	
 const as=(arg,cb)=>process.nextTick(()=>cb(arg))
 const final=()=>db(null,{arr:rs,size:rsn,lusers:lusers,info:"ok",sifilis:sifilis,pidment:pidment,chataccess:chataccess})
@@ -26,7 +26,10 @@ while(running<lim && lift.length>0){
 let item=lift.shift();
 as(item, async function(el){
 if(level=="uroom"){
-if(el.upgradeReq.url===ws.upgradeReq.url){
+//if(el.upgradeReq.url===ws.upgradeReq.url){
+	console.log('url: ',url)
+	console.log('el.url: ',el.url)
+if(el.url===url){
 if(el && el.readyState===1){
 if(bool){
 el.send(bmess);rsn++;
@@ -44,10 +47,20 @@ rs.push(el)
 }
 }else if(level=="all"){
 	//console.log('METHOD ALLLLL')
+if(bool==false){
+if(el.username==obj.target){
+if(el && el.readyState==1){
+el.send(JSON.stringify(obj),(err)=>{
+if(err){console.log('error in level=all send to one user in all rooms: ',err)}
+})
+}
+}
+
+}else{
 if(el && el.readyState===1){
 rsn++
 el.send(bmess)
-}
+}}
 }else if(level=="websock"){
 	//console.log('el.isAlive??:',el.isAlive)
 if(el.isAlive===false)return el.terminate()
@@ -67,64 +80,79 @@ running++
 }
 process.nextTick(launcher)
 }
-const promis_list=(ws,obj,bool,level)=>{
+const promis_list=(ws,url,obj,bool,level)=>{
 return  new Promise((r,j)=>{
-list_of_clients(ws,obj,bool,level,(e,d)=>{
+list_of_clients(ws,url,obj,bool,level,(e,d)=>{
 if(e)j(e)
 r(d)
 })
 })
 }
 
-async function emergency_to_all_in_room(ws,obj){
+async function emergency_to_all_in_room(ws,url,obj){
 try{
-let d=await promis_list(ws,obj,true,"uroom")
+let d=await promis_list(ws,url,obj,true,"uroom")
 //console.log('if sending emergency to all in room?: ',d)
 }catch(e){console.log(e)}
 }
 	
-async function send_new_user_to_all(ws,username,clid){
+async function send_new_user_to_all(ws,url,username,clid){
 console.log('sending new user ')
 try{
-let b=await promis_list(ws,{fake:'f'},false,"uroom");
+let b=await promis_list(ws,url,{fake:'f'},false,"uroom");
 //let sifa=await
 let msg={type:"joined_user",mus_cnt:b.arr.length,username:username,clid:clid,
 		 users:b.lusers,ready:b.sifilis,pidi:b.pidment,info:b.info,chataccess:b.chataccess}
 try{var me2=JSON.stringify(msg)
 console.log('me2: ',me2)}catch(e){console.log(e)}
-emergency_to_all_in_room(ws,me2)
+emergency_to_all_in_room(ws,url,me2)
 }catch(e){console.log('err sending new user to all: ',e)}
 }	
 
-async function super_send(ws,obj){
+async function super_send(ws,url,obj){
 try{
 let mes=JSON.stringify(obj)
-let d=await promis_list(ws,mes,true,"all")
+let d=await promis_list(ws,url,mes,true,"all")
 }catch(e){console.log('in super_send: ',e)}
 }
-	
-async function send_to_one_user_in_room(ws,target,mstring){
+const find_target=(v,id,m)=>new Promise((r,j)=>r(v.find(e=>e[id]==m)))
+
+async function send_to_one_user_in_room(ws,url,target,mstring){
 let bm=tjson(mstring)
 try{
-let d=await promis_list(ws,{fake:'f'},false,"uroom")
+let d=await promis_list(ws,url,{fake:'f'},false,"uroom")
+
 let si=await find_target(d.arr,'username',target)
 if(si && si.readyState==1)si.send(bm)
+	
 }catch(e){console.log(e)}
 }
-async function on_leave_out(ws,id,name){
+
+async function send_to_one_user_in_all_rooms(ws,url,mstring){
+//let bm=tjson(mstring)
+
+try{
+	console.log('colling send_to_one_user_in_all_rooms')
+await promis_list(ws,url,mstring,false,"all")
+
+	
+}catch(e){console.log('err in send_to_one_user_in_all_rooms: ',e)}
+}
+async function on_leave_out(ws,url,id,name){
 	console.log('on_leave_out()')
 try{
-let a=await promis_list(ws,{fake:'f'},false,"uroom");
+let a=await promis_list(ws,url,{fake:'f'},false,"uroom");
 let um={type:"out_user",username:name,clientId:id,mus_cnt:a.arr.length}
 console.log('sending message on _leave_out()')
 try{var fiki2=JSON.stringify(um)}catch(e){console.log('json stringify err in on_leave_out')}
-emergency_to_all_in_room(ws,fiki2)
+emergency_to_all_in_room(ws,url,fiki2)
 }catch(e){console.log(e)}
 	console.log('end of on_leave out()')
 }
 const sendback=(ws,m)=>{if(ws.readyState==1)ws.send(tjson(m))}
 
-return {send_new_user_to_all,super_send,sendback,emergency_to_all_in_room,send_to_one_user_in_room,on_leave_out,promis_list}
+return {send_new_user_to_all,super_send,sendback,emergency_to_all_in_room,send_to_one_user_in_room,on_leave_out,promis_list,
+	   send_to_one_user_in_all_rooms}
 
 }
 /*
@@ -285,13 +313,5 @@ d.event="new_rtpreceiver";
 	//console.log('ON RTP OBJECT OCCURED IN RTP RECEIVER 801')
 	})
 })
-
-
-
-
-
-
-
-
 
 */

@@ -25,6 +25,7 @@ return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
 </form>
 </section>
 ${devi()?'<br><button onclick="dev_bitaps_cb();">devel_bitaps_cb</button><br>':''}
+<output id="ssout"></output>
 <script>
 var mikok=false;
 var is_dev=document.getElementById("isDevel").value;
@@ -142,6 +143,30 @@ if(!n){console.log('no pack provided. Return')}
 if(n==100){
 return superbtc=0.04;
 }else if(n==200){return superbtc=0.08;}else if(n==500){return superbtc=0.2;}else if(n==1000){return superbtc=0.4;}else{return null;}
+}
+
+var ss=new EventSource('/log_rooms');
+ss.onopen=function(e){console.log('event source is opened! ')}
+ss.onmessage=function(e){
+console.log('event data:',e.data);
+var mata=JSON.parse(e.data);
+}
+ss.onerror=function(e){console.error("event source error: ");}
+ss.addEventListener('bitaps_cb',notify_bitaps_cb,false);
+function notify_bitaps_cb(ev){
+try{
+var dss=JSON.parse(ev.data);
+}catch(e){console.error(e);}
+console.warn('sse data came: ',dss);
+/*
+{ us_id: '58a1a78a406da007a696e917',
+  items: 100,
+  inv_id: 'invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm',
+  bcamt: 4000000,
+  type: 'paid' }
+*/
+ssout.innerHTML='<br><b>us_id: </b>'+dss.us_id+'<br><b>items: </b>'+dss.items+'<br><b>inv_id: </b>'+dss.inv_id+'<br>';
+ssout.innerHTML+='<b>bcamt: </b>'+dss.bcamt+'<br><b>type: </b>'+dss.type+'<br>';
 }
 </script>
 </body></html>`;

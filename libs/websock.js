@@ -38,7 +38,7 @@ if(vidi){
 let peerlength=vidi.peers.length;
 	//statistik
 bpeer--;
-update_view(ws,peerlength,message.roomname);
+update_view(ws,'/'+message.roomname,peerlength,message.roomname);
 }
 if(err)console.log(err);
 });
@@ -93,7 +93,7 @@ let vid=droom.get(message.roomname);
 if(vid){
 let peerlength=vid.peers.length;
 console.log('-- PEERS in the room FROM handleAnswer = ', peerlength);
-update_view(ws,peerlength,message.roomname)
+update_view(ws,'/'+message.roomname,peerlength,message.roomname)
 
 }
 //dumpPeer(pc.peer, 'peer.dump after setRemoteDescription(re-answer):');
@@ -139,33 +139,33 @@ const insert_message=(msgi,roomname,nick)=>{
 pool.query('insert into chat(msg,chat_name,us_name) values($1,$2,$3)',[msgi,roomname,nick]).then(r=>{
 }).catch(e=>{console.log('err in inserting message into chat table: ',e)})
 }
-const update_view=(ws,peerlength,roomname)=>{
+const update_view=(ws,furl,peerlength,roomname)=>{
 pool.query('update rooms set view=$1 where room_name=$2',[peerlength,roomname]).then(r=>{
 console.log('ok update rooms view handleanswer')
 sse.publish('ch_log_rooms','room_view', {peers:peerlength,room_name:roomname})
-didi.emergency_to_all_in_room(ws,tjson({type:"stat_room",peers:peerlength,room_name:roomname}))
+didi.emergency_to_all_in_room(ws,furl,tjson({type:"stat_room",peers:peerlength,room_name:roomname}))
 }).catch(err=>{console.log('err update rooms view handleanswer: ',err)})
 }
 
-function update_photo_src(ws,msg){
+function update_photo_src(ws,furl,msg){
 let sis1='update rooms set src=$1 where room_name=$2 returning status,view,room_name,src';
 console.log('sis1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 pool.query(sis1,[msg.src,msg.roomname]).then(res=>{
 console.log('what the fuck??????????????????????????????? msg:',msg.pidi,' chat access ',msg.chataccess)
-didi.emergency_to_all_in_room(ws,tjson({type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src,chataccess:msg.chataccess}));
+didi.emergency_to_all_in_room(ws,furl,tjson({type:'roomer_online',ready:true,pidi:msg.pidi,src:res.rows[0].src,chataccess:msg.chataccess}));
 sse.publish('ch_log_rooms','add_room', res.rows[0])
 //status,view,room_name,src
 }).catch(er=>{console.log(er);
-didi.emergency_to_all_in_room(ws,tjson({type:'roomer_online',ready:true,pidi:msg.pidi,src:undefined}))			 
+didi.emergency_to_all_in_room(ws,furl,tjson({type:'roomer_online',ready:true,pidi:msg.pidi,src:undefined}))			 
 })
 }
 	
-function update_photo_src_end(ws,msg){
+function update_photo_src_end(ws,furl,msg){
 let sis2="update rooms set src=$1 where room_name=$2 returning room_name";
 pool.query(sis2,['',msg.roomname]).then(res=>{
 console.log('msg.pidi: ',msg.pidi)
 update_end(msg.pidi)
-didi.emergency_to_all_in_room(ws,tjson({type:'roomer_offline',ready:false,pidi:0}))
+didi.emergency_to_all_in_room(ws,furl,tjson({type:'roomer_offline',ready:false,pidi:0}))
 sse.publish('ch_log_rooms','remove_room', {room_name:msg.roomname})
 }).catch(e=>{console.log(e)})
 }
@@ -173,7 +173,7 @@ sse.publish('ch_log_rooms','remove_room', {room_name:msg.roomname})
 const deletePeerConnection=id=>Connections.delete(id)
 const addPeerConnection=(id, pc)=>Connections.set(id,pc)
 const getPeerConnection=id=>Connections.get(id)
-const find_target=(v,id,m)=>new Promise((r,j)=>r(v.find(e=>e[id]==m)))
+//const find_target=(v,id,m)=>new Promise((r,j)=>r(v.find(e=>e[id]==m)))
 
 async function inserting_room(roomname){
 try{
@@ -239,7 +239,7 @@ didi.sendback(ws,{type:'error',error:err,roomname: urlroom})
 
 function heartbeat(){this.isAlive=true;}
 async function wsping(){
-try{return await didi.promis_list('fake',{fake:'f'},'fake',"websock")}catch(e){console.log(e)}
+try{return await didi.promis_list('fake','/fake_furl',{fake:'f'},'fake',"websock")}catch(e){console.log(e)}
 }
 var interval2=setInterval(async function ping(){
 let bulu=await wsping();
@@ -254,7 +254,9 @@ process.nextTick(()=>{
 ws.isAlive=true;
 ws.on('pong', heartbeat);
 //var blin=ws.upgradeReq.url,blin2=blin.trim(),urlRoom=blin2.substring(1)
-var blin=iu.url,blin2=blin.trim(),urlRoom=blin2.substring(1)
+var blin=iu.url,blin2=blin.trim(),urlRoom=blin2.substring(1);
+	var furl=iu.url;
+ws.url=iu.url;
 console.log('URL_ROOM: ',urlRoom)
 ws.clientId=shortid.generate();
 var msg={type:"id",id:ws.clientId}
@@ -274,13 +276,13 @@ console.log('MSG IN TYPE USERNAME: ',msg)
 ws.username=msg.name
 ws.owner=msg.owner
 ws.ready=false
-didi.send_new_user_to_all(ws,msg.name,msg.id)
+didi.send_new_user_to_all(ws,furl,msg.name,msg.id)
 sendtoclients=false;
 }else if(msg.type=="emergency_stop"){
-didi.super_send(ws,{type:"emergency_stop",msg:"Stop all streams"});
+didi.super_send(ws,furl,{type:"emergency_stop",msg:"Stop all streams"});
 sendtoclients=false;
 }else if(msg.type=="note"){
-didi.super_send(ws,{type:"message",msg:msg.msg,from_nick:msg.from_nick})
+didi.super_send(ws,furl,{type:"message",msg:msg.msg,from_nick:msg.from_nick})
 sendtoclients=false;
 }else if(msg.type=="createroom"){
 	console.log('is mediaserver closed?: ',mediasoup.closed)
@@ -307,14 +309,14 @@ sendtoclients=false;
 ws.ready=true;
 ws.pidi=msg.pidi;
 ws.chataccess=msg.chataccess;
-update_photo_src(ws,msg)
+update_photo_src(ws,furl,msg)
 sendtoclients=false;
 }else if(msg.type=="offline"){
 ws.ready=false;
-update_photo_src_end(ws,msg)
+update_photo_src_end(ws,furl,msg)
 sendtoclients=false;
 }else if(msg.type=="money_trans"){
-didi.emergency_to_all_in_room(ws,tjson({type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick}))
+didi.emergency_to_all_in_room(ws,furl,tjson({type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick}))
 insert_message(msg.msg,msg.roomname,msg.from_nick)
 sendtoclients=false;
 }else if(msg.type=="call"){
@@ -338,6 +340,11 @@ cleanUpPeer(ws, msg.roomname);
 sendtoclients=false;
 }else if(msg.type=="candidate"){
 //console.log('MUST NOT got candidate');
+}else if(msg.type=="bitaps_cb"){
+console.log('type bitaps_cb in ws')
+console.log('msg: ',msg);
+await didi.send_to_one_user_in_all_rooms(ws,furl,msg);
+sendtoclients=false;
 }else if(msg.type=="removeroom"){
 if(msg.owner){
 // pauseVideo 'stop video' button
@@ -349,14 +356,14 @@ sendtoclients=false;
 
 if(sendtoclients){
 if(msg.target && msg.target !==undefined && msg.target.length !==0){
-	console.log('sending target message to one user: ',msg)
-didi.send_to_one_user_in_room(ws,msg.target,msg);
+console.log('sending target message to one user: ',msg)
+didi.send_to_one_user_in_room(ws,furl,msg.target,msg);
 }else{
 if(msg.type=='message'){
 //console.log('sending to all type message: ',msg)
 insert_message(msg.msg,msg.roomname,msg.from_nick)}
 try{var jsob=JSON.stringify(msg)}catch(e){console.log('err json stringify in sending type message to all')}
-didi.emergency_to_all_in_room(ws,jsob)
+didi.emergency_to_all_in_room(ws,furl,jsob)
 }
 }
 
@@ -366,7 +373,7 @@ ws.on('error',e=>console.log('err in websocket: ',err))
 ws.on('close',()=>{
 console.log('WEBSOCKET CLOSED. ',urlRoom)
 	//function on_leave_out(wss,ws,id,name)
-didi.on_leave_out(ws,ws.clientId,ws.username)
+didi.on_leave_out(ws,furl,ws.clientId,ws.username)
 cleanUpPeer(ws, urlRoom);
 console.log('WS.OWNER: ',ws.owner)
 if(ws.owner){

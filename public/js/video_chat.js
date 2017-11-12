@@ -414,6 +414,15 @@ d.target=myusername;
 d.type="message";
 sendJson(d)
 }
+function send_btc_cb(){
+	//alert('a?');
+let d={};
+	d.type="bitaps_cb";
+	d.btc=0.05;
+	d.target="globik";
+	d.omg="hali halo";
+	sendJson(d);
+}
 function go_message(event){
 	//console.log(event.data)
 	try{
@@ -459,8 +468,10 @@ vidW.classList.add('banned');
 }
 }
 	
-}
-else if(msg.type=='history'){
+}else if(msg.type=='bitaps_cb'){
+	console.log('bitaps_cb : ',event.data)
+alert('type bitaps_cb: '+event.data)	
+}else if(msg.type=='history'){
 //console.warn('on history: ',event.data)
 show_history(msg);
 }else if(msg.type=='joined_user'){

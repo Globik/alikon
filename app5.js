@@ -307,6 +307,13 @@ try{
 // bitaps_ok
 ps.addChannel('bitaps_ok', bitaps_msg=>{
 console.log('Bitaps_Msg: ',bitaps_msg)
+sse.publish('ch_log_rooms','bitaps_cb', bitaps_msg)
+/*{ us_id: '58a1a78a406da007a696e917',
+  items: 100,
+  inv_id: 'invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm',
+  bcamt: 4000000,
+  type: 'paid' }
+  */
 })
 //--trace-warnings
 
