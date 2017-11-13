@@ -1,5 +1,5 @@
 # Simple photo blog based on [Koa](http://koajs.com/) and [mongoDB](https://www.mongodb.org)
-# Herbert Sager widmet.
+#an Herbert Sager gewidmet.
 
 With no template engine. The view pages formatted as a es6.0 tagged template strings in modules.
 With purpose of better perfomance by html rendering on server side. In developing mode you may need something

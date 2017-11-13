@@ -50,8 +50,9 @@ rs.push(el)
 if(bool==false){
 if(el.username==obj.target){
 if(el && el.readyState==1){
-el.send(JSON.stringify(obj),(err)=>{
-if(err){console.log('error in level=all send to one user in all rooms: ',err)}
+try{var vjson=JSON.stringify(obj)}catch(e){return db(e);}
+el.send(vjson,(err)=>{
+if(err){console.log('error in level=all send to one user in all rooms: ',err);return db(err)}
 })
 }
 }
@@ -59,7 +60,9 @@ if(err){console.log('error in level=all send to one user in all rooms: ',err)}
 }else{
 if(el && el.readyState===1){
 rsn++
-el.send(bmess)
+el.send(bmess,(err)=>{
+if(err)return db(err)
+})
 }}
 }else if(level=="websock"){
 	//console.log('el.isAlive??:',el.isAlive)

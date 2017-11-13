@@ -102,3 +102,9 @@ window.location.href="#message_box";
 playSound(sounds.complete.buffer);
 open_al();
 }
+var gevS=null;
+if(!!window.EventSource){
+gevS=new EventSource('/log_rooms');
+	gevS.onopen=function(){console.log('sse opened');}
+	gevS.onerror=function(e){console.error("event source error: ");}
+}else{}

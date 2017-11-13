@@ -5,9 +5,10 @@ if(is_devel=="yes"){return true;}else{return false;}
 }
 const bitaps = n=>{
  const buser=n.user;
-return `<!DOCTYPE html><html lang="en"><!-- purchase.js -->
+return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 <head>${head.head({title:"Purchase Tokens"/*, js:["https://bitpay.com/bitpay.min.js"]*/})}</head>
 <body>
+<a href="/">home</a>
 <section class="sect">
 <h1>Get Tokens - a real mode</h1>
 <h4>Recommended amount of tokens:</h4>
@@ -145,14 +146,12 @@ return superbtc=0.04;
 }else if(n==200){return superbtc=0.08;}else if(n==500){return superbtc=0.2;}else if(n==1000){return superbtc=0.4;}else{return null;}
 }
 
-var ss=new EventSource('/log_rooms');
-ss.onopen=function(e){console.log('event source is opened! ')}
-ss.onmessage=function(e){
-console.log('event data:',e.data);
-var mata=JSON.parse(e.data);
+function go_sse(){
+if(gevS==null){console.log('evS is null');return;}
+gevS.addEventListener('bitaps_cb',notify_bitaps_cb,false);
 }
-ss.onerror=function(e){console.error("event source error: ");}
-ss.addEventListener('bitaps_cb',notify_bitaps_cb,false);
+go_sse();
+
 function notify_bitaps_cb(ev){
 try{
 var dss=JSON.parse(ev.data);
@@ -168,6 +167,10 @@ console.warn('sse data came: ',dss);
 ssout.innerHTML='<br><b>us_id: </b>'+dss.us_id+'<br><b>items: </b>'+dss.items+'<br><b>inv_id: </b>'+dss.inv_id+'<br>';
 ssout.innerHTML+='<b>bcamt: </b>'+dss.bcamt+'<br><b>type: </b>'+dss.type+'<br>';
 }
+function ru(){
+wrongel.addEventListener('click',f,false);
+}
+function f(){}
 </script>
 </body></html>`;
 }

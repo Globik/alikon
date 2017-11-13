@@ -60,16 +60,17 @@ ${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">N
 <a href="/demo/webrtc">test webrtc</a><br><br>
 <script>
 //alert(localStorage.abuse);
-var s=new EventSource('/log_rooms');
-s.onopen=function(e){console.log('event source is opened! ')}
-s.onmessage=function(e){
-console.log('event data:',e.data);
-var mata=JSON.parse(e.data);
+
+function go_rooms_sse(){
+if(gevS==null){return;}
+gevS.addEventListener('remove_room',remove_room,false);
+gevS.addEventListener('add_room',add_room,false);
+gevS.addEventListener('room_view',room_view,false);
 }
-s.onerror=function(e){console.error("event source error: ");}
-s.addEventListener('remove_room',remove_room,false);
-s.addEventListener('add_room',add_room,false);
-s.addEventListener('room_view',room_view,false);
+document.body.onload=function(){
+//alert('document body loaded!');
+go_rooms_sse();
+}
 
 function remove_room(e){
 console.log('on remove_room : '+e.data);
