@@ -457,6 +457,10 @@ ctx.body=await ctx.render('bitaps',{})
  var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';
  var address_dev='18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb'; 
 
+var qr=require('qrcode-js')
+//var url="http://example.com"
+//var b=qr.toDataURL(url,4)
+
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 
 let db=ctx.db;
@@ -469,16 +473,24 @@ if(!mata.tok_pack  && !mata.buyerId){ctx.throw(400,'Not enough data provided to 
 let {tok_pack,buyerId}=mata;
 try{
 var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfang',tok_pack,smin]);
+	//var src4=qr.toDataURL(mres.rows[0].addr,4);
+	console.log('src4: ','src4')
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
-ctx.body={body:mata,result:mres.rows[0],type:"alt",prod:is_devel(true)}
+	console.log('mres.rows[0].addr: ',mres.rows[0].addr)
+var fid=qr.toDataURL(mres.rows[0].addr,4)
+console.log('src5: ',fid)
+ctx.body={body:mata,result:mres.rows[0],src4:fid,type:"alt",prod:is_devel(true)}
 }else{
 if(is_devel(true)){
 
 try{
 let resw=await db.query(`insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok)
 values($1,$2,$3,$4,$5) returning addr,bt_pck_tok,bt_inv_id`,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack])
-ctx.body={body:mata,result:resw.rows[0],type:"neu",prod:false}
+console.log('resw.rows[0].addr: ',resw.rows[0].addr)
+var fi=qr.toDataURL(resw.rows[0].addr,4)
+console.log('src5: ',fi)
+ctx.body={body:mata,result:resw.rows[0],src4:fi,type:"neu",prod:false}
 }catch(e){ctx.throw(400,e)}
 }else{
 
@@ -500,8 +512,9 @@ try{
 var rs3=await db.query(`insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok)
 values($1,$2,$3,$4,$5) returning addr, bt_pck_tok,bt_inv_id`,
 [ewq2.body.invoice,ewq2.body.address,ewq2.body.payment_code,buyerId,tok_pack])
+//var src6=qr.toDataURL(rs3.rows[0].addr)
 }catch(e){ctx.throw(400,e)}
-ctx.body={body:mata,result:rs3.rows[0],type:"neu",prod:true}
+ctx.body={body:mata,result:rs3.rows[0],src4:'src6',type:"neu",prod:true}
 }
 }
 

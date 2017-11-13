@@ -25,6 +25,7 @@ return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 <div class="inp"><input id="bitsend" name="submit" type="submit" value="go to pay"></div>
 </form>
 </section>
+<img id="testimg" src=""/>
 ${devi()?'<br><button onclick="dev_bitaps_cb();">devel_bitaps_cb</button><br>':''}
 <output id="ssout"></output>
 <script>
@@ -91,6 +92,8 @@ btoki=md.result.bt_pck_tok;
 console.log('btoki: ',btoki)
 superbtc=org_btc_price(btoki);
 if(superbtc){supersatoshi=superbtc*100000000;}
+testimg.src=md.src4;
+testimg.style.width="100%";
 }
 
 }
@@ -166,11 +169,11 @@ console.warn('sse data came: ',dss);
 */
 ssout.innerHTML='<br><b>us_id: </b>'+dss.us_id+'<br><b>items: </b>'+dss.items+'<br><b>inv_id: </b>'+dss.inv_id+'<br>';
 ssout.innerHTML+='<b>bcamt: </b>'+dss.bcamt+'<br><b>type: </b>'+dss.type+'<br>';
+if(dss.inv_id==gInvoice && dss.us_id==busid.value){
+ssout.innerHTML+='<b>invoice id and us_id are equal. OK.</b><br><br>';
+ssout.innerHTML+='Congratulations! You have '+dss.items+' tokens. Your'+dss.bcamt+' successfully processed.<br>'
 }
-function ru(){
-wrongel.addEventListener('click',f,false);
 }
-function f(){}
 </script>
 </body></html>`;
 }
