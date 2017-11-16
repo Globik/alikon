@@ -4,7 +4,8 @@
   "description": "A sample Node.js app using koa",
   "main": "app5.js",
   "scripts": {
-    "start": "node app5"
+    "start": "node app5",
+"postinstall":"bash dqrencode.sh"
   },
   "dependencies": {
     "bitauth": "0.3.2",
