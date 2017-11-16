@@ -16,8 +16,8 @@ const {websock}=require('./libs/websock.js')
 
 var broom=0;
 var bpeer=0;
-const redis=require('./examples/redis-promis.js')();
-const cl=redis.createClient();
+//const redis=require('./examples/redis-promis.js')();
+//onst cl=redis.createClient();
 
 const session=require('koa-generic-session');
 const sse=require('sse-broadcast')();
