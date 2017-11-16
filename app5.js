@@ -54,8 +54,8 @@ const {msg_handler} = require('./libs/mailer.js');
 const {script}=require('./libs/filter_script');
 const PgStore=require('./pg-sess.js')
 const configDB=require('./config/database.js')
-//const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-const database_url=configDB.pg_url;
+const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+//const database_url=configDB.pg_url;
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
