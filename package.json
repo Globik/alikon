@@ -1,6 +1,6 @@
 {
   "name": "node-js-getting-started",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "description": "A sample Node.js app using koa",
   "main": "app5.js",
   "scripts": {
