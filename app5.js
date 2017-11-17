@@ -220,16 +220,11 @@ console.log('OK, deleteng all rooms!')
 var servak=app.listen(process.env.PORT || 5000)
 	
 console.log('is Mediasoup server closed?: ',server.closed)
-var wss=new WebSocket.Server({server:servak,verifyClient:(info,cb)=>{
+var wss=new WebSocket.Server({server:servak/*,verifyClient:(info,cb)=>{
 	console.log('info: ',info.origin)
-	if(process.env.DEVELOPMENT=="yes"){
 if(info.origin==='http://localhost:5000'){cb(true);return;}
-	}else{
-	if(info.origin==='https://alikon.herokuapp.com'){cb(true);return;}
-	}
-	cb(false)
-}
-							 });
+cb(false)}*/
+})
 //RTCPeerConnection,RTCSessionDescription,roomOptions,peerCapabilities
 
 websock(wss,pool,sse,shortid,server,RTCPeerConnection,RTCSessionDescription,peerCapabilities,roomOptions)
