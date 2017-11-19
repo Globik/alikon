@@ -22,26 +22,65 @@ router.post('/send', async ctx=> {
     //ctx.response.set('Content-Type', 'text/plain;charset=utf-8');
     ctx.body = {info:'ok'}
 });
-
+let stream = new PassThrough();
+let vid=0;
+let con=new Map();
 router.get('/subscribe', async ctx=>{
-    let stream = new PassThrough();
-
+    function dow(){stream.write('event:fuck\ndata: fuck and data\n\n')}
+var t=setInterval(dow,5000);
     let fn = (message) =>{ console.log('message: ',message);stream.write(`data: ${JSON.stringify(message)}\n\n`);}
-    let finish = () => {console.log('OnFinish!');dispatcher.removeListener('message', fn);}
-
+    let finish = () => {
+		console.log('OnFinish!');
+		dispatcher.removeListener('message', fn);
+	}
+let onclose=(e)=>{console.log('ON_CLOSE!',e);clearInterval(t);
+				 console.log('clear interval for: ',ctx.vid);
+				  delete ctx.vid;
+				 }
+let onerror=(e)=>{console.log('ON_ERROR!',e)}
     ctx.response.status = 200;
     ctx.response.type = 'text/event-stream;charset=utf-8';
     ctx.response.set('Cache-Control', 'no-cache');
+	//ctx.response.set(
 
     ctx.body = stream;
-
-    stream.write('event:fuck\ndata: open stream\n\n');
+	ctx.vid=vid;
+	con.set('pid',vid)
+	console.log('size: ',con.size);
+vid++;
+	
     dispatcher.on('message', fn);
-    ctx.req.on('close', finish);
+    ctx.req.on('close', onclose);
     ctx.req.on('finish', finish);
-    ctx.req.on('error', finish);
+    ctx.req.on('error', onerror);
+	ctx.res.on('close',function(){console.log('RESPONSE_CLOSE')})
+	ctx.req.on('connection',()=>{console.log('REQ_CONNECTION')})
+	ctx.res.on('connection',()=>{console.log('RES_CONNECTION!')})
+	stream.on('error',(e)=>{console.log('error!!: ',e);
+							//ctx.res.end()
+							//stream.end();
+							//ctx.response.status=500;
+							//ctx.throw(500,'fuck')
+						   })//??
 });
 
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(webport);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 console.log(webport);
