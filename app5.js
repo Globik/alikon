@@ -54,8 +54,8 @@ const {msg_handler} = require('./libs/mailer.js');
 const {script}=require('./libs/filter_script');
 const PgStore=require('./pg-sess.js')
 const configDB=require('./config/database.js')
-const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-//const database_url=configDB.pg_url;
+//const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+const database_url=configDB.pg_url;
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
@@ -169,13 +169,31 @@ if(ctx.path=='/module_cache'){
 lasha=true;}
 await next();
 });
-
+function heartbeat_sse(){
+setInterval(function(){
+sse.publish('ch_log_rooms',{data:"heart"});
+},10000)
+}
 subrouter.get('/log_rooms', async (ctx,next)=>{
 sse.subscribe('ch_log_rooms',ctx.res)
 //console.log('header: ',ctx.request)
 ctx.response=false;
 await next();
 })
+
+sse.on('subscribe',(room,res)=>{
+console.log('SSE Room subscribe: ',room)
+//console.log('res subscribe: ',res)
+})
+sse.on('unsubscribe',(room,res)=>{
+console.log('SSE Room unsubscribe: ',room)
+//console.log('res unsubscribe: ',res)
+})
+sse.on('finish',()=>{
+console.log('SSE finish')
+})
+sse.on('error',()=>{console.log('sse error')})
+sse.on('warnig',()=>{console.log('sse warnig')})
 
 app.use(subrouter.routes()).use(subrouter.allowedMethods())
 app.use(pubrouter.routes()).use(pubrouter.allowedMethods())
@@ -217,10 +235,10 @@ pool.query(`delete from rooms`).then(r=>{
 console.log('OK, deleteng all rooms!')
 }).catch(err=>console.log('Error in deleteng all rooms: ',err))
 
-var servak=app.listen(process.env.PORT || 5000)
-	
+const servak=app.listen(process.env.PORT || 5000)
+heartbeat_sse();	
 console.log('is Mediasoup server closed?: ',server.closed)
-var wss=new WebSocket.Server({server:servak/*,verifyClient:(info,cb)=>{
+const wss=new WebSocket.Server({server:servak/*,verifyClient:(info,cb)=>{
 	console.log('info: ',info.origin)
 if(info.origin==='http://localhost:5000'){cb(true);return;}
 cb(false)}*/

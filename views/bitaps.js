@@ -26,6 +26,7 @@ return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 </form>
 </section>
 <img id="testimg" src=""/>
+<div id="SVGQR"></div>
 ${devi()?'<br><button onclick="dev_bitaps_cb();">devel_bitaps_cb</button><br>':''}
 <output id="ssout"></output>
 <script>
@@ -93,7 +94,8 @@ console.log('btoki: ',btoki)
 superbtc=org_btc_price(btoki);
 if(superbtc){supersatoshi=superbtc*100000000;}
 testimg.src=md.src4;
-testimg.style.width="100%";
+//testimg.style.width="100%";
+
 }
 
 }
@@ -148,10 +150,11 @@ if(n==100){
 return superbtc=0.04;
 }else if(n==200){return superbtc=0.08;}else if(n==500){return superbtc=0.2;}else if(n==1000){return superbtc=0.4;}else{return null;}
 }
-
+var mnu=0;
 function go_sse(){
 if(gevS==null){console.log('evS is null');return;}
 gevS.addEventListener('bitaps_cb',notify_bitaps_cb,false);
+gevS.onmessage=function(e){mnu++;console.log(mnu);}
 }
 go_sse();
 
@@ -175,6 +178,7 @@ ssout.innerHTML+='Congratulations! You have '+dss.items+' tokens. Your'+dss.bcam
 }
 }
 </script>
+
 </body></html>`;
 }
 module.exports={bitaps}

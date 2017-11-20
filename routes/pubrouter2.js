@@ -9,6 +9,7 @@ const walletValidator=require('wallet-address-validator');//0.1.0
 const cofs=require('../libs/await-fs.js');
 const fs=require('fs');
 const email_enc=require('../libs/email_enc.js');
+const {Encoder, Levels, Types}=require('../libs/qr-node.js');
 const rk=require('request');
 /*
 var bitpay=require('bitpay-rest');
@@ -457,9 +458,31 @@ ctx.body=await ctx.render('bitaps',{})
  var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';
  var address_dev='18J8Qjy6AJLV4icAcWAjPELNxrhzEnwecb'; 
 
-var qr=require('qrcode-js')
+//var qr=require('qrcode-js')
 //var url="http://example.com"
 //var b=qr.toDataURL(url,4)
+const bas_part='data:image/png;base64,';
+const bas_part2='data:image/svg+xml;base64,';
+const ob64={
+/*background_color:'#76eec6',
+foreground_color:'#ff0000', */
+level:Levels.HIGH, 
+dot_size:12/2,
+margin:8/2,
+type:Types.PNG
+}
+const vstr='insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok) values($1,$2,$3,$4,$5) returning addr,bt_pck_tok,bt_inv_id';
+const vstr2=n=>{ return `${n.a}?amount=${n.am}&label=${n.l}&message=Purchase%20${n.p}%20tokens`;}
+async function dor_b64(url,n){
+try{
+let b=await Encoder.encode(url,null,n)
+if(n.type=='SVG'){
+return b.toString();
+}else{
+return `${bas_part}${b.toString('base64')}`
+}
+}catch(e){throw e}
+}
 
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 
@@ -470,27 +493,31 @@ let mata=ctx.request.body.fields;
 if(!mata){ctx.throw(400,'no body vars')}
 //tok_pack,items2,buyerId
 if(!mata.tok_pack  && !mata.buyerId){ctx.throw(400,'Not enough data provided to be processed.')}
-let {tok_pack,buyerId}=mata;
+let {tok_pack,buyerId,items2}=mata;let src4=null;let mres2;
 try{
 var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfang',tok_pack,smin]);
 	//var src4=qr.toDataURL(mres.rows[0].addr,4);
 	console.log('src4: ','src4')
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
-	console.log('mres.rows[0].addr: ',mres.rows[0].addr)
-var fid=qr.toDataURL(mres.rows[0].addr,4)
-console.log('src5: ',fid)
-ctx.body={body:mata,result:mres.rows[0],src4:fid,type:"alt",prod:is_devel(true)}
+console.log('mres.rows[0].addr: ', mres.rows[0].addr)
+try{
+//src4=await dor_b64(`${mres.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${tok_pack}%20tokens`,ob64)
+src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
+}catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
+	
+ctx.body={body:mata,result:mres.rows[0],src4,type:"alt",prod:is_devel(true)}
 }else{
 if(is_devel(true)){
 
 try{
-let resw=await db.query(`insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok)
-values($1,$2,$3,$4,$5) returning addr,bt_pck_tok,bt_inv_id`,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack])
-console.log('resw.rows[0].addr: ',resw.rows[0].addr)
-var fi=qr.toDataURL(resw.rows[0].addr,4)
-console.log('src5: ',fi)
-ctx.body={body:mata,result:resw.rows[0],src4:fi,type:"neu",prod:false}
+mres2=await db.query(vstr,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack])
+console.log('resw.rows[0].addr: ',mres2.rows[0].addr)
+try{
+//src4=await dor_b64(`${mres2.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${mres2.rows[0].bt_pck_tok}%20tokens`,ob64)
+src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+}catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
+ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:false}
 }catch(e){ctx.throw(400,e)}
 }else{
 
@@ -505,16 +532,18 @@ let data5={type:"hot_wallet",hot_wallet:real_address,cold_storage:cold_wallet_ad
 let ops5={url:s6,method:'post',json:true,body:data5};
 try{
 var ewq2=await rkw(ops5);
+var {invoice,address,payment_code}=ewq2.body;
 console.log('ewq status code: ',ewq2.resp.statusCode);
 console.log('ewq body: ',ewq2.body)
 }catch(e){console.log('error in request.js: ',e);ctx.throw(404,e.message)}
 try{
-var rs3=await db.query(`insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok)
-values($1,$2,$3,$4,$5) returning addr, bt_pck_tok,bt_inv_id`,
-[ewq2.body.invoice,ewq2.body.address,ewq2.body.payment_code,buyerId,tok_pack])
-//var src6=qr.toDataURL(rs3.rows[0].addr)
+mres2=await db.query(vstr,[invoice,address,payment_code,buyerId,tok_pack])
 }catch(e){ctx.throw(400,e)}
-ctx.body={body:mata,result:rs3.rows[0],src4:'src6',type:"neu",prod:true}
+try{
+//src4=await dor_b64(mres2.rows[0].addr,ob64)
+src4=await dor_64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+}catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
+ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:true}
 }
 }
 
