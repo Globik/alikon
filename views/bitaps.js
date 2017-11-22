@@ -25,8 +25,9 @@ return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 <div class="inp"><input id="bitsend" name="submit" type="submit" value="go to pay"></div>
 </form>
 </section>
-<img id="testimg" src=""/>
-<div id="SVGQR"></div>
+<div id="qrcont">
+<a id="qrlink" href=""><img id="testimg" src=""/></a>
+</div><div id="qraddr"></div>
 ${devi()?'<br><button onclick="dev_bitaps_cb();">devel_bitaps_cb</button><br>':''}
 <output id="ssout"></output>
 <script>
@@ -93,9 +94,13 @@ btoki=md.result.bt_pck_tok;
 console.log('btoki: ',btoki)
 superbtc=org_btc_price(btoki);
 if(superbtc){supersatoshi=superbtc*100000000;}
+if(md.src4){
+qrlink.href="bitcoin:"+md.result.addr+"?amount="+md.body.items2+"&label="+md.body.buyerId+"&message=Purchase%20"+md.body.tok_pack+"%20tokens";
+console.error('qrlink.href: ',qrlink.href);
 testimg.src=md.src4;
+qraddr.textContent=qrlink.href;
 //testimg.style.width="100%";
-
+}
 }
 
 }
