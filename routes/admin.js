@@ -4,6 +4,9 @@ const bodyParser=require('koa-body');
 const Router=require('koa-router');
 const co=require('co');
 const fs=require('fs');
+const util=require('util');
+const readf=util.promisify(fs.readFile);
+
 const cfs=require('../libs/await-fs.js');
 const path=require('path');
 const moment=require('moment');
@@ -27,8 +30,8 @@ bpclient.on('error',err=>console.log(err));
 bpclient.on('ready',()=>{console.log('bitpay ready')})
 
 var admin=new Router();
-admin.get('/dashboard', authed, ctx=>{
-ctx.body=ctx.render('admin_dashboard',{});
+admin.get('/dashboard', authed,async ctx=>{
+ctx.body=await ctx.render('admin_dashboard',{});
 })
 
 /* **************************************************
@@ -72,9 +75,21 @@ ctx.body={id:invoice.id, messy:binv};
 END BITPAY PART
 ****************************** */
 
-
-
-//boss
+/* *********************************
+ADMIN_BITAPS_API
+******************************** */
+admin.get("/dashboard/admin_bitaps",authed,async ctx=>{
+ctx.body=await ctx.render('admin_bitaps',{})
+})
+admin.post('/api/payment_system',authed,async ctx=>{
+let {fn}=ctx.request.body,m,d;
+if(!fn){ctx.throw(400,"No fname")}
+try{
+d=await readf(`./config/${fn}.json`,'utf8')
+m=JSON.parse(d)
+}catch(e){ctx.throw(400,e)}
+ctx.body={info:ctx.request.body,m}
+})
 
 admin.get('/dashboard/banners', authed, async ctx=>{
 let db=ctx.db;
