@@ -3,11 +3,11 @@ const sluger=require('limax');
 const bodyParser=require('koa-body');
 const Router=require('koa-router');
 const co=require('co');
-const fs=require('fs');
-const util=require('util');
-const readf=util.promisify(fs.readFile);
+//const fs=require('fs');
+//const util=require('util');
+const {readf,exists,stat,mkdir}=require('../libs/await-fs.js');
 
-const cfs=require('../libs/await-fs.js');
+//const cfs=require('../libs/await-fs.js');//cfs
 const path=require('path');
 const moment=require('moment');
 //var pool=require('../app4.js');

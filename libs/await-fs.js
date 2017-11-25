@@ -1,16 +1,6 @@
-const fs=require('fs');
-const ab=['access','rename','ftruncate','chown','lchown','cmod','fchmod','stat','lstat','fstat','link','symlink',
-		'readlink','realpath','unlink','rmdir','readdir','close','open','utimes',
-		'futimes','fsync','write','read','readFile','writeFile','appendFile','mkdir','mkdtemp']
-// fchown fdatasync mkdtemp rename truncate
-ab.forEach(name=>{
-if(!fs[name])return;
-exports[name]=(...n)=>{
-return new Promise((res,rej)=>{
-fs[name](...n,(er,d)=>{
-if(er)rej(er)
-if(d)res(d)
-})
-})
-}
-})
+const fs=require('fs'), util=require('util');
+const readf=util.promisify(fs.readFile);
+const exists=util.promisify(fs.exists);//use fs.stat() or fs.access() instead
+const mkdir=util.promisify(fs.mkdir);
+const stat=util.promisify(fs.stat);
+module.exports={readf,exists,mkdir,stat}

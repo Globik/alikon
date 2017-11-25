@@ -53,7 +53,7 @@ ${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">N
 <h1>Buy Tokens for Bitcoins!</h1>
 <h6>In a test mode</h6>
 <a href='/tipping/purchase_tokens'>Purchase tokens</a><hr>
-<a href='/tip/get_tokens'>bitaps</a><hr>
+<a href='/${n.bitaps_href?n.bitaps_href:'no_href'}'>bitaps</a><hr>
 <output id="wso"></output>
 <br><br>
 <a href="/demo/videostream">test videostream</a><br><br>

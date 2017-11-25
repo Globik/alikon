@@ -6,11 +6,13 @@ const bodyParser=require('koa-body');
 const Router=require('koa-router');
 const walletValidator=require('wallet-address-validator');//0.1.0
 //var moment=require('moment');
-const cofs=require('../libs/await-fs.js');
+const {readf}=require('../libs/await-fs.js');//cofs
 const fs=require('fs');
 const email_enc=require('../libs/email_enc.js');
 const {Encoder, Levels, Types}=require('../libs/qr-node.js');
 const rk=require('request');
+const conf_pay=require('../config/pay.json');
+
 /*
 var bitpay=require('bitpay-rest');
 var bitauth=require('bitauth');
@@ -26,6 +28,7 @@ const pub=new Router();
 
 //bpclient.on('ready',()=>{console.log('bitpay ready')})
 const limit=3;
+
 function rkw(obj){return new Promise(function(res,rej){
 rk(obj,function(err,resp,body){
 if(err)rej(err)
@@ -86,16 +89,6 @@ pub.get("/api/get_qrcode",async ctx=>{
 var grund="https://bitaps.com/api/";
 var padres="1DSPfSrZDJJXCKfVPmmP6ZEw45GLvWtSAk?amount=20.3&label=Vasja_Pupkin&message=order%20for%tokens";
 var s6=grund+"qrcode/"+padres;
-/*
-	function rkw(obj){
-	return new Promise(function(res,rej){
-	rk(obj,function(err,resp,body){
-	if(err)rej(err)
-	res({resp:resp,body:body})
-	})
-	})
-	}
-	*/
 	try{
 	var ewq=await rkw({method:'get',url:s6});
 console.log('ewq status code: ',ewq.resp.statusCode);
@@ -179,19 +172,7 @@ if(ctx.isAuthenticated()) ctx.redirect(ctx.session.dorthin || '/');
 let m=ctx.session.bmessage;
 ctx.body=await ctx.render('signup',{errmsg: m});
 delete ctx.session.bmessage;
-});
-/*
-pub.post('/login', function*(next) {
-var ctx = this;yield* passport.authenticate('local',function*(err, user,info) {
-	if (err) throw err;
-console.log('USER IN POST LOGIN : ', user);
-if (!user) {ctx.session.messaga=[info.message];
-	ctx.redirect('/login');} else {
-		ctx.session.messaga=null;
-		yield ctx.login(user);ctx.redirect(ctx.session.dorthin || '/');}}).call(this, next)}
-		);
-*/
-
+})
 pub.post('/login', (ctx,next)=>{
 if(ctx.isAuthenticated()){
 if(ctx.state.xhr){
@@ -225,35 +206,6 @@ return ctx.login(user)
 }
 )(ctx,next)
 })
-
-/*
-pub.post('/signup', function*(next){
-var ctx = this;yield* passport.authenticate('local-signup',function*(err, user,info) {
-	//console.log('ERR, USER, INFO: ',err.message,user,info);
-	
-	if (err) {
-		// 23514: new row for relation "busers" violates check constraint "busers_email_check"
-		// 23505: email is already in use
-		
-		ctx.throw(409,err);
-	}
-if (!user) {ctx.session.messaga=[info.message];
-			console.log('USER IN POST SIGN_UP: ', user);
-			ctx.body={"message":ctx.session.messaga};
-		   } 
-	else {yield ctx.login(user);
-		  console.log('USER IN POST SIGN_UP ELSE: ', user);
-		  ctx.session.messaga=null;
-//ctx.redirect(ctx.session.dorthin || '/');
-	ctx.body={"message": `You're almost finished.<br><br>
-We've sent an account activation email to you at <strong>${ctx.request.body.email}</strong>.
-Head over to your inbox and click on the "Activate My Account" button to validate your email address.`, redirect:"/"};	 
-		 }}).call(this, next)}
-		
-		)
-		*/
-
-
 pub.post('/signup', (ctx,next)=>{
 if(ctx.isAuthenticated()){
 if(ctx.state.xhr){
@@ -353,7 +305,6 @@ ctx.redirect('/error');
 })
 
 pub.get('/error', async ctx=>{
-	console.log('ctx.response_666: ',ctx.response);
 ctx.body=await ctx.render('error',{message:ctx.message, error:ctx.session.error});
 delete ctx.session.error;
 delete ctx.message;
@@ -448,11 +399,15 @@ pub.get('/labs',ctx=>{ctx.body='str';});
 
 pub.get('/tipping/purchase_tokens',async ctx=>{
 ctx.session.dorthin=ctx.path;
-ctx.body=await ctx.render('purchase',{/*buser:this.req.user*/});
+ctx.body=await ctx.render('purchase',{});
 })
-pub.get('/tip/get_tokens',async ctx=>{
+pub.get(`/${conf_pay.bitaps_href}`,async ctx=>{
 ctx.session.dorthin=ctx.path;
-ctx.body=await ctx.render('bitaps',{})
+//let payconf=ctx.payment;
+let packs=ctx.tok_pack;
+//console.log('CTX>PAYMENT: ',ctx.payment)
+//console.log('CTX>TOK_PACK: ',ctx.tok_pack)
+ctx.body=await ctx.render('bitaps',{packs})
 })
  var payment_code_dev='PMTvNPy4NYp9PKZ76BG1f4KAWR3LC95XQS1rWgYjG1NGEshAqge63';
  var invoice_dev='invNoStCHMT7SwUESos6oW9UhnFCQjJ6E6LwXWDCLBB5RYtMGpJYm';

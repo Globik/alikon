@@ -5,6 +5,7 @@ if(is_devel=="yes"){return true;}else{return false;}
 }
 const bitaps = n=>{
  const buser=n.user;
+	//console.log('n.user: ',n.user)
 return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 <head>${head.head({title:"Purchase Tokens"/*, js:["https://bitpay.com/bitpay.min.js"]*/})}</head>
 <body>
@@ -16,15 +17,9 @@ return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 <form id="payment2"  name="payment2" method="post" action="/tipping/get_invoice" enctype="multipart/form-data">
 <input type="hidden" id="busid" name="buyerId" value="${buser ? buser.id : ''}"/>
 <input type="hidden" id="isDevel" name="is_develop" value="${devi()}"/>
-
-<div class="inp"><input type="radio" name="items2" value="0.04" data-t_pack="100" onchange="set_price2(this);" checked/> 100 tokens for 0.04 BTC</div>
-<div class="inp"><input type="radio" name="items2" value="0.08" data-t_pack="200" onchange="set_price2(this);"/> 200 tokens for 0.08 BTC</div>
-<div class="inp"><input type="radio" name="items2" value="0.2" data-t_pack="500" onchange="set_price2(this);"/> 500 tokens for 0.2 BTC</div>
-<div class="inp"><input type="radio" name="items2" value="0.4" data-t_pack="1000" onchange="set_price2(this);"/> 1000 tokens for 0.4 BTC</div>
-
+${n.packs?get_packs(n.packs):'<b>no packs</b>'}
 <div class="inp"><input id="bitsend" name="submit" type="submit" value="go to pay"></div>
-</form>
-</section>
+</form></section>
 <div id="qrcont">
 <a id="qrlink" href=""><img id="testimg" src=""/></a>
 </div><div id="qraddr"></div>
@@ -187,3 +182,14 @@ ssout.innerHTML+='Congratulations! You have '+dss.items+' tokens. Your'+dss.bcam
 </body></html>`;
 }
 module.exports={bitaps}
+
+function get_packs(packs){
+let s='',b=" checked",c='';
+if (packs.packs){
+if(Array.isArray(packs.packs)){
+packs.packs.forEach(function(el,i){
+if(i==0){c=b}else{c=''}
+s+=`<div class="inp"><input type="radio" name="items2" value="${el.price}" data-t_pack="${el.p}" onchange="set_price2(this);"${c}/> ${el.p} tokens for ${el.price} BTC</div>`;
+})
+}
+}return s;}

@@ -1,4 +1,9 @@
 {
-"pays":[{"name":"bitaps","active":true,"prior":"first","develop":true,"active_addr":"myaddr_1","dop":"mob"},
-	   {"name":"bitpay","active":true,"prior":"second","develop":true,"active_addr":"my2","dop":"mbop"}]
+	"enabled":true,
+	"test":false,
+	"name":"bitaps",
+	"real_adr":false,
+	"cold_adr":false,
+	"hotadr_quota":60,
+	"cb_part":"bitaps/cb"
 }

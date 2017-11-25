@@ -1,0 +1,3 @@
+{"name":"bitaps","config":"payment_system","tok_btc":0.0004,"tok_satoshi":40000,"bitaps_href":"tip/get_tokens",
+ "packs":[{"p":100,"price":0.04},{"p":200,"price":0.08},{"p":500,"price":0.2},{"p":1000,"price":0.4}]
+}

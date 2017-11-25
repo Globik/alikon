@@ -9,8 +9,8 @@ const Koa=require('koa')
 const passport=require('koa-passport')
 const url=require('url')
 const koaBody=require('koa-body')
-const fs=require('co-fs');
-const fss=require('fs');
+//const fs=require('fs');
+
 const debug=require('debug')('k');
 const {websock}=require('./libs/websock.js')
 
@@ -50,10 +50,15 @@ const server = mediasoup.Server({logLevel:"debug",
 								rtcMaxPort:49999,
 								dtlsCertificateFile:"data/mycert.pem",
 								dtlsPrivateKeyFile:"data/mykey.pem"});
+
+const {readf}=require('./libs/await-fs.js');
+
 const {msg_handler} = require('./libs/mailer.js');
 const {script}=require('./libs/filter_script');
 const PgStore=require('./pg-sess.js')
 const configDB=require('./config/database.js')
+const conf_pay=require('./config/pay.json')
+
 //const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
 const database_url=configDB.pg_url;
 var dop_ssl='';
@@ -107,31 +112,18 @@ await next();
 }
 app.use(xhr());
 
-function readf(n){
-return new Promise((res,rej)=>{
-fss.readFile(n,'utf-8',(err,data)=>{
-if(err)rej(err)
-res(data)
-})
-})
-}
-/*
-(async()=>{
-try{var ww=await readf('app.json');
-	console.log('file ww: ',ww)
-   }catch(e){console.log(e)}
-})()
-*/
 var lasha=true;
 var mobject={};
+var payflag=true;
+var cachePay={};
 var locals={
-async showmodule(){try{var mn=await readf('app.json');
-	return mn;}catch(e){console.log('eeeeri: ',e);return e;}},
+async showmodule(){try{return await readf('app.json','utf8')}catch(e){console.log('eeeeri: ',e);return e;}},
 async  show_banners(){try{let m=await pool.query('select*from banners');console.log('SHOW BANNERS!!!!!!!');
 return m.rows;}catch(e){console.log(e);return e;}},
 async show_abuse_nots(){try{let m=await pool.query(`select abus_id from abuse where ab_type='neu'`);
 							console.log('MUUUUUU: ',m.rows);
-							return m;}catch(e){console.log(e);return e.name;}}
+							return m;}catch(e){console.log(e);return e.name;}},
+async get_pay_sys(){try{let d=await readf(`./config/${conf_pay.config}.json`,'utf8');return JSON.parse(d);}catch(e){throw e}}
 };
 //var inkognito=false;
 //var langsam_stop=false;
@@ -141,18 +133,30 @@ app.use(async (ctx, next)=>{
 	console.log('PATH: ',ctx.method,ctx.path,ctx.url)
 	console.log('RESPONSE_ME: ',ctx.response)
 ctx.state.filter_script=script;
+ctx.state.bitaps_href=conf_pay.bitaps_href;
 ctx.db=pool;
 ctx.boss=boss;
 var sa;
 if(lasha){
+try{
 sa=await locals.showmodule();
-console.log('SHOW MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+console.log('SHOW MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ',sa)
 sa=JSON.parse(sa);
+console.log('SA: ',sa)
 mobject.showmodule=sa;
 //mobject.webrtc_stream={inkognito:inkognito,langsam_stop:langsam_stop}
 lasha=false;
+}catch(e){console.log('err in lasha: ',e)}
 }
-
+if(payflag){
+try{
+let a=await locals.get_pay_sys();
+cachePay=a;
+payflag=false;
+}catch(e){throw e}
+}
+ctx.payment=cachePay;
+ctx.tok_pack=conf_pay;
 ctx.state.showmodule=mobject.showmodule;
 ctx.state.showmodulecache=lasha;
 //ctx.state.langsam_stop=langsam_stop;
@@ -165,10 +169,10 @@ ctx.state.abuse_nots=await locals.show_abuse_nots();
 console.log('ABUSE_NOTS!: ',ctx.state.abuse_nots.rowCount,' : ',ctx.state.abuse_nots.rows)
 	}
 	}
-if(ctx.path=='/module_cache'){
-lasha=true;}
+if(ctx.path=='/module_cache'){lasha=true;}
 await next();
-});
+})
+
 function heartbeat_sse(){
 setInterval(function(){
 sse.publish('ch_log_rooms',{data:"heart"});
