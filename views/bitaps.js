@@ -52,8 +52,8 @@ if(ev.target.buyerId.value.length==0){ payoutinfo2.innerHTML='Go <a href="/login
 payoutinfo2.innerHTML=ev.target.method+'<br>'+ev.target.action+'<br>'+ev.target.items2.value+'<br>'+tokens_packet;
 //ev.target.submit.disabled=true;
 //setTimeout(function(){ev.target.submit.disabled=false;},5000)
-var data=new FormData(document.forms.namedItem("payment2"));
-
+//var data=new FormData(document.forms.namedItem("payment2"));
+let data=new FormData(ev.target);
 data.append("tok_pack",tokens_packet);
 var xhr=new XMLHttpRequest();
 xhr.open(ev.target.method,ev.target.action,true);
@@ -133,6 +133,7 @@ d.payout_service_fee=0.0002;
 let xhr=new XMLHttpRequest();
 xhr.open('post','/bitaps/cb/'+busid.value);
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
 

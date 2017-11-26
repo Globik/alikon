@@ -79,7 +79,8 @@ END BITPAY PART
 ADMIN_BITAPS_API
 ******************************** */
 admin.get("/dashboard/admin_bitaps",authed,async ctx=>{
-ctx.body=await ctx.render('admin_bitaps',{})
+let payment=ctx.payment;
+ctx.body=await ctx.render('admin_bitaps',{payment})
 })
 admin.post('/api/payment_system',authed,async ctx=>{
 let {fn}=ctx.request.body,m,d;
@@ -103,7 +104,9 @@ console.log('result: ',result);
 ctx.body=await ctx.render('adm_dsh_banners',{banners:result});
 })
 
-
+admin.post('/admin/conf_bitaps_payment',auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
+ctx.body={info:ctx.request.body.fields}
+})
 admin.post('/banner/set_banner', authed, async ctx=>{
 let boss=ctx.boss;
 var jobid_en=await boss.publish('banner_enable',{message:{ban_id:ban_id,href,src,title,type}},{startIn:ctx.request.body.start});

@@ -58,6 +58,7 @@ const {script}=require('./libs/filter_script');
 const PgStore=require('./pg-sess.js')
 const configDB=require('./config/database.js')
 const conf_pay=require('./config/pay.json')
+const mainmenu=require('./app.json')
 
 //const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
 const database_url=configDB.pg_url;
@@ -107,17 +108,13 @@ app.use(passport.session())
 function xhr(){
 return async function xhr(ctx,next){
 ctx.state.xhr=(ctx.request.get('X-Requested-With')==='XMLHttpRequest')
-await next();
+await next()
 }
 }
-app.use(xhr());
-
-var lasha=true;
-var mobject={};
+app.use(xhr())
 var payflag=true;
 var cachePay={};
 var locals={
-async showmodule(){try{return await readf('app.json','utf8')}catch(e){console.log('eeeeri: ',e);return e;}},
 async  show_banners(){try{let m=await pool.query('select*from banners');console.log('SHOW BANNERS!!!!!!!');
 return m.rows;}catch(e){console.log(e);return e;}},
 async show_abuse_nots(){try{let m=await pool.query(`select abus_id from abuse where ab_type='neu'`);
@@ -128,6 +125,7 @@ async get_pay_sys(){try{let d=await readf(`./config/${conf_pay.config}.json`,'ut
 //var inkognito=false;
 //var langsam_stop=false;
 app.use(async (ctx, next)=>{
+	if(ctx.path=='/favicon.ico'){console.log('*************************************************************skiping favicon.ico');return;}
 //if(ctx.path==='/log_rooms')return;
 	//console.log('REQUEST: ',ctx.req)
 	console.log('PATH: ',ctx.method,ctx.path,ctx.url)
@@ -136,18 +134,7 @@ ctx.state.filter_script=script;
 ctx.state.bitaps_href=conf_pay.bitaps_href;
 ctx.db=pool;
 ctx.boss=boss;
-var sa;
-if(lasha){
-try{
-sa=await locals.showmodule();
-console.log('SHOW MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: ',sa)
-sa=JSON.parse(sa);
-console.log('SA: ',sa)
-mobject.showmodule=sa;
-//mobject.webrtc_stream={inkognito:inkognito,langsam_stop:langsam_stop}
-lasha=false;
-}catch(e){console.log('err in lasha: ',e)}
-}
+	
 if(payflag){
 try{
 let a=await locals.get_pay_sys();
@@ -157,8 +144,8 @@ payflag=false;
 }
 ctx.payment=cachePay;
 ctx.tok_pack=conf_pay;
-ctx.state.showmodule=mobject.showmodule;
-ctx.state.showmodulecache=lasha;
+ctx.state.showmodule=mainmenu;
+ctx.state.showmodulecache='lasha';
 //ctx.state.langsam_stop=langsam_stop;
 if(ctx.path !=='/log_rooms' && ctx.method !=='POST'){
 ctx.state.banner=await locals.show_banners();
@@ -169,7 +156,7 @@ ctx.state.abuse_nots=await locals.show_abuse_nots();
 console.log('ABUSE_NOTS!: ',ctx.state.abuse_nots.rowCount,' : ',ctx.state.abuse_nots.rows)
 	}
 	}
-if(ctx.path=='/module_cache'){lasha=true;}
+if(ctx.path=='/admin/uncache_payment'){if(ctx.state.user && ctx.state.user.role==='superadmin'){payflag=true;}}
 await next();
 })
 
@@ -267,30 +254,20 @@ return (Math.random()*16 | 0).toString(16);
 */
 // from command line scrot -d 10 =take a screenshot
 	
-//wss.on('connection', ws=>{setImmediate(()=>{console.log('websocket connected: ', ws.upgradeReq.url);
-//ws.on('message', message=>{})
-// })})
+
 	/*
 https.createServer(ssl_options,app.callback()).listen(process.env.PORT || 5000, (err) => {
 //if (err) { throw new Error(err);}
 console.log('Listening on https//localhost: 5000');
 });
 	*/
-// });
 console.log('soll on port 5000');
 })
 pool.on('connect', client=>{setImmediate(()=>{console.log('pool connected')})});
-pool.on('error', (err, client)=>{setImmediate(()=>{console.log('error in pool: ', err.message)})});
+pool.on('error', (err, client)=>{setImmediate(()=>{console.log('error in pool: ', err.message)})})
 pool.on('acquire', client=>{setImmediate(()=>{console.log('pool acquired ')})})
-/*var dop_ssl='';
-if(process.env.DEVELOPMENT ==="yes"){
-	//dop_ssl="?ssl=true";
-	dop_ssl="";
-}else{dop_ssl="?ssl=true"}
-*/
 
-
-var ps=new PS(database_url+dop_ssl);
+const ps=new PS(database_url+dop_ssl);
 
 ps.addChannel('validate', msg_handler);
 ps.addChannel('reset', msg_handler);
@@ -336,12 +313,10 @@ sse.publish('ch_log_rooms','bitaps_cb', bitaps_msg)
   type: 'paid' }
   */
 })
-//--trace-warnings
 
 boss.start().then(ready).catch(err=>console.log(err));
 
 function ready(){
-	
 boss.subscribe('banner_enable', (job,done)=>{
 console.log(job.name,job.id,job.data);
 (async()=>{

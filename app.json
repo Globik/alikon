@@ -1,8 +1,4 @@
 {
-  "name": "Koa.js Getting Started",
-  "description": "A barebones Node.js app using Koa",
-  "repository": "https://github.com/heroku/node-js-getting-started",
-  "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "mainmenu": [{"name":"home","path":"/"},{"name":"articles","path":"/articles"},
   {"name":"labs","path":"/labs"}],
 "profiler":{
@@ -30,6 +26,5 @@
 },
 "podval":{"was":"js","type":"main","href":"/js/main-podval.js","extra":
 [{"href":"/js/podval.js","type":"admin_dashboard_mongodb"}]
-
 }
 }
