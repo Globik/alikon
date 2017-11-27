@@ -1,5 +1,7 @@
-//admin_main_menu.js
-var admin_main_menu=n=>`<div id="admin_main_menu">
+const file='admin_main_menu.js',gf=`<!-- ${file} -->`;
+var admin_main_menu=n=>{
+	let {abuse_nots}=n;
+	return `${gf}<div id="admin_main_menu">
 <select id="operamini-menu-selector" dropdown=true onchange="showname1(this.value)">
 <option value="">menu</option>
 <option value="/">home</option>
@@ -8,7 +10,7 @@ var admin_main_menu=n=>`<div id="admin_main_menu">
 <option value="/dashboard">dashboard</option>
 </select>
 &nbsp;notes:&nbsp;<span onclick="fetch_abuse_popup();" style="background:yellow;">
-${n.abuse_nots?(n.abuse_nots.rowCount==0?'':n.abuse_nots.rowCount):''}</span> 
+${abuse_nots?(abuse_nots.rowCount==0?'':abuse_nots.rowCount):''}</span> 
 </div>
 <a href="#." class="overlay" id="abuse_popup"></a>
 <output id="abuse_id" class="popi">
@@ -18,8 +20,7 @@ ${n.abuse_nots?(n.abuse_nots.rowCount==0?'':n.abuse_nots.rowCount):''}</span>
 <div class="podsmall"><small class="centstr" onclick="xhr_abuse_list();">else</small></div>
 <button onclick="insert_part();">insert part</button>
 </output>
-<script src="/js/abuse_notes.js"></script>
-`;
+<script src="/js/abuse_notes.js"></script>${gf}`;}
 module.exports={admin_main_menu};
 /*
 '2017-08-15 14:37:08.784881'

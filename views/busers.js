@@ -13,14 +13,13 @@ const head=require('./head'),
     footer=require('./footer'),
 	login_proto=require('./login_proto.js');
 const {js_help}=require('../libs/helper.js');
-var warnig=false;	  
-var haupt_ban=false;
+var warnig=false,haupt_ban=false;
 
 const busers = n=>{
 let {model,showmodule:{mainmenu,profiler}}=n;
 const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><!-- busers.js -->
-<head>${head.head({title:`${model !==null ?model.name:'no user'}. Live video.`,
+<head>${head.head({title:model.name?model.name:'no_name',
 csslink:"/css/main2.css"/*,js:[""]*/,cssl:["/css/video_chat.css","/css/login2.css"],luser:buser})}
 <style>
 video::cue{
@@ -36,10 +35,10 @@ background:red;
 video::cue(v[voice="fred"]){color:blue;background:red;border:5px solid green;border-radius:5px;}
 </style>
 </head>
-<body>${(warnig ? `<div id="warnig">Warnig</div>`:``)}
+<body>${warnig?'<div id="warnig">Warnig</div>':''}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
-${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`:'')}
+${haupt_ban?'<div id="haupt-banner"><div id="real-ban">Banner</div></div>':''}
+${buser && buser.role=='superadmin'?admin_main_menu.admin_main_menu(n):''}
 
 <main id="pagewrap"> 
 <div id="media-header">
@@ -60,7 +59,7 @@ data-owneroffline="${onowneroff}" data-usoff="${usoff}" data-banned="${model?(mo
 </video>
 </div>
 <div id="undervideo">
-${n.owner ?'<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button>${!n.owner ?'<button class="start" onclick="tip();">send tip</button><button class="start" onclick="go_private();">private room</button>':''}
+${n.owner?'<button class="start" id="video_starter" onclick="get_vid(this);">start video</button>':''}<button id="connect_starter" class="start" onclick="do_conn(this);">connect</button>${!n.owner ?'<button class="start" onclick="tip();">send tip</button><button class="start" onclick="go_private();">private room</button>':''}
 </div>
 </div>
 

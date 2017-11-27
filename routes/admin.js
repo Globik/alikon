@@ -5,7 +5,7 @@ const Router=require('koa-router');
 const co=require('co');
 //const fs=require('fs');
 //const util=require('util');
-const {readf,exists,stat,mkdir}=require('../libs/await-fs.js');
+const {readf,exists,stat,mkdir,writeFile}=require('../libs/await-fs.js');
 
 //const cfs=require('../libs/await-fs.js');//cfs
 const path=require('path');
@@ -103,10 +103,26 @@ console.log('result: ',result);
 }catch(e){console.log(e);}
 ctx.body=await ctx.render('adm_dsh_banners',{banners:result});
 })
-
+/* BITAPS */
 admin.post('/admin/conf_bitaps_payment',auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
+//console.log('ctx.tok_pack: ',ctx.tok_pack)
+if(!ctx.tok_pack){ctx.throw(404,'no config file parameter found!')}
+let {config}=ctx.tok_pack;
+//console.log('fields: ',ctx.request.body.fields)
+let fi=ctx.request.body.fields;
+try{
+let fi2=JSON.stringify(fi);
+await writeFile(path.resolve(`./config/${config}.json`),fi2,'utf8');
+}catch(e){ctx.throw(400,e);}
 ctx.body={info:ctx.request.body.fields}
 })
+
+admin.post('/admin/uncache_what',auth,async ctx=>{
+ctx.body={info:ctx.request.body}
+})
+
+/* END BITAPS */
+
 admin.post('/banner/set_banner', authed, async ctx=>{
 let boss=ctx.boss;
 var jobid_en=await boss.publish('banner_enable',{message:{ban_id:ban_id,href,src,title,type}},{startIn:ctx.request.body.start});

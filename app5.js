@@ -122,41 +122,40 @@ async show_abuse_nots(){try{let m=await pool.query(`select abus_id from abuse wh
 							return m;}catch(e){console.log(e);return e.name;}},
 async get_pay_sys(){try{let d=await readf(`./config/${conf_pay.config}.json`,'utf8');return JSON.parse(d);}catch(e){throw e}}
 };
-//var inkognito=false;
-//var langsam_stop=false;
+
 app.use(async (ctx, next)=>{
-	if(ctx.path=='/favicon.ico'){console.log('*************************************************************skiping favicon.ico');return;}
-//if(ctx.path==='/log_rooms')return;
-	//console.log('REQUEST: ',ctx.req)
-	console.log('PATH: ',ctx.method,ctx.path,ctx.url)
-	console.log('RESPONSE_ME: ',ctx.response)
+//if(ctx.path=='/favicon.ico'){console.log('**skiping favicon.ico');return;}
+console.log('PATH: ',ctx.method,ctx.path,ctx.url)
 ctx.state.filter_script=script;
-ctx.state.bitaps_href=conf_pay.bitaps_href;
 ctx.db=pool;
 ctx.boss=boss;
-	
-if(payflag){
-try{
-let a=await locals.get_pay_sys();
-cachePay=a;
-payflag=false;
-}catch(e){throw e}
-}
 ctx.payment=cachePay;
 ctx.tok_pack=conf_pay;
 ctx.state.showmodule=mainmenu;
 ctx.state.showmodulecache='lasha';
-//ctx.state.langsam_stop=langsam_stop;
+ctx.state.bitaps_href=conf_pay.bitaps_href;
+if(payflag){
+try{
+let a=await locals.get_pay_sys()
+cachePay=a;
+payflag=false;
+}catch(e){console.log('err in payflag',e)}
+}
 if(ctx.path !=='/log_rooms' && ctx.method !=='POST'){
-ctx.state.banner=await locals.show_banners();
-console.log('BUT WHY????????????????????: path:',ctx.method,' ',ctx.path,' ',ctx.state.xhr);
-	//console.log('HERE CTX>STATE>USER : ',ctx.state.user)
-	if(ctx.state.user && ctx.state.user.role==='superadmin'){
+ctx.state.banner=await locals.show_banners()
+console.log('path:',ctx.method,' ',ctx.path,' ',ctx.state.xhr)
+console.log('NOW!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+if(ctx.state.user && ctx.state.user.role==='superadmin'){
 ctx.state.abuse_nots=await locals.show_abuse_nots();	
 console.log('ABUSE_NOTS!: ',ctx.state.abuse_nots.rowCount,' : ',ctx.state.abuse_nots.rows)
 	}
 	}
-if(ctx.path=='/admin/uncache_payment'){if(ctx.state.user && ctx.state.user.role==='superadmin'){payflag=true;}}
+if(ctx.path=='/admin/uncache_what'){
+if(ctx.state.user && ctx.state.user.role==='superadmin'){
+let {type="no"}=ctx.request.body;
+if(type=="pay_sys_reload")payflag=true;
+}
+}
 await next();
 })
 

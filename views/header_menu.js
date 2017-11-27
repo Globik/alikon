@@ -1,13 +1,7 @@
 //header_menu.js
 var sign_up=false;
 const header_menu=n=>{
-//console.log('N.USER: ',n.buser)
-	return `<!-- header_menu.js -->
-	<!-- <ul id="menu"> 
-	<li><a href="/">home</a>
-    <li><a href="/articles">articles</a>
-    <li><a href="/labs">labs</a>
-    </ul> -->
+return `<!-- header_menu.js -->
 ${getMenu(n)} 
 <!-- <label style="position:absolute;right:3.2em;top:0.1em;background:yellow;">log in or sign up</label> -->
 <label id="lb-menu-all" class="lb-menu-all" onclick="dowas1();">
@@ -79,33 +73,23 @@ el[i].classList.add(clas);}else{el[i].classList.remove(clas);}
 }}</script><!-- end of header_menu.js -->`;}
 module.exports={header_menu};
 function getMenu(n){
-	var sr="";
-	var {mainmenu}=n;
-	//var mainmenu=n.mainmenu;
-	//console.log('mainmenu:',mainmenu);
-	sr+=`<ul id="menu">`;
-	for(var {name,path} of mainmenu){sr+=`<li><a href="${path}">${name}</a>`;}
-	sr+=`</ul>`;
-	return sr;
+let {mainmenu}=n,s='<ul id="menu">';
+for(let {name,path} of mainmenu){s+=`<li><a href="${path}">${name}</a>`;}
+s+='</ul>';
+return s;
 }
-function getProfileMenu(n){
-	var {buser,mainmenu,profiler}=n;
-//console.log('BUSERttttttttttttttttt: ',n.buser,profiler)
-	var {loginname,loginpath,logoutname,logoutpath,profilername,profilerpath,signupname,signupshow}=profiler;
-	var su="";
-	su+=`<ul id="miniMenu" class="">`;
-for(var {name,path} of mainmenu){su+=`<li><div class="znak-svg">pic</div><a href="${path}">${name}</a>`;}
-su+=`${(buser ? `<li><div class="znak-svg">pic</div><a href="${profilerpath}">${profilername}</a>`:``)}
-${buser ? `<li><div class="znak-svg">pic</div><a href="${logoutpath}" id="login_pop">${logoutname}</a>`:`<li><div class="znak-svg">pic</div><a href="${loginpath}">${loginname}</a></li>`}
-${signupshow ? `${fuckme(n)}`:''}`;
-	su+="</ul>";return su;}
 
+function getProfileMenu(n){
+let {buser,mainmenu,profiler}=n,{loginname,loginpath,logoutname,logoutpath,profilername,profilerpath,signupname,signupshow}=profiler;
+let s='<ul id="miniMenu" class="">';
+for(var {name,path} of mainmenu){s+=`<li><div class="znak-svg">pic</div><a href="${path}">${name}</a>`;}
+s+=`${(buser ? `<li><div class="znak-svg">pic</div><a href="${profilerpath}">${profilername}</a>`:'')}
+${buser ? `<li><div class="znak-svg">pic</div><a href="${logoutpath}" id="login_pop">${logoutname}</a>`:`<li>
+<div class="znak-svg">pic</div><a href="${loginpath}">${loginname}</a></li>`}${signupshow?fuckme(n):''}`;
+s+="</ul>";return s;}
 function fuckme(n){
-	let s=``;
-	//console.log('BUSERRRRRR: ',n.buser);
-	if(n.buser){s+=``;}else{
-s+=`<li><div class="znak-svg">pic</div>
-<a href="/signup">sign up</a>`;
-	}
-	return s;
+let s='';
+if(n.buser){s+=''}else{
+s+=`<li><div class="znak-svg">pic</div><a href="/signup">sign up</a>`;
 }
+return s;}

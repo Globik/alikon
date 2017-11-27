@@ -440,7 +440,8 @@ return `${bas_part}${b.toString('base64')}`
 }
 
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
-
+if(!ctx.payment && !ctx.payment.enabled){ctx.throw(400,'no ctx.payment provided!')}
+if(ctx.payment.enabled=="false"){ctx.throw(404,'Service temporary not available. Please try later!')}
 let db=ctx.db;
 let smin='20';
 if(ctx.state.xhr){

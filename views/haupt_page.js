@@ -1,29 +1,23 @@
-//haupt_page.js
-const head=require('./head'),
-    header_menu=require('./header_menu'),
-	admin_main_menu=require('./admin_main_menu'),
-    footer=require('./footer');
-var warnig=false;	  
-var haupt_ban=false;
+const file='haupt_page.js',endf=`<!-- ${file} -->`;
+const head=require('./head'),header_menu=require('./header_menu'),
+	 admin_main_menu=require('./admin_main_menu'),footer=require('./footer');
+var warnig=false,haupt_ban=false;
 
-const haupt_page= n=>{
+const haupt_page=n=>{
 const {lusers,showmodule:{mainmenu,profiler}}=n;
-	//console.log('BUSER: ',buser);
-const buser=n.user;
-	//console.log('N>USER: ',n.user)
-const roomers=n.roomers;
-return `<!DOCTYPE html><html lang="en"><!-- haupt_pages.js -->
-<head>${head.head({title:"home", meta:`${get_meta()}`,csslink:"/css/main2.css",luser:buser})}</head>
-<body>${(warnig ? `<div id="warnig">Warnig</div>`:'')}
+const buser=n.user,roomers=n.roomers;
+return `<!DOCTYPE html><html lang="en">
+<head>${head.head({title:"home", meta:get_meta(),csslink:"/css/main2.css",luser:buser})}</head>
+<body>${warnig?'<div id="warnig">Warnig</div>':''}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
-${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : '')}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu(n)}`:'')}
+${haupt_ban ?'<div id="haupt-banner"><div id="real-ban">Banner</div></div>':''}
+${buser && buser.role=='superadmin'?admin_main_menu.admin_main_menu(n):''}
+${endf}
 <main id="pagewrap"> 
-${n.m ? n.m.msg : ''}<br><br>
-
-<h1>Сайт в разработке!</h1>
-	${(buser ? buser.name : "Guest<br>")}
-	${(buser ? `<a href="/logout">logout</a>` :`<a href="/login">login</a>`)}
+${n.m?n.m.msg:''}<br><br>
+<h1>Сайт в разработке! Under construction!</h1>
+${buser?buser.name:'Guest<br>'}
+${buser?'<a href="/logout">logout</a>':'<a href="/login">login</a>'}
 <br>Or you can log in with <a href="/auth/facebook">facebook</a> or <a href="/auth/vkontakte">vk</a>
 
 <!-- <div>Some div with user's personals fades ${douser(buser)}</div> -->
@@ -33,10 +27,6 @@ ${n.banner[0].src}
 </div> -->
 <!-- <button onclick="set_banner();">set banner</button> -->
 <script>${clearCache()}</script>
-
-<img src="/kl/pic.png"/>
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-
 <!-- end reklama -->
 <!-- <output id="out4"></output>
 <output id="out5"></output> -->
@@ -186,6 +176,7 @@ xhr.send();
 }
 </script>
 </main>
+${endf}
 <footer id="footer">${footer.footer({})}</footer></body></html>`;}
 
 module.exports={haupt_page};
@@ -269,9 +260,7 @@ xhr.onerror=function(e){alert(this.response + e)}
 xhr.send(JSON.stringify(data));
 }
 	`;
-	
-	
-	return s;}
+return s;}
 function get_meta(){
 let s='';
 	s+=`

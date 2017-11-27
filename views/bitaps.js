@@ -1,11 +1,8 @@
 const head=require('./head'),header_menu=require('./header_menu');
 const is_devel=process.env.DEVELOPMENT;
-function devi(){
-if(is_devel=="yes"){return true;}else{return false;}
-}
-const bitaps = n=>{
+const devi=()=>is_devel=="yes"?true:false
+const bitaps=n=>{
  const buser=n.user;
-	//console.log('n.user: ',n.user)
 return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 <head>${head.head({title:"Purchase Tokens"/*, js:["https://bitpay.com/bitpay.min.js"]*/})}</head>
 <body>
@@ -15,7 +12,7 @@ return `<!DOCTYPE html><html lang="en"><!-- bitaps.js -->
 <h4>Recommended amount of tokens:</h4>
 <output id="payoutinfo2"></output>
 <form id="payment2"  name="payment2" method="post" action="/tipping/get_invoice" enctype="multipart/form-data">
-<input type="hidden" id="busid" name="buyerId" value="${buser ? buser.id : ''}"/>
+<input type="hidden" id="busid" name="buyerId" value="${buser?buser.id:''}"/>
 <input type="hidden" id="isDevel" name="is_develop" value="${devi()}"/>
 ${n.packs?get_packs(n.packs):'<b>no packs</b>'}
 <div class="inp"><input id="bitsend" name="submit" type="submit" value="go to pay"></div>
@@ -179,11 +176,8 @@ ssout.innerHTML+='Congratulations! You have '+dss.items+' tokens. Your'+dss.bcam
 }
 }
 </script>
-
-</body></html>`;
-}
+</body></html><!-- bitaps.js -->`;}
 module.exports={bitaps}
-
 function get_packs(packs){
 let s='',b=" checked",c='';
 if (packs.packs){
