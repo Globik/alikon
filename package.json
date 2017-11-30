@@ -32,15 +32,15 @@
     "pg-format": "1.0.3",
     "pg-native": "2.0.1",
     "promised-retry": "0.2.3",
-    "qrcode-js":"0.0.2",
+    "qrcode-js": "0.0.2",
     "reloadjs": "0.0.2",
+    "request": "2.83.0",
     "secp256k1": "^3.3.0",
     "shortid": "2.2.6",
-"sse-broadcast":"0.4.1",
+    "sse-broadcast": "0.4.1",
     "uuid-validate": "0.0.2",
     "wallet-address-validator": "0.1.0",
-    "ws": "3.2.0",
-"request":"2.83.0"
+    "ws": "3.2.0"
   },
   "engines": {
     "node": "9.0.0",
