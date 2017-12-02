@@ -2,18 +2,11 @@
 const sluger=require('limax');
 const bodyParser=require('koa-body');
 const Router=require('koa-router');
-const co=require('co');
-//const fs=require('fs');
-//const util=require('util');
+const {encrypt,decrypt}=require('../libs/aes256gcm.js')(Buffer.from(process.env.BITAPS_KEY,'base64'))
 const {readf,exists,stat,mkdir,writeFile}=require('../libs/await-fs.js');
-
-//const cfs=require('../libs/await-fs.js');//cfs
 const path=require('path');
-const moment=require('moment');
-//var pool=require('../app4.js');
-//boss.publish('workbanner',{message:'ok banner start'},{startIn:'6 seconds'}).then(j=>console.log(j));
-//var diskspace=require('diskspace');
-//pool.query('select from busers',function(er,r){console.log(er);console.log(r);})
+//const moment=require('moment');
+
 
 const bitpay=require('bitpay-rest');
 const bitauth=require('bitauth');
@@ -30,6 +23,14 @@ bpclient.on('error',err=>console.log(err));
 bpclient.on('ready',()=>{console.log('bitpay ready')})
 
 var admin=new Router();
+
+function is_devel(b){
+if(process.env.DEVELOPMENT=="yes"){
+	if(!b){return false;}
+	return true;
+}else{return false;}
+}
+
 admin.get('/dashboard', authed,async ctx=>{
 ctx.body=await ctx.render('admin_dashboard',{});
 })
@@ -119,6 +120,32 @@ ctx.body={info:ctx.request.body.fields}
 
 admin.post('/admin/uncache_what',auth,async ctx=>{
 ctx.body={info:ctx.request.body}
+})
+
+var test_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";// 34 
+var test_invoice="invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V";// 53 
+var test_redeem_code="BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le";// 53
+
+admin.post('/api/create_redeem_code',auth,async ctx=>{
+let si='insert into reedem(red_c,red_adr, red_inv) values($1,$2,$3) returning *'
+let db=ctx.db;let decred,encred,dbdec;
+let {parol}=ctx.request.body;
+if(!parol){ctx.throw(400,"No parol provided.")}
+if(is_devel(true)){
+console.log('DEVELOPING?')
+try{
+encred=encrypt(test_redeem_code,parol)
+//red_c red_adr red_inv
+dbdec=await db.query(si,[encred,test_address,test_invoice])
+if(dbdec.rows[0] && dbdec.rows[0].red_c){
+decred=decrypt(dbdec.rows[0].red_c,parol)
+
+dbdec.rows[0].red_c=decred
+}
+}catch(e){ctx.throw(400,e)}
+}else{console.log("It's PRODUCTION!")}
+	
+ctx.body={"info":"OK",encred, dbdec:dbdec.rows[0]}
 })
 
 /* END BITAPS */

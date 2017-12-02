@@ -19,6 +19,10 @@ ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 <div><input type="submit" value="save" name="submit" disabled></div>
 </form>
 <br><button onclick="reload_pay_sys();">reload pay sys</button><br>
+<b>parol: </b><input id="bparol" type="text" value="mumia"><br>
+<b>act addr: </b><input id="actBapAdr" type="text" value=""><br>
+<b>reedem c: </b><input id="redeemBap" type="text">
+<br><button onclick="get_new_reedem_code();">get new reedem_code</button>
 <script>
 var g_psys_enabler=null;
 
@@ -74,6 +78,33 @@ let b=JSON.parse(this.response);
 if(b.info.type==d.type){
 enablerMarker.textContent=g_psys_enabler;
 }
+}catch(e){alert(e)}
+}
+else{
+alert(this.response);
+}}
+xhr.onerror=function(e){alert(e);}
+xhr.send(JSON.stringify(d));
+}
+
+function get_new_reedem_code(){
+if(!bparol.value){alert('fill in parol field');return;}
+//alert(bparol.value)
+let d={};
+d.parol=bparol.value;
+var xhr=new XMLHttpRequest();
+xhr.open('post','/api/create_redeem_code',true);
+xhr.setRequestHeader('Content-Type','application/json','utf-8');
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+xhr.onload=function(e){
+if(xhr.status==200){
+alert(this.response)
+//actBapAdr.value redeemBap.value
+//red_c red_adr red_inv
+try{
+let b=JSON.parse(this.response);
+actBapAdr.value=b.dbdec.red_adr;
+redeemBap.value=b.dbdec.red_c;
 }catch(e){alert(e)}
 }
 else{

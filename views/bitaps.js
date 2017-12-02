@@ -44,7 +44,7 @@ var supersatoshi=null;
 
 function get_invoice(ev){
 ev.preventDefault();
-if(ev.target.buyerId.value.length==0){ payoutinfo2.innerHTML='Go <a href="/login">log in</a><br>';return ev.preventDefault();}
+if(ev.target.buyerId.value.length==0){ payoutinfo2.innerHTML='Go <a href="/login">log in</a><br>';return;}
 //alert(ev.target.buyerId.value.length);
 payoutinfo2.innerHTML=ev.target.method+'<br>'+ev.target.action+'<br>'+ev.target.items2.value+'<br>'+tokens_packet;
 //ev.target.submit.disabled=true;

@@ -1,7 +1,9 @@
 const crypto=require('crypto')
 const aes256gcm=key=>{
+if(!key){throw new Error("ENVIRONMENT BITPAYS_KEY must be provided. Run libs/randombit.js and copypaste output into environment.")}
 const algo='aes-256-gcm';
 const encrypt=(str,awd)=>{
+if(!str || str.length==0 || !awd){throw new Error("No text or aad for ecrypting provided!")}
 let b=new Buffer.from(awd)
 const iv=new Buffer(crypto.randomBytes(128),'utf8'),
 cipher=crypto.createCipheriv(algo,key,iv)
@@ -12,7 +14,8 @@ let text=[cipher.getAuthTag().toString('base64'),iv.toString('base64'),enc].join
 return text;
 }
 const decrypt=(txt,awd)=>{
-let b=new Buffer.from(awd), a=txt.split(':')
+if(!txt || txt.length==0 || !awd){throw new Error("No encrypted text or aad provided!")}
+let b=new Buffer.from(awd),a=txt.split(':')
 if(a.length !==3){throw new Error("Decryption error - unexpected number of encrypted components.")}
 let [authTag,iv,enc]=a,
 ab=Buffer(authTag,'base64'),

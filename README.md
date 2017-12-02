@@ -1,6 +1,4 @@
-# Simple erotic live video streams project using [Node.js](https://nodejs.org), [Koa](http://koajs.com/), [postgreSQL 9.6](https://www.postgresql.org) and [mediasoup.js v1](https://mediasoup.org)
-
-# Adults only
+# Simple live video streams project using [Node.js](https://nodejs.org), [Koa](http://koajs.com/), [postgreSQL 9.6](https://www.postgresql.org) and [mediasoup.js v1](https://mediasoup.org)
 
 # Proof Of Concept
 
@@ -27,8 +25,9 @@ Bitcoin is a very secure and cheap way to accept payments. [bitaps.com](https://
 
 # Demo
 
-There is a problem with heroku sandbox. File system is read only and port forwarding is also limit to one.
-So it doesn't work. But on a local laptop(Linux) it's work like a charm.
+There is a problem with heroku sandbox. The file system is read only and also the port forwarding is limited to one.
+So mediasoup doesn't work in heroku sandbox environment.
+But on a local laptop(Linux) it's work like a charm.
 
 [demo](https://alikon.herokuapp.com/webrtc/globik)
 
