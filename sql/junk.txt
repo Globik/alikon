@@ -1,0 +1,15 @@
+JUNK. Examples.
+alter table busers add column buser_d jsonb not null default '{}';
+update busers set buser_d=jsonb_set(buser_d,'{ban_id}','6') where name='globik';
+update busers set buser_d=(jsonb_set(to_jsonb(buser_d),'{ban_id}','47',false))::json where name='globik';
+-- drop primary key on email
+-- alter table busers drop constraint busers_pkey cascade;
+drop cascades to constraint images_us_id_fkey on table images ok
+-- set new primary key on id
+-- alter  table busers add primary key (id);
+--add unique index on name
+-- create unique index unique_name on busers(name);
+-- create unique index unique_email on busers(email);
+-- drop column nick
+-- alter table busers drop column nick;
+-- alter table busers alter column name type varchar(24)

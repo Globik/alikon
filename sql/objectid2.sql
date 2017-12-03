@@ -1,5 +1,6 @@
 -- \i /home/globik/alikon/sql/objectid2.sql
 -- gist.github.com/jamarparris/6100413
+-- for a buser ID in busers.sql
 create or replace function generate_object_id() returns varchar as $$
 declare
 	time_component bigint;

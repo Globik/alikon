@@ -6,6 +6,6 @@ create table reedem(red_id serial primary key,
 					red_c text not null, --reedem_code encrypted
 					red_adr text not null, -- address
 					red_inv text not null, --invite
-					red_t text not null default 'pass',  -- act,pass
+					red_t text not null default 'pass',  -- act,pass todo: type enum
 				   red_b numeric not null default 0); -- balance
 -- red_c red_adr red_inv
