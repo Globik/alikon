@@ -129,7 +129,7 @@ console.log('PATH: ',ctx.method,ctx.path,ctx.url)
 ctx.state.filter_script=script;
 ctx.db=pool;
 ctx.boss=boss;
-ctx.payment=cachePay;
+//ctx.payment=cachePay;
 ctx.tok_pack=conf_pay;
 ctx.state.showmodule=mainmenu;
 ctx.state.showmodulecache='lasha';
@@ -141,6 +141,7 @@ cachePay=a;
 payflag=false;
 }catch(e){console.log('err in payflag',e)}
 }
+ctx.payment=cachePay;
 if(ctx.path !=='/log_rooms' && ctx.method !=='POST'){
 ctx.state.banner=await locals.show_banners()
 console.log('path:',ctx.method,' ',ctx.path,' ',ctx.state.xhr)
@@ -153,7 +154,9 @@ console.log('ABUSE_NOTS!: ',ctx.state.abuse_nots.rowCount,' : ',ctx.state.abuse_
 if(ctx.path=='/admin/uncache_what'){
 if(ctx.state.user && ctx.state.user.role==='superadmin'){
 let {type="no"}=ctx.request.body;
-if(type=="pay_sys_reload")payflag=true;
+if(type=="pay_sys_reload"){
+payflag=true;
+}
 }
 }
 await next();

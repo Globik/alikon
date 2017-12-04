@@ -50,7 +50,7 @@ I develop this project in my free time as programming is my passion. I do not ex
 but all donations go towards supporting my development efforts. I use this bitcoins to pay for servers, software and
 other necessities. I greatly appreciate whatever I am given, no matter what the amount.
 If you've donated some bitcoins I'm extremly grateful for the help!
-_bitcoins address: _ 
+_bitcoins address:_ 
 
 1BMXmqU3fZ8PVjPbxgeenEX93YYf74bjeB
 

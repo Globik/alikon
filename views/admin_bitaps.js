@@ -5,7 +5,8 @@ const admin_main_menu=require('./admin_main_menu'),footer=require('./footer');
 var warnig=false,haupt_ban=false;
 let admin_bitaps=n=>{
 var {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
-return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"bitaps", csslink:"/css/main2.css",luser:buser})}</head><body>
+return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"bitaps", csslink:"/css/main2.css",luser:buser})}
+</head><body>
 ${warnig?'<div id="warnig">Warnig</div>':''}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
 ${haupt_ban?'<div id="haupt-banner"><div id="real-ban">Banner</div></div>':''}
@@ -20,12 +21,19 @@ ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 </form>
 <br><button onclick="reload_pay_sys();">reload pay sys</button><br>
 <b>parol: </b><input id="bparol" type="text" value="mumia"><br>
-<b>act addr: </b><input id="actBapAdr" type="text" value=""><br>
-<b>reedem c: </b><input id="redeemBap" type="text">
-<br><button onclick="get_new_reedem_code();">get new reedem_code</button>
+<b>act addr: </b><div><span id="actBapAdr"></span><br></div><br>
+<b>reedem code: </b><div><span id="redeemBap"></span><br>
+<button id="btnChkBalanceRc" onclick="check_balance_rc(this);">check balance</button>
+</div><br>
+<b>type: </b><div><span id="bapRcType"></span><br>
+<button id="btnMakeRcActive" onclick="make_rc_active(this);">make active</button></div>
+<b>invoice: </b><div><span id="bapInv"></span></div><br>
+<br><button onclick="get_new_reedem_code();">get new reedem_code</button> | 
+
+
 <script>
 var g_psys_enabler=null;
-
+var g_actual_rc;
 function bp_enabler(el){
 //alert(el.parentNode.parentNode.method)
 try{
@@ -41,78 +49,70 @@ idpay1.addEventListener('submit',send_pay_config,false);
 function send_pay_config(ev){
 let d=new FormData(ev.target);
 if(!d)return;
-var xhr=new XMLHttpRequest();
-xhr.open(ev.target.method,ev.target.action,true);
-xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-xhr.onload=function(e){
-if(xhr.status==200){
-alert(this.response)
-let f;
-try{
-f=JSON.parse(this.response);
-parse_pay_sys(f)
-}catch(e){alert(e)}
-}else{alert(this.response);}}
-xhr.onerror=function(e){alert(e);}
-xhr.send(d);
+vax(ev.target.method,ev.target.action,d,obusi,erl,true);//true means formdata, not an json set request header
 ev.preventDefault();
 }
 
-function parse_pay_sys(f){
+function obusi(f){
 if(!f.info && !f.info.enabled){return;}
+console.warn('saved');
 g_psys_enabler=f.info.enabled=="true"?"YES!":f.info.enabled=="false"?"NO!":g_psys_enabler;
 }
-
+var strty="pay_sys_reload";
 function reload_pay_sys(){
 let d={};
-d.type="pay_sys_reload";
-var xhr=new XMLHttpRequest();
-xhr.open('post','/admin/uncache_what',true);
-xhr.setRequestHeader('Content-Type','application/json','utf-8');
-xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-xhr.onload=function(e){
-if(xhr.status==200){
-alert(this.response)
+d.type=strty;
+vax('post','/admin/uncache_what',d,omsuc,erl);
+}
+
+function omsuc(b){
+console.log(miss(b))
 try{
-let b=JSON.parse(this.response);
-if(b.info.type==d.type){
+if(b.info.type==strty){
 enablerMarker.textContent=g_psys_enabler;
 }
-}catch(e){alert(e)}
+}catch(er){alert(er)}
 }
-else{
-alert(this.response);
-}}
-xhr.onerror=function(e){alert(e);}
-xhr.send(JSON.stringify(d));
-}
+
+var g_cur_inv,g_cur_rc,g_cur_t,g_cur_adr;
 
 function get_new_reedem_code(){
 if(!bparol.value){alert('fill in parol field');return;}
-//alert(bparol.value)
 let d={};
 d.parol=bparol.value;
-var xhr=new XMLHttpRequest();
-xhr.open('post','/api/create_redeem_code',true);
-xhr.setRequestHeader('Content-Type','application/json','utf-8');
-xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-xhr.onload=function(e){
-if(xhr.status==200){
-alert(this.response)
-//actBapAdr.value redeemBap.value
-//red_c red_adr red_inv
+vax('post','/api/create_redeem_code',d,onsuc,erl);
+}
+
+function onsuc(e){
 try{
-let b=JSON.parse(this.response);
-actBapAdr.value=b.dbdec.red_adr;
-redeemBap.value=b.dbdec.red_c;
-}catch(e){alert(e)}
+let b=e;
+let adr=actBapAdr.textContent=b.dbdec.red_adr;
+g_cur_adr=adr;
+let rc=redeemBap.textContent=b.dbdec.red_c;
+g_cur_rc=rc;
+btnChkBalanceRc.value=rc;
+btnMakeRcActive.value=b.dbdec.red_id;
+let t=bapRcType.textContent=b.dbdec.red_t;
+g_cur_t=t;
+let inv=bapInv.textContent=b.dbdec.red_inv;
+g_cur_inv=inv;
+}catch(er){alert(er)}
 }
-else{
-alert(this.response);
-}}
-xhr.onerror=function(e){alert(e);}
-xhr.send(JSON.stringify(d));
+
+function check_balance_rc(el){
+if(!el.value){alert('redeem code not provided: '+el.value);return;}
+alert(el.value)
 }
+
+function make_rc_active(el){
+if(!el.value){alert('no reedem code provided!');return;}
+let d={}
+d.rc_id=el.value;
+vax('post','/make_rc_active',d,onl,erl);
+}
+
+function onl(e){alert(miss(e))}
+function erl(e){alert(miss(e))}
 </script>
 </main>${fg}<footer id="footer">${footer.footer({})}</footer></body></html>`;
 }

@@ -108,3 +108,8 @@ gevS=new EventSource('/log_rooms');
 	gevS.onopen=function(){console.log('sse opened');}
 	gevS.onerror=function(e){console.error("event source error: ");}
 }else{}
+function vax(m,u,d,o,z,bool){let x=new XMLHttpRequest();if(!x){return false;}x.open(m,u);
+if(!bool){x.setRequestHeader('Content-Type','application/json','utf-8');}x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+x.onload=function(e){let f;try{f=JSON.parse(e.target.response);}catch(er){throw er;};x.status==200?o(f):z(f)};
+x.onerror=function(e){console.error('it looks like xhr.onerror')};if(!bool){let v=miss(d);x.send(v);}else{x.send(d)}}
+function miss(n){let a;try{a=JSON.stringify(n);return a;}catch(er){throw er;}}

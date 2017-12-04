@@ -148,6 +148,10 @@ dbdec.rows[0].red_c=decred
 ctx.body={"info":"OK",encred, dbdec:dbdec.rows[0]}
 })
 
+admin.post('/make_rc_active',auth,async ctx=>{
+	//ctx.throw(400,'What the hell are you talking about?')
+ctx.body=ctx.request.body
+})
 /* END BITAPS */
 
 admin.post('/banner/set_banner', authed, async ctx=>{
