@@ -6,7 +6,8 @@ const {encrypt,decrypt}=require('../libs/aes256gcm.js')(Buffer.from(process.env.
 const {readf,exists,stat,mkdir,writeFile}=require('../libs/await-fs.js');
 const path=require('path');
 //const moment=require('moment');
-
+const walletValidator=require('wallet-address-validator');//0.1.0
+const rk=require('request');
 
 const bitpay=require('bitpay-rest');
 const bitauth=require('bitauth');
@@ -30,6 +31,12 @@ if(process.env.DEVELOPMENT=="yes"){
 	return true;
 }else{return false;}
 }
+function rkw(obj){return new Promise(function(res,rej){
+rk(obj,function(err,resp,body){
+if(err)rej(err)
+res({resp:resp,body:body})
+})})
+	}
 
 admin.get('/dashboard', authed,async ctx=>{
 ctx.body=await ctx.render('admin_dashboard',{});
@@ -148,9 +155,49 @@ dbdec.rows[0].red_c=decred
 ctx.body={"info":"OK",encred, dbdec:dbdec.rows[0]}
 })
 
+
+
 admin.post('/make_rc_active',auth,async ctx=>{
-	//ctx.throw(400,'What the hell are you talking about?')
-ctx.body=ctx.request.body
+let {rc_id}=ctx.request.body;
+if(!rc_id)ctx.throw(400,"no rc_id")
+let db=ctx.db;
+try{
+await db.query('update reedem set red_t=true where red_id=$1',[rc_id])
+}catch(e){ctx.throw(400,e)}
+ctx.body={info:`id ${rc_id} marked as active!`}
+})
+admin.get('/mid/:mister',async ctx=>{
+	//ctx.throw(400,'uhu err')
+ctx.body={info:ctx.params.mister}
+})
+
+admin.post('/saveColdAdr',auth,async ctx=>{
+	let {red_id,cold_adr}=ctx.request.body;
+	if(!red_id || !cold_adr){ctx.throw(400,'no cold address or red_id to save!')}
+	let vali=walletValidator.validate(cold_adr,'bitcoin');
+	console.log('VALIDATOR: ',vali)
+	if(!vali){ctx.throw(400,'bitcoin cold_adr is not valid!')}
+	let db=ctx.db;
+	try{
+	await db.query('update reedem set red_cold_adr=$1 where red_id=$2',[cold_adr,red_id])
+	}catch(e){ctx.throw(400,e)}
+ctx.body={info:'ok'}
+})
+const grund="https://bitaps.com/api/";
+admin.post('/admin/check_balance_rc',auth,async ctx=>{
+let {rc}=ctx.request.body;
+	if(!rc){ctx.throw(400,'no rc')}
+	let b;
+	
+	let s2=grund+"get/redeemcode/info";
+let data1={redeemcode:rc};
+let ops1={method:'post',body:data1,json:true,url:s2};
+	try{
+		let a=await rkw(ops1)
+		b=a.body;
+		console.log('a: ',b)
+			}catch(e){ctx.throw(400,e)}
+ctx.body={info:'ok',b}
 })
 /* END BITAPS */
 

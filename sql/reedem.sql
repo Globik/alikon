@@ -6,6 +6,8 @@ create table reedem(red_id serial primary key,
 					red_c varchar(1000) not null, --reedem_code encrypted
 					red_adr varchar(100) not null, -- address
 					red_inv varchar(60) not null, --invite
+					red_cold_adr varchar(60) not null default 'no',
 					red_t boolean not null default false,  -- active or passive
+					red_cmt varchar(10) not null default 'no mark',
 				    red_b float not null default 0); -- balance
 -- red_c red_adr red_inv

@@ -145,7 +145,6 @@ ctx.payment=cachePay;
 if(ctx.path !=='/log_rooms' && ctx.method !=='POST'){
 ctx.state.banner=await locals.show_banners()
 console.log('path:',ctx.method,' ',ctx.path,' ',ctx.state.xhr)
-console.log('NOW!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 if(ctx.state.user && ctx.state.user.role==='superadmin'){
 ctx.state.abuse_nots=await locals.show_abuse_nots();	
 console.log('ABUSE_NOTS!: ',ctx.state.abuse_nots.rowCount,' : ',ctx.state.abuse_nots.rows)

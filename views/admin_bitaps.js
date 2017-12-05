@@ -21,15 +21,20 @@ ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 </form>
 <br><button onclick="reload_pay_sys();">reload pay sys</button><br>
 <b>parol: </b><input id="bparol" type="text" value="mumia"><br>
+<b>red_id: </b><div><span id="bapRedid"></span></div><br>
 <b>act addr: </b><div><span id="actBapAdr"></span><br></div><br>
 <b>reedem code: </b><div><span id="redeemBap"></span><br>
 <button id="btnChkBalanceRc" onclick="check_balance_rc(this);">check balance</button>
 </div><br>
 <b>type: </b><div><span id="bapRcType"></span><br>
 <button id="btnMakeRcActive" onclick="make_rc_active(this);">make active</button></div>
-<b>invoice: </b><div><span id="bapInv"></span></div><br>
-<br><button onclick="get_new_reedem_code();">get new reedem_code</button> | 
-
+<b>invoice: </b><div><span id="bapInv"></span></div>
+<b>cold address: </b><div><span id="coldAdr" contenteditable=true oninput="legin(this);"></span>
+<br><button id="btnSaveColdAdr" onclick="saveColdAdr(this);">save cold address</button>
+</div><br>
+<br>
+<br><button onclick="get_new_reedem_code();">get new reedem_code</button> 
+<br><br><button onclick="geti();">get</button>
 
 <script>
 var g_psys_enabler=null;
@@ -92,16 +97,21 @@ let rc=redeemBap.textContent=b.dbdec.red_c;
 g_cur_rc=rc;
 btnChkBalanceRc.value=rc;
 btnMakeRcActive.value=b.dbdec.red_id;
+bapRedid.textContent=b.dbdec.red_id;
 let t=bapRcType.textContent=b.dbdec.red_t;
 g_cur_t=t;
 let inv=bapInv.textContent=b.dbdec.red_inv;
 g_cur_inv=inv;
+coldAdr.textContent=b.dbdec.red_cold_adr;
+btnSaveColdAdr.value=coldAdr.textContent;
 }catch(er){alert(er)}
 }
-
+function legin(el){btnSaveColdAdr.value=el.textContent;}
 function check_balance_rc(el){
 if(!el.value){alert('redeem code not provided: '+el.value);return;}
-alert(el.value)
+//alert(el.value)
+let d={};d.rc=el.value;
+vax('post','/admin/check_balance_rc',d,onl,erl);
 }
 
 function make_rc_active(el){
@@ -112,7 +122,18 @@ vax('post','/make_rc_active',d,onl,erl);
 }
 
 function onl(e){alert(miss(e))}
-function erl(e){alert(miss(e))}
+
+function erl(e){alert('ajx err : '+e)}
+
+function geti(){
+vax('get','/mid/Bob',null,onl,erl)
+}
+function saveColdAdr(el){
+if(el.value=='no'){alert(el.value+' cold address provided');return;}
+let d={};d.cold_adr=el.value;d.red_id=bapRedid.textContent;
+vax('post','/saveColdAdr',d,onl,erl)
+}
+
 </script>
 </main>${fg}<footer id="footer">${footer.footer({})}</footer></body></html>`;
 }
