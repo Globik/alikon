@@ -166,6 +166,7 @@ await db.query('update reedem set red_t=true where red_id=$1',[rc_id])
 }catch(e){ctx.throw(400,e)}
 ctx.body={info:`id ${rc_id} marked as active!`}
 })
+
 admin.get('/mid/:mister',async ctx=>{
 	//ctx.throw(400,'uhu err')
 ctx.body={info:ctx.params.mister}
@@ -183,13 +184,14 @@ admin.post('/saveColdAdr',auth,async ctx=>{
 	}catch(e){ctx.throw(400,e)}
 ctx.body={info:'ok'}
 })
-const grund="https://bitaps.com/api/";
+//const grund="https://bitaps.com/api/";
 admin.post('/admin/check_balance_rc',auth,async ctx=>{
 let {rc}=ctx.request.body;
 	if(!rc){ctx.throw(400,'no rc')}
 	let b;
-	
-	let s2=grund+"get/redeemcode/info";
+	let g=ctx.payment;
+	if(!g){ctx.throw(400,'no pay conf')}
+	let s2=g.grund+"get/redeemcode/info";
 let data1={redeemcode:rc};
 let ops1={method:'post',body:data1,json:true,url:s2};
 	try{

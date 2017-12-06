@@ -129,7 +129,6 @@ console.log('PATH: ',ctx.method,ctx.path,ctx.url)
 ctx.state.filter_script=script;
 ctx.db=pool;
 ctx.boss=boss;
-//ctx.payment=cachePay;
 ctx.tok_pack=conf_pay;
 ctx.state.showmodule=mainmenu;
 ctx.state.showmodulecache='lasha';

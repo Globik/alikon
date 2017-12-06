@@ -118,7 +118,7 @@ function make_rc_active(el){
 if(!el.value){alert('no reedem code provided!');return;}
 let d={}
 d.rc_id=el.value;
-vax('post','/make_rc_active',d,onl,erl);
+vax('post','/make_rc_active',d,svd_hot_adr,erl);
 }
 
 function onl(e){alert(miss(e))}
@@ -131,9 +131,16 @@ vax('get','/mid/Bob',null,onl,erl)
 function saveColdAdr(el){
 if(el.value=='no'){alert(el.value+' cold address provided');return;}
 let d={};d.cold_adr=el.value;d.red_id=bapRedid.textContent;
-vax('post','/saveColdAdr',d,onl,erl)
+vax('post','/saveColdAdr',d,svd_cold_adr,erl)
 }
-
+function svd_cold_adr(d){
+if(!d)return;
+if(d.info=='ok') idpay1.cold_adr.value="true";
+}
+function svd_hot_adr(e){
+if(!e)return;
+if(e.info=='ok'){idpay1.real_adr.value="true";}
+}
 </script>
 </main>${fg}<footer id="footer">${footer.footer({})}</footer></body></html>`;
 }
@@ -141,7 +148,7 @@ vax('post','/saveColdAdr',d,onl,erl)
 module.exports={admin_bitaps};
 function get_payment_sys(payment){
 let s='';
-let {name,enabled,test,real_adr,cold_adr,hotadr_quota,cb_part}=payment;
+let {name,enabled,test,real_adr,cold_adr,hotadr_quota,grund,cb_part}=payment;
 s+=`<div><b>name:</b><br><input type="text" name="name" value="${name}" readonly></div>`;
 s+=`<div><b>enabled:</b><b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b><br><input type="text" name="enabled" value="${enabled}">`;
 s+=`<button value="${enabled}" onclick="bp_enabler(this);return false;">${enabled=="true"?'disable':'enable'}</button></div>`;
@@ -149,6 +156,7 @@ s+=`<div><b>test mode:</b><br><input type="text" name="test" value="${test}" rea
 s+=`<div><b>hot address:</b><br><input type="text" name="real_adr" value="${real_adr}" readonly></div>`;
 s+=`<div><b>cold address:</b><br><input type="text" name="cold_adr" value="${cold_adr}" readonly></div>`;
 s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
+s+=`<div><b>base url api: </b><input type="text" name="grund" value="${grund} readonly></div>`;
 s+=`<div><b>callback:</b><br><input type="text" name="cb_part" value="${cb_part}" readonly></div>`;
 return s;
 }
