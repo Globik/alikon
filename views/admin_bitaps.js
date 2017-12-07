@@ -14,25 +14,25 @@ ${buser && buser.role=='superadmin'?admin_main_menu.admin_main_menu(n):''}
 ${fg}
 <main id="pagewrap">
 Hallo <b>${buser.name}</b><br>
-<h1>Payment system</h1>
+<h1>Bitaps payment configuration.</h1>
 <form id="idpay1" method="post" action="/admin/conf_bitaps_payment" name="npay1">
 ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 <div><input type="submit" value="save" name="submit" disabled></div>
 </form>
 <br><button onclick="reload_pay_sys();">reload pay sys</button><br>
 <b>parol: </b><input id="bparol" type="text" value="mumia"><br>
-<b>red_id: </b><div><span id="bapRedid"></span></div><br>
-<b>act addr: </b><div><span id="actBapAdr"></span><br></div><br>
-<b>reedem code: </b><div><span id="redeemBap"></span><br>
-<button id="btnChkBalanceRc" onclick="check_balance_rc(this);">check balance</button>
-</div><br>
-<b>type: </b><div><span id="bapRcType"></span><br>
-<button id="btnMakeRcActive" onclick="make_rc_active(this);">make active</button></div>
+
+<section id="bitapsnew" style="border:1px solid blue;background:red;">
+<b>red_id: </b><div><span id="bapRedid"></span></div>
+<b>act addr: </b><div><span id="actBapAdr"></span></div>
+<b>reedem code: </b><button id="btnChkBalanceRc" onclick="check_balance_rc(this);">check balance</button>
+<div><span id="redeemBap"></span></div>
+<b>type: </b><button id="btnMakeRcActive" onclick="make_rc_active(this);">make active</button><div><span id="bapRcType"></span></div>
 <b>invoice: </b><div><span id="bapInv"></span></div>
-<b>cold address: </b><div><span id="coldAdr" contenteditable=true oninput="legin(this);"></span>
-<br><button id="btnSaveColdAdr" onclick="saveColdAdr(this);">save cold address</button>
-</div><br>
-<br>
+<b>cold address: </b><button id="btnSaveColdAdr" onclick="saveColdAdr(this);">save cold address</button>
+<div><span id="coldAdr" contenteditable=true oninput="legin(this);"></span></div>
+<b>marker: </b><div><span id="bapCmt" contenteditable=true oninput="legin2(this);"></span></div>
+</section>
 <br><button onclick="get_new_reedem_code();">get new reedem_code</button> 
 <br><br><button onclick="geti();">get</button>
 
@@ -104,6 +104,7 @@ let inv=bapInv.textContent=b.dbdec.red_inv;
 g_cur_inv=inv;
 coldAdr.textContent=b.dbdec.red_cold_adr;
 btnSaveColdAdr.value=coldAdr.textContent;
+bapCmt.textContent=b.dbdec.red_cmt;
 }catch(er){alert(er)}
 }
 function legin(el){btnSaveColdAdr.value=el.textContent;}
@@ -156,7 +157,7 @@ s+=`<div><b>test mode:</b><br><input type="text" name="test" value="${test}" rea
 s+=`<div><b>hot address:</b><br><input type="text" name="real_adr" value="${real_adr}" readonly></div>`;
 s+=`<div><b>cold address:</b><br><input type="text" name="cold_adr" value="${cold_adr}" readonly></div>`;
 s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
-s+=`<div><b>base url api: </b><input type="text" name="grund" value="${grund} readonly></div>`;
+s+=`<div><b>base url api: </b><br><input type="text" name="grund" value="${grund}" readonly></div>`;
 s+=`<div><b>callback:</b><br><input type="text" name="cb_part" value="${cb_part}" readonly></div>`;
 return s;
 }

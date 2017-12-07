@@ -1,0 +1,88 @@
+<html><head><title>bitaps admin</title>
+	<style>
+		#bitapsadminsect{
+		display:grid;
+			grid-template-areas:
+				"vrida vridv vridv"
+				"vrida vridv vridv"
+				"vredca vredcv vredcm"
+				"vrdta vrdtv vrdtm";
+		background-color:lightgreen;
+			/*grid-template-columns:repeat(3,[col] 100px);
+			grid-template-rows:repeat(3,[row] auto);
+			*/
+			grid-template-columns:10% 1fr 30%;
+			grid-template-rows:30px 30px 30px;
+			color:#444;
+		}
+		#bitapsadminsect > div{border:1px solid red;}
+		/*#redida{grid-area:vrida;}
+		#redidv{grid-area:vridv;}*/
+		.ftypeatr{grid-area:vrida;}
+		.ftypeval{grid-area:vridv;}
+		
+		/*#redactadra{grid-area:vrdadra;}
+		#redactadrv{grid-area:vrdadrv;}*/
+		
+		#redca{grid-area:vredca;}
+		#redcv{grid-area:vredcv;}
+		#redcm{grid-area:vredcm;}
+		
+		#redta{grid-area:vrdta;}
+		#redtv{grid-area:vrdtv;}
+		#redtm{grid-area:vrdtm;}
+	
+	</style>
+	</head>
+<body>
+	<h1>bitaps admin</h1>
+	<section id="bitapsadminsect">
+		<div id="redida" class="ftypeatr">red_id:</div>
+		<div id="redidv" class="ftypeval">21</div>
+		
+		<div id="redactadra" class="ftypeatr">act addr:</div>
+		<div id="redactadrv" class="ftypeval">1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</div>
+	
+		<div id="redca">reedem code:</div>
+		<div id="redcv">BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le</div>
+		<div id="redcm"><button>check balance</button></div>
+		
+		<div id="redta">type:</div>
+		<div id="redtv">false</div><div id="redtm"><button>make active</button></div>
+		</section><hr>
+		<div>invoice:</div>
+		<div>invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V</div>
+		<div>cold address:</div><div><button>save cold address</button></div>
+		<div>1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</div>
+		<div>marker:</div><div>active</div>
+	
+	<hr>
+	<section id="bitapsadminsect2">
+		<div>red_id:</div>
+		<div>21</div>
+		<div>act addr:</div>
+		<div>1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</div>
+		<div>reedem code:</div><div><button>check balance</button></div>
+		<div>BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le</div>
+		<div>type:</div><div><button>make active</button></div>
+		<div>false</div>
+		<div>invoice:</div>
+		<div>invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V</div>
+		<div>cold address:</div><div><button>save cold address</button></div>
+		<div>1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</div>
+		<div>marker:</div><div>active</div>
+	</section>
+	<style>
+		.form{display:grid;grid-template-columns:[labels] auto [controls] 1fr [fuck] 20%;grid-auto-flow:row;grid-gap:.8em;
+			justify-content:center;padding:1.2em;background:violet;text-align:center;}
+
+		.form > label{grid-column:labels;grid-row:auto;background:lightgreen;}
+		.form > span{grid-column:controls;grid-row:auto;background:brown;}
+		.form > div{grid-column:fuck;grid-row:auto;background:red;}
+	</style>
+	<section class="form">
+		<label>name:</label><span>name</span><div>su</div>
+		<label>address:</label><span>address</span><div>suka</div>
+		<label>phone</label><span>phone</span><div><button>suka</button><button>fucker</button></div>
+	</section>
+	</body></html>
