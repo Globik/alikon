@@ -1,7 +1,7 @@
 const file='admin_bitaps.js',fg=`<!-- ${file} -->`;
-const head=require('./head.js');
-const header_menu=require('./header_menu');
-const admin_main_menu=require('./admin_main_menu'),footer=require('./footer');
+const head=require('./head.js'),header_menu=require('./header_menu');
+const admin_main_menu=require('./admin_main_menu'),footer=require('./footer'),
+	  admin_v_bitaps_reedem=require('./admin_v_bitaps_reedem.js');
 var warnig=false,haupt_ban=false;
 let admin_bitaps=n=>{
 var {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
@@ -21,7 +21,9 @@ ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 </form>
 <br><button onclick="reload_pay_sys();">reload pay sys</button><br>
 <b>parol: </b><input id="bparol" type="text" value="mumia"><br>
-
+<berror: </b>${n.error?n.error:'no error'}
+${n.curd?n.curd.rd_id:'<h5>no reedem data.</h5>'}
+<!--
 <section id="bitapsnew" style="border:1px solid blue;background:red;">
 <b>red_id: </b><div><span id="bapRedid"></span></div>
 <b>act addr: </b><div><span id="actBapAdr"></span></div>
@@ -31,8 +33,9 @@ ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 <b>invoice: </b><div><span id="bapInv"></span></div>
 <b>cold address: </b><button id="btnSaveColdAdr" onclick="saveColdAdr(this);">save cold address</button>
 <div><span id="coldAdr" contenteditable=true oninput="legin(this);"></span></div>
-<b>marker: </b><div><span id="bapCmt" contenteditable=true oninput="legin2(this);"></span></div>
 </section>
+-->
+
 <br><button onclick="get_new_reedem_code();">get new reedem_code</button> 
 <br><br><button onclick="geti();">get</button>
 
@@ -89,6 +92,8 @@ vax('post','/api/create_redeem_code',d,onsuc,erl);
 }
 
 function onsuc(e){
+alert('htmlbody?: '+e.htmlbody);
+/*
 try{
 let b=e;
 let adr=actBapAdr.textContent=b.dbdec.red_adr;
@@ -106,6 +111,7 @@ coldAdr.textContent=b.dbdec.red_cold_adr;
 btnSaveColdAdr.value=coldAdr.textContent;
 bapCmt.textContent=b.dbdec.red_cmt;
 }catch(er){alert(er)}
+*/
 }
 function legin(el){btnSaveColdAdr.value=el.textContent;}
 function check_balance_rc(el){
@@ -154,8 +160,8 @@ s+=`<div><b>name:</b><br><input type="text" name="name" value="${name}" readonly
 s+=`<div><b>enabled:</b><b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b><br><input type="text" name="enabled" value="${enabled}">`;
 s+=`<button value="${enabled}" onclick="bp_enabler(this);return false;">${enabled=="true"?'disable':'enable'}</button></div>`;
 s+=`<div><b>test mode:</b><br><input type="text" name="test" value="${test}" readonly></div>`;
-s+=`<div><b>hot address:</b><br><input type="text" name="real_adr" value="${real_adr}" readonly></div>`;
-s+=`<div><b>cold address:</b><br><input type="text" name="cold_adr" value="${cold_adr}" readonly></div>`;
+//s+=`<div><b>hot address:</b><br><input type="text" name="real_adr" value="${real_adr}" readonly></div>`;
+//s+=`<div><b>cold address:</b><br><input type="text" name="cold_adr" value="${cold_adr}" readonly></div>`;
 s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
 s+=`<div><b>base url api: </b><br><input type="text" name="grund" value="${grund}" readonly></div>`;
 s+=`<div><b>callback:</b><br><input type="text" name="cb_part" value="${cb_part}" readonly></div>`;

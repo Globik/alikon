@@ -82,24 +82,6 @@ ctx.body={id:invoice.id, messy:binv};
 /* ***********************************
 END BITPAY PART
 ****************************** */
-
-/* *********************************
-ADMIN_BITAPS_API
-******************************** */
-admin.get("/dashboard/admin_bitaps",authed,async ctx=>{
-let payment=ctx.payment;
-ctx.body=await ctx.render('admin_bitaps',{payment})
-})
-admin.post('/api/payment_system',authed,async ctx=>{
-let {fn}=ctx.request.body,m,d;
-if(!fn){ctx.throw(400,"No fname")}
-try{
-d=await readf(`./config/${fn}.json`,'utf8')
-m=JSON.parse(d)
-}catch(e){ctx.throw(400,e)}
-ctx.body={info:ctx.request.body,m}
-})
-
 admin.get('/dashboard/banners', authed, async ctx=>{
 let db=ctx.db;
 var result=null;
@@ -111,6 +93,30 @@ console.log('result: ',result);
 }catch(e){console.log(e);}
 ctx.body=await ctx.render('adm_dsh_banners',{banners:result});
 })
+/* *********************************
+ADMIN_BITAPS_API
+******************************** */
+admin.get("/dashboard/admin_bitaps",authed,async ctx=>{
+let payment=ctx.payment,db=ctx.db,curd,su=undefined, error=null;
+	try{
+	curd=await db.query("select rd_id from reedem where rd_t='a'")
+	if(curd.rows[0]){su=curd.rows[0]}
+	}catch(e){error=e}
+	console.log('curd: ',curd)
+ctx.body=await ctx.render('admin_bitaps',{payment,error,curd:su})
+})
+
+admin.post('/api/payment_system',authed,async ctx=>{
+let {fn}=ctx.request.body,m,d;
+if(!fn){ctx.throw(400,"No fname")}
+try{
+d=await readf(`./config/${fn}.json`,'utf8')
+m=JSON.parse(d)
+}catch(e){ctx.throw(400,e)}
+ctx.body={info:ctx.request.body,m}
+})
+
+
 /* BITAPS */
 admin.post('/admin/conf_bitaps_payment',auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 //console.log('ctx.tok_pack: ',ctx.tok_pack)
@@ -134,7 +140,7 @@ var test_invoice="invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V";// 53
 var test_redeem_code="BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le";// 53
 
 admin.post('/api/create_redeem_code',auth,async ctx=>{
-let si='insert into reedem(red_c,red_adr, red_inv) values($1,$2,$3) returning *'
+let si='insert into reedem(rd_c,rd_adr, rd_inv) values($1,$2,$3) returning *'
 let db=ctx.db;let decred,encred,dbdec;
 let {parol}=ctx.request.body;
 if(!parol){ctx.throw(400,"No parol provided.")}
@@ -144,15 +150,15 @@ try{
 encred=encrypt(test_redeem_code,parol)
 //red_c red_adr red_inv
 dbdec=await db.query(si,[encred,test_address,test_invoice])
-if(dbdec.rows[0] && dbdec.rows[0].red_c){
-decred=decrypt(dbdec.rows[0].red_c,parol)
+if(dbdec.rows[0] && dbdec.rows[0].rd_c){
+decred=decrypt(dbdec.rows[0].rd_c,parol)
 
-dbdec.rows[0].red_c=decred
+dbdec.rows[0].rd_c=decred
 }
 }catch(e){ctx.throw(400,e)}
 }else{console.log("It's PRODUCTION!")}
 	
-ctx.body={"info":"OK",encred, dbdec:dbdec.rows[0]}
+ctx.body={"info":"OK",encred, htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:dbdec.rows}),dbdec:dbdec.rows[0]}
 })
 
 
