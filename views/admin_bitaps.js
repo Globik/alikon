@@ -6,6 +6,7 @@ var warnig=false,haupt_ban=false;
 let admin_bitaps=n=>{
 var {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"bitaps", csslink:"/css/main2.css",luser:buser})}
+<style>table,th,td{border:1px solid black;}</style>
 </head><body>
 ${warnig?'<div id="warnig">Warnig</div>':''}
 <nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
@@ -23,21 +24,11 @@ ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 <b>parol: </b><input id="bparol" type="text" value="mumia"><br>
 <berror: </b>${n.error?n.error:'no error'}
 ${n.curd?n.curd.rd_id:'<h5>no reedem data.</h5>'}
-<!--
-<section id="bitapsnew" style="border:1px solid blue;background:red;">
-<b>red_id: </b><div><span id="bapRedid"></span></div>
-<b>act addr: </b><div><span id="actBapAdr"></span></div>
-<b>reedem code: </b><button id="btnChkBalanceRc" onclick="check_balance_rc(this);">check balance</button>
-<div><span id="redeemBap"></span></div>
-<b>type: </b><button id="btnMakeRcActive" onclick="make_rc_active(this);">make active</button><div><span id="bapRcType"></span></div>
-<b>invoice: </b><div><span id="bapInv"></span></div>
-<b>cold address: </b><button id="btnSaveColdAdr" onclick="saveColdAdr(this);">save cold address</button>
-<div><span id="coldAdr" contenteditable=true oninput="legin(this);"></span></div>
-</section>
--->
-
-<br><button onclick="get_new_reedem_code();">get new reedem_code</button> 
-<br><br><button onclick="geti();">get</button>
+<hr><button onclick="get_new_reedem_code();">get new reedem_code</button><br>
+<section id="redIn"></section>
+<hr>
+<button onclick="showMore();">show more reedems!</button><br>
+<section id="redIn2"></section>
 
 <script>
 var g_psys_enabler=null;
@@ -91,41 +82,49 @@ d.parol=bparol.value;
 vax('post','/api/create_redeem_code',d,onsuc,erl);
 }
 
+
 function onsuc(e){
-alert('htmlbody?: '+e.htmlbody);
-/*
-try{
-let b=e;
-let adr=actBapAdr.textContent=b.dbdec.red_adr;
-g_cur_adr=adr;
-let rc=redeemBap.textContent=b.dbdec.red_c;
-g_cur_rc=rc;
-btnChkBalanceRc.value=rc;
-btnMakeRcActive.value=b.dbdec.red_id;
-bapRedid.textContent=b.dbdec.red_id;
-let t=bapRcType.textContent=b.dbdec.red_t;
-g_cur_t=t;
-let inv=bapInv.textContent=b.dbdec.red_inv;
-g_cur_inv=inv;
-coldAdr.textContent=b.dbdec.red_cold_adr;
-btnSaveColdAdr.value=coldAdr.textContent;
-bapCmt.textContent=b.dbdec.red_cmt;
-}catch(er){alert(er)}
-*/
+if(!e.htmlbody){alert('no htmlbody attr found!');return;}
+redIn.innerHTML=e.htmlbody;
+
 }
-function legin(el){btnSaveColdAdr.value=el.textContent;}
+function legin(el){}
+
 function check_balance_rc(el){
-if(!el.value){alert('redeem code not provided: '+el.value);return;}
-//alert(el.value)
-let d={};d.rc=el.value;
+if(!el.value){alert('reedem code not provided');return;}
+let enc=el.getAttribute('data-enc')
+alert(enc+' '+el.value)
+let d={}
+if(enc=='true'){
+if(!bparol.value){alert('fill in parol field');return;}
+d.parol=bparol.value;
+}
+d.rc=el.value;d.enc=enc;
 vax('post','/admin/check_balance_rc',d,onl,erl);
 }
 
 function make_rc_active(el){
-if(!el.value){alert('no reedem code provided!');return;}
-let d={}
-d.rc_id=el.value;
+let dTbody=el.parentElement.parentElement.parentElement;
+if(!dTbody){alert('No tbody element found!');retrun;}
+let dForm=el.parentElement.previousElementSibling.firstChild;
+if(!dForm){alert('No form element found! It looks like you have an old browser.');return;}
+let c=dForm.f.value;
+let rdid=dTbody.getAttribute('data-rdid');
+let cadr=dTbody.rows[5].cells[1].textContent;
+alert(c+' '+rdid+' '+cadr)
+
+
+//if(!rdid || !c){alert('no id and no type provided!');return;}
+//if(c=='active'){
+//if(cadr=='no'){alert('No cold address provided!');return;}
+//}
+let d={};
+/*
+d.rd_id=rdid;
+d.rd_t=c;
+d.cold_adr=cadr;
 vax('post','/make_rc_active',d,svd_hot_adr,erl);
+*/
 }
 
 function onl(e){alert(miss(e))}
@@ -135,18 +134,40 @@ function erl(e){alert('ajx err : '+e)}
 function geti(){
 vax('get','/mid/Bob',null,onl,erl)
 }
-function saveColdAdr(el){
-if(el.value=='no'){alert(el.value+' cold address provided');return;}
-let d={};d.cold_adr=el.value;d.red_id=bapRedid.textContent;
+function save_cold(el){
+let tbody=el.parentElement.parentElement.parentElement;
+if(!tbody){alert('no tbody found');return;}
+let rdid=tbody.getAttribute('data-rdid');
+let cadr1=el.parentElement.previousElementSibling;
+if(!cadr1)return;
+let cadr=cadr1.textContent;
+alert(rdid+' '+cadr);
+if(!rdid || !cadr){alert('no id or cold address provided!');return;}
+if(cadr=='no'){alert('no cold address provided!');return;}
+let d={};
+d.rd_id=rdid;
+d.cold_adr=cadr;
+
+/*
+
 vax('post','/saveColdAdr',d,svd_cold_adr,erl)
+*/
 }
 function svd_cold_adr(d){
-if(!d)return;
-if(d.info=='ok') idpay1.cold_adr.value="true";
+//if(!d)return;
+//if(d.info=='ok') idpay1.cold_adr.value="true";
 }
 function svd_hot_adr(e){
-if(!e)return;
-if(e.info=='ok'){idpay1.real_adr.value="true";}
+//if(!e)return;
+//if(e.info=='ok'){idpay1.real_adr.value="true";}
+}
+function showMore(){
+let d={};d.show=true;
+vax('post','/admin/more_reedem',d,show2,erl)
+}
+function show2(e){
+if(!e.htmlbody){alert('no htmlbody attr found!');return;}
+redIn2.innerHTML=e.htmlbody;
 }
 </script>
 </main>${fg}<footer id="footer">${footer.footer({})}</footer></body></html>`;

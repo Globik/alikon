@@ -1,25 +1,37 @@
 const admin_v_bitaps_reedem=n=>{
-return `${n.dbdec?getred(n.dbdec):'<h4>No reedem data.</h4>'}`;
+	console.log('encrypted: ',n.unencrypted)
+return `${n.dbdec?getred(n.dbdec,n.unencrypted):'<h4>No reedem data.</h4>'} Unencrypted`;
 }
 module.exports={admin_v_bitaps_reedem}
-function getred(n){
+function getred(n,enc){
 let s='';
+	//'<table id="bitapstable" class="rd-info"><caption>Reedem info</caption>';
+	//s+='<thead><tr><th>attribute</th><th>value</th><th>control</th></tr></thead>';
 if(Array.isArray(n)){
 n.forEach((el,i)=>{
-s+=`<table class="red-info" data-id="${el.rd_id}" data-type="${el.rd_t}">`;
+s+=`<table class="rd-info"><caption>Reedem info. Crypted: ${enc}</caption>`;
 s+='<thead><tr><th>attribute</th><th>value</th><th>control</th></tr></thead>';
+s+=`<tbody data-rdid="${el.rd_id}" data-type="${el.rd_t}">`;
 s+=`<tr><th>id</th><td>${el.rd_id}</td></tr>`;
 s+=`<tr><th>active address</th><td>${el.rd_adr}</td></tr>`;
-s+=`<tr><th>reedem code:</th><td>${el.rd_c}</td><td><button onclick="check_balance_rc(this)">balance</button></td></tr>`;
-s+=`<tr><th>type</th><td>${el.rd_t}</td><td><button onclick="make_rc_active(this);">make active</button></td></tr>`;
+s+=`<tr><th>reedem code:</th><td>${enc?el.rd_c.substring(0,10):el.rd_c}</td><td>`;
+s+=`<button value="${el.rd_c}" data-enc="${enc}" onclick="check_balance_rc(this)">balance</button></td></tr>`;
+s+=`<tr><th>type</th><td>${moon(el.rd_t)}</td><td><button onclick="make_rc_active(this);">make active</button></td></tr>`;
 s+=`<tr><th>invoice</th><td>${el.rd_inv}</td></tr>`;
 s+=`<tr><th>cold address</th><td contenteditable=true oninput="legin(this);">${el.rd_cold_adr}</td>`;
-s+='<td><button onclick="svd_cold_adr(this);">save</button></td></tr>';
+s+='<td><button onclick="save_cold(this);">save</button></td></tr>';
 s+=`<tr><th>all amount</th><td>${el.rd_b} (BTC)</td></tr>`;
 s+=`<tr><th>created at</th><td>${el.rd_at}</td></tr>`;
 s+=`<tr><th>updated at</th><td>${el.rd_at}</td></tr>`;
-s+='</table>';
+s+='</tbody><tfoot><tr><td>end</td></tr></tfoot></table>';
 })
 }
+//s+='</table>';
 return s;
+}
+function moon(el){
+let s='<form name="formrdtype" style="display:inline;">';
+	s+=`<label>active</label><input type="radio" name="f" value="active"${el=='a'?' checked':''}>`;
+	s+=`<label>passive</label><input type="radio" name="f" value="passive"${el=='p'?' checked':''}></form>`;
+	return s;
 }

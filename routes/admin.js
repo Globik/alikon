@@ -158,19 +158,19 @@ dbdec.rows[0].rd_c=decred
 }catch(e){ctx.throw(400,e)}
 }else{console.log("It's PRODUCTION!")}
 	
-ctx.body={"info":"OK",encred, htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:dbdec.rows}),dbdec:dbdec.rows[0]}
+ctx.body={"info":"OK",encred, htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:dbdec.rows,unencrypted:false}),dbdec:dbdec.rows[0]}
 })
 
 
 
 admin.post('/make_rc_active',auth,async ctx=>{
-let {rc_id}=ctx.request.body;
-if(!rc_id)ctx.throw(400,"no rc_id")
+let {rd_id,rd_t,cold_adr}=ctx.request.body;
+if(!rd_id || !rd_t || !cold_adr)ctx.throw(400,"no rd_id or rd_t or cold_adr provided!")
 let db=ctx.db;
 try{
-await db.query('update reedem set red_t=true where red_id=$1',[rc_id])
+await db.query("update reedem set rd_t='a' where rd_id=$1",[rd_id])
 }catch(e){ctx.throw(400,e)}
-ctx.body={info:`id ${rc_id} marked as active!`}
+ctx.body={info:`id ${rd_id} marked as active!`}
 })
 
 admin.get('/mid/:mister',async ctx=>{
@@ -179,21 +179,28 @@ ctx.body={info:ctx.params.mister}
 })
 
 admin.post('/saveColdAdr',auth,async ctx=>{
-	let {red_id,cold_adr}=ctx.request.body;
-	if(!red_id || !cold_adr){ctx.throw(400,'no cold address or red_id to save!')}
+	let {rd_id,cold_adr}=ctx.request.body;
+	if(!rd_id || !cold_adr){ctx.throw(400,'no cold address or red_id to save!')}
 	let vali=walletValidator.validate(cold_adr,'bitcoin');
 	console.log('VALIDATOR: ',vali)
 	if(!vali){ctx.throw(400,'bitcoin cold_adr is not valid!')}
 	let db=ctx.db;
 	try{
-	await db.query('update reedem set red_cold_adr=$1 where red_id=$2',[cold_adr,red_id])
+	await db.query('update reedem set rd_cold_adr=$1 where rd_id=$2',[cold_adr,rd_id])
 	}catch(e){ctx.throw(400,e)}
 ctx.body={info:'ok'}
 })
 //const grund="https://bitaps.com/api/";
 admin.post('/admin/check_balance_rc',auth,async ctx=>{
-let {rc}=ctx.request.body;
-	if(!rc){ctx.throw(400,'no rc')}
+let {rc,enc,parol=undefined}=ctx.request.body;
+	if(!rc || !enc){ctx.throw(400,'no rc or enc provided')}
+	console.log('enc: ',enc)
+	if(enc=='true'){
+	if(!parol){ctx.throw(400,'no parol provided!')}
+		try{
+		rc=decrypt(rc,parol)
+		}catch(er){ctx.throw(400,er)}
+	}
 	let b;
 	let g=ctx.payment;
 	if(!g){ctx.throw(400,'no pay conf')}
@@ -206,6 +213,14 @@ let ops1={method:'post',body:data1,json:true,url:s2};
 		console.log('a: ',b)
 			}catch(e){ctx.throw(400,e)}
 ctx.body={info:'ok',b}
+})
+
+admin.post('/admin/more_reedem',auth,async ctx=>{
+let db=ctx.db;let res;
+	try{
+	res=await db.query('select*from reedem')
+	}catch(e){ctx.throw(400,e)}
+	ctx.body={htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:res.rows,unencrypted:true})}
 })
 /* END BITAPS */
 

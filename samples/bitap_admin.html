@@ -69,23 +69,32 @@
 			thead{display:none;}
 		}
 	</style>
-	<table id="bitapsadminsect2">
-		<thead><tr><th>attribute</th><th>value</th><th>control</th></tr></thead>
+	<table id="bitapsadminsect2" class="red-info" data-type="i" data-id="24" onchange="alert(7);">
+		<caption>caption</caption>
+		<thead> <tr><th>attribute</th><th>value</th><th>control</th></tr></thead> 
+		<tbody style="background:violet;" id="SomeBody" data-vid="666">
 		<tr><th>red_id</th><td>21</td></tr>
 	
 		<tr><th>act addr:</th><td>1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</td></tr>
 		
 		<tr><th>reedem code:</th>
 		<td>BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le</td>
-			<td><button>check balance</button></td></tr>
+			<td><button onclick="checkb(this);">check balance</button></td></tr>
 		<tr><th>type:</th>
-		<td>false</td>
-			<td><button>make active</button></td></tr>
+			<td><form name="duck" style="background:brown;display:inline;"><label>idempotent</label>
+				
+				<input type="radio" name="f" value="idempotent" checked>
+				<label>active</label><input type="radio" name="f" value="active">
+				<label>passive</label><input type="radio" name="f" value="passive"></form>
+			</td>
+			<td><button onclick="make_active(this);">make active</button></td></tr>
 		<tr><th>invoice:</th>
 			<td>invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V</td></tr>
 		<tr><th>cold address:</th>
-			<td>1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</td><td><button>save cold address</button></td></tr>
+			<td contenteditable=true data-pid="sosed" oninput="legin(this);">1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</td>
+			<td data-pid="mumi"><button value="button_value" onclick="svd_cold_adr(this);">save cold address</button></td></tr>
 		<tr><th>marker:</th><td>active</td></tr>
+			<tbody>
 	</table>
 	<style>
 		.form{display:grid;grid-template-columns:[labels] auto [controls] 1fr [fuck] 20%;grid-auto-flow:row;grid-gap:.8em;
@@ -104,4 +113,50 @@
 		<tr><th>Atr</th><th>val</th><th>controls</th></tr>
 		<tr><th>event</th><td>waltz</td><td>obel</td></tr>
 	</table>
+	<br><button onclick="doska('p');">doska</button><br>
+	<output id="sekta"></output>
+	<script>
+	function svd_cold_adr(el){
+	//alert(el.parentNode.getAttribute('data-pid'))
+		//alert(el.parentNode.parentNode.textContent)
+		let id=el.parentElement.parentElement.parentElement.parentElement;
+		alert(el.parentNode.previousElementSibling.textContent+' '+id.id)
+	}	
+		function legin(el){
+		//alert(el.nextElementSibling.getAttribute('data-pid'))
+			//alert(el.nextElementSibling.firstChild.value)
+		}
+		function make_active(el){
+		//alert(el.parentNode.parentNode.parentNode.parentNode.id)
+			let a=el.parentElement.parentElement.parentElement.parentElement;
+			let d=el.parentElement.parentElement.parentElement;
+			//alert(a.nodeType+' '+a.nodeName)// 1 table
+			//alert(el.nodeType+' '+el.nodeName)// 1 button
+			//alert(a.getAttribute('data-type')+' '+a.getAttribute('data-id'))
+			let b=el.parentElement.previousElementSibling.firstChild;
+			let c=b.f.value;
+			alert(b.name+' '+c+' '+d.getAttribute('data-vid'))
+			alert(d.nodeName+' '+d.nodeType+' '+d.rows[0].textContent)// tbody 1 length: 7
+		}
+		function checkb(el){
+		let a=el.parentElement.previousElementSibling;
+		alert(a.textContent)
+		}
+		function loadi(){alert('loadi')}
+		function boo(n){
+		let r=n=='a'?'a is a':n=='b'?'b is b':'nothing';
+			alert(r)
+		}
+		//boo('ba');
+		function doska(el){
+		
+			
+		let s='<form>';
+			s+='<label>active</lable><input type="radio" name="fu" '+(el=='a'?'checked':'')+'>';
+			s+='<label>passive</label><input type="radio" name="fu" '+(el=='p'?'checked':'')+'></form>';
+			sekta.innerHTML=s;
+		}
+		var suk='Mama gehts ins Kino. Heute';
+		alert(suk.substring(0,8))
+	</script>
 	</body></html>

@@ -438,7 +438,7 @@ return `${bas_part}${b.toString('base64')}`
 }
 }catch(e){throw e}
 }
-
+let advalid='Server side btc address is not valid!';
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 if(!ctx.payment && !ctx.payment.enabled){ctx.throw(400,'no ctx.payment provided!')}
 if(ctx.payment.enabled=="false"){ctx.throw(404,'Service temporary not available. Please try later!')}
@@ -457,6 +457,8 @@ var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfan
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
 console.log('mres.rows[0].addr: ', mres.rows[0].addr)
+let vali=walletValidator.validate(mres.rows[0].addr,'bitcoin');
+if(!vali){ctx.throw(400,advalid)}
 try{
 //src4=await dor_b64(`${mres.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${tok_pack}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
@@ -469,6 +471,8 @@ if(is_devel(true)){
 try{
 mres2=await db.query(vstr,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack])
 console.log('resw.rows[0].addr: ',mres2.rows[0].addr)
+let vali=walletValidator.validate(mres2.rows[0].addr,'bitcoin');
+if(!vali){ctx.throw(400,advalid)}
 try{
 //src4=await dor_b64(`${mres2.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${mres2.rows[0].bt_pck_tok}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
@@ -484,6 +488,10 @@ let estr2=encodeURIComponent(estr);
 let cb1=estr2
 let grund="https://bitaps.com/api/";
 let s6=grund+"create/payment/smartcontract/"+cb1;
+let vali3=walletValidator.validate(real_address,'bitcoin');
+if(!vali3){ctx.throw(400,advalid)}
+let vali4=walletValidator.validate(cold_wallet_address,'bitcoin');
+if(!vali4){ctx.throw(400,advalid)}
 let data5={type:"hot_wallet",hot_wallet:real_address,cold_storage:cold_wallet_address,hot_wallet_quota:60}
 let ops5={url:s6,method:'post',json:true,body:data5};
 try{
