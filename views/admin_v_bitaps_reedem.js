@@ -31,7 +31,7 @@ return s;
 }
 function moon(el){
 let s='<form name="formrdtype" style="display:inline;">';
-	s+=`<label>active</label><input type="radio" name="f" value="active"${el=='a'?' checked':''}>`;
-	s+=`<label>passive</label><input type="radio" name="f" value="passive"${el=='p'?' checked':''}></form>`;
+	s+=`<label>active</label><input type="radio" name="f" value="a"${el=='a'?' checked':''}>`;
+	s+=`<label>passive</label><input type="radio" name="f" value="p"${el=='p'?' checked':''}></form>`;
 	return s;
 }

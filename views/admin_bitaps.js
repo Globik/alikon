@@ -34,7 +34,6 @@ ${n.curd?n.curd.rd_id:'<h5>no reedem data.</h5>'}
 var g_psys_enabler=null;
 var g_actual_rc;
 function bp_enabler(el){
-//alert(el.parentNode.parentNode.method)
 try{
 let f=el.value=="true"?true:false;
 el.value=f?"false":"true";
@@ -114,17 +113,16 @@ let cadr=dTbody.rows[5].cells[1].textContent;
 alert(c+' '+rdid+' '+cadr)
 
 
-//if(!rdid || !c){alert('no id and no type provided!');return;}
-//if(c=='active'){
-//if(cadr=='no'){alert('No cold address provided!');return;}
-//}
+if(!rdid || !c){alert('no id or no type of reedem provided!');return;}
+if(c=='a'){
+if(cadr=='no'){alert('No cold address provided!');return;}
+}
 let d={};
-/*
+
 d.rd_id=rdid;
 d.rd_t=c;
 d.cold_adr=cadr;
 vax('post','/make_rc_active',d,svd_hot_adr,erl);
-*/
 }
 
 function onl(e){alert(miss(e))}
@@ -158,6 +156,7 @@ function svd_cold_adr(d){
 //if(d.info=='ok') idpay1.cold_adr.value="true";
 }
 function svd_hot_adr(e){
+alert(miss(e))
 //if(!e)return;
 //if(e.info=='ok'){idpay1.real_adr.value="true";}
 }

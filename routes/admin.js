@@ -167,8 +167,11 @@ admin.post('/make_rc_active',auth,async ctx=>{
 let {rd_id,rd_t,cold_adr}=ctx.request.body;
 if(!rd_id || !rd_t || !cold_adr)ctx.throw(400,"no rd_id or rd_t or cold_adr provided!")
 let db=ctx.db;
+let vali=walletValidator.validate(cold_adr,'bitcoin');
+if(!vali){ctx.throw(400,'bitcoin cold_adr is not valid!')}
 try{
-await db.query("update reedem set rd_t='a' where rd_id=$1",[rd_id])
+//await db.query("update reedem set rd_t=$1, rd_cold_adr=$2 where rd_id=$3",[rd_t,cold_adr,rd_id])
+await db.query("select bitaps_update_rd_type($1,$2,$3)",[rd_t,cold_adr,rd_id])
 }catch(e){ctx.throw(400,e)}
 ctx.body={info:`id ${rd_id} marked as active!`}
 })
@@ -182,7 +185,6 @@ admin.post('/saveColdAdr',auth,async ctx=>{
 	let {rd_id,cold_adr}=ctx.request.body;
 	if(!rd_id || !cold_adr){ctx.throw(400,'no cold address or red_id to save!')}
 	let vali=walletValidator.validate(cold_adr,'bitcoin');
-	console.log('VALIDATOR: ',vali)
 	if(!vali){ctx.throw(400,'bitcoin cold_adr is not valid!')}
 	let db=ctx.db;
 	try{
