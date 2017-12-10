@@ -60,8 +60,8 @@ const configDB=require('./config/database.js')
 const conf_pay=require('./config/pay.json')
 const mainmenu=require('./app.json')
 
-//const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-const database_url=configDB.pg_url;
+const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+//const database_url=configDB.pg_url;
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";
@@ -126,6 +126,10 @@ async get_pay_sys(){try{let d=await readf(`./config/${conf_pay.config}.json`,'ut
 app.use(async (ctx, next)=>{
 //if(ctx.path=='/favicon.ico'){console.log('**skiping favicon.ico');return;}
 console.log('PATH: ',ctx.method,ctx.path,ctx.url)
+//console.log('request: ',ctx.request.header["user-agent"])
+if(ctx.request.header["user-agent"]){
+ctx.session.ua=ctx.request.header["user-agent"];
+}
 ctx.state.filter_script=script;
 ctx.db=pool;
 ctx.boss=boss;
