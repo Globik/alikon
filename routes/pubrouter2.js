@@ -439,9 +439,12 @@ return `${bas_part}${b.toString('base64')}`
 }catch(e){throw e}
 }
 let advalid='Server side btc address is not valid!';
+
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 if(!ctx.payment && !ctx.payment.enabled){ctx.throw(400,'no ctx.payment provided!')}
 if(ctx.payment.enabled=="false"){ctx.throw(404,'Service temporary not available. Please try later!')}
+let {hotadr_quota,grund,cb_part}=ctx.payment;
+if(!hotadr_quota || !grund || !cb_part)ctx.throw(400,"hquota or grund or cb_part is not provided.")
 let db=ctx.db;
 let smin='20';
 if(ctx.state.xhr){
@@ -452,13 +455,11 @@ if(!mata.tok_pack  && !mata.buyerId){ctx.throw(400,'Not enough data provided to 
 let {tok_pack,buyerId,items2}=mata;let src4=null;let mres2;
 try{
 var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfang',tok_pack,smin]);
-	//var src4=qr.toDataURL(mres.rows[0].addr,4);
-	console.log('src4: ','src4')
+
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
 console.log('mres.rows[0].addr: ', mres.rows[0].addr)
-let vali=walletValidator.validate(mres.rows[0].addr,'bitcoin');
-if(!vali){ctx.throw(400,advalid)}
+
 try{
 //src4=await dor_b64(`${mres.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${tok_pack}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
@@ -466,13 +467,13 @@ src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),o
 	
 ctx.body={body:mata,result:mres.rows[0],src4,type:"alt",prod:is_devel(true)}
 }else{
-if(is_devel(true)){
+if(is_devel(false)){
 
 try{
-mres2=await db.query(vstr,[invoice_dev,address_dev,payment_code_dev,buyerId,tok_pack])
+	//inserting into bitaps_tmp
+mres2=await db.query(vstr,[invoice_dev,address_dev, payment_code_dev,buyerId,tok_pack])
 console.log('resw.rows[0].addr: ',mres2.rows[0].addr)
-let vali=walletValidator.validate(mres2.rows[0].addr,'bitcoin');
-if(!vali){ctx.throw(400,advalid)}
+
 try{
 //src4=await dor_b64(`${mres2.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${mres2.rows[0].bt_pck_tok}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
@@ -480,23 +481,35 @@ src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[
 ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:false}
 }catch(e){ctx.throw(400,e)}
 }else{
-
-let real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";
-let cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3";
-let estr="https://alikon.herokuapp.com/bitaps/cb/"+buyerId;//?
-let estr2=encodeURIComponent(estr);
-let cb1=estr2
-let grund="https://bitaps.com/api/";
+console.log("it is a production!")
+//let real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";
+//let cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3";
+	const cwa="1BMXmqU3fZ8PVjPbxgeenEX93YYf74bjeB";
+//let estr="https://alikon.herokuapp.com/bitaps/cb/"+buyerId;//?
+const estr="https://alikon.herokuapp.com/"+cb_part+buyerId;
+let estr2=encodeURIComponent(estr),cb1=estr2
+//let grund="https://bitaps.com/api/";
 let s6=grund+"create/payment/smartcontract/"+cb1;
-let vali3=walletValidator.validate(real_address,'bitcoin');
+	let hoti,coldi;
+	try{
+	let rw=await db.query("select rd_adr,rd_cold_adr from reedem where rd_t='a'")
+	if(rw.rows[0]){hoti=rw.rows[0].rd_adr;coldi=rw.rows[0].rd_cold_adr;
+	if(hoti==coldi){ctx.throw(400,"coldi and hoti must not to be equal. Check it initial params in reedem.")}
+	}else{ctx.throw(400,"no coldi or hoti found.")}
+	}catch(e){ctx.throw(400,e)}
+let vali3=walletValidator.validate(hoti,'bitcoin');
 if(!vali3){ctx.throw(400,advalid)}
-let vali4=walletValidator.validate(cold_wallet_address,'bitcoin');
+let vali4=walletValidator.validate(coldi,'bitcoin');
 if(!vali4){ctx.throw(400,advalid)}
-let data5={type:"hot_wallet",hot_wallet:real_address,cold_storage:cold_wallet_address,hot_wallet_quota:60}
+let data5={type:"hot_wallet",hot_wallet:/*real_address*/hoti,cold_storage:/*cold_wallet_address*/coldi,hot_wallet_quota:/*60*/Number(hotadr_quota)}
 let ops5={url:s6,method:'post',json:true,body:data5};
 try{
-var ewq2=await rkw(ops5);
+var ewq2=await rkw(ops5);// TODO check for body if is it of type JSON
+	//let sac=JSON.parse(ewq2.body)
+	
 var {invoice,address,payment_code}=ewq2.body;
+	console.log('addrr: ',address,'\n payment_code:\n',payment_code,' inv:\n ',invoice)
+	//ctx.throw(400,"mu mu")
 console.log('ewq status code: ',ewq2.resp.statusCode);
 console.log('ewq body: ',ewq2.body)
 }catch(e){console.log('error in request.js: ',e);ctx.throw(404,e.message)}
@@ -505,7 +518,7 @@ mres2=await db.query(vstr,[invoice,address,payment_code,buyerId,tok_pack])
 }catch(e){ctx.throw(400,e)}
 try{
 //src4=await dor_b64(mres2.rows[0].addr,ob64)
-src4=await dor_64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
 }catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
 ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:true}
 }

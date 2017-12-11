@@ -16,6 +16,7 @@ ${fg}
 <main id="pagewrap">
 Hallo <b>${buser.name}</b><br>
 <h1>Bitaps payment configuration.</h1>
+<b> from personal wallet: </b>${n.cwa?n.cwa:''}
 <form id="idpay1" method="post" action="/admin/conf_bitaps_payment" name="npay1">
 ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 <div><input type="submit" value="save" name="submit" disabled></div>
@@ -72,7 +73,7 @@ enablerMarker.textContent=g_psys_enabler;
 }catch(er){alert(er)}
 }
 
-var g_cur_inv,g_cur_rc,g_cur_t,g_cur_adr;
+//var g_cur_inv,g_cur_rc,g_cur_t,g_cur_adr;
 
 function get_new_reedem_code(){
 if(!bparol.value){alert('fill in parol field');return;}
@@ -145,12 +146,9 @@ if(cadr=='no'){alert('no cold address provided!');return;}
 let d={};
 d.rd_id=rdid;
 d.cold_adr=cadr;
-
-/*
-
 vax('post','/saveColdAdr',d,svd_cold_adr,erl)
-*/
 }
+
 function svd_cold_adr(d){
 //if(!d)return;
 //if(d.info=='ok') idpay1.cold_adr.value="true";

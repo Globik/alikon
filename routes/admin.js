@@ -96,6 +96,7 @@ ctx.body=await ctx.render('adm_dsh_banners',{banners:result});
 /* *********************************
 ADMIN_BITAPS_API
 ******************************** */
+const cwa="1BMXmqU3fZ8PVjPbxgeenEX93YYf74bjeB";//persnl wall
 admin.get("/dashboard/admin_bitaps",authed,async ctx=>{
 let payment=ctx.payment,db=ctx.db,curd,su=undefined, error=null;
 	try{
@@ -103,7 +104,7 @@ let payment=ctx.payment,db=ctx.db,curd,su=undefined, error=null;
 	if(curd.rows[0]){su=curd.rows[0]}
 	}catch(e){error=e}
 	console.log('curd: ',curd)
-ctx.body=await ctx.render('admin_bitaps',{payment,error,curd:su})
+ctx.body=await ctx.render('admin_bitaps',{payment,error,curd:su,cwa})
 })
 
 admin.post('/api/payment_system',authed,async ctx=>{
@@ -135,15 +136,26 @@ admin.post('/admin/uncache_what',auth,async ctx=>{
 ctx.body={info:ctx.request.body}
 })
 
-var test_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";// 34 
-var test_invoice="invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V";// 53 
-var test_redeem_code="BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le";// 53
+const test_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";// 34 
+const test_invoice="invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V";// 53 
+const test_redeem_code="BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le";// 53
 
+const s2="https://bitaps.com/api/create/redeemcode";
+const si='insert into reedem(rd_c,rd_adr, rd_inv) values($1,$2,$3) returning *'
 admin.post('/api/create_redeem_code',auth,async ctx=>{
-let si='insert into reedem(rd_c,rd_adr, rd_inv) values($1,$2,$3) returning *'
-let db=ctx.db;let decred,encred,dbdec;
+
+let db=ctx.db,decred,encred,dbdec;
+let {ramount}=ctx.tok_pack;
+if(!ramount){ctx.trow(400,"no romaunt from pay.json")}
 let {parol}=ctx.request.body;
 if(!parol){ctx.throw(400,"No parol provided.")}
+try{
+let rs=await db.query("select from reedem");
+console.log('ramount: ',ramount)
+if(rs.rowCount){
+//if(rs.rowCount > ramount)ctx.throw(400,"More than "+ramount+"redeems not allowed. Try to delete one or more idempotent, passive, or rd_lm==rd_at")
+}
+}catch(e){ctx.throw(400,e)}
 if(is_devel(true)){
 console.log('DEVELOPING?')
 try{
@@ -156,9 +168,26 @@ decred=decrypt(dbdec.rows[0].rd_c,parol)
 dbdec.rows[0].rd_c=decred
 }
 }catch(e){ctx.throw(400,e)}
-}else{console.log("It's PRODUCTION!")}
+}else{
+console.log("It's PRODUCTION!")
+let ops1={method:'get',url:s2};
+try{
+let a=await rkw(ops1)
+let sak=JSON.parse(a.body);
+	console.log('SAKA!: ',sak.address,'\n',sak.invoice)
+let {address,redeem_code,invoice}=sak;
 	
-ctx.body={"info":"OK",encred, htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:dbdec.rows,unencrypted:false}),dbdec:dbdec.rows[0]}
+console.log('addrr: ',address,'\n redeem_code:\n',redeem_code,' inv:\n ',invoice)
+encred=encrypt(redeem_code,parol)
+//red_c red_adr red_inv
+dbdec=await db.query(si,[encred,address,invoice])
+if(dbdec.rows[0] && dbdec.rows[0].rd_c){
+decred=decrypt(dbdec.rows[0].rd_c,parol)
+dbdec.rows[0].rd_c=decred
+}
+}catch(e){ctx.throw(400,e)}
+}	
+ctx.body={"info":"OK",encred, htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:dbdec.rows,unencrypted:false}),/*dbdec:dbdec.rows[0]*/}
 })
 
 

@@ -1,6 +1,6 @@
 -- \i /home/globik/alikon/sql/reedem.sql
 -- see https://bitaps.com/api
--- drop type if exists rd_type cascade;
+--drop type if exists rd_type cascade;
 
 create type rd_type as enum('i','a','p'); 
 create table reedem(rd_id serial primary key,
@@ -31,4 +31,3 @@ update reedem set rd_t=$1,rd_cold_adr=$2,rd_lm=now() where reedem.rd_id=$3;
 end if;
 end;
 $$;
---select bitaps_update_rd_type('a','adress',20);
