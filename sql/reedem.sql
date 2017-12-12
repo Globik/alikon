@@ -31,3 +31,17 @@ update reedem set rd_t=$1,rd_cold_adr=$2,rd_lm=now() where reedem.rd_id=$3;
 end if;
 end;
 $$;
+
+create or replace function bitaps_delete_rd(rd_id int) returns void
+language plpgsql as $$
+declare
+_typ rd_type;
+begin
+select reedem.rd_t into _typ from reedem where reedem.rd_id=$1;
+if _typ = 'a' then
+raise exception 'It''s active. Make it passive and then you can delete it.';
+else
+delete from reedem where reedem.rd_id=$1 and reedem.rd_t <>'a';
+end if;
+end;
+$$;

@@ -98,13 +98,15 @@ ADMIN_BITAPS_API
 ******************************** */
 const cwa="1BMXmqU3fZ8PVjPbxgeenEX93YYf74bjeB";//persnl wall
 admin.get("/dashboard/admin_bitaps",authed,async ctx=>{
-let payment=ctx.payment,db=ctx.db,curd,su=undefined, error=null;
+let payment=ctx.payment,db=ctx.db,su=undefined, error=null,dmount=0;let mu=0;
 	try{
-	curd=await db.query("select rd_id from reedem where rd_t='a'")
-	if(curd.rows[0]){su=curd.rows[0]}
+	let bmount=await db.query("select count(*) from reedem")
+	if(bmount.rows[0]){dmount=bmount.rows[0].count}
+	let curd=await db.query("select * from reedem where rd_t='a'")
+	if(curd.rows[0]){su=curd.rows[0];mu=curd.rows;}
 	}catch(e){error=e}
-	console.log('curd: ',curd)
-ctx.body=await ctx.render('admin_bitaps',{payment,error,curd:su,cwa})
+	
+ctx.body=await ctx.render('admin_bitaps',{payment,error,dbdec:mu,unencrypted:true,curd:su,cwa,dmount})
 })
 
 admin.post('/api/payment_system',authed,async ctx=>{
@@ -187,7 +189,9 @@ dbdec.rows[0].rd_c=decred
 }
 }catch(e){ctx.throw(400,e)}
 }	
-ctx.body={"info":"OK",encred, htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:dbdec.rows,unencrypted:false}),/*dbdec:dbdec.rows[0]*/}
+ctx.body={"info":"OK",encred, 
+htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:dbdec.rows,unencrypted:false})
+		 }
 })
 
 
@@ -240,18 +244,28 @@ let data1={redeemcode:rc};
 let ops1={method:'post',body:data1,json:true,url:s2};
 	try{
 		let a=await rkw(ops1)
-		b=a.body;
-		console.log('a: ',b)
-			}catch(e){ctx.throw(400,e)}
+		b=a.body;// it's not JSON!
+		//console.log('a: ',b)
+	}catch(e){ctx.throw(400,e)}
 ctx.body={info:'ok',b}
 })
 
 admin.post('/admin/more_reedem',auth,async ctx=>{
 let db=ctx.db;let res;
-	try{
-	res=await db.query('select*from reedem')
-	}catch(e){ctx.throw(400,e)}
-	ctx.body={htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:res.rows,unencrypted:true})}
+try{
+res=await db.query('select*from reedem')
+}catch(e){ctx.throw(400,e)}
+ctx.body={htmlbody:await ctx.render('admin_v_bitaps_reedem',{dbdec:res.rows,unencrypted:true})}
+})
+admin.post('/admin/api/delete_redeem',auth,async ctx=>{
+let {rdid,typ}=ctx.request.body;
+if(!rdid){ctx.throw(400,'rdid is not provided.')}
+let db=ctx.db;
+try{
+	//bitaps_delete_rd(rd_id int)
+await db.query("select bitaps_delete_rd($1)",[rdid])
+}catch(e){ctx.throw(400,e)}
+ctx.body={info:ctx.request.body}
 })
 /* END BITAPS */
 
