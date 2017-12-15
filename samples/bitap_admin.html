@@ -58,43 +58,65 @@
 	
 	<hr>
 	<style>
-		table,th,td{border:1px solid black;}
+		table{border-collapse:collapse;}
+		table,tr,td,caption{border:1px solid black;padding:0.8rem;}
+		caption{border-bottom:none;}
+		table th{padding:0.8rem;}
+		thead{background:#4caf50;color:white;}
+		
+		form[name=duck]{background:inherit;display:inline;padding:0.2rem;border:2px solid green;border-radius:2px;}
+		form[name=duck] input[type=radio]{vertical-align:top;background:red;color:red;}
+		
+		tfoot{background:silver;}
+		
+		
+		
+	tbody tr:nth-child(odd) {background:white;padding:0.5em;}
+	tbody tr:nth-child(even) {background:lightgreen;}
+		/*td > button{background:brown;width:100%;padding:16px;border:1px solid violet;color:white;font-weight:bold;}
+		td > button:hover{cursor:pointer;}*/
+		/*td[rowspan="3"]{vertical-align:middle;background:lightgreen;}*/
+		th[colspan="2"] > button{background:inherit;padding:0.8rem;margin-left:3px;font-weight:bold;border:2px solid black;
+		cursor:pointer;
+		}
+		th[colspan="2"]{text-align:left;}
+
+	
 		@media screen and (max-width:700px){
-			body{background:lightgreen;}
-			table{width:100%;}
-			td{display:block;}
-			td:nth-child(3) {background:green;color:red;}
+	
+			td{display:block}
+			/*td:nth-child(3) {background:green;color:red;}
 			tr:nth-child(odd) {background:gray;}
-			tr:nth-child(even) {background:lightblue;}
+			tr:nth-child(even) {background:lightblue;}*/
 			thead{display:none;}
 		}
 	</style>
-	<table id="bitapsadminsect2" class="red-info" data-type="i" data-id="24" onchange="alert(7);">
+	<table id="bitapsadminsect2" class="red-info" data-type="i" data-id="24" onchange="" oninput="">
 		<caption>caption</caption>
-		<thead> <tr><th>attribute</th><th>value</th><th>control</th></tr></thead> 
-		<tbody style="background:violet;" id="SomeBody" data-vid="666">
+		<thead> <tr><th>attribute</th><th>value</th></tr></thead> 
+		<tbody id="SomeBody" data-vid="666">
 		<tr><th>red_id</th><td>21</td></tr>
-	
-		<tr><th>act addr:</th><td>1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</td></tr>
-		
-		<tr><th>reedem code:</th>
+	    <tr><th>act addr:</th><td>1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</td></tr>
+		<tr><th>redeem code:</th>
 		<td>BTCvb1EkcMq3UanuFacxRpW9Ei4ePLt9HQ8SXTgZVhSQFRA4NB7Le</td>
-			<td><button onclick="checkb(this);">check balance</button></td></tr>
+</tr>
 		<tr><th>type:</th>
-			<td><form name="duck" style="background:brown;display:inline;"><label>idempotent</label>
-				
-				<input type="radio" name="f" value="idempotent" checked>
+			<td><form name="duck">
 				<label>active</label><input type="radio" name="f" value="active">
 				<label>passive</label><input type="radio" name="f" value="passive"></form>
 			</td>
-			<td><button onclick="make_active(this);">make active</button></td></tr>
+		
+			</tr>
 		<tr><th>invoice:</th>
 			<td>invNetkQ1TTTk5y2Hw48JoSipULpgGewG2mskqmKtitwUJoSFT12V</td></tr>
 		<tr><th>cold address:</th>
-			<td contenteditable=true data-pid="sosed" oninput="legin(this);">1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</td>
-			<td data-pid="mumi"><button value="button_value" onclick="svd_cold_adr(this);">save cold address</button></td></tr>
-		<tr><th>marker:</th><td>active</td></tr>
-			<tbody>
+			<td contenteditable=true data-pid="sosed" data-val="piska" oninput="legin(this);">1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs</td>
+			
+			</tr></tbody>
+		<tfoot>
+<tr><th colspan="2"><button>make active</button><button data-val="piska" href="#suka">save cold address</button><button>balance</button>
+	<button onclick="del(this);">delete</button></th></tr>
+		</tfoot>		
 	</table>
 	<style>
 		.form{display:grid;grid-template-columns:[labels] auto [controls] 1fr [fuck] 20%;grid-auto-flow:row;grid-gap:.8em;
@@ -115,7 +137,26 @@
 	</table>
 	<br><button onclick="doska('p');">doska</button><br>
 	<output id="sekta"></output>
+	ul
+	<style>
+		ul! li:hover{background:green;}
+	</style>
+	<ul>ijijij<li>j</ul>
 	<script>
+		function del(el){
+			let a=el.parentElement.parentElement.parentElement.parentElement;
+			let b=a.rows[1].cells[1].textContent;
+		alert('idi: '+b+' ')
+		//a.remove();
+		}
+		function suka(el){
+			let s=document.querySelectorAll('*[data-val=piska]')
+			//alert(s.length)
+	//s[0].classList.add('violet')
+	//alert(s[1])
+	//s[2].classList.add('violet')
+	s[1].className='violet';
+		}
 	function svd_cold_adr(el){
 	//alert(el.parentNode.getAttribute('data-pid'))
 		//alert(el.parentNode.parentNode.textContent)
@@ -157,6 +198,6 @@
 			sekta.innerHTML=s;
 		}
 		var suk='Mama gehts ins Kino. Heute';
-		alert(suk.substring(0,8))
+		//alert(suk.substring(0,8))
 	</script>
 	</body></html>

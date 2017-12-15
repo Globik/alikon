@@ -6,24 +6,38 @@ var warnig=false,haupt_ban=false;
 let admin_bitaps=n=>{
 var {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"bitaps", csslink:"/css/main2.css",luser:buser})}
-<style>table,th,td{border:1px solid black;}
-table.rd-info.tododelete{background:red;color:green;}
-.bggreen{background:green;}
-form[name=formrdtype]{background:red;display:inline;}
-td button{background:violet;height:100%;width:100%;margin:0;padding:0;border:none;}
-td:nth-child(3) {background:violet;}
+<style>
+table{border-collapse:collapse;}
+.greeny{background:green;}
 
-@media screen and (max-width:700px){
-			body{background:lightgreen;}
-			table{width:100%;}
-			td{display:block;}
+table,tr,td,caption{border:1px solid black;padding:0.8rem;}
+
+
+caption{border-bottom:none;}
+table th{padding:0.8rem;}
+thead{background:#4caf50;color:white;}
+.tododelete{background:red;}
+		
+form[name=formrd]{background:inherit;display:inline;padding:0.2rem;border:2px solid green;border-radius:2px;}
+form[name=formrd] input[type=radio]{vertical-align:top;background:red;color:red;}
+tfoot{background:silver;}
 /*
-			td:nth-child(3) {background:green;color:red;}
-			tr:nth-child(odd) {background:gray;}
-			tr:nth-child(even) {background:lightblue;}
+tbody tr:nth-child(odd) {background:white;padding:0.5em;}
+tbody tr:nth-child(even) {background:lightgreen;}
 */
-			thead{display:none;}
-		}
+th[colspan="2"] > button{background:inherit;padding:0.8rem;margin-left:3px;font-weight:bold;border:2px solid black;
+cursor:pointer;
+}
+th[colspan="2"]{text-align:left;}
+
+/*table[data-rdid="37"]{margin:100px;}*/
+#redIn2{display:flex;width:100%;flex-wrap:wrap;}
+#redIn2 > table{margin:10px;}
+@media screen and (max-width:700px){
+table{width:100%;}
+td{display:block;}
+thead{display:none;}
+}
 </style>
 </head><body>
 ${warnig?'<div id="warnig">Warnig</div>':''}
@@ -94,7 +108,7 @@ enablerMarker.textContent=g_psys_enabler;
 }
 
 function get_new_reedem_code(){
-if(!bparol.value){alert('fill in parol field');return;}
+if(!bparol.value){message_box('fill in parol field');return;}
 let d={};
 d.parol=bparol.value;
 vax('post','/api/create_redeem_code',d,onsuc,erl);
@@ -102,11 +116,10 @@ vax('post','/api/create_redeem_code',d,onsuc,erl);
 
 
 function onsuc(e){
-if(!e.htmlbody){alert('no htmlbody attr found!');return;}
+if(!e.htmlbody){message_box('no htmlbody attr found!');return;}
 redIn.innerHTML=e.htmlbody;
-
 }
-function legin(el){}
+
 
 function check_balance_rc(el){
 if(!el.value){message_box('redeem code not provided.');return;}
@@ -117,29 +130,30 @@ if(!bparol.value){message_box('fill in parol field!');return;}
 d.parol=bparol.value;
 }
 d.rc=el.value;d.enc=enc;
-vax('post','/admin/check_balance_rc',d,on_bal,on_bal_er);
-el.classList.add('bggreen');
+vax('post','/admin/check_balance_rc',d,on_bal,erl);
+el.parentElement.parentElement.classList.add('greeny');//tr
+
 }
+
 function on_bal(e){
-rem('bggreen');
+rem('greeny');
 message_box(e.b.address);
 }
-function on_bal_er(e){
-rem('bggreen')
-message_box(e);
-}
+
+
 function rem(d){
 let l=document.querySelector('.'+d);
 if(l)l.classList.remove(d);
 }
+
 function make_rc_active(el){
-let dTbody=el.parentElement.parentElement.parentElement;
-if(!dTbody){message_box('No tbody element found!');retrun;}
-let dForm=el.parentElement.previousElementSibling.firstChild;
-if(!dForm){message_box('No form element found! It looks like you have an old browser.');return;}
-let c=dForm.f.value;
-let rdid=dTbody.getAttribute('data-rdid');
-let cadr=dTbody.rows[5].cells[1].textContent;
+let a=el.parentElement.parentElement.parentElement.parentElement;
+if(!a){message_box('No table element found!');retrun;}
+let b=a.rows[3].cells[1].firstChild;
+if(!b){message_box('No form element found! It looks like you have an old browser.');return;}
+let c=b.f.value;
+let rdid=a.getAttribute('data-rdid');
+let cadr=a.rows[4].cells[1].textContent;
 //alert(c+' '+rdid+' '+cadr)
 if(!rdid || !c){mesage_box('no id or no type of reedem provided!');return;}
 if(c=='a'){
@@ -149,23 +163,23 @@ let d={};
 d.rd_id=rdid;
 d.rd_t=c;
 d.cold_adr=cadr;
-vax('post','/make_rc_active',d,svd_hot_adr,erl);
-dTbody.classList.add('bggreen');
+vax('post','/make_rc_active',d,onl,erl);
+a.classList.add('greeny');
 }
 
 function onl(e){alert(miss(e))}
 
-function erl(e){message_box('ajx err : '+e);rem('bggreen')}
+function erl(e){message_box(e);rem('greeny')}
 
 function geti(){
 vax('get','/mid/Bob',null,onl,erl)
 }
 function save_cold(el){
-let tbody=el.parentElement.parentElement.parentElement;
+let tbody=el.parentElement.parentElement.parentElement.parentElement;
 if(!tbody){message_box('no tbody found');return;}
 let rdid=tbody.getAttribute('data-rdid');
-let cadr1=el.parentElement.previousElementSibling;
-if(!cadr1)return;
+let cadr1=tbody.rows[4].cells[1];
+if(!cadr1){message_box('no cadr1 found.');return;}
 let cadr=cadr1.textContent;
 //alert(rdid+' '+cadr);
 if(!rdid || !cadr){message_box('no id or cold address provided!');return;}
@@ -173,49 +187,49 @@ if(cadr=='no'){message_box('no cold address provided!');return;}
 let d={};
 d.rd_id=rdid;
 d.cold_adr=cadr;
-vax('post','/saveColdAdr',d,svd_cold_adr,erl)
+vax('post','/admin/api/saveColdAdr',d,svd_cold_adr,erl)
+el.parentElement.parentElement.classList.add('greeny');
 }
 
 function svd_cold_adr(d){
-//if(!d)return;
-//if(d.info=='ok') idpay1.cold_adr.value="true";
+rem('greeny');
+if(d && d.info=='ok')message_box('A new cold address is successful updated!')
 }
-function svd_hot_adr(e){
-alert(miss(e))
-//if(!e)return;
-//if(e.info=='ok'){idpay1.real_adr.value="true";}
-}
+
 function showMore(){
 let d={};d.show=true;
 vax('post','/admin/more_reedem',d,show2,erl)
 }
 function show2(e){
-if(!e.htmlbody){alert('no htmlbody attr found!');return;}
+if(!e.htmlbody){message_box('no htmlbody attr found!');return;}
 redIn2.innerHTML=e.htmlbody;
 }
+
 function delete_redeem(el){
-let v=el.parentElement.parentElement.parentElement;
+let v=el.parentElement.parentElement.parentElement.parentElement;
 let id=v.getAttribute('data-rdid');
+//alert(id)
 let typ=v.getAttribute('data-type');
 if(!id || !typ){message_box('id or type is not provided. Sorry.');return;}
-//if(typ=='a'){message_box("It's active. Make it passive and then you can delete it.");return;}
+if(typ=='a'){message_box("It's active. Make it passive and then you can delete it.");return;}
 //alert('typ: '+typ+' id: '+id)
 let su=v.parentElement;
 let d={};
 d.rdid=id;
 d.typ=typ;
-su.classList+=" tododelete";
-vax('post','/admin/api/delete_redeem',d,on_rd_del,er_on_rd_del);
+vax('post','/admin/api/delete_redeem',d,on_rd_del,erl);
+v.classList.add('greeny');
+/*
+setTimeout(function(){
+on_rd_del({del:"307"})
+},4000)
+*/
 }
 function on_rd_del(e){
-let vel=document.querySelector('.rd-info.tododelete');
-if(!vel)return;
+if(!e.del){message_box("Attribute 'del' not found!");rem("greeny");return;}
+let vel=document.querySelector('table[data-rdid="'+e.del+'"]');
+if(!vel){message_box("Id "+e.del+" not found.");rem("greeny");return;}
 vel.remove();
-}
-function er_on_rd_del(e){
-message_box(e);
-let veli=document.querySelector('.rd-info.tododelete');
-veli.classList.remove('tododelete')
 }
 </script>
 </main>${fg}<footer id="footer">${footer.footer({})}</footer></body></html>`;

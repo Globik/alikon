@@ -214,14 +214,14 @@ admin.get('/mid/:mister',async ctx=>{
 ctx.body={info:ctx.params.mister}
 })
 
-admin.post('/saveColdAdr',auth,async ctx=>{
+admin.post('/admin/api/saveColdAdr',auth,async ctx=>{
 	let {rd_id,cold_adr}=ctx.request.body;
 	if(!rd_id || !cold_adr){ctx.throw(400,'no cold address or red_id to save!')}
 	let vali=walletValidator.validate(cold_adr,'bitcoin');
 	if(!vali){ctx.throw(400,'bitcoin cold_adr is not valid!')}
 	let db=ctx.db;
 	try{
-	await db.query('update reedem set rd_cold_adr=$1 where rd_id=$2',[cold_adr,rd_id])
+	await db.query('update reedem set rd_cold_adr=$1,rd_lm=now() where rd_id=$2',[cold_adr,rd_id])
 	}catch(e){ctx.throw(400,e)}
 ctx.body={info:'ok'}
 })
@@ -265,7 +265,7 @@ try{
 	//bitaps_delete_rd(rd_id int)
 await db.query("select bitaps_delete_rd($1)",[rdid])
 }catch(e){ctx.throw(400,e)}
-ctx.body={info:ctx.request.body}
+ctx.body={info:"ok",del:rdid}
 })
 /* END BITAPS */
 
