@@ -443,8 +443,8 @@ let advalid='Server side btc address is not valid!';
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
 if(!ctx.payment && !ctx.payment.enabled){ctx.throw(400,'no ctx.payment provided!')}
 if(ctx.payment.enabled=="false"){ctx.throw(404,'Service temporary not available. Please try later!')}
-let {hotadr_quota,grund,cb_part}=ctx.payment;
-if(!hotadr_quota || !grund || !cb_part)ctx.throw(400,"hquota or grund or cb_part is not provided.")
+let {hotadr_quota,grund,cb_part,ptype}=ctx.payment;
+if(!hotadr_quota || !grund || !cb_part || !ptype)ctx.throw(400,"hquota or grund or cb_part or ptype is not provided!")
 let db=ctx.db;
 let smin='20';
 if(ctx.state.xhr){
@@ -458,22 +458,20 @@ var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfan
 
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
-console.log('mres.rows[0].addr: ', mres.rows[0].addr)
+//console.log('mres.rows[0].addr: ', mres.rows[0].addr)
 
 try{
 //src4=await dor_b64(`${mres.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${tok_pack}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
-}catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
+}catch(e){ctx.throw(400,e);}
 	
 ctx.body={body:mata,result:mres.rows[0],src4,type:"alt",prod:is_devel(true)}
 }else{
 if(is_devel(false)){
-
 try{
 	//inserting into bitaps_tmp
 mres2=await db.query(vstr,[invoice_dev,address_dev, payment_code_dev,buyerId,tok_pack])
-console.log('resw.rows[0].addr: ',mres2.rows[0].addr)
-
+//console.log('resw.rows[0].addr: ',mres2.rows[0].addr)
 try{
 //src4=await dor_b64(`${mres2.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${mres2.rows[0].bt_pck_tok}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
@@ -490,6 +488,7 @@ const estr="https://alikon.herokuapp.com/"+cb_part+buyerId;
 let estr2=encodeURIComponent(estr),cb1=estr2
 //let grund="https://bitaps.com/api/";
 let s6=grund+"create/payment/smartcontract/"+cb1;
+
 	let hoti,coldi;
 	try{
 	let rw=await db.query("select rd_adr,rd_cold_adr from reedem where rd_t='a'")
@@ -501,13 +500,28 @@ let vali3=walletValidator.validate(hoti,'bitcoin');
 if(!vali3){ctx.throw(400,advalid)}
 let vali4=walletValidator.validate(coldi,'bitcoin');
 if(!vali4){ctx.throw(400,advalid)}
-let data5={type:"hot_wallet",hot_wallet:/*real_address*/hoti,cold_storage:/*cold_wallet_address*/coldi,hot_wallet_quota:/*60*/Number(hotadr_quota)}
+let s7=grund+"create/payment/"+coldi+"/"+cb1+"?";
+let qes={confirmations:3,free_level:"low"};
+let data7={method:"get",url:s7,qs:qes}
+let data5={type:"hot_wallet",hot_wallet:hoti,cold_storage:coldi,hot_wallet_quota:Number(hotadr_quota)}
 let ops5={url:s6,method:'post',json:true,body:data5};
+let misha;let isjson=false;let resulti;
+	console.log('ptype: ',ptype)
+if(ptype=="hot"){
+misha=ops5;
+}else if(ptype=="single"){
+misha=data7;
+}else{ctx.throw(400,"no ptype specified.")}
 try{
-var ewq2=await rkw(ops5);// TODO check for body if is it of type JSON
-	//let sac=JSON.parse(ewq2.body)
+var ewq2=await rkw(misha);// TODO check for body if is it of type JSON
+	console.log('ewq2: ',ewq2.body)
+	try{let sac=JSON.parse(ewq2.body);
+		console.log('sac: ',sac);
+		isjson=true;
+	   resulti=sac;
+	   }catch(e){console.log('js parse err: ',e)}
 	
-var {invoice,address,payment_code}=ewq2.body;
+var {invoice,address,payment_code}=(isjson?resulti:ewq2.body);
 	console.log('addrr: ',address,'\n payment_code:\n',payment_code,' inv:\n ',invoice)
 	//ctx.throw(400,"mu mu")
 console.log('ewq status code: ',ewq2.resp.statusCode);
@@ -520,7 +534,7 @@ try{
 //src4=await dor_b64(mres2.rows[0].addr,ob64)
 src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
 }catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
-ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:true}
+ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:true,ptype:ptype}
 }
 }
 

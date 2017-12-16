@@ -33,6 +33,8 @@ th[colspan="2"]{text-align:left;}
 /*table[data-rdid="37"]{margin:100px;}*/
 #redIn2{display:flex;width:100%;flex-wrap:wrap;}
 #redIn2 > table{margin:10px;}
+
+#idpay1{border:1px solid green;width:15rem;}
 @media screen and (max-width:700px){
 table{width:100%;}
 td{display:block;}
@@ -49,10 +51,12 @@ ${fg}
 Hallo <b>${buser.name}</b><br>
 <h1>Bitaps payment configuration.</h1>
 <b> from personal wallet: </b>${n.cwa?n.cwa:''}
+<section>
 <form id="idpay1" method="post" action="/admin/conf_bitaps_payment" name="npay1">
 ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 <div><input type="submit" value="save" name="submit" disabled></div>
 </form>
+</section>
 <br><button onclick="reload_pay_sys();">reload pay sys</button><br>
 <b>parol: </b><input id="bparol" type="text" value="mumia"><br>
 <b>error: </b>${n.error?n.error:'no error'}
@@ -76,6 +80,13 @@ idpay1.enabled.value=f?"false":"true";
 el.textContent=f?"enable":"disable";
 idpay1.submit.disabled=false;
 }catch(e){alert(e);}}
+
+function bp_ptype(el){
+el.textContent=el.textContent=="single"?"hot":"single";
+idpay1.ptype.value=idpay1.ptype.value=="single"?"hot":"single";
+idpay1.submit.disabled=false;
+//el.parentElement.parentElement.submit.disabled=false;
+}
 
 idpay1.addEventListener('submit',send_pay_config,false);
 
@@ -238,10 +249,12 @@ vel.remove();
 module.exports={admin_bitaps};
 function get_payment_sys(payment){
 let s='';
-let {name,enabled,test,real_adr,cold_adr,hotadr_quota,grund,cb_part}=payment;
+let {name,enabled,test,real_adr,cold_adr,hotadr_quota,grund,cb_part,ptype}=payment;
 s+=`<div><b>name:</b><br><input type="text" name="name" value="${name}" readonly></div>`;
 s+=`<div><b>enabled:</b><b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b><br><input type="text" name="enabled" value="${enabled}">`;
 s+=`<button value="${enabled}" onclick="bp_enabler(this);return false;">${enabled=="true"?'disable':'enable'}</button></div>`;
+s+=`<div><b>type:</b><b id="ptypeMarker">${ptype=="hot"?'HOT!':'SINGLE!'}</b><br><input type="text" name="ptype" value="${ptype}" readonly>`;
+s+=`<button onclick="bp_ptype(this);return false;">${ptype=='hot'?'single':'hot'}</button></div>`;
 s+=`<div><b>test mode:</b><br><input type="text" name="test" value="${test}" readonly></div>`;
 s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
 s+=`<div><b>base url api: </b><br><input type="text" name="grund" value="${grund}" readonly></div>`;
