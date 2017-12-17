@@ -8,39 +8,30 @@ bell:{src:"/sounds/bell.ogg"},
 message:{src:"/sounds/message.ogg"}
 }
 
-function is_local_storage(){
-	/*
-if(typeof(Storage) !=='undefined'){return true;}else{
-return false;}
-*/
-	return (typeof(Storage) !=='undefined'?true:false);
-}
+function is_local_storage(){return (typeof(Storage) !=='undefined'?true:false);}
 function is_sound(){
 if(is_local_storage()){
 if(localStorage.soundenable){
 if(localStorage.soundenable=="0"){return false;}else{return true;}
 }
-return true;
-}
-return false;
-}
-function shell(el,n,ml){
-if(typeof HTMLDialogElement==='function'){
+return true;}
+return false;}
+function is_dialogi(){return (typeof HTMLDialogElement==='function'?true:false);}
+function bzuka(el,n,ml){
 inbox3.innerHTML='<b>'+n+'</b>';dialogConfirm.showModal();
 playSound(sounds.message.buffer);
 dialogConfirm.onclose=function(ev){
-if(ev.target.returnValue=='true'){el.target.dispatchEvent(ml);
+ev.target.returnValue=='true'?luzda(el,ml):null;
 ev.target.returnValue=null;
-}
-}}else{
-if(confirm(n)){el.target.dispatchEvent(ml);}
-}
-}
+}}
+function shell(el,n,ml){is_dialogi()?bzuka(el,n,ml):puzuki(el,n,ml);}
+function puzuki(el,n,ml){confirm(n)?luzda(el,ml):null}
+function luzda(el,ml){(el?el.target.dispatchEvent(ml):pizda(ml));}
 function bvid(i){return document.getElementById(i);}
 function galert(n){
-//alert('what the fuck');
 let c=window.getComputedStyle(document.querySelector('.popi'),null).getPropertyValue('z-index');
 inbox2.innerHTML='<b>'+n+'</b>';
+playSound(sounds.complete.buffer);
 if(c)bvid('alert_id').style.zIndex=c+1;
 bvid('alert_id').classList.add('ak');
 setTimeout(function(){

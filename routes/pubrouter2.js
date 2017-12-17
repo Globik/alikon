@@ -426,7 +426,7 @@ dot_size:12/2,
 margin:8/2,
 type:Types.PNG
 }
-const vstr='insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok) values($1,$2,$3,$4,$5) returning addr,bt_pck_tok,bt_inv_id';
+const vstr='insert into bitaps_tmp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,brd_pt) values($1,$2,$3,$4,$5,$6) returning addr,bt_pck_tok,bt_inv_id';
 const vstr2=n=>{ return `${n.a}?amount=${n.am}&label=${n.l}&message=Purchase%20${n.p}%20tokens`;}
 async function dor_b64(url,n){
 try{
@@ -450,7 +450,6 @@ let smin='20';
 if(ctx.state.xhr){
 let mata=ctx.request.body.fields;
 if(!mata){ctx.throw(400,'no body vars')}
-//tok_pack,items2,buyerId
 if(!mata.tok_pack  && !mata.buyerId){ctx.throw(400,'Not enough data provided to be processed.')}
 let {tok_pack,buyerId,items2}=mata;let src4=null;let mres2;
 try{
@@ -458,28 +457,22 @@ var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfan
 
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
-//console.log('mres.rows[0].addr: ', mres.rows[0].addr)
-
 try{
-//src4=await dor_b64(`${mres.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${tok_pack}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
 }catch(e){ctx.throw(400,e);}
 	
-ctx.body={body:mata,result:mres.rows[0],src4,type:"alt",prod:is_devel(true)}
+ctx.body={body:mata,result:mres.rows[0],src4,type:"alt",prod:is_devel(true),ptype:ptype}
 }else{
 if(is_devel(false)){
 try{
 	//inserting into bitaps_tmp
-mres2=await db.query(vstr,[invoice_dev,address_dev, payment_code_dev,buyerId,tok_pack])
-//console.log('resw.rows[0].addr: ',mres2.rows[0].addr)
+mres2=await db.query(vstr,[invoice_dev,address_dev, payment_code_dev,buyerId,tok_pack,ptype])
 try{
-//src4=await dor_b64(`${mres2.rows[0].addr}?amount=${items2}&label=${buyerId}&message=Purchase%20${mres2.rows[0].bt_pck_tok}%20tokens`,ob64)
 src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
-}catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
-ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:false}
+}catch(e){ctx.throw(400,e);}
+ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:false,ptype:ptype}
 }catch(e){ctx.throw(400,e)}
 }else{
-console.log("it is a production!")
 //let real_address="1Gdc5d6hKQnguxrkHmPYw4A1bP7rHAoSAs";
 //let cold_wallet_address="1DnxfQ4YqAvzEkeR6XBkxQt76MRQvScet3";
 	const cwa="1BMXmqU3fZ8PVjPbxgeenEX93YYf74bjeB";
@@ -506,34 +499,29 @@ let data7={method:"get",url:s7,qs:qes}
 let data5={type:"hot_wallet",hot_wallet:hoti,cold_storage:coldi,hot_wallet_quota:Number(hotadr_quota)}
 let ops5={url:s6,method:'post',json:true,body:data5};
 let misha;let isjson=false;let resulti;
-	console.log('ptype: ',ptype)
 if(ptype=="hot"){
 misha=ops5;
 }else if(ptype=="single"){
 misha=data7;
-}else{ctx.throw(400,"no ptype specified.")}
+}else{ctx.throw(400,"no ptype specified. Single or hot?")}
 try{
-var ewq2=await rkw(misha);// TODO check for body if is it of type JSON
-	console.log('ewq2: ',ewq2.body)
+var ewq2=await rkw(misha);
 	try{let sac=JSON.parse(ewq2.body);
-		console.log('sac: ',sac);
 		isjson=true;
 	   resulti=sac;
-	   }catch(e){console.log('js parse err: ',e)}
+	   }catch(e){
+	console.log('js parse err: ',e);
+	   //todo check is_object?
+	   }
 	
 var {invoice,address,payment_code}=(isjson?resulti:ewq2.body);
-	console.log('addrr: ',address,'\n payment_code:\n',payment_code,' inv:\n ',invoice)
-	//ctx.throw(400,"mu mu")
-console.log('ewq status code: ',ewq2.resp.statusCode);
-console.log('ewq body: ',ewq2.body)
-}catch(e){console.log('error in request.js: ',e);ctx.throw(404,e.message)}
+}catch(e){ctx.throw(404,e.message)}
 try{
-mres2=await db.query(vstr,[invoice,address,payment_code,buyerId,tok_pack])
+mres2=await db.query(vstr,[invoice,address,payment_code,buyerId,tok_pack,ptype])
 }catch(e){ctx.throw(400,e)}
 try{
-//src4=await dor_b64(mres2.rows[0].addr,ob64)
 src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
-}catch(e){console.log('err in dor_b64: ',e);ctx.throw(400,e);}
+}catch(e){ctx.throw(400,e);}
 ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:true,ptype:ptype}
 }
 }
@@ -549,7 +537,7 @@ let b=ctx.request.body;
 if(!b){ctx.throw(400,'no body vars')}
 if(!b.code){ctx.throw(400,'no p_code provided')}
 let cb_us_id=ctx.params.bus_id;
-if(!cb_us_id){ctx.throw(404,'not found')}
+if(!cb_us_id){ctx.throw(404,'cb_us_id is not found.')}
 	let tx_h=b.tx_hash;
 	let adr=b.address;
 	let inv=b.invoice;

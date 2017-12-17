@@ -50,25 +50,34 @@ ${fg}
 <main id="pagewrap">
 Hallo <b>${buser.name}</b><br>
 <h1>Bitaps payment configuration.</h1>
-<b> from personal wallet: </b>${n.cwa?n.cwa:''}
+<b>Personal wallet btc address:</b>&nbsp;${n.cwa?n.cwa:''}&nbsp;&nbsp;<b>parol: </b><input id="bparol" type="text" value="mumia">
 <section>
 <form id="idpay1" method="post" action="/admin/conf_bitaps_payment" name="npay1">
 ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
 <div><input type="submit" value="save" name="submit" disabled></div>
 </form>
 </section>
-<br><button onclick="reload_pay_sys();">reload pay sys</button><br>
-<b>parol: </b><input id="bparol" type="text" value="mumia"><br>
-<b>error: </b>${n.error?n.error:'no error'}
-${n.curd?n.curd.rd_id:'<h5>no reedem data.</h5>'}
+<br><button id="newfucker">reload pay sys</button><br>
+onclick="reload_pay_sys();"
+<div>
+${n.error?`<h4>Error:</h4>${n.error}`:''}
+</div>
+${n.curd?`<h4>Current id of redeem data: ${n.curd.rd_id}</h4>`:'<h4>no redeem data.</h4>'}
 <br>${admin_v_bitaps_reedem.admin_v_bitaps_reedem(n)}<br>
-<hr><button onclick="get_new_reedem_code();">get new reedem_code</button><br>
+<hr><button onclick="get_new_reedem_code();">get new redeem_code</button><br>
 <section id="redIn"></section>
 <hr>
-<br><b>how much: </b>${n.dmount?n.dmount:'0'}<br>
-<button onclick="showMore();">show more reedems!</button><br>
-<section id="redIn2"></section>
+<br><b>There are ${n.dmount?n.dmount:'0'} redeem data.</b>&nbsp;<button onclick="showMore();">show me that!</button><br>
 
+<section id="redIn2"></section>
+<!--
+<a href="#." class="overlay" id="btcreloader"></a>
+<output id="btcreloaderId" class="popi">
+<div class="wrap-close"><a href="#." class="close"></a></div>
+<button class="ban" id="smartStopBtn" data-zus="false" title="Smart enable/disable all streams">smart stop</button>
+<button class="ban" id="dirtyStopBtn" title="Dirty enable/disable all streams">dirty stop</button>
+</output>
+-->
 <script>
 var g_psys_enabler=null;
 var g_actual_rc;
@@ -96,13 +105,28 @@ if(!d)return;
 vax(ev.target.method,ev.target.action,d,obusi,erl,true);//true means formdata, not an json set request header
 ev.preventDefault();
 }
-
+var sura=new Event('suzuki');
 function obusi(f){
 if(!f.info && !f.info.enabled){return;}
 console.warn('saved');
+shell(false,"Saved! Wish you reload this payment system??","sayPizda")
+
 g_psys_enabler=f.info.enabled=="true"?"YES!":f.info.enabled=="false"?"NO!":g_psys_enabler;
 }
+
+function pizda(n){
+//alert('pizda:'+n)
+if(n=="sayPizda"){reload_pay_sys();}
+}
+
+newfucker.onclick=function(e){
+shell(e,"Wish you reload this payment system?",sura);
+}
+newfucker.addEventListener('suzuki',reload_pay_sys,false);
+
+//function dura(){alert('a?')}
 var strty="pay_sys_reload";
+
 function reload_pay_sys(){
 let d={};
 d.type=strty;
@@ -114,8 +138,10 @@ console.log(miss(b))
 try{
 if(b.info.type==strty){
 enablerMarker.textContent=g_psys_enabler;
+//message_box("OK! Have been reloaded!");
+galert("OK! Have been reloaded!")
 }
-}catch(er){alert(er)}
+}catch(er){message_box(er)}
 }
 
 function get_new_reedem_code(){
@@ -127,7 +153,7 @@ vax('post','/api/create_redeem_code',d,onsuc,erl);
 
 
 function onsuc(e){
-if(!e.htmlbody){message_box('no htmlbody attr found!');return;}
+if(!e.htmlbody){galert('no htmlbody attr found!');return;}
 redIn.innerHTML=e.htmlbody;
 }
 
@@ -204,7 +230,7 @@ el.parentElement.parentElement.classList.add('greeny');
 
 function svd_cold_adr(d){
 rem('greeny');
-if(d && d.info=='ok')message_box('A new cold address is successful updated!')
+if(d && d.info=='ok')galert('A new cold address is successful updated!')
 }
 
 function showMore(){
@@ -241,6 +267,7 @@ if(!e.del){message_box("Attribute 'del' not found!");rem("greeny");return;}
 let vel=document.querySelector('table[data-rdid="'+e.del+'"]');
 if(!vel){message_box("Id "+e.del+" not found.");rem("greeny");return;}
 vel.remove();
+galert("OK!");
 }
 </script>
 </main>${fg}<footer id="footer">${footer.footer({})}</footer></body></html>`;

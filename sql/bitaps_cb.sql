@@ -8,25 +8,27 @@ insert into bitaps_temp(bt_inv_id,addr,p_c,us_id,bt_pck_tok,bt_amount) values('i
 -- todo: dynamic price for one token. At the moment it has 40 000 satoshis(0.0004 btc) per token
 
 drop table bitaps_cb;
-create table bitaps_cb(tx_h text not null, -- tx_hash
-					   adr text not null, --address todo: type varchar() remove type text
-					   inv text not null, --invoice
-					   p_c text not null, --code
+create table bitaps_cb(tx_h varchar(100) not null, -- tx_hash
+					   adr varchar(100) not null, --address 
+					   inv varchar(100) not null, --invoice
+					   p_c varchar(100) not null, --code
 					   amt bigint not null, --amount (in satoshi)
 					   cnf int not null, -- confirmations
-					   p_tx_h text not null, -- payout_tx_hash
+					   p_tx_h varchar(100) not null, -- payout_tx_hash
 					   p_m_f float not null, -- payout_miner_fee
 					   p_s_f float not null, -- payout_service_fee
 					   cb_us_id varchar(24) not null references busers(id),
 					   cb_at timestamptz not null default now(), -- creating time
 					   l_at timestamptz not null default now(), -- last modified
-					   pack int not null, -- how much tokens 
+					   pack int not null, -- how much tokens ,
+					   cb_pt brd_ptype not null default 'hot', -- brd_pt brd_ptype from bitaps_tmp.sql single,hot
 			prom_pack int not null default 0, -- additional amount of tokens after recalculations on satoshi 'w_items' field in busers.sql
 					   cb_n int not null default 0, -- an order number of a confirmation(incremental)
 					  constraint unique_inv_id unique(inv));
-					   
-create or replace function bitaps_cb_proc(tx_h text,adr text,inv text,p_c text,
-										 amt bigint,cnf int,p_tx_h text,
+					  
+--drop function bitaps_cb_proc(text,text,text,text,bigint,int,text,float,float,varchar(34));					   
+create or replace function bitaps_cb_proc(tx_h varchar(100),adr varchar(100),inv varchar(100),p_c varchar(100),
+										 amt bigint,cnf int,p_tx_h varchar(100),
 										 p_m_f float,p_s_f float,
 										 cb_us_id varchar(24)) returns void
 language plpgsql as $$
@@ -36,15 +38,17 @@ muck int; -- an order number of a given confirmation
 _dolg bigint; -- a temporal variable to calculate satoshis in busers.w_items
 _vdolg int; -- a temporal variable to calculate amount of tokens to give
 _promdolg int :=0; -- a temporal value of additional tokens for bitaps_pays.sql storing
+_cb_pt brd_ptype; --brd_pt brd_ptype from bitaps_tmp.sql
 begin
 -- must to check if payment_code exists in bitaps_tmp. Throw error if not.
 if exists(select 1 from bitaps_tmp where bitaps_tmp.p_c=bitaps_cb_proc.p_c) then
 select trunc(bitaps_cb_proc.amt/40000) into p_pack;
+select bitaps_tmp.brd_pt from bitaps_tmp into _cb_pt;
 
-insert into bitaps_cb(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,cb_us_id,pack) values(
+insert into bitaps_cb(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,cb_us_id,pack,cb_pt) values(
 	bitaps_cb_proc.tx_h,bitaps_cb_proc.adr,bitaps_cb_proc.inv,bitaps_cb_proc.p_c,bitaps_cb_proc.amt,
 	bitaps_cb_proc.cnf,bitaps_cb_proc.p_tx_h,bitaps_cb_proc.p_m_f,bitaps_cb_proc.p_s_f,
-bitaps_cb_proc.cb_us_id,p_pack) on conflict on constraint unique_inv_id do update 
+bitaps_cb_proc.cb_us_id,p_pack, _cb_pt) on conflict on constraint unique_inv_id do update 
 set cb_n=bitaps_cb.cb_n + 1, l_at=now(), cnf=bitaps_cb_proc.cnf;
 	
 select bitaps_cb.cb_n from bitaps_cb where bitaps_cb.inv=bitaps_cb_proc.inv into muck; 
@@ -74,8 +78,9 @@ end if;
 
 update bitaps_tmp set bt_status='confirming',bt_l_mod=now() where bitaps_tmp.p_c=bitaps_cb_proc.p_c;
 elsif muck = 3 then
+select cb_pt from bitaps_cb where bitaps_cb.inv=bitaps_cb_proc.inv into _cb_pt;
 select prom_pack from bitaps_cb where bitaps_cb.inv=bitaps_cb_proc.inv into _promdolg;
-insert into bitaps_pays(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,pus_id,pack) 
+insert into bitaps_pays(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,pus_id,pack,fcb_pt) 
 	values(bitaps_cb_proc.tx_h,
 		   bitaps_cb_proc.adr,
 		   bitaps_cb_proc.inv,
@@ -86,7 +91,7 @@ insert into bitaps_pays(tx_h,adr,inv,p_c,amt,cnf,p_tx_h,p_m_f,p_s_f,pus_id,pack)
 	       bitaps_cb_proc.p_m_f,
 		   bitaps_cb_proc.p_s_f,
 		   bitaps_cb_proc.cb_us_id,
-		   p_pack + _promdolg);
+		   p_pack + _promdolg,_cb_pt);
 	
 	delete from bitaps_tmp where bitaps_tmp.p_c=bitaps_cb_proc.p_c;
 	delete from bitaps_cb where bitaps_cb.inv=bitaps_cb_proc.inv;

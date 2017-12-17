@@ -7,7 +7,7 @@ let s='';
 if(Array.isArray(n)){
 n.forEach((el,i)=>{
 s+=`<table data-rdid="${el.rd_id}" data-type="${el.rd_t}">`;
-s+=`<caption>Reedem info. Crypted: ${enc}</caption>`;
+s+=`<caption>Redeem info. Crypted: ${enc}</caption>`;
 s+='<thead><tr><th>attribute</th><th>value</th></tr></thead>';
 s+='<tfoot><tr><th colspan="2"><button onclick="make_rc_active(this);">make active</button>';
 s+='<button onclick="save_cold(this);">save cold address</button>';
