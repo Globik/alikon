@@ -8,37 +8,72 @@ var {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
 return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"bitaps", csslink:"/css/main2.css",luser:buser})}
 <style>
 table{border-collapse:collapse;}
+#pagewrap h1{padding:0.8em;}
+#pagewrap > section{margin-top:8px;margin-bottom:8px;padding:0.8em;}
 .greeny{background:green;}
 
 table,tr,td,caption{border:1px solid black;padding:0.8rem;}
 
 
-caption{border-bottom:none;}
+caption{border-bottom:none;font-weight:bold;}
 table th{padding:0.8rem;}
-thead{background:#4caf50;color:white;}
+thead,caption{background:#4caf50;color:white;}
 .tododelete{background:red;}
 		
+input:read-only{background:inherit;}
+input[type="radio"]:indeterminate{background:red;}
 form[name=formrd]{background:inherit;display:inline;padding:0.2rem;border:2px solid green;border-radius:2px;}
 form[name=formrd] input[type=radio]{vertical-align:top;background:red;color:red;}
-tfoot{background:silver;}
-/*
+tfoot{background:#4caf50;}
+button[data-p="cold"],td[data-p="cold"]{color:orange;font-weight:bold;background:brown;}
+
+
 tbody tr:nth-child(odd) {background:white;padding:0.5em;}
-tbody tr:nth-child(even) {background:lightgreen;}
-*/
-th[colspan="2"] > button{background:inherit;padding:0.8rem;margin-left:3px;font-weight:bold;border:2px solid black;
+
+th[colspan="2"] > button,button{background:inherit;margin-left:2px;margin-right:2px;
+font-size:1rem;font-weight:bold;border:2px solid black;padding:0.9em;
 cursor:pointer;
 }
+th[colspan="2"] > button[data-p="cold"]{background:brown;}
 th[colspan="2"]{text-align:left;}
 
-/*table[data-rdid="37"]{margin:100px;}*/
-#redIn2{display:flex;width:100%;flex-wrap:wrap;}
-#redIn2 > table{margin:10px;}
 
-#idpay1{border:1px solid green;width:15rem;}
+#redIn2{display:flex;width:100%;flex-wrap:wrap;}
+#redIn2 > table{margin:2rem;}
+
+#idpay1{/*border:2px solid brown;border-radius:2px;*/display:grid;width:100%;
+grid-template-columns:auto auto auto;
+grid-template-rows:auto auto auto;
+justify-content:center;grid-auto-flow:row;grid-gap:.8em;
+}
+form > div{/*border:1px dotted green;*/padding:0.8em;grid-row:auto;}
+form > div > input[type="text"]{
+padding:0.9em;
+font-size:1rem;
+border:2px solid black;
+}
+section.sparol{padding:0.8em;}
+form > div > button{background:orange;min-width:12rem;}
+form > div input[type="submit"],input[type="password"],#bparol{
+background:orange;min-width:12rem;border:2px solid black;font-size:1rem;padding:0.9em;
+cursor:pointer;color:black;font-weight:bold;}
+
+#bparol + button{min-width:12rem;}
+#bparol{background:lightgreen;padding:0.9rem;margin:0;width:17.5%;}
+
+input[type="submit"]:disabled{background:rgba(1,2,8,1.0);color:orange;border:2px solid red;}
+dialog button{min-width:6rem;background:orange;margin-top:1rem;}
+dialog button:hover{background:red;}
+
+
 @media screen and (max-width:700px){
 table{width:100%;}
 td{display:block;}
+/*th:not(th[colspan="2"]){display:none;}*/
+tr{display:block;}
 thead{display:none;}
+#redIn2 > table{margin:0;}
+#idpay1{display:block;}
 }
 </style>
 </head><body>
@@ -50,15 +85,20 @@ ${fg}
 <main id="pagewrap">
 Hallo <b>${buser.name}</b><br>
 <h1>Bitaps payment configuration.</h1>
-<b>Personal wallet btc address:</b>&nbsp;${n.cwa?n.cwa:''}&nbsp;&nbsp;<b>parol: </b><input id="bparol" type="text" value="mumia">
 <section>
+<b>Personal wallet btc address:</b>&nbsp;${n.cwa?n.cwa:''}
+</section>
+<section class="sparol">
+<b>parol:</b><br>
+<input id="bparol" type="password" value="mumia" required>&nbsp;<button onclick="show_parol(this);">show</button></section>
+
+
 <form id="idpay1" method="post" action="/admin/conf_bitaps_payment" name="npay1">
 ${n.payment?get_payment_sys(n.payment):'<b>no payment system config file.</b>'}
-<div><input type="submit" value="save" name="submit" disabled></div>
 </form>
-</section>
-<br><button id="newfucker">reload pay sys</button><br>
-onclick="reload_pay_sys();"
+
+<section><button id="newfucker">reload pay sys</button></section>
+
 <div>
 ${n.error?`<h4>Error:</h4>${n.error}`:''}
 </div>
@@ -70,15 +110,13 @@ ${n.curd?`<h4>Current id of redeem data: ${n.curd.rd_id}</h4>`:'<h4>no redeem da
 <br><b>There are ${n.dmount?n.dmount:'0'} redeem data.</b>&nbsp;<button onclick="showMore();">show me that!</button><br>
 
 <section id="redIn2"></section>
-<!--
-<a href="#." class="overlay" id="btcreloader"></a>
-<output id="btcreloaderId" class="popi">
-<div class="wrap-close"><a href="#." class="close"></a></div>
-<button class="ban" id="smartStopBtn" data-zus="false" title="Smart enable/disable all streams">smart stop</button>
-<button class="ban" id="dirtyStopBtn" title="Dirty enable/disable all streams">dirty stop</button>
-</output>
--->
+
 <script>
+function show_parol(el){
+bparol.type="text";
+el.textContent=="show"?el.textContent="hide":el.textContent="show";
+el.textContent!=="show"?bparol.type="text":bparol.type="password";
+}
 var g_psys_enabler=null;
 var g_actual_rc;
 function bp_enabler(el){
@@ -167,6 +205,7 @@ if(!bparol.value){message_box('fill in parol field!');return;}
 d.parol=bparol.value;
 }
 d.rc=el.value;d.enc=enc;
+//alert(d.parol+' '+d.enc+' '+d.rc);
 vax('post','/admin/check_balance_rc',d,on_bal,erl);
 el.parentElement.parentElement.classList.add('greeny');//tr
 
@@ -185,12 +224,13 @@ if(l)l.classList.remove(d);
 
 function make_rc_active(el){
 let a=el.parentElement.parentElement.parentElement.parentElement;
+//alert(a.getAttribute('data-rdid'))
 if(!a){message_box('No table element found!');retrun;}
-let b=a.rows[3].cells[1].firstChild;
+let b=a.rows[2].cells[1].firstChild;
 if(!b){message_box('No form element found! It looks like you have an old browser.');return;}
 let c=b.f.value;
 let rdid=a.getAttribute('data-rdid');
-let cadr=a.rows[4].cells[1].textContent;
+let cadr=a.rows[3].cells[1].textContent;
 //alert(c+' '+rdid+' '+cadr)
 if(!rdid || !c){mesage_box('no id or no type of reedem provided!');return;}
 if(c=='a'){
@@ -215,7 +255,7 @@ function save_cold(el){
 let tbody=el.parentElement.parentElement.parentElement.parentElement;
 if(!tbody){message_box('no tbody found');return;}
 let rdid=tbody.getAttribute('data-rdid');
-let cadr1=tbody.rows[4].cells[1];
+let cadr1=tbody.rows[3].cells[1];
 if(!cadr1){message_box('no cadr1 found.');return;}
 let cadr=cadr1.textContent;
 //alert(rdid+' '+cadr);
@@ -249,11 +289,12 @@ let id=v.getAttribute('data-rdid');
 let typ=v.getAttribute('data-type');
 if(!id || !typ){message_box('id or type is not provided. Sorry.');return;}
 if(typ=='a'){message_box("It's active. Make it passive and then you can delete it.");return;}
-//alert('typ: '+typ+' id: '+id)
+
 let su=v.parentElement;
 let d={};
 d.rdid=id;
 d.typ=typ;
+alert(d.rdid+' '+d.typ)
 vax('post','/admin/api/delete_redeem',d,on_rd_del,erl);
 v.classList.add('greeny');
 /*
@@ -277,15 +318,25 @@ module.exports={admin_bitaps};
 function get_payment_sys(payment){
 let s='';
 let {name,enabled,test,real_adr,cold_adr,hotadr_quota,grund,cb_part,ptype}=payment;
-s+=`<div><b>name:</b><br><input type="text" name="name" value="${name}" readonly></div>`;
-s+=`<div><b>enabled:</b><b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b><br><input type="text" name="enabled" value="${enabled}">`;
-s+=`<button value="${enabled}" onclick="bp_enabler(this);return false;">${enabled=="true"?'disable':'enable'}</button></div>`;
-s+=`<div><b>type:</b><b id="ptypeMarker">${ptype=="hot"?'HOT!':'SINGLE!'}</b><br><input type="text" name="ptype" value="${ptype}" readonly>`;
+	s+=`<div><b>type:</b>&nbsp;<b id="ptypeMarker">${ptype=="hot"?'HOT!':'SINGLE!'}</b>
+<br><input type="text" name="ptype" value="${ptype}" readonly>&nbsp;`;
 s+=`<button onclick="bp_ptype(this);return false;">${ptype=='hot'?'single':'hot'}</button></div>`;
+	
+s+=`<div><b>name:</b><br><input type="text" name="name" value="${name}" readonly></div>`;
+//s+=`<div><b>enabled:</b>&nbsp;<b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b><br><input type="text" name="enabled" value="${enabled}">`;
+//s+=`<button value="${enabled}" onclick="bp_enabler(this);return false;">${enabled=="true"?'disable':'enable'}</button></div>`;
 s+=`<div><b>test mode:</b><br><input type="text" name="test" value="${test}" readonly></div>`;
-s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
+	s+=`<div><b>enabled:</b>&nbsp;<b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b><br><input type="text" name="enabled" value="${enabled}">`;
+s+=`&nbsp;<button value="${enabled}" onclick="bp_enabler(this);return false;">${enabled=="true"?'disable':'enable'}</button></div>`;
+	s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
+	//s+=`<div><b>type:</b>&nbsp;<b id="ptypeMarker">${ptype=="hot"?'HOT!':'SINGLE!'}</b><br><input type="text" name="ptype" value="${ptype}" readonly>`;
+//s+=`<button onclick="bp_ptype(this);return false;">${ptype=='hot'?'single':'hot'}</button></div>`;
+	
+	
+//s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
 s+=`<div><b>base url api: </b><br><input type="text" name="grund" value="${grund}" readonly></div>`;
-s+=`<div><b>callback:</b><br><input type="text" name="cb_part" value="${cb_part}" readonly></div>`;
+s+=`<div><b>callback:</b><br><input type="text" name="cb_part" value="${cb_part}" readonly>`;
+s+='&nbsp;<input type="submit" value="save" name="submit" disabled></div></div>';
 return s;
 }
 /*
