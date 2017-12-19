@@ -1,0 +1,82 @@
+#pagewrap h1,h4{margin:0.6rem;}
+#pagewrap > section{margin-top:8px;margin-bottom:8px;padding:0.6rem;}
+.greeny{background:green;}
+
+table,tr,td,caption{border:1px solid black;padding:0.6rem;}
+table{margin:0.6rem;border-collapse:collapse;}
+
+caption{border-bottom:none;font-weight:bold;}
+table th{padding:0.8rem;}
+thead,caption{background:#4caf50;color:white;}
+.tododelete{background:red;}
+		
+input:read-only{background:gray;}
+input[type="radio"]:indeterminate{background:red;}
+form[name=formrd]{background:inherit;display:inline;padding:0.2rem;border:2px solid green;border-radius:2px;}
+form[name=formrd] input[type=radio]{vertical-align:top;background:red;color:red;}
+tfoot{background:#4caf50;}
+button[data-p="cold"],td[data-p="cold"]{color:orange;font-weight:bold;background:brown;}
+
+
+tbody tr:nth-child(odd) {background:white;padding:0.5em;}
+
+table th[colspan="2"] > button,button{background:inherit;margin-left:2px;margin-right:2px;
+font-size:1rem;font-weight:bold;border:2px solid black;padding:0.9em;margin-top:4px;
+cursor:pointer;
+}
+table th[colspan="2"] > button[data-p="cold"]{background:brown;}
+th[colspan="2"]{text-align:left;}
+
+
+#redIn2{display:flex;width:100%;flex-wrap:wrap;}
+#redIn2 > table{margin:2rem;}
+
+#idpay1{
+display:grid;width:100%;
+grid-auto-rows:minmax(auto,auto);
+grid-template-columns:repeat(2,1fr);
+
+grid-gap:.8rem;
+padding:.8rem;
+}
+
+#idpay1 div button{margin-top:4px;margin-left:0;padding:0.8rem;min-width:12rem;}
+
+
+#idpay1 > div input{/*border:1px dotted green;*/padding:0.8rem;font-size:1rem;
+border:2px solid black;margin-bottom:4px;margin-top:2px;width:12rem;}
+
+section.sparol{padding:0.8rem;}
+
+#idpay1 > div input[type="submit"],input[type="password"],#bparol{
+background:orange;min-width:12rem;border:2px solid black;font-size:1rem;padding:0.8rem;
+cursor:pointer;color:black;font-weight:bold;}
+
+#bparol + button{min-width:12rem;padding:0.8rem;}
+#bparol{background:lightgreen;padding:0.8rem;margin:0;width:17.5%;}
+
+#idpay1 > div input[type="submit"]:disabled{background:pink;color:orange;border:2px solid black;padding:0.8rem;}
+
+
+@media screen and (max-width: 1024px) {}
+
+@media screen and (max-width:650px){
+table{width:100%;}
+td{display:block;}
+/*th:not(th[colspan="2"]){display:none;}*/
+tr{display:block;}
+thead{display:none;}
+#redIn2 > table{margin:0;}
+#idpay1{
+
+grid-template-columns:repeat(1,1fr);
+grid-auto-rows:minmax(auto,auto);
+}
+#idpay1 > div input[type="submit"],
+#idpay1 > div input[type="text"],
+#idpay1 > div button,
+#bparol{width:100%;}
+#bparol + button{width:100%;margin-left:0;}
+
+}
+@media screen and (max-width: 15em) {}
