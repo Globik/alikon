@@ -3,7 +3,7 @@ var sign_up=false;
 const header_menu=n=>{
 return `<!-- header_menu.js -->
 ${getMenu(n)} 
-<!-- <label style="position:absolute;right:3.2em;top:0.1em;background:yellow;">log in or sign up</label> -->
+
 <label id="lb-menu-all" class="lb-menu-all" onclick="dowas1();">
  <div class="spinner diagonal part-1"></div>
  <div class="spinner horizontal"></div>
@@ -82,14 +82,14 @@ return s;
 function getProfileMenu(n){
 let {buser,mainmenu,profiler}=n,{loginname,loginpath,logoutname,logoutpath,profilername,profilerpath,signupname,signupshow}=profiler;
 let s='<ul id="miniMenu" class="">';
-for(var {name,path} of mainmenu){s+=`<li><div class="znak-svg">pic</div><a href="${path}">${name}</a>`;}
-s+=`${(buser ? `<li><div class="znak-svg">pic</div><a href="${profilerpath}">${profilername}</a>`:'')}
-${buser ? `<li><div class="znak-svg">pic</div><a href="${logoutpath}" id="login_pop">${logoutname}</a>`:`<li>
-<div class="znak-svg">pic</div><a href="${loginpath}">${loginname}</a></li>`}${signupshow?fuckme(n):''}`;
+for(var {name,path} of mainmenu){s+=`<li><div class="znak-svg">pic</div><a href="${path}"><div class="muka"><span>${name}</span></div></a>`;}
+s+=`${(buser ? `<li><div class="znak-svg">pic</div><a href="${profilerpath}"><div class="muka"><span>${profilername}</span></div></a>`:'')}
+${buser ? `<li><div class="znak-svg">pic</div><a href="${logoutpath}" id="login_pop"><div class="muka"><span>${logoutname}</span></div></a>`:`<li>
+<div class="znak-svg">pic</div><a href="${loginpath}"><div class="muka"><span>${loginname}</span></div></a></li>`}${signupshow?fuckme(n):''}`;
 s+="</ul>";return s;}
 function fuckme(n){
 let s='';
 if(n.buser){s+=''}else{
-s+=`<li><div class="znak-svg">pic</div><a href="/signup">sign up</a>`;
+s+=`<li><div class="znak-svg">pic</div><a href="/signup"><div class="muka"><span>sign up</span></div></a>`;
 }
 return s;}

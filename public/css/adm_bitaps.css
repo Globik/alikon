@@ -1,9 +1,10 @@
+/*html{idth:100%;background:brown;}*/
 #pagewrap h1,h4{margin:0.6rem;}
 #pagewrap > section{margin-top:8px;margin-bottom:8px;padding:0.6rem;}
 .greeny{background:green;}
 
 table,tr,td,caption{border:1px solid black;padding:0.6rem;}
-table{margin:0.6rem;border-collapse:collapse;}
+table{margin:0;border-collapse:collapse;}
 
 caption{border-bottom:none;font-weight:bold;}
 table th{padding:0.8rem;}
@@ -11,9 +12,11 @@ thead,caption{background:#4caf50;color:white;}
 .tododelete{background:red;}
 		
 input:read-only{background:gray;}
-input[type="radio"]:indeterminate{background:red;}
+/*input[type="radio"]:indeterminate{background:red;}*/
+
 form[name=formrd]{background:inherit;display:inline;padding:0.2rem;border:2px solid green;border-radius:2px;}
-form[name=formrd] input[type=radio]{vertical-align:top;background:red;color:red;}
+
+form[name=formrd] input[type=radio]{vertical-align:top;}
 tfoot{background:#4caf50;}
 button[data-p="cold"],td[data-p="cold"]{color:orange;font-weight:bold;background:brown;}
 
@@ -32,6 +35,7 @@ th[colspan="2"]{text-align:left;}
 #redIn2 > table{margin:2rem;}
 
 #idpay1{
+	background:green;
 display:grid;width:100%;
 grid-auto-rows:minmax(auto,auto);
 grid-template-columns:repeat(2,1fr);
@@ -60,12 +64,15 @@ cursor:pointer;color:black;font-weight:bold;}
 
 @media screen and (max-width: 1024px) {}
 
-@media screen and (max-width:650px){
-table{width:100%;}
+@media screen and (max-width:750px){
+	html,body{font-size:115%;}
+	input,button,table,#bparol{font-size:1.5rem;padding:1.5rem;}
 td{display:block;}
+	table{display:block;width:100%;}
 /*th:not(th[colspan="2"]){display:none;}*/
 tr{display:block;}
 thead{display:none;}
+	form[name=formrd] input[type=radio]{vertical-align:.0rem;}
 #redIn2 > table{margin:0;}
 #idpay1{
 
@@ -79,4 +86,6 @@ grid-auto-rows:minmax(auto,auto);
 #bparol + button{width:100%;margin-left:0;}
 
 }
-@media screen and (max-width: 15em) {}
+@media screen and (max-width: 15em) {
+table{width:100%;display:block;}
+}

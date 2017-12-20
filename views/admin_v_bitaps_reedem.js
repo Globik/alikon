@@ -1,3 +1,4 @@
+const moment=require('moment');
 const admin_v_bitaps_reedem=n=>{
 return `${n.dbdec?getred(n.dbdec,n.unencrypted):'<h4>No reedem data.</h4>'}`;
 }
@@ -19,8 +20,8 @@ s+=`<tr><th>redeem code:</th><td>${enc?el.rd_c.substring(0,10):el.rd_c}</td></tr
 s+=`<tr><th>type</th><td>${moon(el.rd_t)}</td></tr>`;
 s+=`<tr><th>cold address</th><td data-p="cold" contenteditable=true>${el.rd_cold_adr}</td>`;
 s+=`<tr><th>all amount</th><td>${el.rd_b} (BTC)</td></tr>`;
-s+=`<tr><th>created at</th><td>${el.rd_at}</td></tr>`;
-s+=`<tr><th>updated at</th><td>${el.rd_lm}</td></tr>`;
+s+=`<tr><th>created at</th><td>${moment(el.rd_at).format('MMM Do YYYY, h:mm:ss')}</td></tr>`;
+s+=`<tr><th>updated at</th><td>${moment(el.rd_lm).format('MMM Do YYYY, h:mm:ss')}</td></tr>`;
 s+='</tbody></table>';
 })
 }

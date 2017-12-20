@@ -14,8 +14,8 @@ ${fg}
 <main id="pagewrap">
 Hallo <b>${buser.name}</b><br>
 <h1>Bitaps payment configuration.</h1>
-<section>
-<b>Personal wallet btc address:</b>&nbsp;${n.cwa?n.cwa:''}
+<section style="">
+<b>Personal wallet btc address:</b>&nbsp;<span>${n.cwa?n.cwa:''}</span>
 </section>
 <section class="sparol">
 <b>parol:</b><br>
@@ -29,7 +29,7 @@ ${n.payment?get_payment_sys(n.payment):'<b>No payment system config file.</b>'}
 ${n.error?`<h4>Error:</h4>${n.error}`:''}
 </div>
 ${n.curd?`<h4>Current id of redeem data: ${n.curd.rd_id}</h4>`:'<h4>no redeem data.</h4>'}
-<br>${admin_v_bitaps_reedem.admin_v_bitaps_reedem(n)}<br>
+${admin_v_bitaps_reedem.admin_v_bitaps_reedem(n)}
 <hr><button onclick="get_new_reedem_code();">get new redeem_code</button><br>
 <section id="redIn"></section>
 <hr>
