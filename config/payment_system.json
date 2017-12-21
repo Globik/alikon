@@ -1,1 +1,1 @@
-{"ptype":"single","name":"bitaps","test":"false","enabled":"true","hotadr_quota":"60","grund":"https://bitaps.com/api/","cb_part":"bitaps/cb/"}
+{"ptype":"hot","name":"bitaps","test":"false","enabled":"true","hotadr_quota":"60","grund":"https://bitaps.com/api/","cb_part":"bitaps/cb/"}
