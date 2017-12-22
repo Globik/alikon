@@ -3,11 +3,13 @@
 /*html{font-size:140%;}*/
 :root {--sf:1.2rem;--pd:1rem;}
 .micha{white-space:pre;word-wrap:break-word;}
+/*
 select{-moz-appearance:none;-webkit-appearance:none;
 	-moz-user-select:none;
 	appearance:none;
 	color:red;
 }
+*/
 /*
 :focus{-moz-outline:300px solid #fff !important;}
 suka:focus{
@@ -37,7 +39,12 @@ thead,caption{background:#4caf50;color:white;}
 input:read-only{background:gray;}
 /*input[type="radio"]:indeterminate{background:red;}*/
 
-form[name=formrd]{background:inherit;display:inline;padding:0.4rem;border:.2rem solid green;border-radius:2px;}
+form[name=formrd]{background:inherit;
+	display:inline;
+	line-height:1.2;
+	padding:0.5rem;border:.2rem solid green;border-radius:2px;
+position:relative;
+}
 /*
 form[name=formrd] input[type=radio]{vertical-align:0rem;border:2px solid green;}
 */
@@ -116,15 +123,47 @@ cursor:pointer;color:black;font-weight:bold;}
 	background:pink;color:orange;
 
 }
-section{width:100%;background:pink;wite-space:wrap;}
+section{width:100%;background:pink;}
 .drow:nth-child(2){margin-top:.4rem;}
-.dcell{display:inline-block;padding:1.1rem;}
+.dcell{display:inline-block;padding:1.2rem;}
 .dcell:nth-child(1){background:red;border:1px solid brown;min-width:30%;}
-.dcell:nth-child(2){background:yellow;width:70%;border:1px solid green;hite-space:wrap;}
+.dcell:nth-child(2){background:yellow;width:70%;border:1px solid green;}
+:root{--pi:.8em;}
+input[type="radio"]{position:relative;visibility:hidden;margin-left:25px;margin-right:15px;}
+.rdinfo label{line-height:1;margin-right:25px;position:relative;cursor:pointer;}
 
 
+	.rdinfo label::before{
+content:"";
+text-align:center;
+background:white;
+position:absolute;
+padding:1px;
+	top:-.175em;
+	left:-1.1em;
+	width:.8em;
+	width:var(--pi);
+	height:.8em;
+	height:var(--pi);
+	font-weight:bold;
+	font-size:180%;
+	line-height:0.8;
+	color:green;
+	border:3px solid green;
+}
 
 
+input[type="radio"]:checked + label::before{
+	content:"\2713";
+	box-shadow:0 2px 2px 2px rgba(0,0,0,0.5);
+	text-shadow: 1px 3px 3px black;
+}
+
+input[type="radio"]:checked:active + label::before{background:lightgreen;}
+ .rdinfo label:active{background:lightgreen;}
+.dcell:focus{background:white;outline-color:green;outline-style:solid;outline-width:5px; outline-offset:-8px;
+box-shadow:0 2px 5px 6px rgba(0,0,0,0.6);
+}
 @media screen and (max-width: 1024px) {}
 
 @media screen and (max-width:750px){
@@ -149,9 +188,11 @@ grid-auto-rows:minmax(auto,auto);
 #idpay1 > div input[type="text"],
 #idpay1 > div button,
 #bparol{width:100%;}
+button{margin-left:0;}
 #bparol + button{width:100%;margin-left:0;}
 
 }
+
 @media screen and (max-width: 321px) {
 	section{background:green;}
 	#pagewrap > section{margin-top:.4rem;margin-bottom:.4rem;padding:.2rem;}
