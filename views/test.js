@@ -21,7 +21,7 @@ return `<html><head><title>Tests</title></head><body>
 <h4>Outputs:</h4>
 <div id="out"></div>
 <script>
-'use strict';
+/*'use strict';*/
 var out=document.getElementById('out');
 var pwd=document.getElementById('pwd');
 var fnameid=document.getElementById('fnameid');
@@ -83,6 +83,7 @@ function check_href(){
 out.innerHTML+='location.href: '+window.location.href+'<br>';
 }
 function check_event_source(){
+/*
 try{
 let b="b is in let b variable";
 out.innerHTML+='<b>let b=</b>'+b+'<br>';
@@ -101,6 +102,7 @@ out.innerHTML+='eventsource-2 YES<br>';
 out.innerHTML+='event source-2 NO<br>';
 }
 }catch(e){out.innerHTML+=e+'<br>';}
+*/
 }
 </script>
 
