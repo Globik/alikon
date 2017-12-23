@@ -24,6 +24,17 @@ return `<html><head><title>Tests</title></head><body>
 <div id="out"></div>
 <script>
 'use strict';
+function cr_event(name){
+var makaka23=null;
+try{
+makaka23=new Event(name);return makaka23;
+}catch(e){
+makaka23=document.createEvent('Event');
+makaka23.initEvent(name,true,true);
+return makaka23;
+}
+return makaka23;
+}
 var out=document.getElementById('out');
 var pwd=document.getElementById('pwd');
 var fnameid=document.getElementById('fnameid');
@@ -95,6 +106,8 @@ out.innerHTML+='<b>let b=</b>'+b+'<br>';
 try{
 if(window.EventSource){
 out.innerHTML+='event source-1 YES<br>';
+var ev=new EventSource('/log_rooms');
+ev.onopen=function(){out.innerHTML+='<b>EventSource</b> opened!<br>';}
 }else{
 out.innerHTML+='event source-1 NO<br>';
 }
@@ -111,10 +124,8 @@ out.innerHTML+='event source-2 NO<br>';
 }
 function check_opera_custom_event(el){
 try{
-var opevent=document.createEvent('Event');
-opevent.initEvent('build',true,true);
-//var opevent=new Event('build');
-pwd.dispatchEvent(opevent);
+var opevent=cr_event('build');
+if(opevent)pwd.dispatchEvent(opevent);
 }catch(e){out.innerHTML+='err: '+e+'<br>';}
 }
 pwd.addEventListener('build',function(e){
