@@ -21,7 +21,7 @@ return `<html><head><title>Tests</title></head><body>
 <h4>Outputs:</h4>
 <div id="out"></div>
 <script>
-/*'use strict';*/
+'use strict';
 var out=document.getElementById('out');
 var pwd=document.getElementById('pwd');
 var fnameid=document.getElementById('fnameid');
@@ -85,9 +85,9 @@ out.innerHTML+='location.href: '+window.location.href+'<br>';
 function check_event_source(){
 
 try{
-let b="b is in let b variable";
+var b="b is in let b variable";
 out.innerHTML+='<b>let b=</b>'+b+'<br>';
-}catch(e){out.innerHTML+='let b='+e+'<br>';}
+}catch(e){out.innerHTML+='var b='+e+'<br>';}
 
 try{
 if(window.EventSource){
