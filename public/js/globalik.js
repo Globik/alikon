@@ -18,7 +18,7 @@ return true;}
 return false;}
 function is_dialogi(){return (typeof HTMLDialogElement==='function'?true:false);}
 function bzuka(el,n,ml){
-inbox3.innerHTML='<b>'+n+'</b>';
+bvid('inbox3').innerHTML='<b>'+n+'</b>';
 //dialogConfirm.style.display="block";
 dialogConfirm.showModal();
 playSound(sounds.message.buffer);
@@ -28,13 +28,10 @@ ev.target.returnValue=null;
 }}
 function shell(el,n,ml){is_dialogi()?bzuka(el,n,ml):puzuki(el,n,ml);}
 function puzuki(el,n,ml){confirm(n)?luzda(el,ml):null}
-function luzda(el,ml){
-	if(!el.target.dispatchEvent(ml)){alert('el.target.dispatchEvent() API is not supported!');}
-	(el?el.target.dispatchEvent(ml):pizda(ml));
-}
+function luzda(el,ml){(el?el.target.dispatchEvent(ml):pizda(ml));}
 function bvid(i){return document.getElementById(i);}
 function galert(n){
-let c=window.getComputedStyle(document.querySelector('.popi'),null).getPropertyValue('z-index');
+var c=window.getComputedStyle(document.querySelector('.popi'),null).getPropertyValue('z-index');
 inbox2.innerHTML='<b>'+n+'</b>';
 playSound(sounds.complete.buffer);
 if(c)bvid('alert_id').style.zIndex=c+1;
@@ -58,13 +55,13 @@ ax=null;
 }}
 getAudioContext();
 function fogg(){
-let b=!!(new Audio().canPlayType('audio/ogg;codecs="vorbis"'));
+var b=!!(new Audio().canPlayType('audio/ogg;codecs="vorbis"'));
 console.warn('can play ogg: ', b);
 if(b){return true;}else{return false;}
 }
 fogg();
 function loadSoundObj(obj){
-let r=new XMLHttpRequest();
+var r=new XMLHttpRequest();
 r.open('GET',obj.src,true)
 r.setRequestHeader('X-Requested-With','XMLHttpRequest');
 r.responseType='arraybuffer';
@@ -82,7 +79,7 @@ function blaysound(buffer){
 if(ax==null)return;
 if(buffer){
 try{
-let s=ax.createBufferSource();
+var s=ax.createBufferSource();
 	s.buffer=buffer;
 	s.connect(ax.destination);
 	s.start(0);
@@ -109,10 +106,21 @@ gevS=new EventSource('/log_rooms');
 	gevS.onopen=function(){console.log('sse opened');}
 	gevS.onerror=function(e){/*console.error("event source error: ");*/}
 }else{}
-function vax(m,u,d,o,z,bool){let x=new XMLHttpRequest();if(!x){return false;}x.open(m,u);
+function vax(m,u,d,o,z,bool){var x=new XMLHttpRequest();if(!x){return false;}x.open(m,u);
 if(!bool){x.setRequestHeader('Content-Type','application/json','utf-8');}x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 x.onload=function(e){
 	//alert('mu '+this.response);
-	x.status==200?o(demiss(this.response)):z(this.response)};x.onerror=z;if(!bool){let v=miss(d);x.send(v);}else{x.send(d)}}
-function miss(n){let a;try{a=JSON.stringify(n);return a;}catch(er){throw er;}}
-function demiss(n){let b;try{b=JSON.parse(n);return b;}catch(er){throw er;}}
+	x.status==200?o(demiss(this.response)):z(this.response)};x.onerror=z;if(!bool){var v=miss(d);x.send(v);}else{x.send(d)}}
+function miss(n){var a;try{a=JSON.stringify(n);return a;}catch(er){throw er;}}
+function demiss(n){var b;try{b=JSON.parse(n);return b;}catch(er){throw er;}}
+function cr_event(name){
+var makaka23=null;
+try{
+makaka23=new Event(name);return makaka23;
+}catch(e){
+makaka23=document.createEvent('Event');
+makaka23.initEvent(name,true,true);
+return makaka23;
+}
+return makaka23;
+}

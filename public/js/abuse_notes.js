@@ -17,20 +17,20 @@ xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
-let b=JSON.parse(this.response);
+var b=JSON.parse(this.response);
 if(b.abuse_list.length==0)scrflag=1;
 form_abuse_list(b)
 console.log(this.response);}else{alert(this.response);}
 }
 xhr.onerror=function(e){console.error(e);}
-let d={};
+var d={};
 d.list='list';
 if(b)d.nieder=b;
 if(bflag==0)xhr.send(JSON.stringify(d));
 }
 function xhr_abuse_list(){
 if(scrflag==1){console.error('!! END!!!');return;}
-let b=ul.lastChild.getAttribute('data-at');
+var b=ul.lastChild.getAttribute('data-at');
 if(!b)return;
 bflag=0;
 get_abuse_list(b);
@@ -39,12 +39,12 @@ get_abuse_list(b);
 function form_abuse_list(n){
 var frag=document.createDocumentFragment();
 n.abuse_list.forEach(function(el,i){
-let li=document.createElement('li');
+var li=document.createElement('li');
 li.className="abuseli";
 li.setAttribute('data-aid',el.abus_id);
 li.setAttribute('data-at',el.ab_at);
 (el.cmt?li.title=el.cmt:'');
-let cd='&nbsp;<span class="msp">'+el.ab_cnt+'</span>';
+var cd='&nbsp;<span class="msp">'+el.ab_cnt+'</span>';
 li.innerHTML='<a class="fe" href="/webrtc/'+el.name+'" target="_blank">'+el.name+'</a>&nbsp;'+'<span class="msp">'+el.ab_slc+'</span>'+cd;
 frag.appendChild(li)
 });
@@ -60,7 +60,7 @@ var vid=0;
 
 function fake(){
 var frag=document.createDocumentFragment();
-let li=document.createElement('li');
+var li=document.createElement('li');
 li.className="abuseli";
 li.setAttribute('data-vid',vid);
 li.innerHTML='<a class="fe" href="/webrtc/el.name" target="_blank">el.name</a>&nbsp;<span class="msp">el.slc '+vid+'</span>';
@@ -77,7 +77,7 @@ html_abuse_popup.onscroll=function(e){
 if(e.target.scrollHeight-e.target.clientHeight==e.target.scrollTop){
 console.error('yes');
 if(sigara==0){
-let di=ul.lastChild.getAttribute('data-vid')
+var di=ul.lastChild.getAttribute('data-vid')
 xhr_abuse_list();
 //sigara=1;
 //alert(vid);
@@ -87,7 +87,7 @@ xhr_abuse_list();
 }
 function insert_part(){
 var frag=document.createDocumentFragment();
-let li=document.createElement('li');
+var li=document.createElement('li');
 li.className="abuseli";
 li.setAttribute('data-vid',vid);
 li.innerHTML='<a class="fe" href="/webrtc/el.name" target="_blank">el.name</a>&nbsp;<span class="msp">el.slc  eventsource'+vid+'</span>';

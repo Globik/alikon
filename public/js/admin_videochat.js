@@ -2,7 +2,7 @@ function get_one_abuse(){
 window.location.href="#one_abuse";
 }
 function ban_model(){
-let d={};
+var d={};
 	d.bn_us_id=modelId;
 	d.bn_us_by=yourId;
 	d.bn_slc=complainiSelector.value;
@@ -13,7 +13,7 @@ ban_user_xhr(d);
 }
 function ban_model2(el){
 //banned_users(bn_us_id,bn_us_by,bn_status,bn_cmt,bn_slc)
-let d={};
+var d={};
 	d.bn_us_id=modelId;
 	d.bn_us_by=yourId;
 	d.bn_slc=el.getAttribute('data-ab_slc');
@@ -23,7 +23,7 @@ let d={};
 ban_user_xhr(d);
 }
 function socket_to_ban_user(){
-let outi={};
+var outi={};
 outi.msg='You banned from broadcasting.';
 outi.from_nick='moderator';
 outi.type="message";
@@ -43,7 +43,7 @@ xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
 console.warn('xhr from server: ',this.response);
-let bi=JSON.parse(this.response);
+var bi=JSON.parse(this.response);
 	
 if(bi.bstatus==2){
 alert(bi.info+' '+bi.result.ban_id);
@@ -65,28 +65,28 @@ xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
-let bi=JSON.parse(this.response);
+var bi=JSON.parse(this.response);
 console.warn('xhr from server: ',this.response);
 }else{
 alert(this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
-let d={};
+var d={};
 d.abus_id=modelId;
-let a=JSON.stringify(d);
+var a=JSON.stringify(d);
 alert(a);
 xhr.send(a);
 }
 function ban_out(el){
 if(!is_banned()){alert('This user is already ban out!');return;}
-let d={}
+var d={}
 //model_id,bn_status='no',bstatus='end',ban_id
 d.model_id=modelId;
 d.bn_status='no';
 d.bstatus='end';
 d.ban_id=el.getAttribute('data-ban_id');
 if(!d.ban_id)return;
-let a=JSON.stringify(d);
+var a=JSON.stringify(d);
 alert(a);
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/ban_out_user');
@@ -94,11 +94,11 @@ xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
-let bi=JSON.parse(this.response);
+var bi=JSON.parse(this.response);
 alert(this.response);
 gid('is_banned').value="no";
 vidW.classList.remove('banned');
-let outi={};
+var outi={};
 outi.msg='You just banned out';
 outi.from_nick='moderator';
 outi.type="message";
@@ -116,8 +116,8 @@ function hol_stoper(){
 window.location.href="#stoper";
 }
 var pipka=false;
-var smart_stop_ev=new Event('smartStop');
-var dirty_stop_ev=new Event('dirtyStop');
+var smart_stop_ev=cr_event('smartStop');//new Event('smartStop');
+var dirty_stop_ev=cr_event('dirtyStop');//new Event('dirtyStop');
 if(is_langsam_stop()){pipka=true;}
 
 smartStopBtn.onclick=function(e){
@@ -151,7 +151,7 @@ xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
 console.log(this.response);
-let m=JSON.parse(this.response);
+var m=JSON.parse(this.response);
 gid('langsam_stop').value=m.stopi;
 el.target.setAttribute('data-zus',m.stopi);
 if(m.stopi){
@@ -171,7 +171,7 @@ el.target.textContent='smart stop';
 alert(this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
-let d={};
+var d={};
 if(el.target.dataset.zus=="true"){
 d.stop=true;
 }else{

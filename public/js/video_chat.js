@@ -58,7 +58,7 @@ out.innerHTML='Please <a href="/login">log in</a>';
 
 function vor_login(){
 vorlogincontainer.innerHTML=loginstr.value;
-let col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
+var col=window.getComputedStyle(gid('loginery-wrap'),null).getPropertyValue('background');
 vorlogin.style.background=col;
 window.location.href="#vorlogery";
 }
@@ -129,8 +129,8 @@ out.innerHTML="Not selbst!";
 var balu=false;
 var btnok=document.querySelector('.btnok');
 var btnotok=document.querySelector('.btnnotok');
-let r=document.querySelector('#pop button');
-let ptokenstosend=document.querySelector('.ptokenstosend');
+var r=document.querySelector('#pop button');
+var ptokenstosend=document.querySelector('.ptokenstosend');
 
 function to_xhr(n){
 balu=true;
@@ -138,13 +138,13 @@ if(r)r.classList.toggle('btnajx');
 ptokenstosend.style.background="black";
 console.log('sending token: ',n);
 sendJson(n);
-let xhr=new XMLHttpRequest();
+var xhr=new XMLHttpRequest();
 xhr.open("POST","/api/set_transfer");
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 xhr.onload=function(e){
 if(xhr.status==200){
-let m=JSON.parse(this.response);
+var m=JSON.parse(this.response);
 success_token_transfer(m.amount)
 }else{
 console.error('xhr from server: ',this.response);
@@ -184,13 +184,13 @@ window.location.href="#get_complaini";
 var sendabusi=0;
 function send_abuse(){
 	sendabusi++;
-let a=complainiSelector.value;
-let b=txarComplain.value;
-let c=modelId;
-let d={};
-let e=myusername;
+var a=complainiSelector.value;
+var b=txarComplain.value;
+var c=modelId;
+var d={};
+var e=myusername;
 d.selector=a;d.text=b;d.us_id=c;d.who=e;
-let j=JSON.stringify(d);
+var j=JSON.stringify(d);
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/send_abuse');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
@@ -203,7 +203,7 @@ console.error('xhr from server: ',this.response);
 }}
 xhr.onerror=function(e){console.error(e)};
 xhr.send(j);
-let ru={};
+var ru={};
 ru.m=sendabusi;
 ru.who=myusername;
 if(!localStorage.abuse){localStorage.abuse=JSON.stringify(ru);}else{localStorage.abuse=JSON.stringify(ru);}
@@ -249,8 +249,8 @@ if(balu){tokTosend.textContent='';balu=false;}
 reset_send_tok_style();
 tokTosend.textContent+=ev.target.textContent;
 }else{
-let str=tokTosend.textContent;
-let fi=str.slice(0,-1);
+var str=tokTosend.textContent;
+var fi=str.slice(0,-1);
 tokTosend.textContent=fi;
 }
 }
@@ -405,7 +405,7 @@ return false
 }
 */
 function sendtome(){
-let d={}
+var d={}
 d.msg="Test target message";
 d.username=myusername;
 d.roomname=modelName;
@@ -416,7 +416,7 @@ sendJson(d)
 }
 function send_btc_cb(){
 	//alert('a?');
-let d={};
+var d={};
 	d.type="bitaps_cb";
 	d.btc=0.05;
 	d.target="globik";
@@ -567,7 +567,7 @@ dissconnect();
 
 }else if(msg.type === 'offer') {
 console.log('Received offer ...');
-let offer = new RTCSessionDescription(msg);
+var offer = new RTCSessionDescription(msg);
 setOffer(offer);
 }
 else if (msg.type === 'answer') {
@@ -615,8 +615,8 @@ dfucker.innerHTML+=event.data+'<br>';
 }else if(msg.type=='stat_room'){
 	//alert('stat_room occured!');
 console.log('on stat_room: ',event.data);
-let c=rview.textContent;
-let d=Number(c);
+var c=rview.textContent;
+var d=Number(c);
 rview.textContent=msg.peers;
 if(owner()){
 if(msg.peers > d){
@@ -658,13 +658,13 @@ vr_mess(el.us_name,el.msg)
 }
 function vr_mess(nick,msg){
 
-let d=bo_mes(nick,msg);
+var d=bo_mes(nick,msg);
 insert_message(d);
 }
 function showmessage(message){
 console.log('message: ',message);
 if(message){
-let s=bo_mes(message.from_nick,message.msg);
+var s=bo_mes(message.from_nick,message.msg);
 insert_message(s);
 playSound(sounds.l1.buffer);
 if(message.from_nick===myusername)set_chat_btn_green();
@@ -679,8 +679,8 @@ sadmin=' smoderator';
 }else{sadmin='';
 	 if(owner())sadmin=' sowner';
 	 }
-let d='<b class="chat-user'+sadmin+'" data-from_nick="'+from_nick+'" onclick="user_menu(this);">'+from_nick+':&nbsp;</b>';
-let s=d+'<span class="chat-message'+sadmin+'">'+escape_html(msg)+'</span>';
+var d='<b class="chat-user'+sadmin+'" data-from_nick="'+from_nick+'" onclick="user_menu(this);">'+from_nick+':&nbsp;</b>';
+var s=d+'<span class="chat-message'+sadmin+'">'+escape_html(msg)+'</span>';
 return s;
 }
 var srigi='globik';
@@ -700,18 +700,18 @@ if(find_ignor(arr,n)){arr.delete(n);return true;}
 function user_menu(el){
 //alert(el.getAttribute('data-from_nick'));
 
-let b=el.getAttribute('data-from_nick');
+var b=el.getAttribute('data-from_nick');
 if(b)
 if(myusername===b)return;
 if(confirm('Do you wish to ignore the messages from '+b+'?')){
-let l=update_ignor(ignory,b);
+var l=update_ignor(ignory,b);
 	console.warn('l: ',l);
 }
 }
 
 
 function get_acc_users(){
-let s='',t='';
+var s='',t='';
 if(is_local_storage()){
 if(localStorage.chatac){s=localStorage.chatac;}
 if(localStorage.soundenable){t=localStorage.soundenable;}
@@ -752,12 +752,12 @@ message_box('Saved!');
 
 function show_event_token(m){
 console.log('m: ',m);
-let s=tok_str(m.amount,m.user_nick)
+var s=tok_str(m.amount,m.user_nick)
 insert_message(s);
 if(owner()){
 	//alert('a? '+m.amount)
-let l=gid('tokens_panel').textContent;
-let i=Number(l);
+var l=gid('tokens_panel').textContent;
+var i=Number(l);
 l=i+m.amount;
 	console.log('l ',l)
 	gid('tokens_panel').textContent=l;
@@ -766,18 +766,18 @@ updateModelTokens();
 }
 }
 function tok_str(am,nick){
-let ds=(am==1?'':'s');
-let b='<b class="chat-user">'+nick+':&nbsp;</b>';
-let s=b+'<span class="chat-message">'+toki_s(am)+'</span>';
+var ds=(am==1?'':'s');
+var b='<b class="chat-user">'+nick+':&nbsp;</b>';
+var s=b+'<span class="chat-message">'+toki_s(am)+'</span>';
 return s;
 }
 function toki_s(am){
-let ds=(am==1?'':'s');
-let s='Sent '+am+' tip'+ds+'.';
+var ds=(am==1?'':'s');
+var s='Sent '+am+' tip'+ds+'.';
 return s;
 }
 function insert_message(div){
-let m=document.createElement('div');
+var m=document.createElement('div');
 m.className="chat-div";
 m.innerHTML=div;
 chat.appendChild(m);
@@ -797,7 +797,7 @@ var xhr=new XMLHttpRequest();
 	xhr.onload=function(e){
 	if(xhr.status==200){
 		//alert(this.response)
-	let m=JSON.parse(this.response);
+	var m=JSON.parse(this.response);
 		console.warn('items: ',m.items);
 	//modelTokens.textContent=m.items;
 	modelTokens2.textContent=m.items;
@@ -833,7 +833,7 @@ if(owner()){
 getDeviceStream({video: true, audio: true})
 .then(function (stream) {
 localStream = stream;
-let videoTracks = stream.getVideoTracks();
+var videoTracks = stream.getVideoTracks();
 if (videoTracks) {
 console.log('videoTracks.length=' + videoTracks.length);
 if(videoTracks.length==0) throw 'Have you enabled your web camera?';
@@ -864,12 +864,13 @@ updateButtons();
 
 function stopLocalStream(stream) {
 	if(stream==null)return;
-let tracks = stream.getTracks();
+var tracks = stream.getTracks();
 if (! tracks) {
 console.warn('NO tracks');
 return;
 }
-for (let track of tracks) {
+	
+for (var track in tracks) {
 track.stop();
 }
 }
@@ -929,13 +930,13 @@ if(socket)socket.send(mess);
 
 
 function prepareNewConnection() {
-let pc_config = {"iceServers":[]};
-let peer = new RTCPeerConnection(pc_config);
+var pc_config = {"iceServers":[]};
+var peer = new RTCPeerConnection(pc_config);
     // --- on get remote stream ---
 if ('ontrack' in peer) {
 peer.ontrack = function(event) {
 console.log('-- peer.ontrack()');
-let stream = event.streams[0];
+var stream = event.streams[0];
 logStream('remotestream of ontrack()', stream);
 if ( (stream.getVideoTracks().length > 0) && (stream.getAudioTracks().length > 0) ) {
 if(!owner()){addRemoteVideo(stream.id, stream);}else{console.warn('IGNORE remote track');}
@@ -944,7 +945,7 @@ if(!owner()){addRemoteVideo(stream.id, stream);}else{console.warn('IGNORE remote
 }else {
 peer.onaddstream = function(event) {
 console.log('-- peer.onaddstream()');
-let stream = event.stream;
+var stream = event.stream;
 logStream('remotestream of onaddstream()', stream);
 if(!owner()){
 addRemoteVideo(stream.id, stream);
@@ -1035,7 +1036,7 @@ console.log('==***== connection state=' + peer.connectionState);
 };
 peer.onremovestream = function(event) {
 console.log('-- peer.onremovestream()');
-let stream = event.stream;
+var stream = event.stream;
 if(owner()){
 removeRemoteVideo(stream.id, stream);
 }else{console.log('ignoring remove stream');}
@@ -1050,7 +1051,7 @@ return peer;
 }
 
 function setOffer(sessionDescription) {
-let waitForCandidates = true;
+var waitForCandidates = true;
 if (peerConnection) {
 console.log('peerConnection alreay exist, reuse it');
 if (peerConnection.remoteDescription && (peerConnection.remoteDescription.type === 'offer')) {
@@ -1209,14 +1210,14 @@ stateSpan.innerText = state;
 
 function logStream(msg, stream) {
 console.log(msg + ': id=' + stream.id);
-let videoTracks = stream.getVideoTracks();
+var videoTracks = stream.getVideoTracks();
 if (videoTracks) {
 console.log('videoTracks.length=' + videoTracks.length);
 videoTracks.forEach(function(track) {
 console.log(' track.id=' + track.id);
 });
 }
-let audioTracks = stream.getAudioTracks();
+var audioTracks = stream.getAudioTracks();
 if (audioTracks) {
 console.log('audioTracks.length=' + audioTracks.length);
 audioTracks.forEach(function(track) {
@@ -1248,12 +1249,12 @@ enabelElement('plan_b_check');
 }
 
 function enabelElement(id) {
-let el = gid(id);
+var el = gid(id);
 if (el) {el.removeAttribute('disabled');}
 }
 
 function disableElement(id) {
-let el= gid(id);
+var el= gid(id);
 if (el) {el.setAttribute('disabled', '1');}    
 }
 
@@ -1270,8 +1271,7 @@ pauseVideo(localVideo);
 
 function get_image(){
 var cnv=document.createElement('canvas');
-let w=300;
-let h=200;
+var w=300,h=200;
 cnv.width=w;
 cnv.height=h;
 //local_video.width=130;

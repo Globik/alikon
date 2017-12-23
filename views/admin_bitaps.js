@@ -21,7 +21,7 @@ Hallo <b>${buser.name}</b>
 <b>parol:</b><br>
 <input id="bparol" type="password" value="mumia" required><button onclick="show_parol(this);">show</button></section>
 
-<form id="idpay1" method="post" action="/admin/conf_bitaps_payment" name="npay1">
+<form id="idpay1" method="post" action="/admin/conf_bitaps_payment" name="npay1" enctype="multipart/form-data">
 ${n.payment?get_payment_sys(n.payment):'<b>No payment system config file.</b>'}
 </form>
 <section><button id="newfucker">Reload system</button></section>
@@ -68,15 +68,17 @@ module.exports={admin_bitaps};
 function get_payment_sys(payment){
 let s='';
 let {name,enabled,test,real_adr,cold_adr,hotadr_quota,grund,cb_part,ptype}=payment;
-s+=`<div><b>type:</b>&nbsp;<b id="ptypeMarker">${ptype=="hot"?'HOT!':'SINGLE!'}</b><br><input type="text" name="ptype" value="${ptype}" readonly>&nbsp;`;
-s+=`<button onclick="bp_ptype(this);return false;">${ptype=='hot'?'single':'hot'}</button></div>`;
+s+=`<div><b>type:</b>&nbsp;<b id="ptypeMarker">${ptype=="hot"?'HOT!':'SINGLE!'}</b>`;
+s+=`<input type="radio" name="ptype" id="paytype" value="hot"${ptype=='hot'?' checked':''}><label for="paytype">hot</label>`;
+s+=`<input type="radio" name="ptype" id="paytype2" value="single"${ptype=='single'?' checked':''}><label for="paytype2">single</label></div>`;
 s+=`<div><b>name:</b><br><input type="text" name="name" value="${name}" readonly></div>`;
 s+=`<div><b>test mode:</b><br><input type="text" name="test" value="${test}" readonly></div>`;
-s+=`<div><b>enabled:</b>&nbsp;<b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b><br><input type="text" name="enabled" value="${enabled}">`;
-s+=`&nbsp;<button value="${enabled}" onclick="bp_enabler(this);return false;">${enabled=="true"?'disable':'enable'}</button></div>`;
+s+=`<div><b>enabled:</b>&nbsp;<b id="enablerMarker">${enabled=="true"?'YES!':'NO!'}</b>`;
+s+=`&nbsp;&nbsp;<input type="radio" name="enabled" id="benbl" value="true"${enabled=="true"?' checked':''}><label for="benbl">true</label>`;
+s+=`<input type="radio" name="enabled" id="benbl2" value="false"${enabled=="false"?' checked':''}><label for="benbl2">false</label></div>`;
 s+=`<div><b>hot address quote:</b><br><input type="text" name="hotadr_quota" value="${hotadr_quota}" readonly></div>`;
 s+=`<div><b>base url api: </b><br><input type="text" name="grund" value="${grund}" readonly></div>`;
 s+=`<div><b>callback:</b><br><input type="text" name="cb_part" value="${cb_part}" readonly>`;
-s+='&nbsp;<input type="submit" class="inp" value="save" name="submit" disabled></div></div>';
+s+='&nbsp;<input type="submit" class="inp" value="save" name="submit"></div></div>';
 return s;
 }

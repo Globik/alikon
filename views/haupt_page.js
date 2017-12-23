@@ -70,9 +70,9 @@ if(l){l.remove()}
 }
 
 function add_room(e){
-let m=JSON.parse(e.data);
+var m=JSON.parse(e.data);
 console.warn('on_add room');
-let div=document.createElement('div');
+var div=document.createElement('div');
 div.setAttribute("data-divroomid", m.room_name);
 var bsrc;
 if(m.src){
@@ -87,9 +87,9 @@ div.innerHTML='<a href="/webrtc/'+m.room_name+'">'+m.room_name+'</a><br><br>'+
 roomContainer.appendChild(div);
 }
 function room_view(e){
-let d=JSON.parse(e.data);
+var d=JSON.parse(e.data);
 console.warn('on room_view: ',d);
-let m=document.querySelector('[data-rviewers="'+d.room_name+'"]');
+var m=document.querySelector('[data-rviewers="'+d.room_name+'"]');
 if(m){m.textContent=d.peers;}
 }
 </script>
@@ -99,7 +99,7 @@ if(m){m.textContent=d.peers;}
 <button onclick="qr2();">qr code server side</button><br>
 <script>
 function gof(){
-let data={}
+var data={}
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/gof');
 xhr.setRequestHeader('Content-Type','application/json','utf-8');
@@ -115,7 +115,7 @@ console.log(JSON.stringify(data));
 xhr.send(JSON.stringify(data));
 }
 function alibaba(){
-let form=new FormData();
+var form=new FormData();
 form.append("fucker","fucker2");
 var xhr=new XMLHttpRequest();
 xhr.open('post','/api/posturlparams/VadikGlobus/666');
