@@ -10,6 +10,8 @@ return `<html><head><title>Tests</title></head><body>
 <button onclick="show_pwd();">show password</button><br><br>
 <button onclick="check_href();">check_href</button><br><br>
 <button onclick="check_event_source();">check event source</button><br><br>
+<hr>opera-mini specific<hr>
+<button onclick="check_opera_custom_event(this);">check opera custom event</button><br><br>
 <br>
 <form name="fname" id="fnameid" method="post" action="/fucking_arschloch" enctype="multipart/form-data">
 <input type="text" name="username" value="globik">
@@ -86,6 +88,7 @@ function check_event_source(){
 
 try{
 var b="b is in let b variable";
+// fuck 'let' does not work in opera mini and chrome for android
 out.innerHTML+='<b>let b=</b>'+b+'<br>';
 }catch(e){out.innerHTML+='var b='+e+'<br>';}
 
@@ -106,6 +109,17 @@ out.innerHTML+='event source-2 NO<br>';
 }catch(e){out.innerHTML+=e+'<br>';}
 
 }
+function check_opera_custom_event(el){
+try{
+var opevent=document.createEvent('Event');
+opevent.initEvent('build',true,true);
+//var opevent=new Event('build');
+pwd.dispatchEvent(opevent);
+}catch(e){out.innerHTML+='err: '+e+'<br>';}
+}
+pwd.addEventListener('build',function(e){
+out.innerHTML+='<b>An event ocured! YES!</b><br>';
+},false)
 </script>
 
 </body></html>`;
