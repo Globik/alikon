@@ -87,16 +87,20 @@ try{
 let b="b is in let b variable";
 out.innerHTML+='<b>let b=</b>'+b+'<br>';
 }catch(e){out.innerHTML+='let b='+e+'<br>';}
+try{
 if(window.EventSource){
 out.innerHTML+='event source-1 YES<br>';
 }else{
 out.innerHTML+='event source-1 NO<br>';
 }
+}catch(e){out.innerHTML+=e+'<br>';}
+try{
 if(!!window.EventSource){
 out.innerHTML+='eventsource-2 YES<br>';
 }else{
 out.innerHTML+='event source-2 NO<br>';
 }
+}catch(e){out.innerHTML+=e+'<br>';}
 }
 </script>
 
