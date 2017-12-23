@@ -19,7 +19,7 @@ ${n.m?n.m.msg:''}<br><br>
 ${buser?buser.name:'Guest<br>'}
 ${buser?'<a href="/logout">logout</a>':'<a href="/login">login</a>'}
 <br>Or you can log in with <a href="/auth/facebook">facebook</a> or <a href="/auth/vkontakte">vk</a>
-
+<br><br><a href="/testify">js tests api</a><br><br>
 <!-- <div>Some div with user's personals fades ${douser(buser)}</div> -->
 <!-- reklama -->
 <!-- <div id="rontar">

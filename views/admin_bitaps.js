@@ -39,6 +39,7 @@ ${admin_v_bitaps_reedem.admin_v_bitaps_reedem(n)}
 <section id="redIn2"></section>
 ${js_help(["/js/admin_bitaps.js"])}
 <h4>Some supported features</h4><hr>
+<a href="/testify">js tests api</a><br><br>
 <div id="pout"></div><hr>
 <script>
 var pout=document.getElementById('pout');

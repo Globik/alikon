@@ -9,12 +9,10 @@ if(Array.isArray(n)){
 n.forEach((el,i)=>{
 s+=`<section class="rdinfo" data-rdid="${el.rd_id}" data-type="${el.rd_t}" onchange="">`;
 s+=`<caption class="drow">Redeem info. Crypted: ${enc}</caption>`;
-
 s+='<div class="drow"><button onclick="make_rc_active(this);">make active</button>';
 s+='<button data-p="cold" onclick="save_cold(this);">save cold address</button>';
 s+=`<button value="${el.rd_c}" data-enc="${enc}"  onclick="check_balance_rc(this);">balance</button>`;
 s+='<button onclick="delete_redeem(this);">delete</button></div>'
-
 s+=`<div class="drow"><div class="dcell">active address</div><div class="dcell">${el.rd_adr}</div></div>`;
 s+=`<div class="drow"><div class="dcell">redeem code:</div><div class="dcell">${enc?el.rd_c.substring(0,10):el.rd_c}</div></div>`;
 s+=`<div class="drow"><div class="dcell">type</div><div class="dcell">${moon(el.rd_t,el.rd_id)}</div></div>`;

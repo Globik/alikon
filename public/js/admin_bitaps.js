@@ -1,5 +1,6 @@
+var idpay1=gid('idpay1'),bparol=gid('bparol'),redIn=gid('redIn'),redIn2=gid('redIn2'),rddmount=gid('rddmount');
 function show_parol(el){
-gid('bparol').type="text";
+bparol.type="text";
 el.textContent=="show"?el.textContent="hide":el.textContent="show";
 el.textContent!=="show"?bparol.type="text":bparol.type="password";
 }
@@ -24,12 +25,18 @@ idpay1.submit.disabled=false;
 idpay1.addEventListener('submit',send_pay_config,false);
 
 function send_pay_config(ev){
-let d=new FormData(ev.target);
+let d;
+	try{
+d=new FormData(ev.target);
+	}catch(e){alert('FormData is not supported? '+e);}
 if(!d)return;
 vax(ev.target.method,ev.target.action,d,obusi,erl,true);//true means formdata, not an json set request header
 ev.preventDefault();
 }
+try{
 var sura=new Event('suzuki');
+}catch(e){alert("Custom event not supported in this browser.");}
+
 function obusi(f){
 if(!f.info && !f.info.enabled){return;}
 console.warn('saved');
@@ -43,10 +50,12 @@ function pizda(n){
 if(n=="sayPizda"){reload_pay_sys();}
 }
 
-newfucker.onclick=function(e){
-shell(e,"Wish you reload this payment system?",sura);
+gid('newfucker').onclick=function(e){
+if(sura){shell(e,"Wish you reload this payment system?",sura);}else{
+alert("Custom event api is not supported in this browser");
 }
-if(sura){newfucker.addEventListener('suzuki',reload_pay_sys,false);}
+}
+if(sura){gid('newfucker').addEventListener('suzuki',reload_pay_sys,false);}
 
 //function dura(){alert('a?')}
 var strty="pay_sys_reload";
@@ -110,7 +119,7 @@ if(l)l.classList.remove(d);
 }
 
 function make_rc_active(el){
-let a=el.parentElement.parentElement;
+let a=el.parentNode.parentNode;//parentElement.parentElement;
 //alert(a.getAttribute('data-rdid'))
 if(!a){message_box('No id found!');retrun;}
 //alert(a.getAttribute('data-type'));
@@ -118,7 +127,7 @@ let ab=a.getAttribute('data-type');
 if(ab && ab=="a"){
 message_box("it's already acive.");return;
 	}
-let b=el.parentElement.nextSibling.nextSibling.nextSibling.firstChild.nextSibling.firstChild;
+let b=el.parentNode.nextSibling.nextSibling.nextSibling.firstChild.nextSibling.firstChild;
 	//alert('car: '+car.textContent);
 if(!b){message_box('No form element found! It looks like you have an old browser.');return;}
 let c=b.f.value;
@@ -145,7 +154,7 @@ function geti(){
 vax('get','/mid/Bob',null,onl,erl)
 }
 function save_cold(el){
-let tbody=el.parentElement.parentElement;
+let tbody=el.parentNode.parentNode;//parentElement.parentElement;
 if(!tbody){message_box('no parent found');return;}
 let rdid=tbody.getAttribute('data-rdid');
 let cadr1=el.parentElement.nextSibling.nextSibling.nextSibling.nextSibling.firstChild.nextSibling;
@@ -177,7 +186,7 @@ redIn2.innerHTML=e.htmlbody;
 }
 
 function delete_redeem(el){
-let v=el.parentElement.parentElement;
+let v=el.parentNode.parentNode;//parentElement.parentElement;
 let id=v.getAttribute('data-rdid');
 //alert(id)
 let typ=v.getAttribute('data-type');

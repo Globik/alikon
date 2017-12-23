@@ -370,6 +370,16 @@ xhr_failed_login
 pub.post('/xhr_failed_login', ctx=>{
 ctx.body={body:ctx.request.body};
 })
+
+pub.get('/testify',async ctx=>{
+ctx.body=await ctx.render('test',{})
+})
+pub.post('/get_me_please',async ctx=>{
+ctx.body={info:ctx.request.body}
+})
+pub.post('/fucking_arschloch',async ctx=>{
+ctx.body={"form_post_info":ctx.request.body}
+})
 /* 
 ========
 articles 

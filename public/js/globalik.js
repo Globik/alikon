@@ -28,7 +28,10 @@ ev.target.returnValue=null;
 }}
 function shell(el,n,ml){is_dialogi()?bzuka(el,n,ml):puzuki(el,n,ml);}
 function puzuki(el,n,ml){confirm(n)?luzda(el,ml):null}
-function luzda(el,ml){(el?el.target.dispatchEvent(ml):pizda(ml));}
+function luzda(el,ml){
+	if(!el.target.dispatchEvent(ml)){alert('el.target.dispatchEvent() API is not supported!');}
+	(el?el.target.dispatchEvent(ml):pizda(ml));
+}
 function bvid(i){return document.getElementById(i);}
 function galert(n){
 let c=window.getComputedStyle(document.querySelector('.popi'),null).getPropertyValue('z-index');
@@ -102,7 +105,7 @@ var gevS=null;
 if(!!window.EventSource){
 gevS=new EventSource('/log_rooms');
 	gevS.onopen=function(){console.log('sse opened');}
-	gevS.onerror=function(e){console.error("event source error: ");}
+	gevS.onerror=function(e){/*console.error("event source error: ");*/}
 }else{}
 function vax(m,u,d,o,z,bool){let x=new XMLHttpRequest();if(!x){return false;}x.open(m,u);
 if(!bool){x.setRequestHeader('Content-Type','application/json','utf-8');}x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
