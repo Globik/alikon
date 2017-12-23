@@ -56,8 +56,8 @@ pout.innerHTML+="dialog open is false<br>";
 pout.innerHTML+="dialog html5 is "+(typeof HTMLDialogElement==='function'?true:false)+"<br>";
 pout.innerHTML+="display flex support is "+flexsupport+"<br>";
 pout.innerHTML+="local storage is "+(typeof(Storage) !=='undefined'?true:false)+"<br>";
-pout.innerHTML+="custom events api is "+sura+"<br>";
-pout.innerHTML+="idpay1 is "+idpay1+"<br>";
+pout.innerHTML+="custom events api is sura<br>";
+pout.innerHTML+="idpay1 is idpay1<br>";
 pout.innerHTML+="new FormData() is "+etwasformdata+"<br>";
 pout.innerHTML+="ajax is "+etwasxhr+"<br>";
 

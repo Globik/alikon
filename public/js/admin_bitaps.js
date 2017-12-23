@@ -33,6 +33,7 @@ if(!d)return;
 vax(ev.target.method,ev.target.action,d,obusi,erl,true);//true means formdata, not an json set request header
 ev.preventDefault();
 }
+
 try{
 var sura=new Event('suzuki');
 }catch(e){alert("Custom event not supported in this browser.");}

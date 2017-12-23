@@ -52,7 +52,7 @@ ${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">N
 //alert(localStorage.abuse);
 
 function go_rooms_sse(){
-if(gevS==null){return;}
+if(gevS==null){alert('event source does not work!');return;}
 gevS.addEventListener('remove_room',remove_room,false);
 gevS.addEventListener('add_room',add_room,false);
 gevS.addEventListener('room_view',room_view,false);
@@ -97,7 +97,6 @@ if(m){m.textContent=d.peers;}
 <button onclick="alibaba();">post url with params</button><br>
 <button onclick="qr();">qr code</button><br>
 <button onclick="qr2();">qr code server side</button><br>
-<image id="fuckqr" src=""/>
 <script>
 function gof(){
 let data={}

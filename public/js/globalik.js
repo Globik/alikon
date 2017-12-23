@@ -103,7 +103,9 @@ open_al();
 }
 var gevS=null;
 if(!!window.EventSource){
+	try{
 gevS=new EventSource('/log_rooms');
+	}catch(e){alert('event source err: '+e);}
 	gevS.onopen=function(){console.log('sse opened');}
 	gevS.onerror=function(e){/*console.error("event source error: ");*/}
 }else{}

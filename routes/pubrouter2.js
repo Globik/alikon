@@ -377,8 +377,13 @@ ctx.body=await ctx.render('test',{})
 pub.post('/get_me_please',async ctx=>{
 ctx.body={info:ctx.request.body}
 })
+/*
 pub.post('/fucking_arschloch',async ctx=>{
 ctx.body={"form_post_info":ctx.request.body}
+})
+*/
+pub.post('/fucking_arschloch',bodyParser({multipart:true,formidable:{}}),async ctx=>{
+ctx.body={"fields":ctx.request.body.fields}
 })
 /* 
 ========
