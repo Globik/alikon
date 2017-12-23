@@ -96,7 +96,7 @@ out.innerHTML+='event source-1 YES<br>';
 out.innerHTML+='event source-1 NO<br>';
 }
 }catch(e){out.innerHTML+=e+'<br>';}
-/*
+
 try{
 if(!!window.EventSource){
 out.innerHTML+='eventsource-2 YES<br>';
@@ -104,7 +104,7 @@ out.innerHTML+='eventsource-2 YES<br>';
 out.innerHTML+='event source-2 NO<br>';
 }
 }catch(e){out.innerHTML+=e+'<br>';}
-*/
+
 }
 </script>
 
