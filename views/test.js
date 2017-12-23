@@ -83,12 +83,12 @@ function check_href(){
 out.innerHTML+='location.href: '+window.location.href+'<br>';
 }
 function check_event_source(){
-/*
+
 try{
 let b="b is in let b variable";
 out.innerHTML+='<b>let b=</b>'+b+'<br>';
 }catch(e){out.innerHTML+='let b='+e+'<br>';}
-*/
+
 try{
 if(window.EventSource){
 out.innerHTML+='event source-1 YES<br>';
