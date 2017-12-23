@@ -58,6 +58,9 @@ document.body.onload=shalter;
 
 function shalter(){
 gid('pagewrap').onclick=clickshalter;
+gid('pagewrap').ontouch=clickshalter;
+var dlg=gid('dialogConfirm');
+if(flexsupport==false){if(dlg) dlg.style.display="none";}
 function clickshalter(e){
 	minmen.style.display="none";
 	//lb.classList.remove("active");

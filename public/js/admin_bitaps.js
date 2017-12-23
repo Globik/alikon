@@ -1,5 +1,5 @@
 function show_parol(el){
-bparol.type="text";
+gid('bparol').type="text";
 el.textContent=="show"?el.textContent="hide":el.textContent="show";
 el.textContent!=="show"?bparol.type="text":bparol.type="password";
 }
@@ -46,7 +46,7 @@ if(n=="sayPizda"){reload_pay_sys();}
 newfucker.onclick=function(e){
 shell(e,"Wish you reload this payment system?",sura);
 }
-newfucker.addEventListener('suzuki',reload_pay_sys,false);
+if(sura){newfucker.addEventListener('suzuki',reload_pay_sys,false);}
 
 //function dura(){alert('a?')}
 var strty="pay_sys_reload";

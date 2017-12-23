@@ -18,7 +18,9 @@ return true;}
 return false;}
 function is_dialogi(){return (typeof HTMLDialogElement==='function'?true:false);}
 function bzuka(el,n,ml){
-inbox3.innerHTML='<b>'+n+'</b>';dialogConfirm.showModal();
+inbox3.innerHTML='<b>'+n+'</b>';
+//dialogConfirm.style.display="block";
+dialogConfirm.showModal();
 playSound(sounds.message.buffer);
 dialogConfirm.onclose=function(ev){
 ev.target.returnValue=='true'?luzda(el,ml):null;

@@ -28,12 +28,11 @@ suka:focus{
 #pagewrap > section{margin-top:.4rem;margin-bottom:.4rem;padding:1rem;word-wrap:break-word;}
 .greeny{background:green;}
 
-table,tr,td,caption{border:1px solid black;padding:0.6rem;}
-table{margin:0;border-collapse:collapse;}
+
+
 
 caption{border-bottom:none;font-weight:bold;}
-table th{padding:0.8rem;}
-thead,caption{background:#4caf50;color:white;}
+
 .tododelete{background:red;}
 		
 input:read-only{background:gray;}
@@ -81,6 +80,7 @@ grid-auto-rows:minmax(auto,auto);
 grid-template-columns:repeat(2,1fr);
 
 grid-gap:.8rem;
+padding:1rem;
 padding:var(--pd);
 }
 
@@ -93,10 +93,9 @@ padding:var(--pd);
 
 
 #idpay1 > div input, #bparol{
-
-adding:0.8rem;
-	padding: var(--pd);
-ont-size:1rem;
+padding:1rem;
+padding: var(--pd);
+font-size:1.2rem;
 font-size: var(--sf);
 border:.2rem solid black;
 margin-bottom:4px;margin-top:2px;
@@ -164,6 +163,7 @@ input[type="radio"]:checked:active + label::before{background:lightgreen;}
 .dcell:focus{background:white;outline-color:green;outline-style:solid;outline-width:5px; outline-offset:-8px;
 box-shadow:0 2px 5px 6px rgba(0,0,0,0.6);
 }
+
 @media screen and (max-width: 1024px) {}
 
 @media screen and (max-width:750px){
@@ -190,7 +190,7 @@ grid-auto-rows:minmax(auto,auto);
 #bparol{width:100%;}
 button{margin-left:0;}
 #bparol + button{width:100%;margin-left:0;}
-
+	.rdinfo label::before{font-size:150%;}
 }
 
 @media screen and (max-width: 321px) {

@@ -16,8 +16,14 @@ ${n.luser&&n.luser.role=='superadmin'?`<link href="/css/abuse_notes.css" rel="st
 ${n.csshelper ? `<style>${n.csshelper}</style>`:''}
 
 <script>
+var flexsupport=false;
 var html=document.getElementsByTagName("html")[0],dtct=document.createElement('div');
-dtct.style.display='flex';if(dtct.style.display === 'flex'){html.className='flex';}</script>  
+dtct.style.display='flex';if(dtct.style.display === 'flex'){
+html.className='flex';flexsupport=true;
+
+}else{}
+
+</script>  
 <script src="/js/globalik.js"></script>
 <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 <!--[if lt IE 9]><script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->

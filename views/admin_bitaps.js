@@ -38,6 +38,29 @@ ${admin_v_bitaps_reedem.admin_v_bitaps_reedem(n)}
 </section>
 <section id="redIn2"></section>
 ${js_help(["/js/admin_bitaps.js"])}
+<h4>Some supported features</h4><hr>
+<div id="pout"></div><hr>
+<script>
+var pout=document.getElementById('pout');
+var etwasformdata=new FormData(document.getElementById('idpay1'));
+var etwasxhr=new XMLHttpRequest();
+pout.innerHTML="";
+var dialog=document.createElement('dialog');
+dialog.setAttribute("open","");
+if(dialog.open==true){
+pout.innerHTML+="dialog open is true<br>";
+}else{
+pout.innerHTML+="dialog open is false<br>";
+}
+pout.innerHTML+="dialog html5 is "+(typeof HTMLDialogElement==='function'?true:false)+"<br>";
+pout.innerHTML+="display flex support is "+flexsupport+"<br>";
+pout.innerHTML+="local storage is "+(typeof(Storage) !=='undefined'?true:false)+"<br>";
+pout.innerHTML+="custom events api is "+sura+"<br>";
+pout.innerHTML+="idpay1 is "+idpay1+"<br>";
+pout.innerHTML+="new FormData() is "+etwasformdata+"<br>";
+pout.innerHTML+="ajax is "+etwasxhr+"<br>";
+
+</script>
 </main>${fg}<footer id="footer">${footer.footer({})}</footer></body></html>`;
 }
 module.exports={admin_bitaps};
