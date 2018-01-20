@@ -414,7 +414,8 @@ pub.get('/labs',ctx=>{ctx.body='str';});
 
 pub.get('/tipping/purchase_tokens',async ctx=>{
 ctx.session.dorthin=ctx.path;
-ctx.body=await ctx.render('purchase',{});
+let packs=ctx.tok_pack;
+ctx.body=await ctx.render('bitpay',{packs});
 })
 pub.get(`/${conf_pay.bitaps_href}`,async ctx=>{
 ctx.session.dorthin=ctx.path;
@@ -433,6 +434,15 @@ ctx.body=await ctx.render('bitaps',{packs})
 //var b=qr.toDataURL(url,4)
 const bas_part='data:image/png;base64,';
 const bas_part2='data:image/svg+xml;base64,';
+const {setOptions,qrencode}=require('qrencode_mini');
+const res_qr={
+dot_size:6,
+level:"l",
+margin:4
+}
+var res_qr2=setOptions(res_qr);
+console.log("grencode_mini set_options: ",res_qr);
+console.log("qrencode_mini fact: ",res_qr2);
 const ob64={
 /*background_color:'#76eec6',
 foreground_color:'#ff0000', */
@@ -453,6 +463,8 @@ return `${bas_part}${b.toString('base64')}`
 }
 }catch(e){throw e}
 }
+
+
 let advalid='Server side btc address is not valid!';
 
 pub.post('/tipping/get_invoice',xhr_auth,bodyParser({multipart:true,formidable:{}}),async ctx=>{
@@ -473,17 +485,21 @@ var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfan
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
 try{
-src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
+//src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
+let f=await qrencode(Buffer.from(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack})));
+src4=bas_part+f.toString('base64');
 }catch(e){ctx.throw(400,e);}
 	
 ctx.body={body:mata,result:mres.rows[0],src4,type:"alt",prod:is_devel(true),ptype:ptype}
 }else{
-if(is_devel(false)){
+if(is_devel(true)){
 try{
 	//inserting into bitaps_tmp
-mres2=await db.query(vstr,[invoice_dev,address_dev, payment_code_dev,buyerId,tok_pack,ptype])
+mres2=await db.query(vstr,[invoice_dev,address_dev, payment_code_dev, buyerId, tok_pack, ptype])
 try{
-src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+//src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+let f=await qrencode(Buffer.from(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok})));
+src4=bas_part+f.toString('base64');
 }catch(e){ctx.throw(400,e);}
 ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:false,ptype:ptype}
 }catch(e){ctx.throw(400,e)}
@@ -535,7 +551,9 @@ try{
 mres2=await db.query(vstr,[invoice,address,payment_code,buyerId,tok_pack,ptype])
 }catch(e){ctx.throw(400,e)}
 try{
-src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+//src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+let f=await qrencode(Buffer.from(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok})));
+src4=bas_part+f.toString('base64');
 }catch(e){ctx.throw(400,e);}
 ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:true,ptype:ptype}
 }
@@ -578,6 +596,117 @@ if(is_devel(true)){
 ctx.body={body:b,params:ctx.params,invoice:inv}
 }else{ctx.body=inv;}
 })
+
+/* BITPAY */
+const bitpay=require('bitpay-rest');
+const bitauth=require('bitauth');
+//var privkey=bitauth.decrypt('',fs.readFileSync('/home/globik/.bitpay/api.key','utf8'));
+const privkey=bitauth.decrypt('',process.env.BITPAY_TEST_APIKEY);
+console.log('privkey: ',privkey);
+const bpclient=bitpay.createClient(privkey);
+bpclient.on('error',err=>console.log(err));
+bpclient.on('ready',()=>{console.log('bitpay ready')})
+
+pub.post('/create_invoice', xhr_auth, bodyParser({multipart:true,formidable:{}}), async ctx=>{
+var mata=ctx.request.body.fields;
+//console.log('mata: ',mata);
+	/*is_develop: 'true',
+  items2: '0.08',
+  tok_pack: '200',
+  posData: '{"items":undefined}',
+  itemDesc: 'undefined Tokens',
+  itemCode: 66666,
+  orderID: '123456789fd',
+  fullNotifications: true,
+  */
+
+	mata.posData=`{"items":${mata.tok_pack}}`;
+	mata.price=mata.items2;
+	//mata.posData.ref="referal-123456"; mata.posData.affiliate="some affiliate fucker";
+	mata.itemDesc=mata.tok_pack+" Tokens";
+	mata.itemCode=66666;
+	//bitcoin:?r=https://test.bitpay.com/i/NcG8qsX1dUgvRgsudbnX48
+	//mata.buyerEmail=process.env.DEV_EMAIL;
+    //mata.buyerName="Ali Boos";
+	mata.orderID="123456789fd";
+	mata.fullNotifications=true;
+	mata.currency="BTC";
+	//mata.notificationEmail=process.env.DEV_EMAIL;
+	mata.notificationURL="https://alikon.herokuapp.com/bp/cb";
+	//mata.notificationURL="https://localhost:5000/bp/cb";
+	
+	console.log('mata: ',mata);
+	//console.log('mata: ',mata);
+	function bitp(d){
+	return new Promise((resolve,reject)=>{bpclient.as('merchant').post('invoices',d,(err,invoice)=>err?reject(err):resolve(invoice))
+	})
+	}
+	var binv=null;
+	try{
+	var invoice=await bitp(mata);
+		console.log('invoice resultat: ',invoice);
+		console.log('posData: ', JSON.parse(invoice.posData).items);
+		//console.log('posData: ',invoice.posData.items);
+		console.log('buyeremail: ',invoice.buyer.email);
+	}catch(e){console.log(e);ctx.throw(400,e.message);}
+	if(process.env.DEVELOPMENT=="yes"){binv=invoice;}
+ctx.body={id:invoice.id, messy:binv};
+	/*
+	invoice resultat:  { url: 'https://test.bitpay.com/invoice?id=NcG8qsX1dUgvRgsudbnX48',
+  posData: '{"items":100}',
+  status: 'new',
+  btcPrice: '0.040000',
+  btcDue: '0.040004',
+  price: 0.04,
+  currency: 'BTC',
+  itemDesc: '100 Tokens',
+  orderId: '123456789fd',
+  invoiceTime: 1516477444197,
+  expirationTime: 1516478344197,
+  currentTime: 1516477444211,
+  guid: 'b93ca892-ed98-0b19-26ca-8b5d1d8a170e',
+  id: 'NcG8qsX1dUgvRgsudbnX48',
+  lowFeeDetected: false,
+  amountPaid: 0,
+  btcPaid: '0.000000',
+  rate: 1,
+  exceptionStatus: false,
+  transactions: [],
+  buyer: {},
+  flags: { refundable: false },
+  refundAddresses: [],
+  refundAddressRequestPending: false,
+  buyerProvidedInfo: { selectedTransactionCurrency: 'BTC' },
+  addresses: { BTC: 'mxn1pDYdR2kW3qDT4JDxFSXaPBsiaVhoFP' },
+  paymentSubtotals: { BTC: 4000000 },
+  paymentTotals: { BTC: 4000400 },
+  bitcoinAddress: 'mxn1pDYdR2kW3qDT4JDxFSXaPBsiaVhoFP',
+  minerFees: { BTC: { satoshisPerByte: 3, totalFee: 400 } },
+  buyerPaidBtcMinerFee: '0.000004',
+  supportedTransactionCurrencies: { BTC: { enabled: true } },
+  exRates: { USD: 12810.3 },
+  paymentUrls: 
+   { BIP21: 'bitcoin:mxn1pDYdR2kW3qDT4JDxFSXaPBsiaVhoFP?amount=0.040004',
+     BIP72: 'bitcoin:mxn1pDYdR2kW3qDT4JDxFSXaPBsiaVhoFP?amount=0.040004&r=https://test.bitpay.com/i/NcG8qsX1dUgvRgsudbnX48',
+     BIP72b: 'bitcoin:?r=https://test.bitpay.com/i/NcG8qsX1dUgvRgsudbnX48',
+     BIP73: 'https://test.bitpay.com/i/NcG8qsX1dUgvRgsudbnX48' },
+  exchangeRates: { BTC: { USD: 12810.3 } },
+  paymentCodes: 
+   { BTC: 
+      { BIP21: 'bitcoin:mxn1pDYdR2kW3qDT4JDxFSXaPBsiaVhoFP?amount=0.040004',
+        BIP72: 'bitcoin:mxn1pDYdR2kW3qDT4JDxFSXaPBsiaVhoFP?amount=0.040004&r=https://test.bitpay.com/i/NcG8qsX1dUgvRgsudbnX48',
+        BIP72b: 'bitcoin:?r=https://test.bitpay.com/i/NcG8qsX1dUgvRgsudbnX48',
+        BIP73: 'https://test.bitpay.com/i/NcG8qsX1dUgvRgsudbnX48' } },
+  token: '9eV9CZmk6mLe9YCDtmv118yVJBBCqXF2c29RWrq3zeikVwa9MaB2iWyRUgsPxw84dd' }
+posData:  100
+buyeremail:  undefined
+
+*/
+	
+})
+
+/* end BITPAY */
+
 /* *************************************************************************
 WEBRTC STUFF /:models
 *************************************************************************** */

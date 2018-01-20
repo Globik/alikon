@@ -9,19 +9,8 @@ const path=require('path');
 const walletValidator=require('wallet-address-validator');//0.1.0
 const rk=require('request');
 
-const bitpay=require('bitpay-rest');
-const bitauth=require('bitauth');
+//const pub=new Router();
 
-//var privkey=bitauth.decrypt('',fs.readFileSync('/home/globik/.bitpay/api.key','utf8'));
-const privkey=bitauth.decrypt('',process.env.BITPAY_TEST_APIKEY);
-console.log('privkey: ',privkey);
-
-const pub=new Router();
-//var debug=require('debug');^.+@.+\..+$^.+@.+\..+$
-const bpclient=bitpay.createClient(privkey);
-bpclient.on('error',err=>console.log(err));
-
-bpclient.on('ready',()=>{console.log('bitpay ready')})
 
 var admin=new Router();
 
@@ -45,43 +34,7 @@ ctx.body=await ctx.render('admin_dashboard',{});
 /* **************************************************
    BITPAY PART
  *************************************************** */
-admin.post('/create_invoice', authed,bodyParser({multipart:true,formidable:{}}), async ctx=>{
-var mata=ctx.request.body.fields;
-//console.log('mata: ',mata);
-	mata.posData=`{"items":${mata.items}}`;
-	//mata.posData.ref="referal-123456"; mata.posData.affiliate="some affiliate fucker";
-	mata.itemDesc=mata.items+" Tokens";
-	mata.itemCode=66666;
-	
-	//mata.buyerEmail=process.env.DEV_EMAIL;
-    //mata.buyerName="Ali Boos";
-	mata.orderID="123456789fd";
-	mata.fullNotifications=true;
-	//mata.notificationEmail=process.env.DEV_EMAIL;
-	mata.notificationURL="https://alikon.herokuapp.com/bp/cb";
-	//mata.notificationURL="https://localhost:5000/bp/cb";
-	
-	console.log('mata: ',mata);
-	//console.log('mata: ',mata);
-	function bitp(d){
-	return new Promise((resolve,reject)=>{bpclient.as('merchant').post('invoices',d,(err,invoice)=>err?reject(err):resolve(invoice))
-	})
-	}
-	var binv=null;
-	try{
-	var invoice=await bitp(mata);
-		console.log('invoice resultat: ',invoice);
-		console.log('posData: ', JSON.parse(invoice.posData).items);
-		//console.log('posData: ',invoice.posData.items);
-		console.log('buyeremail: ',invoice.buyer.email);
-	}catch(e){console.log(e);ctx.throw(400,e.message);}
-	if(process.env.DEVELOPMENT=="yes"){binv=invoice;}
-ctx.body={id:invoice.id, messy:binv};
-})
 
-/* ***********************************
-END BITPAY PART
-****************************** */
 admin.get('/dashboard/banners', authed, async ctx=>{
 let db=ctx.db;
 var result=null;
@@ -93,6 +46,7 @@ console.log('result: ',result);
 }catch(e){console.log(e);}
 ctx.body=await ctx.render('adm_dsh_banners',{banners:result});
 })
+
 /* *********************************
 ADMIN_BITAPS_API
 ******************************** */

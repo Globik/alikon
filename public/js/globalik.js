@@ -124,3 +124,4 @@ return makaka23;
 }
 return makaka23;
 }
+function gid(id){return document.getElementById(id);}
