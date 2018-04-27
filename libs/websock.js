@@ -8,6 +8,7 @@ const didi=wslookup(wss)
 
 const preparePeer=(ws,message,downOnly)=>{
 console.log('PREPARINGPEER()',downOnly)
+console.log("MESSAGE In preparePeer: ",message);
 const id=ws.clientId;
 console.log('ID: ',id.toString())
 const planb=message.planb;
@@ -47,8 +48,9 @@ pc.on('signalingstatechange',()=>console.log('state ',pc.signalingState));
 pc.on('negotiationneeded',()=>{
 console.log('negotiationneeded id: ', id);
 sendOffer(ws,pc,downOnly)})
+
 pc.setCapabilities(capabilitySDP).then(()=>{
-console.log('peer.setcapabilities() ok');
+console.log('peer.setcapabilities() ok',capabilitySDP);
 addPeerConnection(id,pc);
 sendOffer(ws,pc);
 }).catch(err=>{
@@ -61,15 +63,18 @@ pc.close();
 function sendOffer(ws,pc,downOnly){
 console.log('SEND OFFER()')
 const id=ws.clientId;
+console.log("downOnly=1");
 let offerOption={offerToReceiveAudio:1,offerToReceiveVideo:1};
 if(downOnly){
+	console.log("downOnly=0");
 offerOption.offerToReceiveAudio=0;
 offerOption.offerToReceiveVideo=0;
 }
 pc.createOffer(offerOption).then(desc=>{
-	console.log('CREATING OFFER')
+	console.log('CREATING OFFER, desc came:',desc)
 return pc.setLocalDescription(desc)}).then(()=>{
 //dumpPeer(pc.peer,'peer.dump after createoffer')
+	console.log("after setlocaldescription: ",pc.localDescription);
 sendSDP(ws,pc.localDescription)
 }).catch(err=>{
 console.log('error handling sdp offer to participant: ',err)
@@ -81,14 +86,15 @@ deletePeerConnection(id);
 	
 	
 function handleAnswer(ws, message) {
-	console.log('ANSWER')
+	console.log('ANSWER::message',message)
 const id = ws.clientId;
 let pc=getPeerConnection(id);
 if (!pc) {return;}
 
 let desc = new RTCSessionDescription({type : "answer", sdp  : message.sdp});
-  
+  console.log("DESC in HandleAnswer: ",desc);
 pc.setRemoteDescription(desc).then(()=>{
+	console.log("after SET remoteDescription()");
 let vid=droom.get(message.roomname);
 if(vid){
 let peerlength=vid.peers.length;

@@ -18,7 +18,7 @@ var broom=0;
 var bpeer=0;
 //const redis=require('./examples/redis-promis.js')();
 //onst cl=redis.createClient();
-
+const uap=require("uaparser-js");
 const session=require('koa-generic-session');
 const sse=require('sse-broadcast')();
 const shortid=require('shortid');
@@ -41,7 +41,8 @@ const RTCSessionDescription = mediasoup.webrtc.RTCSessionDescription;
 const roomOptions = require('./data/options').roomOptions;
 const peerCapabilities = require('./data/options').peerCapabilities;
 const boom=new EventEmitter();
-const server = mediasoup.Server({logLevel:"debug",
+const server = mediasoup.Server({
+	                            logLevel:"debug",
 								rtcIP4:true,
 								rtcIP6:false,
 								rtcAnnouncedIPv4:null,
@@ -122,7 +123,7 @@ async show_abuse_nots(){try{let m=await pool.query(`select abus_id from abuse wh
 							return m;}catch(e){console.log(e);return e.name;}},
 async get_pay_sys(){try{let d=await readf(`./config/${conf_pay.config}.json`,'utf8');return JSON.parse(d);}catch(e){throw e}}
 };
-
+const parser=uap();
 app.use(async (ctx, next)=>{
 //if(ctx.path=='/favicon.ico'){console.log('**skiping favicon.ico');return;}
 console.log('PATH: ',ctx.method,ctx.path,ctx.url)
@@ -144,6 +145,8 @@ cachePay=a;
 payflag=false;
 }catch(e){console.log('err in payflag',e)}
 }
+let pk=parser.parse(ctx.request.header["user-agent"]);
+	console.log("UA_PARSER: ",pk.toString());
 ctx.payment=cachePay;
 if(ctx.path !=='/log_rooms' && ctx.method !=='POST'){
 ctx.state.banner=await locals.show_banners()
