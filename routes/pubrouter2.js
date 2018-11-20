@@ -434,15 +434,15 @@ ctx.body=await ctx.render('bitaps',{packs})
 //var b=qr.toDataURL(url,4)
 const bas_part='data:image/png;base64,';
 const bas_part2='data:image/svg+xml;base64,';
-const {setOptions,qrencode}=require('qrencode_mini');
+//const {setOptions,qrencode}=require('qrencode_mini');
 const res_qr={
 dot_size:6,
 level:"l",
 margin:4
 }
-var res_qr2=setOptions(res_qr);
-console.log("grencode_mini set_options: ",res_qr);
-console.log("qrencode_mini fact: ",res_qr2);
+//var res_qr2=setOptions(res_qr);
+//console.log("grencode_mini set_options: ",res_qr);
+//console.log("qrencode_mini fact: ",res_qr2);
 const ob64={
 /*background_color:'#76eec6',
 foreground_color:'#ff0000', */
@@ -485,9 +485,9 @@ var mres=await db.query('select * from get_invoice($1,$2,$3,$4)',[buyerId,'anfan
 }catch(e){ctx.throw(400,e.name)}
 if(mres.rows[0]){
 try{
-//src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
-let f=await qrencode(Buffer.from(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack})));
-src4=bas_part+f.toString('base64');
+src4=await dor_b64(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack}),ob64)
+//let f=await qrencode(Buffer.from(vstr2({a:mres.rows[0].addr,am:items2,l:buyerId,p:tok_pack})));
+//src4=bas_part+f.toString('base64');
 }catch(e){ctx.throw(400,e);}
 	
 ctx.body={body:mata,result:mres.rows[0],src4,type:"alt",prod:is_devel(true),ptype:ptype}
@@ -497,9 +497,9 @@ try{
 	//inserting into bitaps_tmp
 mres2=await db.query(vstr,[invoice_dev,address_dev, payment_code_dev, buyerId, tok_pack, ptype])
 try{
-//src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
-let f=await qrencode(Buffer.from(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok})));
-src4=bas_part+f.toString('base64');
+src4=await dor_b64(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok}),ob64)
+//let f=await qrencode(Buffer.from(vstr2({a:mres2.rows[0].addr,am:items2,l:buyerId,p:mres2.rows[0].bt_pck_tok})));
+//src4=bas_part+f.toString('base64');
 }catch(e){ctx.throw(400,e);}
 ctx.body={body:mata,result:mres2.rows[0],src4,type:"neu",prod:false,ptype:ptype}
 }catch(e){ctx.throw(400,e)}
@@ -855,6 +855,10 @@ ctx.body={info:"OK",body: ctx.request.body}
 /* DEMO */
 pub.get('/demo/videostream', async ctx=>{
 ctx.body=await ctx.render('demo_videostream',{})
+})
+
+pub.get('/entry', async ctx=>{
+ctx.body=await ctx.render('vk_entry_point',{})	
 })
 
 pub.get('/demo/webrtc', async ctx=>{

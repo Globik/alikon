@@ -61,8 +61,8 @@ const configDB=require('./config/database.js')
 const conf_pay=require('./config/pay.json')
 const mainmenu=require('./app.json')
 
-//const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
-const database_url=configDB.pg_url;
+const database_url=configDB.pg_local_heroku_url; //for a "production" deploying to heroku.com
+//const database_url=configDB.pg_url;
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
 	//dop_ssl="?ssl=true";

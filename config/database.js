@@ -1,4 +1,5 @@
-var pg_local_url='postgress://globik:null@localhost:5432/postgres';
+//var pg_local_url='postgress://globik:null@localhost:5432/postgres';
+var pg_local_url='postgress://globik:null@localhost:5432/alikon';
 //const pg_local_url='postgress://globik:globik@localhost:5432/postgres';
 //var pg_url=process.env.DATABASE_URL;
 var tf=null;
