@@ -65,8 +65,8 @@ const database_url=configDB.pg_local_heroku_url; //for a "production" deploying 
 //const database_url=configDB.pg_url;
 var dop_ssl='';
 if(process.env.DEVELOPMENT ==="yes"){
-	//dop_ssl="?ssl=true";
-	dop_ssl="";
+	dop_ssl="?ssl=true";
+	//dop_ssl="";
 }else{dop_ssl="?ssl=true"}
 
 const pgtypes=require('pg').types;
