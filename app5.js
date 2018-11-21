@@ -22,6 +22,7 @@ const uap=require("uaparser-js");
 const session=require('koa-generic-session');
 const sse=require('sse-broadcast')();
 const shortid=require('shortid');
+const enforceHttps=require('koa-sslify');
 //const render=require('./libs/render.js')
 const render=require('koa-rend');
 const serve=require('koa-static');
@@ -96,6 +97,7 @@ const subrouter=new Router();
 
 app.keys=['your-secret']
 app.use(serve(__dirname+'/public'));
+app.use(enforceHttps({trustProtoHeader:true}));
 app.use(session({store:pg_store}))
 
 render(app,{root:'views', development: configDB.deva})

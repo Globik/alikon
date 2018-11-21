@@ -41,7 +41,8 @@
     "uuid-validate": "0.0.2",
     "wallet-address-validator": "0.1.0",
     "ws": "3.2.0",
-    "uaparser-js":"1.0.6"
+    "uaparser-js":"1.0.6",
+    "koa-sslify":"2.1.2"
   },
   "engines": {
     "node": "9.0.0",
