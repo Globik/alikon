@@ -11,7 +11,7 @@ body{}
 #dropBtc{
 position:absolute;
 background:silver;
-display:none;
+display:block;
 z-index:1;
 margin-top:3px;
 height:auto;
@@ -135,6 +135,7 @@ border:1px solid orange;
 <body>
 <a href="/">home</a> | <a href="/interfaces">interfaces lab</a>
 <h1>BTC INPUT</h1>
+<button onclick="checknumber('0.2');">checknumber('0.2')</button><br>
 <label for="dropcheck">menu</label><input id="dropcheck" type="checkbox" value="7" onchange="changeit(this);"/>
 <table id="tableBtcAmount">
 <caption style="background:pink;">cap</caption>
@@ -173,7 +174,7 @@ border:1px solid orange;
 </div>
 
 </div> 
-<button onclick="checknumber('0.2');">checknumber('0.2')</button>
+
 <script>
 var cl_del_zif = "pissoff";
 var cl_ins_zif = "boo";
