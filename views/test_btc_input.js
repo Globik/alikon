@@ -135,7 +135,7 @@ border:1px solid orange;
 <body>
 <a href="/">home</a> | <a href="/interfaces">interfaces lab</a>
 <h1>BTC INPUT</h1>
-<label for="dropcheck">menu</label><input id="dropcheck" type="checkbox" value="7"/>
+<label for="dropcheck">menu</label><input id="dropcheck" type="checkbox" value="7" onchange="changeit(this);"/>
 <table id="tableBtcAmount">
 <caption style="background:pink;">cap</caption>
 <td><div data-zid="1"></div></td>
@@ -154,7 +154,7 @@ border:1px solid orange;
 
 <div id="dropBtc">
 <div class="btclab">
-<label class="bla" onclick="show_z(this);">0</label>
+<label class="bla" onclick="show_z(this);" ontouch="bob(this);">0</label>
 <label class="bla" onclick="show_z(this);">1</label>
 <label class="bla" onclick="show_z(this);">2</label>
 <label class="bla" onclick="show_z(this);">3</label>
@@ -173,7 +173,7 @@ border:1px solid orange;
 </div>
 
 </div> 
-
+<button onclick="checknumber('0.2');">checknumber('0.2')</button>
 <script>
 var cl_del_zif = "pissoff";
 var cl_ins_zif = "boo";
@@ -318,6 +318,12 @@ function class_remove(node,clas){
 if(!node){alert("wrong node el in class_remove()?");console.error("wrong node el?");return;}
 if(!node.classList){console.error("no classList in el?");return;}
 node.classList.remove(clas);
+}
+
+function changeit(el){alert(el.value);}
+function bob(el){alert("touched! "+el.textContent);}
+function checknumber(n){
+try{alert(Number(n));}catch(e){alert(e);}	
 }
 </script>
 </body>
