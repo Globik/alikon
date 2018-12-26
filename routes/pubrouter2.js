@@ -161,6 +161,20 @@ let jobidu=await boss.publish('bitpay_complete',{message:zomby},{startIn:'1 minu
 */
 })
 
+
+/* TEST INTERFACE  css and js on fron end */
+
+pub.get('/interfaces',async ctx=>{
+ctx.body=await ctx.render("interfaces",{});	
+})
+
+pub.get('/interfaces/testBtcInput', async ctx=>{
+ctx.body=await ctx.render('test_btc_input',{})	
+})
+
+
+/* END OF TEST INTERFACE */
+
 pub.get('/login', async ctx=>{
 let m=ctx.session.bmessage;
 ctx.body=await ctx.render('login',{errmsg:m});

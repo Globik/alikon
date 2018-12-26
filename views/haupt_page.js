@@ -49,6 +49,8 @@ ${roomers && roomers.length >0 ? roomers_list(roomers) : '<-- <b id="noroomer">N
 <a href="/demo/videostream">test videostream</a><br><br>
 <a href="/demo/webrtc">test webrtc</a><br><br>
 <a href="/entry">vk entry point</a>
+<h1>Test Interfaces</h1>
+<a href="/interfaces">interfaces</a><br>
 <script>
 //alert(localStorage.abuse);
 

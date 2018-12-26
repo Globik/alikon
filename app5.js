@@ -22,7 +22,7 @@ const uap=require("uaparser-js");
 const session=require('koa-generic-session');
 const sse=require('sse-broadcast')();
 const shortid=require('shortid');
-const enforceHttps=require('koa-sslify');
+//const enforceHttps=require('koa-sslify');
 //const render=require('./libs/render.js')
 const render=require('koa-rend');
 const serve=require('koa-static');
@@ -97,7 +97,7 @@ const subrouter=new Router();
 
 app.keys=['your-secret']
 app.use(serve(__dirname+'/public'));
-app.use(enforceHttps({trustProtoHeader:true}));
+//app.use(enforceHttps({trustProtoHeader:true}));
 app.use(session({store:pg_store}))
 
 render(app,{root:'views', development: configDB.deva})
@@ -221,7 +221,11 @@ ctx.redirect('/error');}
 });
 
 app.on('error',(err, ctx)=>{
-console.log('app.on.error: ',err.message, ctx.request.url);
+	console.log(ctx.session);
+	console.log(ctx.request.session);
+console.log('app.on.error: ',err.message, ctx.request);
+console.log("SESSION in app on error: ");
+console.log("sess: ", ctx.request.session);
 });
 
 pg_store.on('connect',()=>console.log('PG_STORE IS CONNECTED!!!'));
@@ -235,7 +239,7 @@ pool.query(`delete from rooms`).then(r=>{
 console.log('OK, deleteng all rooms!')
 }).catch(err=>console.log('Error in deleteng all rooms: ',err))
 
-const servak=app.listen(process.env.PORT || 5000)
+const servak=app.listen(process.env.PORT || 5001)
 heartbeat_sse();	
 console.log('is Mediasoup server closed?: ',server.closed)
 const wss=new WebSocket.Server({server:servak/*,verifyClient:(info,cb)=>{

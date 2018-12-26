@@ -92,7 +92,7 @@ if(!fogg())return;
 return blaysound(buffer);
 }
 function message_box(n){
-	console.log('mess: ',n)
+console.log('mess: ',n)
 inbox.innerHTML='<b>'+n+'</b>';
 window.location.href="#message_box";
 playSound(sounds.complete.buffer);
@@ -100,11 +100,11 @@ open_al();
 }
 var gevS=null;
 if(!!window.EventSource){
-	try{
+try{
 gevS=new EventSource('/log_rooms');
-	}catch(e){alert('event source err: '+e);}
-	gevS.onopen=function(){console.log('sse opened');}
-	gevS.onerror=function(e){/*console.error("event source error: ");*/}
+}catch(e){alert('event source err: '+e);}
+gevS.onopen=function(){console.log('sse opened');}
+gevS.onerror=function(e){/*console.error("event source error: ");*/}
 }else{}
 function vax(m,u,d,o,z,bool){var x=new XMLHttpRequest();if(!x){return false;}x.open(m,u);
 if(!bool){x.setRequestHeader('Content-Type','application/json','utf-8');}x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');

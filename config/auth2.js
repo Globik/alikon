@@ -2,7 +2,7 @@
 const LocalStrategy=require('passport-local').Strategy;
 const FacebookStrategy=require('passport-facebook').Strategy;
 
-module.exports=(db,passport)=>{
+module.exports=(db, passport)=>{
 
 passport.serializeUser((user,done)=>{
 	//console.log('in serialize USERA: ',user);
