@@ -7,7 +7,12 @@ return `<!DOCTYPE html><html lang="en">
 <title>btc input</title>
 <style>
 *{box-sizing:border-box;}
-html{touch-action:manipulation;}
+html{
+-webkit-touch-action:none;
+touch-action:none;
+-webkit-user-select:none;
+user-select:none;
+}
 body{}
 #dropBtc{
 position:absolute;
@@ -48,8 +53,13 @@ font-size:20px;
 cursor:pointer;
 -webkit-touch-callout:none;
 -webkit-user-select:none;
+-khtml-user-select:none;
+-ms-user-select:none;
+touch-collout:none;
+user-select:none;
 }
 #dropBtc::selection,.bla::selection,#spanout::selection,label[for=dropcheck]::selection, 
+.blaReset::-webkit-selection, .blaBackspace::-webkit-selection, .btclab::-webkit-selection, button::-webkit-selection{background:none;}
 .blaReset::selection, .blaBackspace::selection, .btclab::selection, button::selection{background:none;}
 table{
 border:1px solid green;
@@ -125,7 +135,9 @@ padding:6px 9px 9px 9px;
 margin:6px 5px 0 5px;
 /* top right bottom left*/
 -webkit-touch-callout:none;
+touch-collout:none;
 -webkit-user-select:none;
+user-select:none;
 }
 .blaReset{
 top:0;
