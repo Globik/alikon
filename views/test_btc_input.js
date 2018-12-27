@@ -11,7 +11,7 @@ body{}
 #dropBtc{
 position:absolute;
 background:silver;
-display:block;
+display:none;
 z-index:1;
 margin-top:3px;
 height:auto;
@@ -137,7 +137,7 @@ border:1px solid orange;
 <h1>BTC INPUT</h1>
 <button onclick="checknumber('0.2');">checknumber('0.2')</button><br><br>
 <button onclick="bibka();">bibka</button> | <button onclick="check_transform();">check transform</button><br><br>
-<label for="dropcheck">menu</label><input id="dropcheck" type="checkbox" value="7" onchange="changeit(this);"/>
+<label for="dropcheck">menu</label><input id="dropcheck" type="checkbox" value="7" onchange="nu(this);"/>
 <table id="tableBtcAmount">
 <caption style="background:pink;">cap</caption>
 <td><div data-zid="1"></div></td>
@@ -175,12 +175,14 @@ border:1px solid orange;
 </div>
 
 </div> 
-
+<output id="outi"></output>
 <script>
 var cl_del_zif = "pissoff";
 var cl_ins_zif = "boo";
 var max_cells = 11;
 var spanout=gid("spanout");
+var drop=gid("dropBtc");
+var outi=gid("outi");
 var is_max = false;
 var fake_max = 300;
 var fake_num = 300.0001;
@@ -327,6 +329,30 @@ function bob(el){alert("touched! "+el.textContent);}
 function checknumber(n){
 try{alert(Number(n));}catch(e){alert(e);}	
 }
+
+
+function nu(el){
+//alert(el.value);
+outi.innerHTML+=el.checked+"<br>";
+console.log("checked ",el.checked);
+if(!el.checked){
+//el.checked=true;
+console.log(el.checked);
+dropBtc.style.display="none";	
+}else{
+	console.log(el.checked);
+//el.checked=false;
+//alert("no check");
+dropBtc.style.display="block";	
+}
+}
+
+
+
+
+
+
+
 
 function bibka(){
 try{
