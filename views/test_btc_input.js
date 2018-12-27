@@ -135,7 +135,8 @@ border:1px solid orange;
 <body>
 <a href="/">home</a> | <a href="/interfaces">interfaces lab</a>
 <h1>BTC INPUT</h1>
-<button onclick="checknumber('0.2');">checknumber('0.2')</button><br>
+<button onclick="checknumber('0.2');">checknumber('0.2')</button><br><br>
+<button onclick="bibka();">bibka</button> | <button onclick="check_transform();">check transform</button><br><br>
 <label for="dropcheck">menu</label><input id="dropcheck" type="checkbox" value="7" onchange="changeit(this);"/>
 <table id="tableBtcAmount">
 <caption style="background:pink;">cap</caption>
@@ -326,6 +327,25 @@ function bob(el){alert("touched! "+el.textContent);}
 function checknumber(n){
 try{alert(Number(n));}catch(e){alert(e);}	
 }
+
+function bibka(){
+try{
+var a=document.querySelector("#dropcheck:checked");
+alert(a);
+}catch(e){alert(e);}	
+}
+function check_transform(){
+var sik=gid("tableBtcAmount");
+
+try{
+var erri=sik.style.transform;//must be undefined if no support
+alert("transform? => "+erri);
+var fucker=sik.style.webkitTransform;
+alert("webkitTransform? => "+ fucker);
+var fucker1=sik.style.msTransform;
+alert("msTransform? => "+fucker1);
+}catch(e){alert(e);}
+
 </script>
 </body>
 </html>
