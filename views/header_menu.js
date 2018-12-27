@@ -27,7 +27,7 @@ ${(sign_up ? `<li><div class="znak-svg">pic</div><a href="#join_form" id="join_p
 </output>
 <dialog  id="dialogConfirm">
 <div id="inbox3"></div>
-<form method="dialog">
+<form method="dialog" style="display:none;">
 <button id="dialogCancelbtn" type="reset" onclick="dialogConfirm.close();">cancel</button>
 <button type="submit" value="true">yes</button><button type="submit" value="false">no</button>
 </form>

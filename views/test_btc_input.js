@@ -8,8 +8,8 @@ return `<!DOCTYPE html><html lang="en">
 <style>
 *{box-sizing:border-box;}
 html{
--webkit-touch-action:none;
-touch-action:none;
+-webkit-touch-action:manipulate;
+touch-action:manipulate;
 -webkit-user-select:none;
 user-select:none;
 }
