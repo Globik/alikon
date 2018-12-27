@@ -345,6 +345,7 @@ alert("webkitTransform? => "+ fucker);
 var fucker1=sik.style.msTransform;
 alert("msTransform? => "+fucker1);
 }catch(e){alert(e);}
+}
 
 </script>
 </body>
