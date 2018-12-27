@@ -7,6 +7,7 @@ return `<!DOCTYPE html><html lang="en">
 <title>btc input</title>
 <style>
 *{box-sizing:border-box;}
+html{touch-action:manipulation;}
 body{}
 #dropBtc{
 position:absolute;
@@ -18,10 +19,13 @@ height:auto;
 width:50%;	
 border:2px solid brown;
 }
+/*
+ sorry to say in old webkit browsers this kind of selectors doesn't work
 #dropcheck:checked ~ #dropBtc{
 display:block;
 z-index:1;
 }
+*/ 
 .btclab{
 display:block;
 position:relative;
@@ -42,6 +46,8 @@ padding-top:13px;
 vertical-align:middle;
 font-size:20px;
 cursor:pointer;
+-webkit-touch-callout:none;
+-webkit-user-select:none;
 }
 #dropBtc::selection,.bla::selection,#spanout::selection,label[for=dropcheck]::selection, 
 .blaReset::selection, .blaBackspace::selection, .btclab::selection, button::selection{background:none;}
@@ -118,6 +124,8 @@ line-height:1.2;
 padding:6px 9px 9px 9px;
 margin:6px 5px 0 5px;
 /* top right bottom left*/
+-webkit-touch-callout:none;
+-webkit-user-select:none;
 }
 .blaReset{
 top:0;
