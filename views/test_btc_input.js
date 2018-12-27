@@ -177,6 +177,7 @@ border:1px solid orange;
 </div> 
 <output id="outi"></output>
 <script>
+var is_transformly=false;
 var cl_del_zif = "pissoff";
 var cl_ins_zif = "boo";
 var max_cells = 11;
@@ -221,15 +222,26 @@ tdel[i].firstChild.textContent=s;
 function del_all_zif(){
 for(var i=0;i<tdel.length;i++){
 if(tdel[i] && tdel[i].firstChild){
-if(tdel[i].firstChild.textContent)class_adi(tdel[i].firstChild, cl_del_zif);
-}}	
+if(tdel[i].firstChild.textContent){
+if(is_transform()){
+class_adi(tdel[i].firstChild, cl_del_zif);
+}else{
+class_remove(tdel[i].firstChild, cl_ins_zif);
+tdel[i].firstChild.textContent="";	
 }
+}}	
+}}
 
 
 
 function del_zif(index){
 if(tdel[index] && tdel[index].firstChild){
+if(is_transform()){
 class_adi(tdel[index].firstChild, cl_del_zif);
+}else{
+class_remove(tdel[index].firstChild, cl_ins_zif);
+tdel[index].firstChild.textContent="";	
+}
 }	
 }
 
@@ -360,18 +372,33 @@ var a=document.querySelector("#dropcheck:checked");
 alert(a);
 }catch(e){alert(e);}	
 }
-function check_transform(){
-var sik=gid("tableBtcAmount");
 
-try{
-var erri=sik.style.transform;//must be undefined if no support
-alert("transform? => "+erri);
-var fucker=sik.style.webkitTransform;
-alert("webkitTransform? => "+ fucker);
-var fucker1=sik.style.msTransform;
-alert("msTransform? => "+fucker1);
-}catch(e){alert(e);}
+function check_transform(){
+var div=document.createElement("div");
+div.setAttribute("style","transform:translateY(-10px);");
+
+document.body.appendChild(div);
+var ws=!!(div.style["transform"]);
+alert(ws);
+div.parentNode.removeChild(div);
+div=null;
 }
+function is_transform(){
+return is_transformly;
+}
+
+function is_transi(){
+try{
+var div=document.createElement("div");
+div.setAttribute("style","transform:translateY(-10px);");
+document.body.appendChild(div);
+var ws=!!(div.style["transform"]);
+is_transformly=ws;
+div.parentNode.removeChild(div);
+div=null;
+}catch(e){}
+}
+is_transi();
 
 </script>
 </body>
