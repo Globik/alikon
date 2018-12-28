@@ -196,6 +196,10 @@ border:1px solid orange;
 
 </div> 
 <output id="outi"></output>
+<button onclick="get_dialog();">dialog</button>
+<dialog id="figa" style=""><h1>dialog</h1>
+<button onclick="this.parentNode.close();">close</button>
+</dialog>
 <script>
 var is_transformly=false;
 var cl_del_zif = "pissoff";
@@ -419,6 +423,11 @@ div=null;
 }catch(e){}
 }
 is_transi();
+
+function get_dialog(){
+//figa.style.visibility="visible";
+gid("figa").showModal();	
+}
 
 </script>
 </body>
