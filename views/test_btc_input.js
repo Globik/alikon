@@ -197,7 +197,9 @@ border:1px solid orange;
 </div> 
 <output id="outi"></output>
 <button onclick="get_dialog();">dialog</button>
-<dialog id="figa" style=""><h1>dialog</h1>
+<dialog id="figa" style="">
+<!-- in the old android browsers the inner html between dialog's tags must to be hidden(and in IE?) -->
+<h1>dialog</h1>
 <button onclick="this.parentNode.close();">close</button>
 </dialog>
 <script>
