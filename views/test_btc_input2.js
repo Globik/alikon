@@ -561,9 +561,11 @@ if(eli2[i]){
 if(eli2[i].classList.contains(cl_act_key))class_remove(eli2[i], cl_act_key);	
 }	
 }	*/
+if(is_transform()){
 var eli2=el_query(".keypad-lbl."+cl_act_key);
 if(eli2){
 class_remove(eli2, cl_act_key);	
+}
 }
 }
 
@@ -571,7 +573,7 @@ class_remove(eli2, cl_act_key);
 function transfer_zif(el){
 //console.log("here is "+el);
 
-nett_zif(el);
+if(is_transform())nett_zif(el);
 if(el =="."){
 t_pointsign+=1;
 if(keypad_max){
