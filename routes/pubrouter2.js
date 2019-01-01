@@ -171,6 +171,9 @@ ctx.body=await ctx.render("interfaces",{});
 pub.get('/interfaces/testBtcInput', async ctx=>{
 ctx.body=await ctx.render('test_btc_input',{})	
 })
+pub.get('/interfaces/pidaraska',async ctx=>{
+ctx.body=await ctx.render('test_btc_input2',{})	
+})
 
 
 /* END OF TEST INTERFACE */

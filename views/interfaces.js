@@ -9,7 +9,8 @@ return `<!DOCTYPE html><html lang="en">
 <body>
 <a href="/">home</a>
 <h1>Interfaces</h1>
-<a href="/interfaces/testBtcInput">BTC INPUT</a>
+<a href="/interfaces/testBtcInput">BTC INPUT</a><br><br>
+<a href="/interfaces/pidaraska">BTC INPUT2</a><br><br>
 </body>
 </html>
 `;	
