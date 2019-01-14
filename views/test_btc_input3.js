@@ -28,7 +28,7 @@ background: linear-gradient(rgba(200,220,255,0.2),rgba(202,223,253,0.3));
 height:20px;
 }
 
-.span-btc-min,.span-btc-max{border:1px solid transparent;padding:2px;line-height:1.5;}
+.span-btc-min,.span-btc-max{border:1px solid transparent;padding:6px 8px 6px 8px;line-height:2.5;}
 
 .span-btc-min.min{border-color:#1b6314;color:#1b6314;}
 .span-btc-max.max{border-color:rgba(236,13,53,1);color:rgba(236,13,53,1);}
@@ -36,7 +36,7 @@ height:20px;
 padding-left:9px;
 color:rgb(23,10,23);
 }
-small{font-weight:bold;font-family:monospace;}
+small{font-family:monospace;letter-spacing:1px;font-size:13px;}
 #padinfo.red{color:rgba(236,13,53,1);}
 #padinfo.green{color:#1b6314;}
 #padinfo.orange{
@@ -92,7 +92,7 @@ color:green;
 
 .keypad-lbl, .keypadBackspace, .keypadReset{
 display:inline-block;
-border:1px solid transparent;	
+border:1px solid rgba(0,0,0,0.9);	
 height:54px;
 font-size:20px;
 margin-top:2px;
@@ -101,8 +101,10 @@ padding-top:14px;
 border-radius:1px;
 cursor:pointer;
 font-family:"Roboto",sans-serif;
+/*
 background:#991b1b;
 background:linear-gradient(silver,gray);
+*/ 
 color: rgba(6,39,2,0.9);
 
 text-shadow:-0.01em -1px 0px #0f13c1c7;
@@ -138,6 +140,8 @@ color:silver;
 label[for="dropcheck"]{
 cursor:pointer;
 height:auto;
+display:block;
+margin-top:4px;
 }
 
 
@@ -312,13 +316,16 @@ body{}
 #med::after{
 content:"max-width:320px";	
 }
-.keypad-lbl,.keypadReset,.keypadBackspace{width:48%;}}
+.keypad-lbl,.keypadReset,.keypadBackspace{width:48%;}
+#homo{font-size:10px;}
+.span-btc-min,.span-btc-max{font-size:10px;letter-spacing:1px;}
+}
 </style>
 </head>
 <body>
 <div id="med">@</div>
 <form id="foget" action="/foo" method="get" name="dooo">
-<fieldset><legend>choose</legend><b>Bitcoin</b><span class="span-btc-min"> minimum 0.0263</span>
+<fieldset><legend>choose</legend><b id="homo">Bitcoin</b><span class="span-btc-min"> minimum 0.0263</span>
 <span class="span-btc-max">maximum 300</span><br>
 <!-- <div style="background-color:red; color:red;width:330px;text-align:left;height:1px;"></div> -->
 <label for="dropcheck"><input id="dropcheck" type="checkbox" hidden value="7"/><span><b>your btc amount:</b></span>
