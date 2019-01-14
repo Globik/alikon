@@ -21,8 +21,10 @@ margin-top:12px;
 #tableBtcAmount tbody.orange{color:orange;}
 
 .keypadInfo{
+	/*
 background:rgba(200,220,255,0.1);
 background: linear-gradient(rgba(200,220,255,0.2),rgba(202,223,253,0.3));
+*/ 
 height:20px;
 }
 
@@ -42,8 +44,7 @@ small{font-weight:bold;font-family:monospace;}
 color:rgba(236,13,53,1);
 }
 #wraptable{
-width:25%;	
-ackground:red;
+width:330px;
 border:1px solid gray;
 display:block;
 height:50px;
@@ -57,15 +58,13 @@ border-color:rgba(15,152,234,.75);
 #dropBtc{
 position:relative;
 background:rgba(228,218,218,0.6);
-
 display: none;
 margin-top:0.06em;
 margin-bottom: 2px;
 padding-bottom:2px;
 height:auto;
-width:25%;
+width: 330px;
 border:1px solid rgba(15,152,234,.75);
-order-radius:1px;
 }
 @keyframes dropRed{
 0%{border-color: inherit;}
@@ -79,7 +78,7 @@ order-radius:1px;
 animation-name: dropRed;	
 animation-duration: 0.4s;
 animation-duration-count:1;
-nimation-fill-mode:backwards;
+/*nimation-fill-mode:backwards;*/
 }
 
 .btclab{
@@ -135,19 +134,6 @@ color:silver;
 #dropBtc::selection,.keypad-lbl::selection,#spanout::selection,label[for=dropcheck]::selection, 
 .keypadReset::selection, .keypadBackspace::selection, .btclab::selection, button::selection, #padinfo::selection{background:none;}
 
-#tableBtcAmount td{
-
-border-top:none;
-border-left:none;
-border-right:none;
-overflow:hidden;
-hight:25px;
-font-size:21px;
-text-align:center;
-font-weight:bold;
-margin:0;
-padding:0;
-}
 
 label[for="dropcheck"]{
 cursor:pointer;
@@ -171,11 +157,24 @@ width:100%;
 opacity:0.4;
 }
 
+#tableBtcAmount td{
+border-top:none;
+border-left:none;
+border-right:none;
+overflow:hidden;
+font-family:Sans-Serif;
+font-size:21px;
 
-td div{
+margin:0;
+padding:0;
+}
+
+
+#tableBtcAmount td div{
 display:block;
 /*background:lightblue;*/
-width:12px;
+
+width:13px;
 height:24px;
 transform:translateY(29px);
 }
@@ -227,9 +226,9 @@ top:4px;
 left:0px;
 visibility:visible;
 background:green;
-border:1px solid transparent;
-border-radius:50%;
-width:0px;
+order:1px solid transparent;
+order-radius:50%;
+width:1px;
 height:40px;
 animation-name:kursi;
 animation-duration:1s;
@@ -247,13 +246,16 @@ color:rgba(10,10,15,0.6);
 #placeholdi.empty{
 display:none;	
 }
+/*
 .treg-down-container{
 position:absolute;
 right:0;
 top:0;
 width:44px;
 height:47px;
+background:red;
 }
+*/
 .treg-down{
 display:block;
 position:absolute;
@@ -272,29 +274,53 @@ transition: all .4s;
 border-top-color: #484444;
 }
 
-@media screen and (max-width:890px){
-body{background:inherit;}
+@media screen and (max-width:2000px){
+#med::after{
+content:"max-width: default? 2000px";	
+}	
+}
+
+
+@media screen and (max-width:1024px){
+#med::after{
+content:"max-width: 1024px";	
+}	
 #wraptable{width:100%;}
 #dropBtc{
 width: 100%;
-idth:calc(100% - 48px);
 }
 .keypad-lbl,.keypadReset,.keypadBackspace{
-width:85px;height:75px;
-padding:20px;
+width:100px;height:100px;
+padding:36px;
 font-size:24px;
 }
 .keypadReset,.keypadBackspace{
-width:130px;
+width:204px;
+}
+}
+
+@media screen and (max-width:480px){
+body{background:pink;}	
+#med::after{
+content:"max-width:480px";	
 }
 
 }
+
+@media screen and (max-width:320px){
+body{}
+#med::after{
+content:"max-width:320px";	
+}
+.keypad-lbl,.keypadReset,.keypadBackspace{width:48%;}}
 </style>
 </head>
 <body>
+<div id="med">@</div>
 <form id="foget" action="/foo" method="get" name="dooo">
-<fieldset><legend>choose</legend><b>Bitcoin</b>
-<b><span class="span-btc-min"> minimum 0.0263</span></b>&nbsp;&nbsp;<b><span class="span-btc-max">maximum 300</span></b><br><br>
+<fieldset><legend>choose</legend><b>Bitcoin</b><span class="span-btc-min"> minimum 0.0263</span>
+<span class="span-btc-max">maximum 300</span><br>
+<!-- <div style="background-color:red; color:red;width:330px;text-align:left;height:1px;"></div> -->
 <label for="dropcheck"><input id="dropcheck" type="checkbox" hidden value="7"/><span><b>your btc amount:</b></span>
 <div id="wraptable" style="">
 <div id="cursi" style=""></div>
@@ -320,9 +346,9 @@ width:130px;
 </td>
 </tfoot> 
 </table>
-<div class="treg-down-container">
+<!-- <div class="treg-down-container"> -->
 <div id="tregDown" class="treg-down"></div>
-</div>
+<!-- </div> -->
 </div>
 </label>
 
@@ -340,8 +366,8 @@ width:130px;
 <label class="keypad-lbl" data-zif="7">7</label>
 <label class="keypad-lbl" data-zif="8">8</label>
 <label class="keypad-lbl" data-zif="9">9</label>
-<label class="keypadReset" title="reset">clear</label>
 <label class="keypad-lbl" title="point" data-zif=".">.</label>
+<label class="keypadReset" title="reset">clear</label>
 <label class="keypadBackspace" title="backspace">back</label>
 </section>
 </section> 
@@ -367,7 +393,7 @@ var cl_ins_zif = "boo";
 var cl_act_key ="act-key";
 var max_cells = 8;
 var spanout=gid("spanout");
-spanout.textContent="";
+spanout.value="";
 var outi=gid("outi");
 var dropBtc=gid("dropBtc");
 var dropcheck=gid("dropcheck");
@@ -576,12 +602,12 @@ if(leni==1){placeholdi.className="empty";}else if(leni==0){placeholdi.className=
 for(var i = 0; i < leni; i++){
 ins_zif(word[i], i);
 }
-s_d+=12;
+s_d+=13;
 cursi.style.left=s_d+"px";
 }else if(typ == back_str){
 del_zif(leni);
 if(leni==0){placeholdi.className="";}
-s_d=s_d-12;
+s_d=s_d-13;
 cursi.style.left=s_d+"px";
 }else if(typ == extrem_str){
 var cells_txt_len = get_cells_leni();
@@ -596,12 +622,12 @@ clog("there is"+ leni+" cursi: "+s_d);
 if(tdel[i].firstChild.textContent) del_zif(i);
 }
 
-s_d=12*leni;
+s_d=13*leni;
 cursi.style.left=s_d+"px";
 }else if(typ == reset_str){
 del_all_zif();
 if(leni==0)placeholdi.className="";
-s_d=1;
+s_d=0;
 cursi.style.left=s_d+"px";
 }else{
 clog("unknown type: "+typ);	
@@ -678,6 +704,7 @@ return;
 }
 
 if(lenis >= max_cells){
+if(!current_number)return;
 var fixed_num = current_number.toFixed(4);
 clog("toFixed=> "+ fixed_num);
 set_text(spanout, fixed_num, extrem_str);
@@ -863,6 +890,10 @@ el.dispatchEvent(awevent);
 </script>
 </body>
 </html>
+
+
+
+
 `;
 }
 module.exports={test_btc_input3}
