@@ -1,3 +1,4 @@
+//localhost:5001
 //const CircularJson=require('circular-json');
 //var jsi=require('node-stringify');
 //var estr="http://example.com/name/big-name/little_name";
@@ -35,7 +36,7 @@ const Router=require('koa-router');
 
 const WebSocket=require('ws');
 const email_enc=require('./libs/email_enc.js');
-
+const HPORT=5001;
 const mediasoup = require('mediasoup');
 const RTCPeerConnection = mediasoup.webrtc.RTCPeerConnection;
 const RTCSessionDescription = mediasoup.webrtc.RTCSessionDescription;
@@ -239,7 +240,7 @@ pool.query(`delete from rooms`).then(r=>{
 console.log('OK, deleteng all rooms!')
 }).catch(err=>console.log('Error in deleteng all rooms: ',err))
 
-const servak=app.listen(process.env.PORT || 5001)
+const servak=app.listen(process.env.PORT || HPORT)
 heartbeat_sse();	
 console.log('is Mediasoup server closed?: ',server.closed)
 const wss=new WebSocket.Server({server:servak/*,verifyClient:(info,cb)=>{
@@ -274,7 +275,7 @@ https.createServer(ssl_options,app.callback()).listen(process.env.PORT || 5000, 
 console.log('Listening on https//localhost: 5000');
 });
 	*/
-console.log('soll on port 5000');
+console.log('Should on port=> localhost:' ,HPORT);
 })
 pool.on('connect', client=>{setImmediate(()=>{console.log('pool connected')})});
 pool.on('error', (err, client)=>{setImmediate(()=>{console.log('error in pool: ', err.message)})})

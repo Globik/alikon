@@ -233,7 +233,7 @@ letter-spacing:0.1em;
 font-weight:bold;	
 }*/
 
-@media screen and (max-width:690px){
+@media screen and (max-width:890px){
 body{background:lightgray;}
 #dropBtc{
 width:97.5%;

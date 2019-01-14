@@ -11,6 +11,7 @@ return `<!DOCTYPE html><html lang="en">
 <h1>Interfaces</h1>
 <a href="/interfaces/testBtcInput">BTC INPUT</a><br><br>
 <a href="/interfaces/pidaraska">BTC INPUT2</a><br><br>
+<a href="/interfaces/pidaraska1">BTC INPUT3</a><br><br>
 </body>
 </html>
 `;	
