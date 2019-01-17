@@ -38,6 +38,7 @@ background:none;
 <span id="down2" data-typ="down">down</span>
 <h4>type</h4>
 <div id="out4"></div>
+
 </body>
 <script>
 var m;var int=0;var out4=gid('out4'),out2=gid('out2'),out=gid('out'),up=gid('up'),up2=gid('up2'),down=gid('down'),down2=gid('down2');
@@ -56,7 +57,7 @@ typ=="up"?evi_plus():evi_minus();
 m=false;
 }else if(ev.type=="touchstart"){
 m=true;
-evi_plus();
+typ=="up"?evi_plus():evi_miinus();
 }else if(ev.type=="touchend"){
 m=false;	
 }	
