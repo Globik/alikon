@@ -57,7 +57,7 @@ typ=="up"?evi_plus():evi_minus();
 m=false;
 }else if(ev.type=="touchstart"){
 m=true;
-typ=="up"?evi_plus():evi_miinus();
+typ=="up"?evi_plus():evi_minus();
 }else if(ev.type=="touchend"){
 m=false;	
 }	
