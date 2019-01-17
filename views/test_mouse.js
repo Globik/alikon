@@ -3,7 +3,10 @@ return `<html><head><title>mouse touch</title>
 <style>
 #up,#up2,#down,#down2{
 border:4px solid black;
-padding:10px;
+padding:20px;
+cursor:pointer;
+line-height:2.5;
+margin-top:300px;
 -webkit-user-select:none;
 -moz-user-select:none;
 -ms-user-select:none;
@@ -13,7 +16,14 @@ background:none;
 -moz-appearance:none;
 appearance:none;
 }
-#up::selection,#up2::selection,#down::selection,#down2::selection{background:none;}
+#out,#out2,h4,#out4{
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+user-select:none;	
+background:none;
+}
+#up::selection,#up2::selection,#down::selection,#down2::selection,#out::slection,#out2::selection,h4::selection,#out4::selection{background:none;}
 </style>
 </head>
 <body>
@@ -32,12 +42,16 @@ appearance:none;
 <script>
 var m;var int=0;var out4=gid('out4'),out2=gid('out2'),out=gid('out'),up=gid('up'),up2=gid('up2'),down=gid('down'),down2=gid('down2');
 var s_timer=100;
-up.addEventListener('mousedown',function(){
+up.addEventListener('mousedown',function(ev){
+ev.preventDefault();
+ev.stopPropagation();
 out4.textContent=ev.type;
 m=true;
 evi_plus();	
 },false)
-up.addEventListener('mouseup',function(){
+up.addEventListener('mouseup',function(ev){
+ev.preventDefault();
+ev.stopPropagation();
 out4.textContent=ev.type;
 m=false;	
 },false);
@@ -62,31 +76,41 @@ int--;
 }
 
 
-down.addEventListener('mousedown',function(){
+down.addEventListener('mousedown',function(ev){
+ev.preventDefault();
+ev.stopPropagation();
 out4.textContent=ev.type;
 m=true;
 evi_minus();	
 },false)
-down.addEventListener('mouseup',function(){
+down.addEventListener('mouseup',function(ev){
+ev.preventDefault();
+ev.stopPropagation();
 out4.textContent=ev.type;
 m=false;	
 },false)
 
 /* touch test */
 up2.addEventListener('touchstart', function(ev){
+ev.preventDefault();
+ev.stopPropagation();
 out4.textContent=ev.type;
 m=true;
 evi_plus();	
 },false)
 up2.addEventListener('touchend', function(ev){
+ev.preventDefault();
+ev.stopPropagation();
 out4.textContent=ev.type;
 m=false;	
 },false);
 
 down2.addEventListener('touchstart', function(ev){
+ev.preventDefault();
+ev.stopPropagation();
 out4.textContent=ev.type;
 m=true;
-evi_plus();	
+evi_minus();	
 },false)
 down2.addEventListener('touchend', function(ev){
 out4.textContent=ev.type;
