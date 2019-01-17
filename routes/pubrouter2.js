@@ -177,7 +177,9 @@ ctx.body=await ctx.render('test_btc_input2',{})
 pub.get('/interfaces/pidaraska1',async ctx=>{
 ctx.body=await ctx.render('test_btc_input3',{})	
 })
-
+pub.get("/interfaces/mouse",async ctx=>{
+ctx.body=await ctx.render('test_mouse',{})	
+})
 
 /* END OF TEST INTERFACE */
 
