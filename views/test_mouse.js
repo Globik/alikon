@@ -41,7 +41,8 @@ background:none;
 
 </body>
 <script>
-var m;var int=0;var out4=gid('out4'),out2=gid('out2'),out=gid('out'),up=gid('up'),up2=gid('up2'),down=gid('down'),down2=gid('down2');
+var m;var int=0;
+var out4=gid('out4'),out2=gid('out2'),out=gid('out'),up=gid('up'),up2=gid('up2'),down=gid('down'),down2=gid('down2');
 var s_timer=100;
 
 function handler_plus(ev){

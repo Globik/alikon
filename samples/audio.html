@@ -1,0 +1,120 @@
+<!-- https://github.com/webrtc/samples/blob/gh-pages/src/content/peerconnection/audio/js/main.js -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>Audio</title>
+</head>
+<body>
+<h3>audio</h3>
+<div>local audio:</div>
+<audio id="audio1" autoplay controls muted></audio>
+<div>remote audio:</div>
+<audio id="audio2" autoplay controls></audio>
+<button id="callbutton">call</button>
+<button id="hangupbutton">hang up</button>
+<script>
+const audio2=document.querySelector("#audio2");
+const callbutton=document.querySelector("#callbutton");
+const hangupbutton=document.querySelector("#hangupbutton");
+
+hangupbutton.disabled=true;
+callbutton.onclick=call;
+hangupbutton.onclick=hang;
+
+let pc1,pc2,localStream;
+const offeroptions={offerToReceiveAudio:1,offerToReceiveVideo:0,voiceActivityDetection:false};
+
+function gotStream(stream){
+hangupbutton.disabled=false;
+console.log("received local stream");
+localStream=stream;
+const audioTracks=localStream.getAudioTracks();
+if(audioTracks.length>0){
+console.warn(audioTracks[0].label);	
+}
+localStream.getTracks().forEach(track=>pc1.addTrack(track,localStream));
+console.log("adding local stream to pc");
+pc1.createOffer(offeroptions).then(gotdesc1,oncreatesessiondescriptionerror);	
+}
+
+function oncreatesessiondescriptionerror(e){console.error(e.toString())}
+function call(){
+callbutton.disabled=true;
+console.log('starting call');
+const servers=null;
+pc1=new RTCPeerConnection(servers);
+pc1.onicecandidate=e=>onicecandidate(pc1,e)
+pc2=new RTCPeerConnection(servers);
+pc2.onicacandidate=e=>onicecandidate(pc2,e)
+pc2.ontrack=gotremotestream;
+navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(gotStream).catch(e=>{console.log(e.name, e)})	
+}
+function gotdesc1(desc){
+console.log("offer from pc1\n",desc.sdp)
+pc1.setLocalDescription(desc).then(()=>{
+pc2.setRemoteDescription(desc).then(()=>{
+return pc2.createAnswer().then(gotdesc2,oncreatesessiondescriptionerror)	
+},oncreatesessiondescriptionerror)
+},oncreatesessiondescriptionerror)	
+} 
+function gotdesc2(desc){
+console.log("answer from pc2\n",desc.sdp)
+pc2.setLocalDescription(desc).then(()=>{
+pc1.setRemoteDescription(desc).then(()=>{
+	
+},oncreatesessiondescriptionerror)	
+},oncreatesessiondescriptionerror)	
+}
+function hang(){
+console.log("ending call");
+localStream.getTracks().forEach(track=>track.stop())
+pc1.close();
+pc2.close();
+pc1=null;pc2=null;
+hangupbutton.disabled=true;
+callbutton.disabled=false;	
+}
+function gotremotestream(e){
+if(audio2.srcObject !==e.streams[0]){
+audio2.srcObject=e.streams[0];
+console.log("receive remote stream");	
+}	
+}
+function geti(pc){
+return (pc===pc1) ? pc2:pc1;	
+}
+function getname(){
+return (pc===pc1) ? 'pc1':'pc2';	
+}
+function onicecandidate(pc,event){
+if(event.candidate)geti(pc).addIceCandidate(event.candidate).then(()=>onicecandidatesuccess(pc),err=>onicecandidateerror(err))
+if(event.candidate){console.warn(event.candidate.candidate);}else{console.warn(null)}	
+}
+function onicecandidatesuccess(){console.log("ice candidate success")}
+function onicecandidateerror(e){console.error(e.toString())}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
