@@ -1,0 +1,71 @@
+<html>
+<head><title>webrtc answer</title>
+<style>#out{border: 1px solid green;}</style>
+</head>
+<body>
+<a href="/offer.html" target="_blank">go to offer.html</a><hr>
+<h1>Answer</h1>
+<h3>отправь ответ. </h3>
+<h4>Убедись, что вебсокет открыт.</h4>
+<!-- <button onclick="start();">Позвонить</button> --><hr><audio id="audio2" autoplay controls></audio><hr>
+<output id="out"></output>
+<script>
+var pc=null;
+var localStream;
+var audio2=document.getElementById("audio2");
+var offeroptions={offerToReceiveAudio:1, offerToReceiveVideo:0, voiceActivityDetection:false};
+var ws=new WebSocket("ws://localhost:3000");
+ws.onopen=function(){out.innerHTML+="Websocket opened!<br>";}
+ws.onclose=function(){out.innerHTML+="Websocket closed!<br>";}
+ws.onerror=function(error){out.innerHTML+="Websocket error "+error+"<br>";}
+ws.onmessage=function(event){
+	//alert(event.data);
+var p;
+try{p=JSON.parse(event.data);}catch(e){return;}	
+if(p.type=="offer"){
+	//alert("OFFER");
+handle_offer(p);
+}else if(p.type=="candidate"){
+console.warn("candidate in socket");
+
+if(pc)pc.addIceCandidate(p.candidate).then(function(){console.log("added candidate success")},
+function(err){console.log("failed adding candidate: ",err);})
+
+}else{console.warn("Unknown type");}
+}
+
+function handle_offer(obj){
+const servers=null;
+pc=new RTCPeerConnection(servers);
+pc.onicecandidate=function(e){
+if(e.candidate){
+console.log("CANDIDATE:\n", e.candidate);
+if(ws)ws.send(JSON.stringify({type:"candidate", candidate:e.candidate}));	
+}
+}
+pc.ontrack=got_remote_stream;
+
+
+
+async function boo(){
+console.log('in boo',obj.sdp);
+await pc.setRemoteDescription(obj.sdp);
+let desc=await pc.createAnswer();
+await pc.setLocalDescription(desc);	
+let a=JSON.stringify(pc.localDescription);
+if(ws)setTimeout(function(){ws.send(a);},1000);
+}
+boo().then(function(){})
+
+
+}
+function got_remote_stream(e){
+console.warn("got_remote_stream");	
+if(audio2.srcObject !==e.streams[0]){
+audio2.srcObject=e.streams[0];
+console.log("receive remote stream");	
+}	
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<html>
+<head><title>webrtc offer</title>
+<style>#out{border: 1px solid green;}</style>
+</head>
+<body>
+<a href="/answer.html" target="_blank">go to answer.html</a><hr>
+<h1>Offer</h1>
+<h3>Звони первым, отправь предложение. </h3>
+<h4>Убедись, что вебсокет открыт.</h4>
+<button onclick="start();">Позвонить</button><hr><!-- <audio id="audio2" autoplay controls></audio> --><hr>
+<output id="out"></output>
+<script>
+var pc=null;
+var localStream;
+//var audio2=document.getElementById("audio2");
+var offeroptions={offerToReceiveAudio:1, offerToReceiveVideo:0, voiceActivityDetection:false};
+
+var ws=new WebSocket("ws://localhost:3000");
+ws.onopen=function(){out.innerHTML+="Websocket opened!<br>";}
+ws.onclose=function(){out.innerHTML+="Websocket closed!<br>";}
+ws.onerror=function(error){out.innerHTML+="Websocket error "+error+"<br>";}
+ws.onmessage=function(event){
+var p;
+try{
+ p=JSON.parse(event.data);	
+}catch(e){return;}
+if(p.type=="answer"){
+//Ждем ответа
+//alert("answer");
+handle_answer(p);
+}else if(p.type=="candidate"){
+console.warn("candidate in socket");
+}else{
+console.warn("Unknown type: ", p.type);	
+}
+}
+function start(){
+const servers=null;
+pc=new RTCPeerConnection(servers);
+pc.onicecandidate=function(e){
+if(e.candidate){
+console.log("CANDIDATE:\n", e.candidate);
+if(ws)ws.send(JSON.stringify({type:"candidate", candidate:e.candidate}));	
+}
+}
+navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(gotStream).catch(function(e){console.log(e.name, e)})
+}
+
+function gotStream(stream){
+console.log("received local stream");
+localStream=stream;
+const audioTracks=localStream.getAudioTracks();
+if(audioTracks.length>0){
+console.warn(audioTracks[0].label);	
+}
+localStream.getTracks().forEach(function(track){pc.addTrack(track, localStream)});
+console.log("adding local stream to pc");
+pc.createOffer(offeroptions).then(gotdesc, on_error);	
+}
+function gotdesc(obj){
+//console.log("offer sdp\n",obj.sdp)
+pc.setLocalDescription(obj).then(function(){
+console.log("send offer to answer.html");	
+if(ws)ws.send(JSON.stringify({type:"offer", sdp: pc.localDescription}))
+}, on_error)
+}
+
+function on_error(err){console.error(err);}
+
+function handle_answer(obj){
+console.warn("handle_answer: \n", obj);
+if(!obj.sdp) console.warn("What the fuck? No sdp?");
+pc.setRemoteDescription(obj).then(function(){
+console.log("what's next??");
+},on_error)
+
+
+}
+
+</script>
+</body>
+</html>

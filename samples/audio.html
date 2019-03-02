@@ -58,7 +58,7 @@ return pc2.createAnswer().then(gotdesc2,oncreatesessiondescriptionerror)
 },oncreatesessiondescriptionerror)	
 } 
 function gotdesc2(desc){
-console.log("answer from pc2\n",desc.sdp)
+console.log("answer from pc2\n", desc.sdp);
 pc2.setLocalDescription(desc).then(()=>{
 pc1.setRemoteDescription(desc).then(()=>{
 	
