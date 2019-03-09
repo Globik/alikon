@@ -180,6 +180,9 @@ ctx.body=await ctx.render('test_btc_input3',{})
 pub.get("/interfaces/mouse",async ctx=>{
 ctx.body=await ctx.render('test_mouse',{})	
 })
+pub.get("/interfaces/ortc", async ctx=>{
+ctx.body=await ctx.render('ortcTest',{})	
+})
 
 /* END OF TEST INTERFACE */
 

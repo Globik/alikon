@@ -13,6 +13,8 @@ return `<!DOCTYPE html><html lang="en">
 <a href="/interfaces/pidaraska">BTC INPUT2</a><br><br>
 <a href="/interfaces/pidaraska1">BTC INPUT3</a><br><br>
 <a href="/interfaces/mouse">MOUSE TOUCH</a><br><br>
+<h2>ortc</h2>
+<a href="/interfaces/ortc">ortc test</a><br><br>
 </body>
 </html>
 `;	
