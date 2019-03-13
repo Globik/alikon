@@ -11,6 +11,8 @@ return `<html>
 <script>
 var iceopt={"gatherPolicy":"all","iceServers":[]};
 var out=gid("out");
+function foo(){
+	try{
 var gatherer1=new RTCIceGatherer(iceopt);
 var transport1=new RTCIceTransport(gatherer1);
 var dtls1=new RTCDtlsTransport(transport1);
@@ -72,6 +74,7 @@ gid('remotev').srcObject=remoteStream;
 sender=new RTCRtpSender(stream.getVideoTracks()[0],dtls1);
 sender.send(params);
 }).catch(function(err){outi('error: '+err);alert(err);});
+}catch(er){alert(er);}
 
 function gid(id){
 return document.getElementById(id);	
