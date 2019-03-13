@@ -76,6 +76,8 @@ sender.send(params);
 }).catch(function(err){outi('error: '+err);alert(err);});
 }catch(er){alert(er);}
 
+foo();
+
 function gid(id){
 return document.getElementById(id);	
 }
