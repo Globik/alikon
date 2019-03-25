@@ -68,7 +68,10 @@ curl -X POST https://api.bitaps.com/btc/testnet/v1/create/payment/address/distri
 Answer:
 {"invoice": "invQ2QoDvEUpqBiB7Xm2Yat2cSkmzkYhkzEtS6tdQfzLW1VzAVMnW", 
 "payment_code": "PMTve5T5sDL4mD2KaPLES73CDhPXyz6XagJEejs17WLRyQhvRMxAg",
- "address": "33yhX82ob8kawDdRmW9xAwcoqxrjuKS8SQ", "domain": "", "domain_hash": "", "confirmations": 3, 
+ "address": "33yhX82ob8kawDdRmW9xAwcoqxrjuKS8SQ", 
+"domain": "", 
+"domain_hash": "",
+ "confirmations": 3, 
 "callback_link": "", 
 "forwarding_address_primary": "37P8thrtDXb6Di5E7f4FL3bpzum3fhUvT7", 
 "forwarding_address_secondary": "194zMcwXswZtkMdpoX9BYDc4T4iGqW1G61", 
@@ -77,8 +80,20 @@ Answer:
 Error answer auf testnet with real btc addresses
 {"error_code": 7, "message": "invalid primary forwarding address, mainnet address is not valid in testnet", "details": ""}
 
+===============
+Test smart contract
+=====================
+
+curl -X POST https://api.bitaps.com/btc/testnet/v1/create/payment/address/distribution -H 'Content-Type:application/json' -H 'cache-control:no-cache' -d'{"forwarding_address_primary":"mod5SqVGMgNJPfS3v6KFKhW8iR7KjexfBE","forwarding_address_secondary":"mi1BYcC463rVJzrbaApLVKSR9bVtGHVDbp", "forwarding_address_primary_share":"10%"}'
 
 
+answer 
+*****************************
+{"invoice": "invQ9JFJFtKAjM5Hg1CFs9AWiye9tB6dusetCGqKjZzotBFi2sqjJ",
+ "payment_code": "PMTvqwHLZRvNXK7iYiZqYmsxXDZbJV5pvYC1oc6id1JGhcZr915FX",
+ "address": "2NCVYz2qus2TEYH5xgzCZPpJeraQhHtGvnU", "domain": "", "domain_hash": "", "confirmations": 3, "callback_link": "", 
+"forwarding_address_primary": "mod5SqVGMgNJPfS3v6KFKhW8iR7KjexfBE", "forwarding_address_secondary": "mi1BYcC463rVJzrbaApLVKSR9bVtGHVDbp",
+ "forwarding_address_primary_share": 10, "share_type": "percent", "currency": "tBTC"}
 
 
 
