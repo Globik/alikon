@@ -96,8 +96,24 @@ answer
  "forwarding_address_primary_share": 10, "share_type": "percent", "currency": "tBTC"}
 
 
+===================
+with callback link
+========================
 
-
+curl -X POST https://api.bitaps.com/btc/testnet/v1/create/payment/address/distribution -H 'Content-Type:application/json' -H 'cache-control:no-cache' -d'{"forwarding_address_primary":"mod5SqVGMgNJPfS3v6KFKhW8iR7KjexfBE","forwarding_address_secondary":"mi1BYcC463rVJzrbaApLVKSR9bVtGHVDbp", "forwarding_address_primary_share":"10%","callback_link":"http://example.com/get_notific"}'
+answer: 
+{
+"invoice": "invNuYUcee1ng9acWk3WAdjoVo4hgpXy5X9opy92EskccM5Qxhync", 
+"payment_code": "PMTucM4ZfQJu3hpb3xVGRqKkCvM2YMJB8Sabqt8Hh9niB83woj5pv",
+ "address": "2NE4QqhqcatVzBmpYekiiaGi6Ux6T9Ck6qr", 
+"domain": "example.com", 
+"domain_hash": "27993976c6bd43280d2c26411c46fe5ef1b9931f", 
+"confirmations": 3, 
+"callback_link": "http://example.com/get_notific",
+ "forwarding_address_primary": "mod5SqVGMgNJPfS3v6KFKhW8iR7KjexfBE",
+ "forwarding_address_secondary": "mi1BYcC463rVJzrbaApLVKSR9bVtGHVDbp", 
+"forwarding_address_primary_share": 10, "share_type": "percent", "currency": "tBTC"
+}
 
 
 
