@@ -1,5 +1,5 @@
 // which psql heroku pg:psql --app alikon //frozen-atoll-47887
-const PORT = 3000;
+const HPORT = 3000;
 //const DB_URL='postgress://globik:null@localhost:5432/test';
 const DB_URL=process.env.DATABASE_URL;
 const Koa=require('koa');
@@ -90,7 +90,7 @@ console.log('app.on.error: ',err.message, 'ctx.url : ', ctx.url);
 });
 
 pg_store.setup().then(function(){
-const servak=app.listen(PORT);
+const servak=app.listen(process.env.PORT||HPORT);
 	const wss=new WebSocket.Server({server:servak});
 	//websock(wss,pool,sse,shortid,server,RTCPeerConnection,RTCSessionDescription,peerCapabilities,roomOptions);
 //websock(wss,pool, 'sse', shortid,' server', 'RTCPeerConnection ', 'RTCSessionDescription' , 'peerCapabilities,roomOptions');
