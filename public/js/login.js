@@ -22,7 +22,7 @@ add_st(false);
 }}
 xhr.onerror=function(e){console.error('XHR onerror: '+e);sessRed.innerHTML='Internet connection lost.';}
 var data={};
-data.email=ev.email.value;
+data.username=ev.username.value;
 data.password=ev.password.value;
 var mid=JSON.stringify(data);
 if(window.sessionStorage){
@@ -51,6 +51,7 @@ if(si>4){console.warn('great then 4');sendto=false;}
 }
 if(sendto){
 if_cont(submit,'waiting','no');
+	console.log(mid);
 xhr.send(mid);
 }}
 

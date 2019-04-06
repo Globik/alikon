@@ -49,7 +49,13 @@ function rem_hash(){
 if(history)history.pushState('',null,window.location.pathname);}
 var ax=null;
 function getAudioContext(){
-try{ax=new (window.AudioContext || window.webkitAudionContext);}catch(e){
+	return;
+try{ax=new (window.AudioContext || window.webkitAudionContext);
+console.log("state ",ax.state);
+if(ax.state=="suspended"){
+//ax.resume().then(function(){console.log("resumed audio context");});	
+}else{}	
+}catch(e){
 console.error('audiocontext:  '+e);
 ax=null;
 }}
@@ -99,13 +105,17 @@ playSound(sounds.complete.buffer);
 open_al();
 }
 var gevS=null;
+function makeEventSource(){
+	return;
 if(!!window.EventSource){
-try{
 gevS=new EventSource('/log_rooms');
-}catch(e){alert('event source err: '+e);}
 gevS.onopen=function(){console.log('sse opened');}
-gevS.onerror=function(e){/*console.error("event source error: ");*/}
+gevS.onerror=function(e){console.error("event source error: ",e);gevS=null;
+return;
+}
 }else{}
+}
+makeEventSource();
 function vax(m,u,d,o,z,bool){var x=new XMLHttpRequest();if(!x){return false;}x.open(m,u);
 if(!bool){x.setRequestHeader('Content-Type','application/json','utf-8');}x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 x.onload=function(e){

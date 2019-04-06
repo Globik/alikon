@@ -1,4 +1,4 @@
-const head=require('./head');
+const html_head=require('./html_head');
 const dev_pwd=process.env.DEV_PWD;
 const login_css=require('./login_css.js');
 const {js_help}=require('../libs/helper.js');
@@ -18,7 +18,7 @@ return s;
 }
 return `<!DOCTYPE html><html lang="en">
 <head>
-${head.head({title:"Reset Password", cssl:["/css/login2.css"]})}
+${html_head.html_head({title:"Reset Password", cssl:["/css/login2.css"]})}
 </head><body><main id="pagewrap">
 <a href="/">home</a>
 <div id="loginery-wrap">

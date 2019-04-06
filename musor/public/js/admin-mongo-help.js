@@ -1,0 +1,1 @@
+//alert('hello admin-mongo-help');

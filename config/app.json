@@ -1,0 +1,15 @@
+{
+  "mainmenu": [{"name":"home","path":"/"},{"name":"articles","path":"/articles"},
+  {"name":"labs","path":"/labs"}],
+"profiler":{
+"profilername":"profile",
+"profilerpath":"/home/profile",
+"loginname":"log in",
+"loginpath":"/login",
+"logoutname":"log out",
+"logoutpath":"/logout",
+"signupname":"sign up",
+"signuppath":"/signup",
+"signupshow":true},
+"showmodule":true
+}

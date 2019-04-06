@@ -15,30 +15,26 @@ return s;
 }
 const login_proto=n=>{
 return html`
-<div id="loginery-wrap">
+<section id="loginery-wrap">
 <form id="mform" name="mform" action="/login" method="post" onsubmit="go_login(this);return false;">
 <h4>Welcome. Please login.<a href="/" style="float:right;font-size:1em;">home</a></h4>
 <span id="sessRed" class="${n.errmsg?classi(n.errmsg):''}">${messi(n)}</span><br>
-<label><strong>Email</strong> </label>
-<input type="email" name="email" class="login-email ${n.errmsg?'redinput':''}" placeholder="E-mail" value="" required />
+<label><strong>Name</strong> </label>
+<div class="inpwrap">
+<input type="text" name="username"  class="login-email ${n.errmsg?'redinput':''}" placeholder="your name" value="globik" required />
+</div>
 <label style=""><strong>Password</strong></label><a style="float:right;" href="/forgot"><strong>Lost your password?</strong></a>
-<input type="password" name="password" class="login-pwd ${n.errmsg?'redinput':''}" placeholder="Password" value="" required />
+<div class="inpwrap">
+<input type="password" name="password" class="login-pwd ${n.errmsg?'redinput':''}" placeholder="Password" value="1234" required />
+</div>
+<div class="submitWrap">
 <input type="submit" value="Log in" class="login-submit" ${n.user ? 'disabled':''}>
+</div>
 <div class="underform"><strong style="">No account yet?</strong><a href="/signup" style="float:right;">
 <strong>Create one</strong></a><hr>
-</div><div class="underform"><strong>Or you can sign in with:</strong></div>
-<a href="/auth/facebook">
-<div class="soc-part fb">
-<div class="soc-icon"><img src="/images/facebook-icon_64.png"/></div><div class="soc-besch"><span>facebook</span></div>
 </div>
-</a>
-<a href="/auth/vkontakte">
-<div class="soc-part vk">
-<div class="soc-icon"><img src="/images/vk.png"></div><div class="soc-besch"><span>vk</span></div>
-</div>
-</a>
 </form>
-</div>
+</section>
 `;
 }
 module.exports={login_proto}

@@ -1,3 +1,4 @@
+
 *{box-sizing: border-box;}
 #loginery-wrap{
 background: rgb(237, 201, 175);
@@ -7,11 +8,11 @@ margin:0 auto;
 border: none;
 max-width:31.250em;
 }
-#loginery-wrap a{cursor:pointer;color:rgba(0,0,30,0.9);text-decoration:underline;}
+#loginery-wrap a{cursor:pointer;color:rgba(0,0,200,0.9);text-decoration:underline;}
+
 
 #loginery-wrap strong{
 font-size:0.8em;
-color: rgba(0,0,30,0.9);
 font-family: Courier;
 }
 
@@ -25,14 +26,41 @@ padding-right:6%;
 #mform h4{line-height:2.5em;font-size:1em;background:none;margin:0;}
 
 		
-.login-email,.login-pwd,.login-submit,.login-text{
+.login-email,.login-pwd,.login-submit,.login-text, input[name=age]{
 width:100%;
+display:inline-block;
+padding-left:10px;
+
+height:40px;
+}
+input[name=fem]{display:inline-block;vertical-align:middle;}
+input[name=fem] + .fem{
+vertical-align:-2px;	
+}
+.inpwrap{
 display:block;
-padding-top:10px;
-padding-bottom:10px;
-margin-top: 1px;
-margin-bottom:10px;
-		}
+position:relative;
+margin-top:2px;
+margin-bottom:4px;
+}
+
+.submitWrap{margin-top:4px;}
+
+#lShow{
+display:block;
+position:absolute;
+top:0;right:0;
+vertical-align:bottom;
+height:40px;padding: 9px 20px 10px 20px;
+border:1px solid blue;
+cursor:pointer;
+
+}
+
+#sShow{
+color:blue;
+
+}
 
 .login-submit/*input[type=submit]*/{
 width: 30%;
@@ -51,23 +79,8 @@ border:1px solid red;
 /*#sessRed{color:green;}*/
 #sessRed.red{color:red;}
 #sessRed.green{color:green;}
-/* social icons */
-.soc-part{
-display:inline-block;
-width:40%;
-height:50px;
-overflow:hidden;
-margin-top:10px;
-margin-bottom:10px;
-}
-.soc-besch span{color:white;}
-.soc-part.fb{background:#45668e;}
-.soc-part.vk{background:#4c74c4;}
-.soc-besch,.soc-icon{display:inline-block;}
-.soc-besch{width:100px;width:calc(100% - 50px);text-align:center;vertical-align:140% !important;}
-.soc-icon{width:50px;overflow:hidden;}
-.soc-icon img{width:100%;}
-.underform{margin-top:15px;}
+
+
 #outresult{
 display:none;
 }	

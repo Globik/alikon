@@ -124,7 +124,7 @@ const id=ws.clientId;
 let m={sendto:id,type:sessionDescription.type,sdp:sessionDescription.sdp}
 didi.sendback(ws, m);
 }
-const sendhistory=(ws,blin3)=>{
+const sendhistory=(ws,blin3)=>{// TODO remove this functionality
 	console.log('sending history')
 pool.query('select*from chat where chat_name=$1 limit $2',[blin3,10]).then(r=>{
 if(r.rows.length > 0)didi.sendback(ws,{type:'history',d:r.rows})
@@ -141,7 +141,7 @@ console.log('DELETE RETURNING ID: ',result.rows[0]);
 didi.sendback(ws,{type:'goodbyeroom',roomname: name})
 }).catch(e=>{console.log('err delete room by id: ',e)})
 }
-const insert_message=(msgi,roomname,nick)=>{
+const insert_message=(msgi,roomname,nick)=>{//TODO remove this functionality
 pool.query('insert into chat(msg,chat_name,us_name) values($1,$2,$3)',[msgi,roomname,nick]).then(r=>{
 }).catch(e=>{console.log('err in inserting message into chat table: ',e)})
 }
@@ -267,7 +267,7 @@ console.log('URL_ROOM: ',urlRoom)
 ws.clientId=shortid.generate();
 var msg={type:"id",id:ws.clientId}
 didi.sendback(ws,msg)
-sendhistory(ws,urlRoom)
+//sendhistory(ws,urlRoom)  TODO remove this functionality
 const on_message=async message=>{
 //process.nextTick(()=>{
 var sendtoclients=true;
@@ -323,7 +323,7 @@ update_photo_src_end(ws,furl,msg)
 sendtoclients=false;
 }else if(msg.type=="money_trans"){
 didi.emergency_to_all_in_room(ws,furl,tjson({type:'token_antwort',from:msg.from,to:msg.to,amount:msg.amount,btype:msg.btype,pid:msg.pid,user_nick:msg.from_nick}))
-insert_message(msg.msg,msg.roomname,msg.from_nick)
+// insert_message(msg.msg, msg.roomname, msg.from_nick) // TODO remove this functionality
 sendtoclients=false;
 }else if(msg.type=="call"){
 console.log('got call from id=' + ws.clientId);
@@ -366,8 +366,10 @@ console.log('sending target message to one user: ',msg)
 didi.send_to_one_user_in_room(ws,furl,msg.target,msg);
 }else{
 if(msg.type=='message'){
-//console.log('sending to all type message: ',msg)
-insert_message(msg.msg,msg.roomname,msg.from_nick)}
+console.log('sending to all type message: ',msg)
+	//insert_message(msg.msg,msg.roomname,msg.from_nick) TODO remove this functionality 'history chat'
+}
+	
 try{var jsob=JSON.stringify(msg)}catch(e){console.log('err json stringify in sending type message to all')}
 didi.emergency_to_all_in_room(ws,furl,jsob)
 }

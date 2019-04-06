@@ -1,0 +1,8 @@
+enp0s29f7u1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.42.11  netmask 255.255.255.0  broadcast 192.168.42.255
+        inet6 fe80::7e:37ff:fe25:3152  prefixlen 64  scopeid 0x20<link>
+
+
+
+inet 192.168.42.11/24 brd 192.168.42.255
+#sudo /etc/init.d/networking restart

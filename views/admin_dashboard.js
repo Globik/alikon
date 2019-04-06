@@ -1,21 +1,21 @@
-﻿//admin_dashboard.js
-const head=require('./head.js');
-const header_menu=require('./header_menu');
-const admin_main_menu=require('./admin_main_menu');
-const footer=require('./footer');
+//admin_dashboard.js
+const html_head=require('./html_head.js'); // head.js 
+const html_nav_menu=require('./html_nav_menu.js');// header_menu.js
+const html_admin_nav_menu=require('./html_admin_nav_menu.js');// admin_main_menu.js
+const html_footer = require('./html_footer.js');// footer.js
 var warnig=false;	  
 var haupt_ban=false;
 
 
 let admin_dashboard=n=>{
 var {showmodule:{mainmenu,profiler}}=n;const buser=n.user;
-return `<!DOCTYPE html><html lang="en"><head>${head.head({title:"Dashboard", csslink:"/css/main2.css"})}</head><body>
+return `<!DOCTYPE html><html lang="en"><head>${html_head.html_head({title:"Dashboard", csslink:"/css/main2.css"})}</head><body>
 ${(warnig ? `<div id="warnig">Warnig</div>`:``)}
-<nav class="back">${header_menu.header_menu({buser,mainmenu,profiler})}</nav>
+<nav class="back">${html_nav_menu.html_nav_menu({buser,mainmenu,profiler})}</nav>
 ${(haupt_ban ? `<div id="haupt-banner"><div id="real-ban">Banner</div></div>` : ``)}
-${((buser && buser.role=='superadmin') ? `${admin_main_menu.admin_main_menu({})}`:``)}
+${((buser && buser.brole=='superadmin') ? `${html_admin_nav_menu.html_admin_nav_menu({})}`:``)}
 <main id="pagewrap">
-hallo ${buser.name}<br>
+hallo ${buser.bname}<br>
 <li><a href="/dashboard/articles">Articles Manager</a>
 <li><a href="/dashboard/albums">Photos</a>
 
@@ -24,7 +24,7 @@ hallo ${buser.name}<br>
 <li><a href="/dashboard/cabinet_admin">cabinet admin(payments)</a>
 <li><a href="/dashboard/admin_bitaps">bitaps api</a>
 
-</main><footer id="footer">${footer.footer({})}</footer></body></html>`;
+</main><footer id="footer">${html_footer.html_footer({})}</footer></body></html>`;
 }
 
 module.exports={admin_dashboard};
